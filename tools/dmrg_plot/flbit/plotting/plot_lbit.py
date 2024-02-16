@@ -152,9 +152,11 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                 ax.set_title(subspec_title,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
         if figspec_title := get_figspec_title(meta,dbval,figspec):
-            f['fig'].suptitle(figspec_title, y=0.66, x=0.85)
-
-        f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
+            f['fig'].suptitle(figspec_title, y=0.62, x=0.85)
+        if filename := meta.get('filename'):
+            f['filename'] = f"{meta['plotdir']}/{filename}"
+        else:
+            f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec))
     return figs

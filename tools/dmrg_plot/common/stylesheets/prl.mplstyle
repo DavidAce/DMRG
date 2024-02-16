@@ -31,7 +31,7 @@ figure.facecolor        : 'white'
 # \printlen[10][in]{\linewidth}   : 3.4039025050 in
 # \printlen[10][in]{\textwidth}   : 7.0568710470 in
 #
-# Use these sizes with ax.set_box_aspect(True) to get square axes
+# Use these sizes with ax.set_box_aspect(true) to get square axes
 
 #figure.figsize       : 3.404,3.404 # 100% column width
 #figure.figsize       : 3.404,3.404 # 100% column width + legend
@@ -49,27 +49,27 @@ grid.color              : k
 grid.linestyle          : -
 
 ## Dimensions as fraction of font size:
-legend.fontsize         : small
-legend.title_fontsize   : small
-legend.frameon          : False      # if True, draw the legend on a background patch
+legend.fontsize         : 8
+legend.title_fontsize   : 8
+legend.frameon          : false      # if true, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.35      # border whitespace
-#legend.labelspacing     : 0.030      # the vertical space between the legend entries
+#legend.labelspacing     : 0.030    # the vertical space between the legend entries
 legend.labelspacing     : 0.15      # the vertical space between the legend entries
 legend.handlelength     : 0.5       # the length of the legend lines
-legend.handletextpad    : 0.25       # the space between the legend line and legend text
+legend.handletextpad    : 0.25      # the space between the legend line and legend text
 legend.borderaxespad    : 1.0       # the border between the axes and legend edge
 legend.columnspacing    : 0.5       # column separation
 legend.framealpha       : 1.0       # legend patch transparency
 legend.facecolor        : inherit   # inherit from axes.facecolor; or color spec
 legend.edgecolor        : k         # background patch boundary color
-legend.fancybox         : False     # if True, use a rounded box for the
+legend.fancybox         : false     # if true, use a rounded box for the
                                     # legend background, else a rectangle
-legend.shadow           : False     # if True, give background a shadow effect
+legend.shadow           : false     # if true, give background a shadow effect
 
 xtick.direction         : in
-xtick.top               : True
-xtick.bottom            : True
+xtick.top               : true
+xtick.bottom            : true
 xtick.major.size        : 3
 xtick.minor.size        : 2
 xtick.major.width       : 1.0
@@ -77,8 +77,8 @@ xtick.minor.width       : 0.5
 xtick.major.pad         : 2.5
 
 ytick.direction         : in
-ytick.left              : True
-ytick.right             : True
+ytick.left              : true
+ytick.right             : true
 ytick.major.size        : 3
 ytick.minor.size        : 2
 ytick.major.width       : 1.0
@@ -88,25 +88,33 @@ ytick.major.pad         : 1.0
 # Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
 
 text.usetex        		: true
-font.size               : 9.0
+text.latex.preamble     : \usepackage{amsmath}
+font.size               : 8
 font.family             : serif
-font.serif              : STIX
-mathtext.fontset        : stix
+font.serif              : cm
+mathtext.fontset        : cm
+pdf.fonttype            : 42
+pdf.use14corefonts      : true
+pgf.rcfonts             : true
+pgf.texsystem           : pdflatex
+
+
+#path.simplify           : True   # When True, simplify paths by removing "invisible" points to reduce file size and increase rendering speed
 
 lines.linewidth         : 0.55
 lines.markersize        : 4.0
 errorbar.capsize        : 1.5  # length of end cap on error bars in pixels
 
-axes.axisbelow          : True
+axes.axisbelow          : true
 axes.titlelocation      : center  # alignment of the title: {left, right, center}
-axes.titlesize          : small   # font size of the axes title
+axes.titlesize          : 8       # font size of the axes title
 axes.titleweight        : normal  # font weight of title
 axes.titlecolor         : auto    # color of the axes title, auto falls back to
                                   # text.color as default value
 axes.titley             : 1.025   # position title (axes relative units).  None implies auto
 axes.titlepad           : 0.00    # pad between axes and title in points
 
-axes.labelsize          : small
+axes.labelsize          : 8
 axes.labelpad           : 0.5     # Spacing in points from the axes bounding box including ticks and tick labels.
 axes.linewidth          : 1.0
 #axes.prop_cycle        : cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
@@ -115,25 +123,25 @@ axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73
 #axes.formatter.limits: -5, 6  # use scientific notation if log10
                                # of the axis range is smaller than the
                                # first or larger than the second
-#axes.formatter.use_locale: False  # When True, format tick labels
+#axes.formatter.use_locale: false  # When true, format tick labels
                                    # according to the user's locale.
                                    # For example, use ',' as a decimal
                                    # separator in the fr_FR locale.
-axes.formatter.use_mathtext: True  # When True, use mathtext for scientific
+axes.formatter.use_mathtext: true  # When true, use mathtext for scientific
                                      # notation.
 #axes.formatter.min_exponent: 0  # minimum exponent to format in scientific notation
-#axes.formatter.useoffset: True  # If True, the tick label formatter
+#axes.formatter.useoffset: true  # If true, the tick label formatter
                                  # will default to labeling ticks relative
                                  # to an offset when the data range is
                                  # small compared to the minimum absolute
                                  # value of the data.
-#axes.formatter.offset_threshold: 4  # When useoffset is True, the offset
+#axes.formatter.offset_threshold: 4  # When useoffset is true, the offset
                                      # will be used when it can remove
                                      # at least this number of significant
                                      # digits from tick labels.
 
 ## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
-figure.autolayout       : False  # Applies tight_layout
+figure.autolayout       : false  # Applies tight_layout
 figure.subplot.top      : 0.99   # the top of the subplots of the figure (Make room for exponent spilling over, or title)
 #figure.subplot.bottom   : 0.10   # the bottom of the subplots of the figure
 figure.subplot.bottom   : 0.05    # the bottom of the subplots of the figure <--- for thin xlabels
@@ -147,14 +155,15 @@ figure.subplot.wspace   : 0.0    # the amount of width reserved for space betwee
 figure.subplot.hspace   : 0.0    # the amount of height reserved for space between subplots,
                                  # expressed as a fraction of the average axis height
 
-#figure.constrained_layout.use: True   # When True, automatically make plot
+#figure.constrained_layout.use: true   # When true, automatically make plot
                                        # elements fit on the figure. (Not
                                        # compatible with `autolayout`, above).
 #figure.constrained_layout.h_pad:  0   # Padding around axes objects. Float representing
 #figure.constrained_layout.w_pad:  0   # inches. Default is 3/72 inches (3 points)
 #figure.constrained_layout.hspace: 0   # Space between subplot groups. Float representing
 #figure.constrained_layout.wspace: 0   # a fraction of the subplot widths being separated.
-figure.titlesize : small
+figure.titlesize : 9
+figure.titleweight : normal
 
 
 
@@ -163,7 +172,7 @@ figure.titlesize : small
 ## e.g., you may want a higher resolution, or to make the figure
 ## background white
 
-savefig.dpi            : figure   # figure dots per inch or 'figure'
+savefig.dpi            : 600      # figure dots per inch or 'figure'
 savefig.facecolor      : auto     # figure face color when saving
 savefig.edgecolor      : auto     # figure edge color when saving
 savefig.format         : pdf      # {png, ps, pdf, svg}
@@ -175,6 +184,6 @@ savefig.pad_inches     : 0.0      # Padding to be used when bbox is set to 'tigh
 
 #savefig.directory      : ~       # default directory in savefig dialog box,
 #                                # leave empty to always use current working directory
-#savefig.transparent: False     # setting that controls whether figures are saved with a
+#savefig.transparent: false     # setting that controls whether figures are saved with a
                                 # transparent background by default
 #savefig.orientation: portrait  # Orientation of saved figure

@@ -788,7 +788,17 @@ def get_batch_setup(projectname):
                 },
             }
         },
-
+        'lbit127-linr': {
+            # Same as lbit124 but taking time step 0.25 between times 0.25 and 1600
+            'projectname': 'lbit127-linr',
+            'batch': {
+                'L16|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16200000],
+                    'time_steps': 6400,
+                },
+            }
+        },
         'fdmrg-isingmajorana1-init': {
             # Calculate subsystem entanglement entropies for  ground states
             'projectname': 'fdmrg-isingmajorana1-init',

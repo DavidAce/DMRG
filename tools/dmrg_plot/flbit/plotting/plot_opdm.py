@@ -70,8 +70,8 @@ def plot_v3_opdm_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     Ldata = dbval['vals']['L']
                     # xdata = np.array(range(Ldata))
                     ndata = np.shape(datanode[()])[1]
-                    ydata = np.mean(datanode[()], axis=1)
-                    edata = np.std(datanode[()], axis=1)/np.sqrt(ndata)
+                    ydata = np.mean(np.abs(datanode[()]), axis=1)
+                    edata = np.std(np.abs(datanode[()]), axis=1)/np.sqrt(ndata)
                     xdata = np.arange(len(ydata))
                     # line = ax.errorbar(xdata, ydata, marker='o', color=color, path_effects=path_effects, zorder=1)
                     line = ax.errorbar(x=xdata, y=ydata, yerr=edata, linestyle='none',capsize=4.0,
@@ -92,8 +92,10 @@ def plot_v3_opdm_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
 
         if figspec_title := get_figspec_title(meta,dbval,figspec):
             f['fig'].suptitle(figspec_title, y=0.66, x=0.85)
-
-        f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
+        if filename := meta.get('filename'):
+            f['filename'] = f"{meta['plotdir']}/{filename}"
+        else:
+            f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec))
     return figs

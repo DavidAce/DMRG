@@ -46,7 +46,7 @@ def get_qdistribution(L):
 if __name__ == '__main__':
     # ax.set_yscale('log')
     # ax.set_xlim(xmin=1,xmax=10)
-    plt.style.use('/home/david/GitProjects/DMRG++/tools/dmrg_plot/common/stylesheets/prb.mplstyle')
+    plt.style.use('/home/david/GitProjects/DMRG++/tools/dmrg_plot/common/stylesheets/prl.mplstyle')
     Ls = np.arange(2,32,2)
     qdists = np.zeros((len(Ls),20))
     figsize = (3.404, 3.404)
@@ -91,6 +91,9 @@ if __name__ == '__main__':
     ax2.set_xlabel('$1/L$')
     # ax2.set_ylabel('$Q_n$')
     ax2.legend(loc='upper left',frameon=True, framealpha=0.7, facecolor='white')
+
+    plt.savefig('q-distribution-1x2.pdf'.format(), format='pdf', backend='pgf')
+    plt.savefig('q-distribution-1x2.png'.format(), format='png', transparent=False, pad_inches=0)
     plt.show()
     exit(0)
     fig3 = plt.figure(figsize=figsize, layout='constrained')

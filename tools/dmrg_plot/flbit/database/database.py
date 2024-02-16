@@ -3,7 +3,7 @@ import h5py
 from dmrg_plot.common.io.h5ops import *
 from plotting.filter import *
 import itertools
-
+from numbers import Integral, Real
 
 def get_bond_info(statenode, datanode):
     bavg_key = None
@@ -126,6 +126,43 @@ def find_between(s, first, last):
     except ValueError:
         return ""
 
+def get_value(key_candidates, node_candidates, optional = True, default=None):
+    if isinstance(key_candidates, str):
+        keys = [key_candidates]
+    elif isinstance(key_candidates, list):
+        keys = key_candidates
+    else:
+        raise TypeError(f'key_candidates must be str or list: got {type(key_candidates)}: {key_candidates}')
+
+    for key in keys:
+        for node in node_candidates:
+            if node is None:
+                continue
+            if key in node.attrs:
+                return node.attrs[key][()]
+            if isinstance(node, h5py.Dataset):
+                if key in node.dtype.fields:
+                    return node[key][0] # Just the first element
+            if isinstance(node, h5py.Group):
+                if key in node:
+                    val = node[key][()]
+                    if isinstance(val, np.ndarray):
+                        return val[0]
+                    return val
+    if not optional:
+        raise LookupError(f'could not find keys {keys} among node candidates: [{node_candidates}]')
+    return default
+
+def get_enum(key, node_candidates, choices, optional = True, default=None):
+    val = get_value(key, node_candidates=node_candidates, optional=optional, default=default)
+    if isinstance(val, Integral):
+        return choices[val]
+    if isinstance(val, str):
+        return choices[val]
+
+    if not optional:
+        raise LookupError(f'could not match key [{key}:{val}] to enum choices: [{choices}]')
+    return val
 
 def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state_filter=None, debug=False):
     # Gather data
@@ -184,44 +221,28 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             print(' Found algo {}'.format(algopath))
         modelnode = algonode['model']
         hamiltonian = modelnode['hamiltonian']
-        lbitcircuit = modelnode['unitary_circuit']
-        L = hamiltonian.attrs['model_size'][()]
-        J = tuple([hamiltonian['J1_mean'][0], hamiltonian['J2_mean'][0], hamiltonian['J3_mean'][0]])
-        w = tuple([hamiltonian['J1_wdth'][0], hamiltonian['J2_wdth'][0], hamiltonian['J3_wdth'][0]])
-        r = hamiltonian['J2_span'][0]
-        x = hamiltonian['xi_Jcls'][0] if 'xi_Jcls' in hamiltonian.dtype.fields else hamiltonian['J2_xcls'][0]
-        u = lbitcircuit['u_depth'][0]
-        f = lbitcircuit['u_fmix'][0]
-        l = lbitcircuit['u_lambda'][0] if 'u_lambda' in lbitcircuit.dtype.fields.keys() else None
-        wkind = None
-        mkind = None
-        g8w8 = None
-        type = None
-        tgw8 = None
-        cgw8 = None
-        tstd = lbitcircuit['u_tstd'][0] if 'u_tstd' in lbitcircuit.dtype.fields.keys() else None
-        cstd = lbitcircuit['u_cstd'][0] if 'u_cstd' in lbitcircuit.dtype.fields.keys() else None
-        ubond = -1
+        lbitcircuit = modelnode['unitary_circuit'] if 'unitary_circuit' in modelnode else None
+        L = get_value('model_size', [modelnode, hamiltonian], optional=False)
+        x = get_value(['xi_Jcls', 'J2_xcls'], [hamiltonian], optional=False)
+        J = tuple([get_value(key, [hamiltonian], optional=False) for key in ['J1_mean', 'J2_mean', 'J3_mean']])
+        w = tuple([get_value(key, [hamiltonian], optional=False) for key in ['J1_wdth', 'J2_wdth', 'J3_wdth']])
+        r = get_value('J2_span', [hamiltonian], optional=False)
+        u = get_value('u_depth', [modelnode, hamiltonian, lbitcircuit], optional=False)
+        f = get_value('u_fmix',  [modelnode, hamiltonian, lbitcircuit], optional=False)
+        l   = get_value('u_lambda',  [modelnode, hamiltonian, lbitcircuit], default=1.0)
+        tstd = get_value('u_tstd',  [modelnode, hamiltonian, lbitcircuit])
+        cstd = get_value('u_cstd',  [modelnode, hamiltonian, lbitcircuit])
+        ubond = get_value('u_bond', [modelnode, hamiltonian, lbitcircuit])
+        wkind = get_enum('u_wkind', [lbitcircuit], choices=['ID', 'EX'])
+        mkind = get_enum('u_mkind', [lbitcircuit], choices=['V1', 'V2', 'V3'])
+        tgw8 = get_enum('u_tgw8', [modelnode, hamiltonian], choices=['ID', 'EX'])
+        cgw8 = get_enum('u_cgw8', [modelnode, hamiltonian], choices=['ID', 'EX'])
+        g8w8 = get_enum('u_g8w8', [modelnode, hamiltonian], choices=['ID', 'EX'])
+        type = get_enum('u_type', [modelnode, hamiltonian], choices=['AND', 'MBL'])
 
-        if 'u_wkind' in lbitcircuit.dtype.fields.keys():
-            wkind = 'ID' if lbitcircuit['u_wkind'][0] == 0 else 'EX'
-        if 'u_mkind' in lbitcircuit.dtype.fields.keys():
-            mkind = f'V{lbitcircuit["u_mkind"][0]+1}'
-        if 'u_g8w8' in lbitcircuit.dtype.fields.keys():
-            g8w8 = 'ID' if lbitcircuit['u_g8w8'][0] == 0 else 'EX'
-        if 'u_type' in lbitcircuit.dtype.fields.keys():
-            type = 'AND' if lbitcircuit['u_type'][0] == 0 else 'MBL'
-        if 'u_tgw8' in hamiltonian.dtype.fields.keys():
-            tgw8 = 'ID' if hamiltonian['u_tgw8'][0] == 0 else 'EX'
-        if 'u_cgw8' in hamiltonian.dtype.fields.keys():
-            cgw8 = 'ID' if hamiltonian['u_cgw8'][0] == 0 else 'EX'
-
-        if 'u_bond' in lbitcircuit.dtype.fields.keys():
-            ubond = lbitcircuit['u_bond'][0]
-        elif 'u_bond' in hamiltonian.dtype.fields.keys():
-            ubond = hamiltonian['u_bond'][0]
-        else:
-            int(find_between(modelnode.name, '_bond', ']'))
+        if ubond is None:
+            if 'bond' in modelnode.name:
+                ubond = int(find_between(modelnode.name, '_bond', ']'))
 
         # L if r == np.iinfo(np.uint64).max else r
         # Skip if not asked for
@@ -388,6 +409,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         'l': '${}{}{:>.2f}$'.format(db['tex']['l'].strip('$'), '{:}', l),
                     },
                 }
+        print(f" Looking for states matching {state_filter} in [{algopath}]")
         for statekey, statepath, statenode in h5py_group_iterator(node=algonode, keypattern=state_filter, dep=1):
             for groupkey, grouppath, groupnode in h5py_group_iterator(node=statenode, keypattern=['tables','cronos'], dep=1):
                 for datakey, datapath, datanode in h5py_group_iterator(node=groupnode, keypattern=grouplist, dep=6):
@@ -664,7 +686,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
     db['vals']['w2'] = sorted(db['vals']['w2'])
     db['vals']['w3'] = sorted(db['vals']['w3'])
     db['vals']['x'] = sorted(db['vals']['x'])
-    db['vals']['r'] = sorted(db['vals']['r'])
+    db['vals']['r'] = list(reversed(sorted(db['vals']['r'])))
     db['vals']['u'] = sorted(db['vals']['u'])
     db['vals']['f'] = sorted(db['vals']['f'])
     db['vals']['tstd'] = sorted(db['vals']['tstd'])

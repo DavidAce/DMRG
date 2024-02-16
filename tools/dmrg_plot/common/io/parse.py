@@ -1,7 +1,7 @@
 import argparse
 
 
-def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
+def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition', states=None):
     if batches is not None:
         if not isinstance(batches, list):
             raise TypeError("batches must be a list")
@@ -92,6 +92,12 @@ def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
         'lbit118',  # L[12-20] mbl mode to see how it affects SN(L) compared to lbit117
         'lbit119',  # FAILED (typo in the hermitian matrix in the circuit) L[8-16] vary the new lambda parameter
         'lbit120',  # L16 with MATRIX_(V1|V2|V3) varying lambda and to make sure the same f can be used in all three
+        'lbit121',  # L16 with MATRIX_(V2|V3) with high precision opdm varying lambda
+        'lbit122',  # L[8,10,16] with MATRIX_V2 to compare lbit with the effective model
+        'lbit123',  # L[12,16] with MATRIX_V2 to compare lbit with the effective model
+        'lbit124',  # L[12,16 ... 32] to check min/max SN(L) after saturation with lambda = 1
+        'lbit125',  # L[12,16 ... 28] to check min/max SN(L) after saturation with lambda = 5
+        'lbit126',  # L[12,16] with MATRIX_V3 to compare lbit with the effective model
 
     ]
     xdmrg_batches = ['data170',  #
@@ -103,7 +109,7 @@ def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
     parser.add_argument('--clear', action='store_true', help='Remake averaged.h5')
     parser.add_argument('--basedir', type=str, help='Main directory for all mbl batch data', default=basedir)
     parser.add_argument('--algos', type=list, help='List of algorithms to plot data for', choices=['fLBIT', 'xDMRG'], default=[algo])
-    parser.add_argument('--states', type=list, help='List of states to plot data for', default=['state_real'])
+    parser.add_argument('--states', type=list, help='List of states to plot data for', default=states if states is not None else ['state_real'])
     parser.add_argument('--models', type=list, help='List of models to plot data for', default=['analysis', 'model'])
     parser.add_argument('--points', type=list, help='List of points to plot data for', default=['tables'])
     if algo == 'fLBIT':

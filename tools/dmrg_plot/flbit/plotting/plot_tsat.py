@@ -137,11 +137,12 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         # ext = int(reals / 5)
                         # Plot the saturation time
                         if 'saturated' in meta['timepoints']:
-                            filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}]_l[{}].json".format(dbval['vals']['cachedir'],
+                            filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(dbval['vals']['cachedir'],
                                                                                       meta['dsetname'],
                                                                                       dbval['vals']['L'],
                                                                                       dbval['vals']['x'],
                                                                                       dbval['vals']['w'],
+                                                                                      dbval['vals']['r'],
                                                                                       dbval['vals']['f'],
                                                                                       dbval['vals']['l'])
                             if meta.get('loadjson') and os.path.isfile(filenamejson):
@@ -150,7 +151,7 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                                     tsb = entropy_saturation_bootstrap(**tsb_json)
                             else:
                                 # tboot_idx_avg, tboot_idx_err, sboot_avg, sboot_err = get_entropy_saturation_from_bootstrap(ydata=s, nbs=100)
-                                tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=s, tdata=t, nbs=meta.get('num-bootstraps', 100), dsetname=meta['dsetname'])
+                                tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=s, tdata=t, nbs=meta.get('num-bootstraps', 100))
                                 if meta.get('savejson'):
                                     if not os.path.exists(dbval['vals']['cachedir']):
                                         os.makedirs(dbval['vals']['cachedir'])
@@ -208,9 +209,9 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 palette, lstyles = get_colored_lstyles(db, xaxspec, palette_name, filter=None, idx=idx_palette)
                 # color = palette[-1]
                 # lstyle = lstyles[-1]
-                print('L:', xvals)
-                print('t:',tvals_boot)
-                print('e:',evals_boot)
+                print('xvals:', xvals)
+                print('tboot:',tvals_boot)
+                # print('eboot:',evals_boot)
                 # line, = ax.plot(xvals, tvals_phys, marker=None, color='black', path_effects=None)
                 # for xval, tval, color in zip(xvals, tvals_phys, palette):
                 #     axn.plot(xval, tval, color=color, markersize=5, marker='o', markerfacecolor='none', markeredgewidth=0.5)
@@ -228,7 +229,7 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                                  marker=None,
                                  path_effects=path_effects, zorder=9)
 
-                if meta.get('fit-tsat'):
+                if meta.get('fit-tsat') and len(xvals) > 1:
 
                     tlog = np.log(tvals_boot)
                     print(evals_boot)
@@ -314,18 +315,21 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
         if figspec_title := get_figspec_title(meta, dbval, figspec):
             f['fig'].suptitle(figspec_title)
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
-        if not f['filename']:
+        if filename := meta.get('filename'):
+            f['filename'] = f"{meta['plotdir']}/{filename}"
+        else:
+            if not f['filename']:
+                suffix = ''
+                suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
+                f['filename'] = "{}/{}_tsat_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                                      '-'.join(map(str, figvals)),
+                                                                      '-'.join(map(str, get_keys(db, subspec))),
+                                                                      suffix)
             suffix = ''
             suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-            f['filename'] = "{}/{}_tsat_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                                  '-'.join(map(str, figvals)),
-                                                                  '-'.join(map(str, get_keys(db, subspec))),
-                                                                  suffix)
-        suffix = ''
-        suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                       get_specvals(db, figspec, figvals),
-                                                       get_specvals(db, subspec), suffix)
+            f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                           get_specvals(db, figspec, figvals),
+                                                           get_specvals(db, subspec), suffix)
     return figs
 
 

@@ -101,9 +101,9 @@ def lbit_plot(args):
         "Paired",
     ]
     palettes = [  # Palette group for up to 4 categories
-        ["Oranges_r"],
+        ["Oranges"],
         # ["viridis_r"]
-        ["Greens_r"]
+        ["Greens"]
         # ["Blues", "Greens", "Oranges", "Purples"],
         # ["winter_r", "autumn_r"],
         # ["Blues", "Oranges"],

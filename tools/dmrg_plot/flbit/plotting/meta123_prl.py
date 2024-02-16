@@ -33,12 +33,28 @@ def get_meta(plotdir, cachedir):
     #     'subplots': subplots1x1,
     # }
 
-
-    # A figure spanning two-columns has 179.24548 mm = 7.05687 inches of width space
-    # For a 2x3 grid, the easiest is to divide the width 7.05687/3 for each figure
+    # For a 2x3 grid, the easiest is to divide the width 7.05687/3=2.35229 for each figure
+    # 2.26926: is 66% of a column width
+    # All the sizes below refer to the size of ONE single plot inside a nxn grid in either spanning 1 or 2 columns
+    #
     # figsize1x1_halfcol = 2.35229, 3.404 * 0.450, # Third-size for spanning a two-column document  with 3 figures
-    figsize1x1_halfcol = 2.26926, 3.404 * 0.440, # Third-size for spanning a two-column document  with 3 figures
-    subplots1x1 = {
+
+    box_aspect = 2. / 3
+    figsize1x1_1col = 3.404 * 0.55, 3.404,  # Full-size in one column of a two-column document
+    figsize1x1_1col = 3.4039, 3.4039 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
+    figsize2x3_2col = 7.0568 / 3, 7.0568 / 3 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
+    # figsize1x1_halfcol = 2.26926, 3.4039 * 0.440, # Third-size for spanning a two-column document  with 3 figures
+    # figsize1x1_halfcol = 2.26926, 3.4039 * 0.440, # Third-size for spanning a two-column document  with 3 figures
+
+    subplots1x1_1col = {
+        'top': 0.997,
+        'bottom': 0.12,
+        'left': 0.130,
+        'right': 0.997,
+        'wspace': 0,
+        'hspace': 0,
+    }
+    subplots2x3_2col = {
         'top': 0.997,
         'bottom': 0.17,
         'left': 0.180,
@@ -46,52 +62,68 @@ def get_meta(plotdir, cachedir):
         'wspace': 0,
         'hspace': 0,
     }
+
     default = {
-        'box_aspect': 2.0/3,
+        'box_aspect': box_aspect,
         'subspec_title': False,
         'figspec_title': False,
         'legendoutside': False,
         'legendcollect': False,
         'constrained_layout': False,
         'axtitle': False,
-        'figsize': figsize1x1_halfcol,
-        'subplots': subplots1x1,
+        'figsize': figsize2x3_2col,
+        'subplots': subplots2x3_2col,
+        'cachedir': Path(cachedir),
+        'plotdir': Path(plotdir, Path(mplstyle).stem),
+    }
+    default1x1_1col = {
+        'box_aspect': box_aspect,
+        'subspec_title': False,
+        'figspec_title': False,
+        'legendoutside': False,
+        'legendcollect': False,
+        'constrained_layout': False,
+        'axtitle': False,
+        'figsize': figsize1x1_1col,
+        'subplots': subplots1x1_1col,
         'cachedir': Path(cachedir),
         'plotdir': Path(plotdir, Path(mplstyle).stem),
     }
     subplots_halfheight = {
         'top': 1.0,
         'bottom': 0.15,
-        'left': 0.02,#0.17,#0.02,
-        'right': 0.755,#1.0,
+        'left': 0.02,  # 0.17,#0.02,
+        'right': 0.72,  # 1.0,
         'wspace': 0,
         'hspace': 0,
     }
     default_halfheight = {
-        'box_aspect': 0.86,#0.46,
-        'figsize': (3.404 * 5.0/9, 3.404*0.25),
+        'box_aspect': 0.95,  # 0.86 0#0.46,
+        'figsize': (3.404 * 5.0 / 9, 3.404 * 0.25),
         'subspec_title': False,
         'figspec_title': False,
-        'legendoutside' : False,
-        'legendcollect' : False,
+        'legendoutside': False,
+        'legendcollect': False,
         'subplots': subplots_halfheight,
+        'cachedir': Path(cachedir),
+        'plotdir': Path(plotdir, Path(mplstyle).stem),
     }
-    figsize1x1_inset = 2.26926*0.34, 3.404 * 0.440*0.42, # Tiny size for insets
+    figsize1x1_inset = 2.26926 * 0.34, 3.404 * 0.440 * 0.42,  # Tiny size for insets
     subplots_inset = {
         'top': 0.94,
         'bottom': 0.18,
-        'left': 0.36,#0.17,#0.02,
-        'right': 0.970,#1.0,
+        'left': 0.36,  # 0.17,#0.02,
+        'right': 0.970,  # 1.0,
         'wspace': 0,
         'hspace': 0,
     }
     default_inset = {
-        'box_aspect': 1.0,#0.46,
+        'box_aspect': 1.0,  # 0.46,
         'figsize': figsize1x1_inset,
         'subspec_title': False,
         'figspec_title': False,
-        'legendoutside' : False,
-        'legendcollect' : False,
+        'legendoutside': False,
+        'legendcollect': False,
         'subplots': subplots_inset,
         'font.size': 7.0,
     }
@@ -124,13 +156,16 @@ def get_meta(plotdir, cachedir):
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
-                'f': [0.06, 0.2],
-                # 'f': [0.2],
+                'f': [0.2],
                 # 'f': [0.4],
                 # 'f': [0.2, 0.4],
                 # 'f': [0.2, 0.3, 0.4],
-                # 'L': [12, 16, 20, 24, 28],
+                # 'L': [12,16,20],
                 'L': [16],
+                # 'l': [0.0, 1.0, 2.0, 4.0, 6.0, 8.0],
+                'l': [1.0],
+                'mkind': ['V2', 'V3'],
+                # 'L': [12, 16, 20, 24, 28, 32],
                 # 'L': [20],
                 # 'L': [20],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
@@ -141,8 +176,8 @@ def get_meta(plotdir, cachedir):
                 # 'u': ['u_5', 'u_6'],
                 # 'u': [32],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
-                'tgw8': ['ID'],
-                'cgw8': ['EX', 'ID'],
+                # 'tgw8': ['ID'],
+                # 'cgw8': ['EX'],
                 # 'u': [8,16,24,32,40,48,56,64],
                 # 'u': [8, 16, 32, 64, 80],
                 # 'ubond': [256],
@@ -182,10 +217,10 @@ def get_meta(plotdir, cachedir):
             'timeselection': 'lnt',
             'timenormalization': '',
             'mplstyle': mplstyle,
-            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L','l', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
             # 'bbox_to_anchor': (1.0, 0.70),  # Use with loc 'upper right'
-            'bbox_to_anchor': (1.04, 1.09),
+            'bbox_to_anchor': (1.00, 1.00),
 
             # 'legendcols': ['L', 'f','num'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -200,7 +235,7 @@ def get_meta(plotdir, cachedir):
             'normpage': False,
             'normsinf': False,
             'filter': {
-                'L': [12, 16, 20, 24, 28, 32],
+                # 'L': [8, 12, 16, 20, 24, 28, 32],
             },
             # 'titlename': 'Number Entropy Approach to saturation',
             'ylabel': '$|\overline S_\mathrm{E}^\infty - \overline S_\mathrm{E}|$',
@@ -234,11 +269,11 @@ def get_meta(plotdir, cachedir):
             'timeselection': 'lnt',
             'timenormalization': '',
             'mplstyle': mplstyle,
-            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['x:.1f'],  # Choose 'num', 'bmax','tsim'
 
             # 'legendlocation': (0.55, 0.44),
             'legendlocation': 'upper right',
-            'bbox_to_anchor': (1.05, 1.05),
+            'bbox_to_anchor': (1.00, 1.00),
         },
         'ent-sat': {
              'default': default,
@@ -249,7 +284,7 @@ def get_meta(plotdir, cachedir):
             # 'titlename': 'Average Entanglement entropy as $t\\rightarrow \infty$',
             'ylabel': 'Saturation times',
             #'yformat': '%.2f',
-            'xticks': [12,16,20,24, 28, 32],
+            'xticks': [12,16,20,24, 28],
             'yticks': [1e0, 1e4, 1e8,1e12, 1e16],
             'yscale': 'log',
             #'ylabelpad': -10,
@@ -266,9 +301,11 @@ def get_meta(plotdir, cachedir):
             'ymin': 1e0,
             'ymax': 1e18,
             'xmin': 10.0,
-            'xmax': 33.0,
+            'xmax': 30.0,
             'timepoints': ['growth-begin', 'growth-cease', 'saturated'],
-            'num-bootstraps': 500,
+            'num-bootstraps': 100,
+            'savejson': True,
+            'loadjson': True,
             'fit-tsat': True,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
@@ -294,7 +331,7 @@ def get_meta(plotdir, cachedir):
             # 'titlename': 'Average Entanglement entropy as $t\\rightarrow \infty$',
             'ylabel': '$t_\mathrm{sat}$',
             # 'yformat': '%.2f',
-            'xticks': [12, 16, 20, 24, 28, 32],
+            'xticks': [12, 16, 20, 24, 28],
             'yticks': [1e0, 1e4, 1e8,1e12, 1e16],
             'yscale': 'log',
             # 'ylabelpad': -10,
@@ -311,9 +348,11 @@ def get_meta(plotdir, cachedir):
             'ymin': 1e0,
             'ymax': 1e18,
             'xmin': 10.0,
-            'xmax': 33.0,
+            'xmax': 30.0,
             'timepoints': ['growth-begin', 'growth-cease', 'saturated'],
-            'num-bootstraps': 500,
+            'num-bootstraps': 100,
+            'savejson': True,
+            'loadjson': True,
             'fit-tsat': True,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
@@ -691,9 +730,9 @@ def get_meta(plotdir, cachedir):
             'legendcollect': False,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'l'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper left', 'center right', 'upper left', 'center right'],
-            'bbox_to_anchor': [(-0.05, 1.05), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
+            'bbox_to_anchor': [(-0.00, 1.00), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
 
         },
         'num2-med': {
@@ -807,7 +846,7 @@ def get_meta(plotdir, cachedir):
             'colname': 'number_entropy',
             'normpage': False,
             'filter': {
-                'L': [12, 16, 20, 24, 28, 32],
+                # 'L': [8, 12, 16, 20, 24, 28, 32],
             },
             # 'titlename': 'Number Entropy Approach to saturation',
             'ylabel': '$|\overline S_\mathrm{N}^\infty - \overline S_\mathrm{N}|$',
@@ -852,7 +891,7 @@ def get_meta(plotdir, cachedir):
             'colname': 'number_entropy',
             'normpage': False,
             'filter': {
-                'L': [12, 16, 20, 24, 28, 32],
+                # 'L': [8, 12, 16, 20, 24, 28, 32],
             },
             # 'titlename': 'Number Entropy Approach to saturation',
             'ylabel': '$|\overline S_\mathrm{N}^\infty - \overline S_\mathrm{N}|$',
@@ -889,7 +928,7 @@ def get_meta(plotdir, cachedir):
 
             # 'legendlocation': (0.55, 0.44),
             'legendlocation': 'upper right',
-            'bbox_to_anchor': (1.04, 1.06),
+            'bbox_to_anchor': (1.00, 1.00),
         },
         'numHa': {
             'default': default,
@@ -1290,9 +1329,9 @@ def get_meta(plotdir, cachedir):
             # 'xlabelpad': -8,
             'xcoords': (0.5,-0.04),
             # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prl else None,
-            'xticks': [0,27],
+            'xticks': [0,15],
             # 'xticklabels': ["0","27"],
-            'yticks': [1e-2, 1e-20],
+            'yticks': [1e-2, 1e-12],
             'ylabelpad': -16,
 
             # 'yticklabels': ['$-1$','$-15$'],
@@ -1305,16 +1344,16 @@ def get_meta(plotdir, cachedir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             # 'ymin': -16,
-            'ymin': 1e-20,
+            'ymin': 1e-12,
             'ymax': 2,
             'xmin': 0,
-            'xmax': 27,
+            'xmax': 15,
             'xnormalize': False,
             'xshift2mid': False,
             # 'xmax': 32 if prl else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'l', 'mkind'],  # Choose 'num', 'bmax','tsim'
             'legendfits': ['xi', 'beta'] if prl else ['C', 'xi', 'beta', 'pos'],
             'legendoutside': False,
             'legendcollect': False,
@@ -1346,7 +1385,7 @@ def get_meta(plotdir, cachedir):
             'default': default,
             # 'figsize': (1.702, 1.702),
             'figsize': figsize1x1_fullcol,
-            'subplots': subplots1x1,
+            'subplots': subplots1x1_1col,
             'frameon': True,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
@@ -1459,6 +1498,80 @@ def get_meta(plotdir, cachedir):
             # 'legendlocation': 'best',
             'legendlocation': 'best',  # "(0.52, 0.05),
         },
+        'opdm': {
+            'default': default1x1_1col,
+            'groupname': 'model',
+            'dsetname': 'opdm-eigv',
+            # 'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
+            # 'filter': {
+            # 'L': [24],
+            # 'f': [0.2,0.4],
+            # 'u': [16],
+            # },
+            # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
+            # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'ylabel': 'opdm',
+            # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
+            'xlabel': "eigv $i$",
+            # 'xlabelpad': -8,
+            # 'xcoords': (0.5, -0.04),
+            # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prl else None,
+            # 'xticks': [0, 15],
+            # 'xticklabels': ["0","27"],
+            # 'yticks': [1e-2, 1e-12],
+            # 'ylabelpad': -16,
+
+            # 'yticklabels': ['$-1$','$-15$'],
+            # 'ycoords': (-0.34, 0.34),
+            # 'xticklabels': ['$0$', '$L/2$', '$L$'],
+            # 'yticks': [0, -3, -6, -9, -12, -15],
+            'yscale': 'log',
+            # 'ynopos': 'mask',
+            'plotprefix': 'opdm',
+            'filename': 'opdm-V2',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            # 'ymin': -16,
+            # 'ymin': 0,
+            # 'ymax': 2,
+            # 'xmin': 0,
+            # 'xmax': 15,
+            # 'xnormalize': False,
+            # 'xshift2mid': False,
+            # 'xmax': 32 if prl else None,
+            # 'ymin': 1e-14,
+            # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'l'],  # Choose 'num', 'bmax','tsim'
+            # 'legendfits': ['xi', 'beta'] if prl else ['C', 'xi', 'beta', 'pos'],
+            'legendoutside': False,
+            'legendcollect': False,
+            # 'legendlocation': (0.18, 0.0),
+            'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
+            # 'bbox_to_anchor': (1.0, 0.70),  # Use with loc 'upper right'
+            'bbox_to_anchor': (1.00, 0.8),
+            'frameon': False,
+            # 'legendtitle': 'Arithmetic average',
+            'legendtitle': None,  # '$\\overline O \propto e^{(\\frac{|i-j|}{\\xi_\\tau})^\\beta}$',
+            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            # 'lbit-site': [0, 'mid', 'last'],
+            # 'lbit-site': ['mid'],
+            # 'lbit-mean': 'arithmetic',
+            # 'lbit-axis': '',
+            # 'fit-beta': True,
+            # 'fit-ymin': 1e-16,
+            # 'fit-skip': 0 if prl else 0,
+            # 'fit-mark': False,
+            # 'fit-plot': False,
+            # 'inset-cls': {
+            #     # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
+            #     'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
+            #     'coords': [None, None, None, None],
+            #     # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+            #     'legendtitle': '$\\xi_\\tau$',
+            # },
+        },
+
         'dist-num': {
             'default': default,
             'groupname': 'measurements',
@@ -1541,15 +1654,14 @@ def get_meta(plotdir, cachedir):
             'dsetname': 'number_entropy',
             'normpage': False,
             # 'titlename': 'Number Entropy',
-            # 'filter': {
-            #     'L': [16],
-            #     'f': [0.06,0.2,],
-            #     # 'u': [16],
-            # },
+            'filter': {
+                # 'L': [12, 16, 20],
+                # 'f': [0.2,0.3,0.4,0.5],
+                # 'u': [16],
+            },
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_\mathrm{N}^\infty)$',
             'yscale': 'log',
-            'xlabelpad': -0.5,
             # 'yformat': '%.2f',
             'ymaloc': LogLocator(numticks=9),  # FixedLocator([1e-3,1e-2,1e-1,1e0,1e1]),
             # 'ymafmt': LogFormatterMathtext(labelOnlyBase=True),
@@ -1565,11 +1677,9 @@ def get_meta(plotdir, cachedir):
             'xlabel': '$S_\mathrm{N}^\infty$',
             'density': True,
             'marklog2': True,
-            'marklog3': False,
-            'plotluitz': True,
+            'marklog3': True,
             'plotprefix': 'SN-divg',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'filename': 'SN-dist-f0.06-weights-off',
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -1577,18 +1687,17 @@ def get_meta(plotdir, cachedir):
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
             'legendshow': True,
-            'legendcols': ['L','f'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             # 'legendlocation': 'lower left',
             'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
-            'bbox_to_anchor': (1.05, 1.05),  # Use with loc 'upper right'
+            'bbox_to_anchor': (0.92, 1.05),  # Use with loc 'upper right'
             'legend2location': 'lower left',
             # 'bbox_to_anchor2': (1.05, 0.40),  # Use with loc 'upper right'
             # 'bbox_to_anchor2': (0.825, 0.95),  # Use with loc 'upper right'
         },
-
         'zivg-num': {  # Zoomed Distribution of infinite time averaged entropy
             'default': default,
             'groupname': 'measurements',
@@ -1820,7 +1929,7 @@ def get_meta(plotdir, cachedir):
         'tavg-ent-page': {
             'default': default,
             'figsize': figsize1x1_fullcol,
-            'subplots': subplots1x1,
+            'subplots': subplots1x1_1col,
             'groupname': 'measurements',
             'dsetname': 'entanglement_entropy',
             'normpage': True,
@@ -1987,7 +2096,7 @@ def get_meta(plotdir, cachedir):
             'xmax': 29,
             'mplstyle': mplstyle,
             'plotpinfty': False,
-            'plotpeakln2': True,
+            'plotpeakln2': False,
             'plotpeakln2_bins': 500,
             'plotpeakln2_range': (0.4, 0.8),
             'legendshow': False,
@@ -2006,7 +2115,7 @@ def get_meta(plotdir, cachedir):
             # 'figsize': figsize1x1_fullcol,
             # 'subplots': subplots1x1,
             'figsize': figsize1x1_fullcol,
-            'subplots': subplots1x1,
+            'subplots': subplots1x1_1col,
             # 'figsize' : (3.404*0.68, 3.404),
             # 'subplots': {
             #     'top': 1.0,
@@ -2053,7 +2162,7 @@ def get_meta(plotdir, cachedir):
         'tgvg-num': {
             'default': default,
             'figsize': figsize1x1_fullcol,
-            'subplots': subplots1x1,
+            'subplots': subplots1x1_1col,
             # 'figsize': (3.404 * 0.68, 3.404),
             # 'subplots': {
             #     'top': 1.0,
@@ -2683,7 +2792,7 @@ def get_meta(plotdir, cachedir):
             'colname': 'number_entropy',
             'normpage': False,
             'filter': {
-                'L': [12, 16, 20, 24, 28, 32],
+                # 'L': [12, 16, 20, 24, 28, 32],
             },
             # 'titlename': 'Number Entropy Approach to saturation',
 

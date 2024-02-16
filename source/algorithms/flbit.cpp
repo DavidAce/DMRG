@@ -456,7 +456,7 @@ void flbit::run_algorithm2() {
         tools::log->info("Starting time evolution");
 
         auto t_evo = tid::tic_scope("evo");
-//#pragma omp parallel for ordered schedule(dynamic, 1)
+#pragma omp parallel for ordered schedule(dynamic, 1)
         for (size_t tidx = 0; tidx < time_points.size(); ++tidx) {
             auto time = time_points[tidx];
             auto tensor_eff = tensors;
@@ -503,7 +503,7 @@ void flbit::run_algorithm2() {
             print_status(status_eff, tensor_eff);
             if (not state_eff.position_is_inward_edge())
                 throw std::runtime_error("state_eff is not at the edge! it will not be written to file!");
-//#pragma omp ordered
+#pragma omp ordered
             {
                 status_eff.event = StorageEvent::ITERATION;
                 tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges,

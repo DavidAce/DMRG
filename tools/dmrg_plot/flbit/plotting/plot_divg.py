@@ -331,7 +331,10 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+        if filename := meta.get('filename'):
+            f['filename'] = f"{meta['plotdir']}/{filename}"
+        else:
+            f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec), suffix)
         f['figcount'] += 1

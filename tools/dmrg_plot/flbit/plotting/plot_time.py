@@ -129,6 +129,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
                                             vals=figvals + subvals + linvals)
                 logger.debug('Found {} datanodes'.format(len(datanodes)))
+                print('Found {} datanodes'.format(len(datanodes)))
                 for datanode in datanodes:
                     dbval = db['dsets'][datanode.name]
 
@@ -555,6 +556,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                             )
 
 
+
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                             icol = 0
@@ -736,6 +738,46 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                     #         marker='s', markersize=4.5, linestyle='None', markeredgecolor='b',
                                     #         markeredgewidth=0.0, path_effects=path_effects, zorder=10)
 
+                    if meta.get('plotminmaxwin'):
+                        tlnln = np.log(np.log(tdata))
+                        # For this we need time series data for all realizations
+                        entropies = datanode[colname][()]
+                        print('Calculating the disorder average... ')
+                        sn_min_mean, sn_max_mean, t_win = get_disorder_averaged_minmax(entropies, tlnln,offset=10)
+                        ax.plot(t_win, sn_min_mean, marker=None, color=color, path_effects=path_effects, zorder=8,)
+                        ax.plot(t_win, sn_max_mean, marker=None, color=color, path_effects=path_effects, zorder=8,)
+                        # ax.plot(t_win, sn_min_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color, marker='^', markersize=3,  alpha=0.6)
+                        # ax.plot(t_win, sn_max_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color,marker='v', markersize=3, alpha=0.6)
+                        if lidx==0:
+                            sub = 'N' if 'number' in colname else 'E'
+                            label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
+                            label_avg = f'$\overline S_\mathrm{{{sub}}}$'
+                            label_min = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{min}}$'
+                            xymax_tail = (0.45, 0.245)
+                            xymax_head = (1.20, 0.260)
+                            xyavg_tail = (0.45, 0.220)
+                            xyavg_head = (1.10, 0.218)
+                            xymin_tail = (0.45, 0.180)
+                            xymin_head = (1.10, 0.170)
+
+                            ax.annotate(label_max,xytext=xymax_tail,xy=xymax_head,
+                                        arrowprops=dict(arrowstyle="->", color='black'),
+                                        bbox=dict(pad=-1, facecolor="none", edgecolor="none"))
+                            ax.annotate(label_avg,xytext=xyavg_tail,xy=xyavg_head,
+                                        arrowprops=dict(arrowstyle="->", color='black'),
+                                        bbox=dict(pad=-1, facecolor="none", edgecolor="none"))
+                            ax.annotate(label_min,xytext=xymin_tail,xy=xymin_head,
+                                        arrowprops=dict(arrowstyle="->", color='black'),
+                                        bbox=dict(pad=-3, facecolor="none", edgecolor="none"))
+
+                        # ax.plot(tlnln, np.mean(sn, axis=1), linestyle='-', color=colors[idx], label=label_avg)
+                        # if adx == 0:
+                        #     ax.axvline(x=tlnln[t.idx_num_lnlnt_begin], color=colors[idx], alpha=1.0,label='$t_{\mathrm{start} \ln\ln t}' +f'({L=})$' ,linewidth=2.0, linestyle='-' if adx==0 else None,zorder=100)
+                        #     ax.axvline(x=tlnln[t.idx_num_lnlnt_cease], color=colors[idx], alpha=1.0,label='$t_{\mathrm{stop} \ln\ln t}' + f'({L=})$' ,linewidth=2.0, linestyle='-' if adx==0 else None,zorder=100)
+                        #     ax.axvline(x=tlnln[t.idx_num_saturated], color=colors[idx], alpha=1.0, label='$t_{\mathrm{saturated}}$',linewidth=4.0, linestyle='-',zorder=100)
+                    #
+
+
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
@@ -908,7 +950,10 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
         suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+        if filename := meta.get('filename'):
+            f['filename'] = f"{meta['plotdir']}/{filename}"
+        else:
+            f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec), suffix)
     return figs

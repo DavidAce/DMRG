@@ -100,6 +100,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 logger.debug('--- plotting lins: {}'.format(linvals))
                 plots = Plots()
                 xvals, yvals, pvals, mvals, gvals, evals, qvals, nvals, vvals, vevals, speak, ybavg, ebavg, ybmed = [], [], [], [], [], [], [], [], [], [], [], [], [], []
+                ymaxw, emaxw, yminw, eminw, yavgw, eavgw = [], [], [] ,[] , [], []# Windowed min/max
                 legendrow = None
                 for xaxvals in xaxprod:
                     logger.debug('--- plotting xaxs: {}'.format(xaxvals))
@@ -207,6 +208,53 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                                     p = -np.sum(ptavg * np.log(ptavg), axis=0,keepdims=True)
                             else:
                                 raise LookupError('Could not find data to generate pinfty entropies')
+
+                        if meta.get('plotminmaxwin'):
+                            # For this we need time series data for all realizations
+                            print('Calculating the disorder average... ')
+                            sn_min, sn_max, t_win = get_every_realization_minmax(y, tdata, offset=10)
+                            # sn_min_mean, sn_max_mean, t_win = get_disorder_averaged_minmax(y, tdata, offset=10)
+                            # sn_avg_mean = np.mean(y, axis=1)
+                            tsb_min = get_entropy_saturation_from_bootstrap(sn_min, t_win, meta.get('num-bootstraps', 500))
+                            tsb_max = get_entropy_saturation_from_bootstrap(sn_max, t_win, meta.get('num-bootstraps', 500))
+                            tsb_avg = get_entropy_saturation_from_bootstrap(y, tdata, meta.get('num-bootstraps', 500))
+                            # ymaxw.append(np.mean(sn_max_mean))
+                            # emaxw.append(np.std(sn_max_mean)/np.sqrt(len(sn_max_mean)))
+                            # yminw.append(np.mean(sn_min_mean))
+                            # eminw.append(np.std(sn_min_mean)/np.sqrt(len(sn_min_mean)))
+                            # yavgw.append(np.mean(sn_avg_mean))
+                            # eavgw.append(np.std(sn_avg_mean)/np.sqrt(len(sn_avg_mean)))
+                            ymaxw.append(tsb_max.sinf_boot_avg)
+                            emaxw.append(tsb_max.sinf_boot_err)
+                            yminw.append(tsb_min.sinf_boot_avg)
+                            eminw.append(tsb_min.sinf_boot_err)
+                            yavgw.append(tsb_avg.sinf_boot_avg)
+                            eavgw.append(tsb_avg.sinf_boot_err)
+
+
+                            # ax.plot(t_win, sn_min_mean, marker=None, color=color, path_effects=path_effects, zorder=8, )
+                            # ax.plot(t_win, sn_max_mean, marker=None, color=color, path_effects=path_effects, zorder=8, )
+                            # # ax.plot(t_win, sn_min_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color, marker='^', markersize=3,  alpha=0.6)
+                            # # ax.plot(t_win, sn_max_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color,marker='v', markersize=3, alpha=0.6)
+                            # if lidx == 0:
+                            #     sub = 'N' if 'number' in meta['dsetname'] else 'E'
+                            #     label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
+                            #     label_avg = f'$\overline S_\mathrm{{{sub}}}$'
+                            #     label_min = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{min}}$'
+                            #     xymax_tail = (0.45, 0.24)
+                            #     xymax_head = (0.90, 0.26)
+                            #     xyavg_tail = (0.45, 0.185)
+                            #     xyavg_head = (0.90, 0.20)
+                            #     xymin_tail = (0.45, 0.165)
+                            #     xymin_head = (0.90, 0.162)
+                            #
+                            #     ax.annotate(label_max, xytext=xymax_tail, xy=xymax_head,
+                            #                 arrowprops=dict(arrowstyle="->", color='black'))
+                            #     ax.annotate(label_avg, xytext=xyavg_tail, xy=xyavg_head,
+                            #                 arrowprops=dict(arrowstyle="->", color='black'))
+                            #     ax.annotate(label_min, xytext=xymin_tail, xy=xymin_head,
+                            #                 arrowprops=dict(arrowstyle="->", color='black'))
+
                         if meta.get('plotVarX'):
                             L = dbval['vals']['L']
                             posnode = datanode.parent.parent['nth_particle_position']
@@ -222,7 +270,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                             # y = np.concatenate([y0[0, :, :], y1[0, :, :]], axis=1)
 
                         if meta.get('plothartley'):
-                            y = np.atleast_2d(datanode.parent.parent['hartley_number_entropies/data'][()]).T
+                            y = np.atleast_2d(datanode.parent.parent['hartley_number_entropies/data'][()])
 
                         # Calculate the infinite time average (1/T) integral_0^T y(t) dt
                         # reals = np.shape(y)[1]
@@ -230,23 +278,35 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         # ext = int(reals / 5)
                         # esb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=100, dsetname=meta['dsetname'])
                         # esb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=meta.get('num-bootstraps', 100), dsetname=meta['dsetname'])
-                        dsetname = 'varx' if meta.get('plotVarX') else meta['dsetname']
-                        filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(dbval['vals']['cachedir'],
-                                                                                  dsetname,
-                                                                                  dbval['vals']['L'],
-                                                                                  dbval['vals']['x'],
-                                                                                  dbval['vals']['w'],
-                                                                                  dbval['vals']['f']
-                                                                                  )
+                        dsetname = meta['dsetname']
+                        if meta.get('plotVarX'):
+                            dsetname = 'varx'
+                        elif meta.get('plothartley'):
+                            dsetname = 'hartley'
+                        elif meta.get('plotminmaxwin'):
+                            dsetname = 'minmax'
+
+                        filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(
+                            dbval['vals']['cachedir'],
+                            dsetname,
+                            dbval['vals']['L'],
+                            dbval['vals']['x'],
+                            dbval['vals']['w'],
+                            dbval['vals']['r'],
+                            dbval['vals']['f'],
+                            dbval['vals']['l'])
+                        print(f'{filenamejson=}')
                         if meta.get('loadjson') and os.path.isfile(filenamejson):
                             with open(filenamejson, 'r') as fp:
                                 tsb_json = json.load(fp)
                                 tsb = entropy_saturation_bootstrap(**tsb_json)
                         else:
                             # tboot_idx_avg, tboot_idx_err, sboot_avg, sboot_err = get_entropy_saturation_from_bootstrap(ydata=s, nbs=100)
-                            tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=meta.get('num-bootstraps', 100), dsetname=dsetname)
+                            tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=meta.get('num-bootstraps', 500))
 
                             if meta.get('savejson'):
+                                if not os.path.exists(dbval['vals']['cachedir']):
+                                    os.makedirs(dbval['vals']['cachedir'])
                                 with open(filenamejson, 'w') as fp:
                                     json.dump(asdict(tsb), fp, indent=4)
 
@@ -290,6 +350,12 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 ybavg = np.ravel(ybavg)
                 ybmed = np.ravel(ybmed)
                 ebavg = np.ravel(ebavg)
+                ymaxw = np.ravel(ymaxw)
+                emaxw = np.ravel(emaxw)
+                yminw = np.ravel(yminw)
+                eminw = np.ravel(eminw)
+                yavgw = np.ravel(yavgw)
+                eavgw = np.ravel(eavgw)
                 if meta.get('ytwinx'):
                     if lidx == 0:
                         ax.annotate('', xy=(0.35, 0.85), xytext=(0.50, 0.85), xycoords='axes fraction',
@@ -324,7 +390,9 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     # ax.plot(xvals, ybmed, color='red', linestyle=':', linewidth=1.0, path_effects=path_effects)
                     # ax.errorbar(x=xvals, y=ybavg, yerr=ebavg, color='blue', linestyle='-', capsize=1.0, path_effects=path_effects)
                     for xval,yval,eval,color in zip(xvals, yvals, evals,palette):
+                        print(f'{color=}')
                         ax.errorbar(x=xval, y=yval, yerr=eval, color=color,linestyle='none',capsize=2.0, path_effects=path_effects,zorder=10)
+
 
                 if meta.get('plotpeakln2'):
                     ax.plot(xvals, speak, marker=None, color='gray', path_effects=None)
@@ -335,7 +403,52 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     line2, = ax.plot(xvals, pvals, marker=None, color='black', linestyle=':', path_effects=None)
                     for xval,pval,qval,color in zip(xvals, pvals, qvals,palette):
                         ax.errorbar(x=xval, y=pval, yerr=qval, color=color,linestyle='none',capsize=2.0, path_effects=path_effects,zorder=10)
-                    # line2 = ax.errorbar(x=xvals, y=pvals, yerr=qvals, linestyle='--', color=color, path_effects=path_effects)
+                if meta.get('plotminmaxwin'):
+                    ls = '-' if f['figcount'] == 0 else '--'
+                    ax.plot(xvals, ymaxw, marker=None, color='black', linestyle=ls, path_effects=None)
+                    ax.plot(xvals, yminw, marker=None, color='black', linestyle=ls, path_effects=None)
+                    # ax.plot(xvals, yavgw, marker=None, color='gray', linestyle='-', path_effects=None)
+                    for xval,ymax,emax,color in zip(xvals, ymaxw, emaxw, palette):
+                        ax.errorbar(x=xval, y=ymax, yerr=emax, color=color,linestyle='none',capsize=2.0, path_effects=path_effects,zorder=10)
+                    for xval, ymin, emin, color in zip(xvals, yminw, eminw, palette):
+                        ax.errorbar(x=xval, y=ymin, yerr=emin, color=color, linestyle='none', capsize=2.0, path_effects=path_effects, zorder=10)
+
+                    if lidx == 0:
+                        sub = 'N' if 'number' in meta['dsetname'] else 'E'
+                        label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
+                        label_avg = f'$\overline S_\mathrm{{{sub}}}$'
+                        label_min = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{min}}$'
+                        # xymax_tail = (32.5, 0.245)
+                        # xymax_head = (32.5, 0.245)
+                        # xyavg_tail = (32.5, 0.226)
+                        # xyavg_head = (32.5, 0.226)
+                        # xymin_tail = (32.5, 0.205)
+                        # xymin_head = (32.5, 0.205)
+                        xymax_tail = (24.63, 0.257)
+                        xymax_head = (24.63, 0.257)
+                        xyavg_tail = (24.5, 0.235)
+                        xyavg_head = (24.5, 0.235)
+                        xymin_tail = (24.5, 0.213)
+                        xymin_head = (24.5, 0.213)
+                        ax.annotate(label_max, xytext=xymax_tail, xy=xymax_head,
+                                    arrowprops=dict(arrowstyle="->", color='black', alpha=0)
+                                    )
+                        ax.annotate(label_avg, xytext=xyavg_tail, xy=xyavg_head,
+                                    arrowprops=dict(arrowstyle="->", color='black', alpha=0))
+                        ax.annotate(label_min, xytext=xymin_tail, xy=xymin_head,
+                                    arrowprops=dict(arrowstyle="->", color='black', alpha=0))
+
+                    # for xval, yavg, eavg, color in zip(xvals, yavgw, eavgw, palette):
+                    #     ax.errorbar(x=xval, y=yavg, yerr=eavg, color=color, linestyle='none', capsize=2.0, path_effects=path_effects, zorder=10)
+
+
+                    # ax.plot(xvals, yminw, marker=None, color=color, path_effects=path_effects, zorder=10)
+                    # ax.plot(xvals, ymaxw, marker=None, color=color, path_effects=path_effects, zorder=10)
+                    # for xval, yval, color in zip(xvals, speak, palette):
+                    #     ax.scatter(x=xval, y=yval, color=color, marker='^', path_effects=path_effects, zorder=10)
+
+
+                # line2 = ax.errorbar(x=xvals, y=pvals, yerr=qvals, linestyle='--', color=color, path_effects=path_effects)
 
                 # if meta.get('plotVarX'):
                 #     line2 = ax.errorbar(x=xvals, y=vvals, yerr=vevals, linestyle='--', color=color,
@@ -486,18 +599,17 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
         if figspec_title := get_figspec_title(meta, dbval, figspec):
             f['fig'].suptitle(figspec_title)
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
-        if not f['filename']:
+
+        if filename := meta.get('filename'):
+            f['filename'] = f"{meta['plotdir']}/{filename}"
+        else:
             suffix = ''
             suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
             f['filename'] = "{}/{}_tavg_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                                   '-'.join(map(str, figvals)),
                                                                   '-'.join(map(str, get_keys(db, subspec))),
                                                                   suffix)
-        suffix = ''
-        suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                       get_specvals(db, figspec, figvals),
-                                                       get_specvals(db, subspec), suffix)
+        f['figcount'] += 1
     return figs
 
 

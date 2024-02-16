@@ -238,7 +238,7 @@ namespace tools::finite::h5 {
             auto                 cols = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(1));
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::number_probabilities::chunksize};
-            h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
+            h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 6);
             h5file.writeAttribute("n_count, site, time", dset_path, "index");
             h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", dset_path, "description");
         }

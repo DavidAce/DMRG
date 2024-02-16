@@ -60,6 +60,7 @@ def get_uniform_palette_names(num):
 
 
 def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
+    print(f"{default_palette=}")
     linprod = list(product(*get_vals(db, specs, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
     lstyles = [None] * len(linprod)
     if idx is None:
@@ -72,15 +73,26 @@ def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
             # The number of colors in each palette == the size of the second linspec
             palette_prod = []
             for pidx in range(slens[0]):
-                # Skip the first color that is usually too dark or bright
-                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
-                # palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]))
+                if any([x in default_palette[pidx] for x in ['viridis', 'autumn', 'Dark2'] ]):
+                    # Colors at the edge of the palette are sometimes missing, so here we force them to appear
+                    cmap = plt.colormaps[default_palette[pidx]]
+                    palette = [cmap(i) for i in np.linspace(0, cmap.N, slens[1], endpoint=True, dtype=int)]
+                    palette_prod.extend(palette)
+                else:
+                    # Skip the first color that is usually too dark or bright
+                    palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
             return palette_prod, lstyles
         else:
             default_palette = default_palette[idx]
 
-    # Skip the first color that is usually too dark or bright
-    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
+    if any([x in default_palette for x in ['viridis', 'autumn', 'Dark2']]):
+        # Colors at the edge of the palette are sometimes missing, so here we force them to appear
+        cmap = plt.colormaps[default_palette]
+        palette = [cmap(i) for i in np.linspace(0, cmap.N, len(linprod), endpoint=True, dtype=int)]
+        # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
+    else:
+        # Skip the first color that is usually too dark or bright
+        palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
     # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     # print(linprod)
     # palette = sns.color_palette(palette=default_palette, n_colors=(10*len(linprod)+1))[::10]
@@ -266,6 +278,41 @@ def flinear(x, a, b):
     with np.errstate(invalid='ignore'):
         return a + b * x
 
+@njit(cache=True, parallel=True)
+def get_every_realization_minmax(sn, times, offset=5):
+    tindices = np.arange(0, len(times) - offset, 1)
+    # sn_min_mean = np.zeros(len(tindices))
+    # sn_max_mean = np.zeros(len(tindices))
+    sn_min = np.zeros((len(tindices), np.shape(sn)[1]))
+    sn_max = np.zeros((len(tindices), np.shape(sn)[1]))
+    t_win = np.zeros(len(tindices))
+    for t in tindices:
+        for r in prange(np.shape(sn)[1]):
+            sn_min[t, r] = np.min(sn[t:t + offset, r])
+            sn_max[t, r] = np.max(sn[t:t + offset, r])
+        t_win[t] = times[t]
+    return sn_min, sn_max, t_win
+
+
+@njit(cache=True, parallel=True)
+def get_disorder_averaged_minmax(sn,times, offset=5):
+    tindices = np.arange(0, len(times) - offset, 1)
+    sn_min_mean = np.zeros(len(tindices))
+    sn_max_mean = np.zeros(len(tindices))
+    sn_min = np.zeros(np.shape(sn)[1])
+    sn_max = np.zeros(np.shape(sn)[1])
+    t_win = np.zeros(len(tindices))
+    for t in tindices:
+        for r in prange(np.shape(sn)[1]):
+            sn_min[r] = np.min(sn[t:t + offset, r])
+            sn_max[r] = np.max(sn[t:t + offset, r])
+        sn_min_mean[t] = np.mean(sn_min)
+        sn_max_mean[t] = np.mean(sn_max)
+        t_win[t] = times[t]
+    return sn_min_mean, sn_max_mean, t_win
+
+
+
 
 @dataclass
 class lbit_fit:
@@ -404,19 +451,19 @@ def get_lbit_fit_data(x, y, e=None, ymin=None, beta=None):
 def nb_mean_cmat(a, mean=None):
     if mean is None:
         mean = 'arithmetic'
+    if not mean in ['arithmetic', 'geometric']:
+        raise ValueError("invalid mean")
     shp = np.shape(a)
     avg = np.empty(shape=(shp[1], shp[2]))
     std = np.empty(shape=(shp[1], shp[2]))
-    for i in prange(shp[1]):
-        for j in prange(shp[2]):
+    for i in range(shp[1]):
+        for j in range(shp[2]):
             if mean == 'arithmetic':
                 avg[i, j] = np.nanmean(a[:, i, j])
                 std[i, j] = np.nanstd(a[:, i, j])
             elif mean == 'geometric':
                 avg[i, j] = np.exp(np.nanmean(np.log(np.abs(a[:, i, j]))))
                 std[i, j] = np.nanstd(a[:, i, j])
-            else:
-                raise ValueError("invalid mean")
     return np.abs(avg), std
 
 
@@ -610,44 +657,44 @@ def running_stats(ydata):
             # ycmsm[i, j] = np.sum(ydata[:i, j]) / (i)
     return ystds,ymean,ymaxs
 
-@njit(numba.types.Tuple((int64[:],float64[:]))
-          (float64[:,:],float64, int64,boolean, int64), cache=True,parallel=True)
-def get_saturation_from_diff_old(ydata, wsize=0.05, count=1, require_beyond=False, setsign = 0):
-    tdim,rdim = np.shape(ydata)
-    sign = np.ones(shape=(rdim), dtype=np.int64) * setsign
-    tidx = np.ones(shape=rdim, dtype=np.int64) * (tdim-1)
-    yval = np.zeros(shape=rdim, dtype=np.float64) * np.nan
-    nhit = np.zeros(shape=rdim, dtype=np.int64) # Counts the number of times the signal switches directio
-    whalf = np.max(np.asarray([1, int(tdim*wsize/2)]))
-    for j in prange(rdim):
-        for i in prange(whalf , tdim - whalf):
-            ychnk = np.ascontiguousarray(ydata[i-whalf:i+whalf, j])
-            diffsum = np.sum(np.diff(ychnk))
-            if sign[j] == 0 and diffsum != 0:
-                sign[j] = 1 if diffsum > 0 else -1
-                continue
-            # A hit means that the signal is changing direction!
-            hit = (sign[j] == 1 and diffsum < 0) or (sign[j] == -1 and diffsum > 0)
-            # We also require that this point is beyond the mean of the remaning time series
-
-            beyond_ymean = False
-            if require_beyond:
-                ymean = np.mean(np.ascontiguousarray(ydata[i:, j]))
-                if sign[j] == 1 and ydata[i,j] >= ymean:
-                    beyond_ymean = True
-                if sign[j] == -1 and ydata[i,j] <= ymean:
-                    beyond_ymean = False
-            else:
-                beyond_ymean = True
-            if hit and beyond_ymean:
-                nhit[j] += 1
-                if nhit[j] >= count:
-                    tidx[j] = i
-                    yval[j] = ydata[i, j]
-                    break
-        # if np.isnan(yval[j]):
-        #     yval[j] = ydata[-1, j]
-    return tidx, yval
+# @njit(numba.types.Tuple((int64[:],float64[:]))
+#           (float64[:,:],float64, int64,boolean, int64), cache=True,parallel=True)
+# def get_saturation_from_diff_old(ydata, wsize=0.05, count=1, require_beyond=False, setsign = 0):
+#     tdim,rdim = np.shape(ydata)
+#     sign = np.ones(shape=(rdim), dtype=np.int64) * setsign
+#     tidx = np.ones(shape=rdim, dtype=np.int64) * (tdim-1)
+#     yval = np.zeros(shape=rdim, dtype=np.float64) * np.nan
+#     nhit = np.zeros(shape=rdim, dtype=np.int64) # Counts the number of times the signal switches directio
+#     whalf = np.max(np.asarray([1, int(tdim*wsize/2)]))
+#     for j in prange(rdim):
+#         for i in prange(whalf , tdim - whalf):
+#             ychnk = np.ascontiguousarray(ydata[i-whalf:i+whalf, j])
+#             diffsum = np.sum(np.diff(ychnk))
+#             if sign[j] == 0 and diffsum != 0:
+#                 sign[j] = 1 if diffsum > 0 else -1
+#                 continue
+#             # A hit means that the signal is changing direction!
+#             hit = (sign[j] == 1 and diffsum < 0) or (sign[j] == -1 and diffsum > 0)
+#             # We also require that this point is beyond the mean of the remaning time series
+#
+#             beyond_ymean = False
+#             if require_beyond:
+#                 ymean = np.mean(np.ascontiguousarray(ydata[i:, j]))
+#                 if sign[j] == 1 and ydata[i,j] >= ymean:
+#                     beyond_ymean = True
+#                 if sign[j] == -1 and ydata[i,j] <= ymean:
+#                     beyond_ymean = False
+#             else:
+#                 beyond_ymean = True
+#             if hit and beyond_ymean:
+#                 nhit[j] += 1
+#                 if nhit[j] >= count:
+#                     tidx[j] = i
+#                     yval[j] = ydata[i, j]
+#                     break
+#         # if np.isnan(yval[j]):
+#         #     yval[j] = ydata[-1, j]
+#     return tidx, yval
 @njit(numba.types.Tuple((int64[:],float64[:]))
           (float64[:,:], float64, int64), cache=True,parallel=True)
 def get_saturation_from_diff(ydata, wsize=0.01, setsign = 0):
@@ -658,8 +705,8 @@ def get_saturation_from_diff(ydata, wsize=0.01, setsign = 0):
     # nhit = np.zeros(shape=rdim, dtype=np.int64) # Counts the number of times the signal switches directio
     # whalf = np.max(np.asarray([1, int(tdim*wsize/2)]))
     wstep = np.max(np.asarray([2, int(tdim*wsize)]))
-    for j in prange(rdim):
-        for i in prange(0 , tdim - wstep):
+    for j in range(rdim):
+        for i in range(0 , tdim - wstep):
             ychnk = np.ascontiguousarray(ydata[i:i+wstep, j])
             diffsum = np.sum(np.diff(ychnk))
             if sign[j] == 0 and diffsum != 0:
@@ -775,8 +822,8 @@ def get_entropy_saturation_from_bootstrap(sdata,
 
     esb = entropy_saturation_bootstrap()
 
-    print(tidx)
-    print(tsat)
+    # print(tidx)
+    # print(tsat)
     esb.sinf_boot_avg = np.mean(sinf)
     esb.sinf_boot_med = np.median(sinf)
     esb.sinf_boot_err = np.std(sinf, ddof=1)
@@ -919,7 +966,7 @@ def find_davg_entropy_saturation_time_from_bootstrap(ydata, tp, nbs=100, dsetnam
     # plt.show()
     return tsb
 
-def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tdata, nbs=100, dsetname='entanglement_entropy'):
+def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tdata, nbs=100):
     # For each bootstrap set of realizations from ydata, this calculates the saturation time
     # and saturation value of individual realizations before averaging.
     if len(np.shape(sdata)) != 2:
@@ -1218,22 +1265,25 @@ def get_timepoints(tdata, db):
     enttsb = None
     numtsb = None
     try:
-        entfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
-                                                             'entanglement_entropy',
-                                                             db['vals']['L'],
-                                                             db['vals']['x'],
-                                                             db['vals']['w'],
-                                                             db['vals']['f'],
-                                                             db['vals']['l'],
-                                                                         )
-        numfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
-                                                             'number_entropy',
-                                                             db['vals']['L'],
-                                                             db['vals']['x'],
-                                                             db['vals']['w'],
-                                                             db['vals']['f'],
-                                                             db['vals']['l'],
-                                                                   )
+        if not 'cachedir' in db['vals']:
+            raise LookupError("Could not find 'cachedir' in db['vals']")
+        entfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
+                                                                               'entanglement_entropy',
+                                                                               db['vals']['L'],
+                                                                               db['vals']['x'],
+                                                                               db['vals']['w'],
+                                                                               db['vals']['r'],
+                                                                               db['vals']['f'],
+                                                                               db['vals']['l'])
+        numfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
+                                                                               'number_entropy',
+                                                                               db['vals']['L'],
+                                                                               db['vals']['x'],
+                                                                               db['vals']['w'],
+                                                                               db['vals']['r'],
+                                                                               db['vals']['f'],
+                                                                               db['vals']['l'])
+
         with open(entfile, 'r') as fp:
             entjson = json.load(fp)
             enttsb = entropy_saturation_bootstrap(**entjson)
@@ -1241,8 +1291,8 @@ def get_timepoints(tdata, db):
             numjson = json.load(fp)
             numtsb = entropy_saturation_bootstrap(**numjson)
     except Exception as ex:
-        print(f"{ex}\n"
-              f"Failed to load saturation times: try running plot_tsat.py first!")
+        print(f"Error: {ex}")
+        print(f"Failed to load saturation times: try running plot_tsat.py first!")
         pass
         # raise FileNotFoundError(f"{ex}\n"
         #                         f"Failed to load saturation times: try running plot_tsat.py first!")
@@ -2028,6 +2078,7 @@ def add_legend5(fmeta):
                 numlegend2 = len(fmeta['legends2'][iax][0]['handle'])
                 if numlegend2 > 0:
                     fmeta[legend_eq][iax].add_artist(lg)
+            lg.set_zorder(100)
             lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
             if collect:
                 break
@@ -2186,8 +2237,8 @@ def save_figure(figs):
             prettify_plot5(f)
             Path(f['filename']).parent.mkdir(parents=True, exist_ok=True)
             print('Saving figure: {}'.format(f['filename']))
-            f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
-            f['fig'].savefig('{}.png'.format(f['filename']), format='png')
+            f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf',backend='pgf')
+            f['fig'].savefig('{}.png'.format(f['filename']), format='png', transparent=False, pad_inches=0)
             # f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
             # f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
 
