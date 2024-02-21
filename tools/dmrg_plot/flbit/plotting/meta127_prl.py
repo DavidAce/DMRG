@@ -43,7 +43,7 @@ def get_meta(plotdir, cachedir):
     # figsize1x1_halfcol = 2.35229, 3.404 * 0.450, # Third-size for spanning a two-column document  with 3 figures
 
     box_aspect = 2./3
-    figsize1x1_1col = 3.4039, 3.4039*box_aspect, # For a single plot spanning 1 column in a two-column doc
+    figsize1x1_1col = 3.4039, 3.4039*box_aspect, # Third-size for spanning a two-column document  with 3 figures
     figsize1x2_1col = 0.5 * 3.4039, 0.7 * 3.4039, # For two plots side by side in 1 column of a two-column doc
     figsize2x3_2col = 7.0568/3, 7.0568/3*box_aspect, # Third-size for spanning a two-column document  with 3 figures
     # figsize1x1_halfcol = 2.26926, 3.4039 * 0.440, # Third-size for spanning a two-column document  with 3 figures
@@ -184,7 +184,8 @@ def get_meta(plotdir, cachedir):
                 # 'f': [0.4],
                 # 'f': [0.2, 0.4],
                 # 'f': [0.2, 0.3, 0.4],
-                'L': [12,16,20,24,28, 32],
+                'L': [16],
+                'r': [1,2,3,4,5,6,7,8],
                 # 'l': [0.0, 1.0, 2.0, 4.0, 6.0, 8.0],
                 # 'l': [5.0],
                 # 'mkind': ['V2'],
@@ -326,7 +327,7 @@ def get_meta(plotdir, cachedir):
             # 'xmin': 10.0,
             # 'xmax': 30.0,
             'timepoints': ['growth-begin', 'growth-cease', 'saturated'],
-            'num-bootstraps': 500,
+            'num-bootstraps': 100,
             'savejson': True,
             'loadjson': True,
             'fit-tsat': True,
@@ -373,7 +374,7 @@ def get_meta(plotdir, cachedir):
             # 'xmin': 10.0,
             # 'xmax': 30.0,
             'timepoints': ['growth-begin', 'growth-cease', 'saturated'],
-            'num-bootstraps': 500,
+            'num-bootstraps': 100,
             'savejson': True,
             'loadjson': True,
             'fit-tsat': True,
@@ -759,7 +760,7 @@ def get_meta(plotdir, cachedir):
 
         },
         'num-minmax': {
-            'default': default1x1_1col,
+            'default': default1x2_1col,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -774,7 +775,7 @@ def get_meta(plotdir, cachedir):
             # 'yscale': 'log',
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'filename': 'SN-minmax',
+            'filename': 'SN-minmax-f0.2',
             'sharex': 'all',
             'sharey': 'none',
             'xticks': [0, 1, 2],
@@ -785,10 +786,10 @@ def get_meta(plotdir, cachedir):
             },
 
             'ylabel_inner_visible': False,
-            # 'ymin': 0.1,
-            # 'ymax': 0.28,
-            # 'xmin': -0.2,
-            # 'xmax': 2.04,
+            'ymin': 0.13,
+            'ymax': 0.279,
+            'xmin': -0.2,
+            'xmax': 2.04,
             'findloglogwindow': True,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'markerlist': ['growth-begin', 'num-lnlnt-cease', 'num-saturated', 'ent-lnt-cease', 'ent-saturated'],
@@ -810,7 +811,7 @@ def get_meta(plotdir, cachedir):
             'legendzorder': 100,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['r'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper left', 'center right', 'upper left', 'center right'],
             'bbox_to_anchor': [(-0.00, 0.9), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
 
@@ -2170,60 +2171,6 @@ def get_meta(plotdir, cachedir):
             'ymax': 0.240,
             'xmin': 11,
             'xmax': 29,
-            'mplstyle': mplstyle,
-            'plotpinfty': False,
-            'plotpeakln2': False,
-            'plotpeakln2_bins': 500,
-            'plotpeakln2_range': (0.4, 0.8),
-            'legendshow': False,
-            'legendshow2': False,
-            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            # 'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
-            # 'legendcols': ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': False,
-            'legendcollect': False,
-            'legendlocation': ['upper right', 'upper right', 'lower right', 'lower right'],
-            # 'bbox_to_anchor': [(1.05, 1.05)],  # Use with loc 'upper right'
-        },
-
-        'tavg-num-minmax': {
-            'default': default1x2_1col,
-            'groupname': 'measurements',
-            'dsetname': 'number_entropy',
-            'normpage': False,
-            # 'titlename': 'Average Number Entropy as $t\\rightarrow \infty$',
-            'ylabel': '$\overline S_\mathrm{N}^\infty$',
-            # 'ylabel': '$\overline S_\mathrm{N}^\infty, \overline S(p_\mathrm{N}^\infty)$',
-            # 'ylabel': '$lower S_\mathrm{N}$',
-            'yformat': '%.2f',
-            'xticks': [12, 16, 20, 24, 28, 32],
-            # 'yticks': [0.220, 0.240],
-            # 'ylabelpad': -18,
-            # 'xlabelpad': -6,
-            #'yticklength': 0,
-            #'xticklength': 0,
-            # 'xmaloc': MaxNLocator(integer=True, nbins=4),
-            'sharex': 'all',
-            'sharey': 'none',
-            'xlabel': '$L$',
-            'ystats': ['mean'],
-            'ytwinx': False,
-            'density': True,
-            'num-bootstraps': 500,
-            'loadjson': True,
-            'savejson': True,
-            'plotprefix': 'SN-tavg-minmax',
-            'filename' : 'SN-tavg-minmax-f0.2',
-            'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'plotluitz': False,
-            'plotminmaxwin': True,
-            # 'ymin': 0.220,
-            # 'ymax': 0.240,
-            'ymin': 0.13,
-            'ymax': 0.279,
-            'xmin': 11,
-            'xmax': 33,
             'mplstyle': mplstyle,
             'plotpinfty': False,
             'plotpeakln2': False,

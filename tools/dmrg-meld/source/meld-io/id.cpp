@@ -19,46 +19,54 @@ BufferedTableInfo::~BufferedTableInfo() { flush(); }
 
 void BufferedTableInfo::insert(const std::vector<std::byte>::const_iterator begin, const std::vector<std::byte>::const_iterator end, hsize_t index) {
     if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
-    if(std::distance(begin, end) != static_cast<long>(info->recordBytes.value())) throw std::runtime_error("insert: record and entry size mismatch");
-    if(recordBuffer.size() >= maxRecords) flush();
+    auto entry_size = std::distance(begin, end);
+    if(entry_size != static_cast<long>(info->recordBytes.value())) throw std::runtime_error("insert: record and entry size mismatch");
+    if(getNumRecordsInBuffer() >= maxRecords) flush();
 
     // We need to find out if there is already a contigous buffer where we can append this entry. If not, we start a new contiguous buffer
     for(auto &r : recordBuffer) {
         if(r.offset + r.extent == index) {
             r.rawdata.insert(r.rawdata.end(), begin, end);
             r.extent += 1;
-            //            h5pp::print("Inserting 1 records at index {} into offset {} extent {}\n", index, r.offset, r.extent );
             count++;
+            auto rsize = static_cast<double>(r.rawdata.size()) / 1024.0 / 1024.0;
+            auto rcpty = static_cast<double>(r.rawdata.capacity()) / 1024.0 / 1024.0;
+//            tools::logger::log->debug(
+//                "Inserting entry ({} bytes) with index {} into offset {} extent {} | rawdata {:.3f} MB capacity {:.3f} MB | maxRecords {}", entry_size, index,
+//                r.offset, r.extent, rsize, rcpty, maxRecords);
             return;
         }
     }
     // None was found, so we make a new one
-    recordBuffer.emplace_back(ContiguousBuffer{index, 1ul, std::vector<std::byte>(begin, end)});
+//    tools::logger::log->debug("Starting a new buffer at index {}", index);
+    recordBuffer.emplace_back(ContiguousBuffer{.offset = index, .extent = 1ul, .rawdata = std::vector<std::byte>(begin, end)});
     count++;
-    //    auto & r = recordBuffer.back();
-    //    h5pp::print("Inserting 1 records at index {} into offset {} extent {}\n",  index, r.offset, r.extent );
 }
 
 void BufferedTableInfo::insert(const std::vector<std::byte> &entry, hsize_t index) {
-    if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
-    if(entry.size() != info->recordBytes.value()) throw std::runtime_error("insert: record and entry size mismatch");
-    if(recordBuffer.size() >= maxRecords) flush();
-
-    // We need to find out if there is already a contigous buffer where we can append this entry. If not, we start a new contiguous buffer
-    for(auto &r : recordBuffer) {
-        if(r.offset + r.extent == index) {
-            r.rawdata.insert(r.rawdata.end(), entry.begin(), entry.end());
-            r.extent += 1;
-            //            h5pp::print("Inserting 1 records at index {} into offset {} extent {}\n", index, r.offset, r.extent );
-            count++;
-            return;
-        }
-    }
-    // None was found, so we make a new one
-    recordBuffer.emplace_back(ContiguousBuffer{index, 1ul, entry});
-    count++;
-    //    auto & r = recordBuffer.back();
-    //    h5pp::print("Inserting 1 records at index {} into offset {} extent {}\n",  index, r.offset, r.extent );
+    insert(entry.begin(), entry.end(), index);
+//    if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
+//    if(entry.size() != info->recordBytes.value()) throw std::runtime_error("insert: record and entry size mismatch");
+//    if(getNumRecordsInBuffer() >= maxRecords) flush();
+//
+//    // We need to find out if there is already a contigous buffer where we can append this entry. If not, we start a new contiguous buffer
+//    for(auto &r : recordBuffer) {
+//        if(r.offset + r.extent == index) {
+//            r.rawdata.insert(r.rawdata.end(), entry.begin(), entry.end());
+//            r.extent += 1;
+//            count++;
+//            auto rsize = static_cast<double>(r.rawdata.size()) / 1024.0 / 1024.0;
+//            auto rcpty = static_cast<double>(r.rawdata.capacity()) / 1024.0 / 1024.0;
+//            tools::logger::log->debug(
+//                "Inserting entry ({} bytes) with index {} into offset {} extent {} | rawdata {:.3f} MB capacity {:.3f} MB | maxRecords {}", entry.size(), index,
+//                r.offset, r.extent, rsize, rcpty, maxRecords);
+//            return;
+//        }
+//    }
+//    // None was found, so we make a new one
+//    tools::logger::log->debug("Starting a new buffer at index {}", index);
+//    recordBuffer.emplace_back(ContiguousBuffer{.offset = index, .extent = 1ul, .rawdata = entry});
+//    count++;
 }
 
 void BufferedTableInfo::flush() {
@@ -70,6 +78,26 @@ void BufferedTableInfo::flush() {
 }
 
 hsize_t BufferedTableInfo::get_count() { return count; }
+size_t  BufferedTableInfo::getNumRecordsInBuffer() {
+    size_t num = 0;
+    for(size_t i = 0; i < recordBuffer.size(); ++i) num += recordBuffer[i].extent;
+    return num;
+}
+
+void BufferedTableInfo::allocateBuffers(size_t expectedIters) {
+    // Example:
+    // If expectedIters==6400 and there are 10000 seeds, then there will be
+    // 6400 BufferedTableInfo objects, where each holds maxRecords table entries (seeds).
+    // We set maxRecords so that, on aggregate, the memory usage is not more than a few GB.
+    // Total mem usage = expectedSrcKeys * expectedIters * maxRecords * info->recordBytes.value()
+
+    if(info == nullptr) return;
+    size_t maxMemUsage = std::clamp(expectedIters * maxRecords * info->recordBytes.value(), 100000000ul /* 100 MB */, 1000000000ul /* 1 GB */);
+    maxRecords         = std::clamp(maxMemUsage / (expectedIters * info->recordBytes.value()), 1ul, 10000ul);
+    maxMemUsage        = expectedIters * maxRecords * info->recordBytes.value();
+    recordBuffer.reserve(maxRecords);
+    tools::logger::log->debug("Set maxRecords = {} | expected iters {} | maxMemUsage {} MB", maxRecords, expectedIters, maxMemUsage / (1024 * 1024));
+}
 
 FileId::FileId(long seed_, std::string_view path_, size_t hash_) : seed(seed_), hash(hash_) {
     strncpy(path, path_.data(), sizeof(path) - 1);
@@ -86,7 +114,10 @@ InfoId<InfoType>::InfoId(const InfoType &info_) : info(info_) {}
 template struct InfoId<h5pp::DsetInfo>;
 template struct InfoId<h5pp::TableInfo>;
 
-InfoId<BufferedTableInfo>::InfoId(long seed_, hsize_t index_) { db[seed_] = index_; }
+InfoId<BufferedTableInfo>::InfoId(long seed_, hsize_t index_) {
+    insert(seed_, index_);
+    //    db[seed_] = index_;
+}
 InfoId<BufferedTableInfo>::InfoId(const h5pp::TableInfo &info_) : info(info_), buff(BufferedTableInfo(&info)) {
     //    h5pp::print("Copy constructor for buffered table {}\n", info.tablePath.value());
 }

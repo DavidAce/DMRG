@@ -267,11 +267,11 @@ int main(int argc, char *argv[]) {
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "truncation_errors"));
                 // A crono records data from each time step
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", time_steps));
-//                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", time_steps));
-//                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", time_steps));
+                //                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", time_steps));
+                //                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", time_steps));
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", time_steps));
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", time_steps));
-//                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
+                //                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
 
                 // Last argument is the axis along which to build the time series
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3, SlabSelect::FULL));
@@ -355,14 +355,14 @@ int main(int argc, char *argv[]) {
             tools::h5db::TgtDb tgtdb;
             //    h5_tgt.setDriver_core();
             {
-                auto keepOpen = h5_tgt_part.getFileHandleToken();
-                tgtdb.file    = tools::h5db::loadFileDatabase(h5_tgt_part); // This database maps  src_name <--> FileId
-                tgtdb.dset    = tools::h5db::loadDatabase<h5pp::DsetInfo>(h5_tgt_part, keys.dsets);
-                tgtdb.table   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt_part, keys.tables);
-                tgtdb.crono   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.cronos);
-                tgtdb.fesup   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.fesups);
-                tgtdb.fesdn   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.fesdns);
-                tgtdb.model   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt_part, keys.models);
+                //                auto keepOpen = h5_tgt_part.getFileHandleToken();
+                tgtdb.file  = tools::h5db::loadFileDatabase(h5_tgt_part); // This database maps  src_name <--> FileId
+                tgtdb.dset  = tools::h5db::loadDatabase<h5pp::DsetInfo>(h5_tgt_part, keys.dsets);
+                tgtdb.table = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt_part, keys.tables);
+                tgtdb.crono = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.cronos);
+                tgtdb.fesup = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.fesups);
+                tgtdb.fesdn = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.fesdns);
+                tgtdb.model = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt_part, keys.models);
             }
             {
                 for(const auto &[infoKey, infoId] : tgtdb.table) infoId.info.assertReadReady();
@@ -507,19 +507,19 @@ int main(int argc, char *argv[]) {
                 {
                     // Start by copying the environment metadata like git version. This should be the same for all files, so we only do it once
                     if(not h5_tgt_part.linkExists(".env")) { h5_tgt_part.copyLinkFromFile(".env", h5_src.getFilePath(), ".env"); }
-                    auto tgtKeepOpen = h5_tgt_part.getFileHandleToken();
-                    auto srcKeepOpen = h5_src.getFileHandleToken();
+                    //                    auto tgtKeepOpen = h5_tgt_part.getFileHandleToken();
+                    //                    auto srcKeepOpen = h5_src.getFileHandleToken();
                     switch(model) {
                         case Model::SDUAL: {
-                            tools::h5io::merge<ModelId<sdual,nocircuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<ModelId<sdual, nocircuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                         case Model::MAJORANA: {
-                            tools::h5io::merge<ModelId<majorana,nocircuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<ModelId<majorana, nocircuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                         case Model::LBIT: {
-                            tools::h5io::merge<ModelId<lbit,lbit_circuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<ModelId<lbit, lbit_circuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                     }

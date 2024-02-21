@@ -212,24 +212,33 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         if meta.get('plotminmaxwin'):
                             # For this we need time series data for all realizations
                             print('Calculating the disorder average... ')
-                            sn_min, sn_max, t_win = get_every_realization_minmax(y, tdata, offset=10)
-                            # sn_min_mean, sn_max_mean, t_win = get_disorder_averaged_minmax(y, tdata, offset=10)
-                            # sn_avg_mean = np.mean(y, axis=1)
-                            tsb_min = get_entropy_saturation_from_bootstrap(sn_min, t_win, meta.get('num-bootstraps', 500))
-                            tsb_max = get_entropy_saturation_from_bootstrap(sn_max, t_win, meta.get('num-bootstraps', 500))
-                            tsb_avg = get_entropy_saturation_from_bootstrap(y, tdata, meta.get('num-bootstraps', 500))
-                            # ymaxw.append(np.mean(sn_max_mean))
-                            # emaxw.append(np.std(sn_max_mean)/np.sqrt(len(sn_max_mean)))
-                            # yminw.append(np.mean(sn_min_mean))
-                            # eminw.append(np.std(sn_min_mean)/np.sqrt(len(sn_min_mean)))
-                            # yavgw.append(np.mean(sn_avg_mean))
-                            # eavgw.append(np.std(sn_avg_mean)/np.sqrt(len(sn_avg_mean)))
-                            ymaxw.append(tsb_max.sinf_boot_avg)
-                            emaxw.append(tsb_max.sinf_boot_err)
-                            yminw.append(tsb_min.sinf_boot_avg)
-                            eminw.append(tsb_min.sinf_boot_err)
-                            yavgw.append(tsb_avg.sinf_boot_avg)
-                            eavgw.append(tsb_avg.sinf_boot_err)
+
+                            tlnln = np.log(np.log(tdata))
+                            # sn_min, sn_max = get_every_realization_peakavg(y,keepnan=False)
+                            sn_min_davg,sn_min_dste, sn_max_davg, sn_max_dste, sn_davg, sn_dste ,t_win = get_disorder_averaged_peaks(y, tlnln, offset=10) # 8 works well?
+
+                            # print(f"{sn_max=}")
+                            # sn_min, sn_max, t_win = get_every_realization_minmax(y, tdata, offset=5)
+                            # sn_avg = np.mean(y, axis=1)
+                            # sn_avg = sn_davg
+                            # sn_std = np.std(y, axis=1)
+                            ymaxw.append(np.nanmean(sn_max_davg))
+                            emaxw.append(np.nanmean(sn_max_dste))
+                            yminw.append(np.nanmean(sn_min_davg))
+                            eminw.append(np.nanmean(sn_min_dste))
+                            yavgw.append(np.nanmean(sn_davg))
+                            eavgw.append(np.nanmean(sn_dste))
+                            # print(sn_max)
+                            # sn_min, sn_max, t_win = get_every_realization_minmax(y, tlnln, offset=10)
+                            # tsb_min = get_entropy_saturation_from_bootstrap(sn_min, t_win, meta.get('num-bootstraps', 500))
+                            # tsb_max = get_entropy_saturation_from_bootstrap(sn_max, t_win, meta.get('num-bootstraps', 500))
+                            # tsb_avg = get_entropy_saturation_from_bootstrap(y, tdata, meta.get('num-bootstraps', 500))
+                            # ymaxw.append(tsb_max.sinf_boot_avg)
+                            # emaxw.append(tsb_max.sinf_boot_err)
+                            # yminw.append(tsb_min.sinf_boot_avg)
+                            # eminw.append(tsb_min.sinf_boot_err)
+                            # yavgw.append(tsb_avg.sinf_boot_avg)
+                            # eavgw.append(tsb_avg.sinf_boot_err)
 
 
                             # ax.plot(t_win, sn_min_mean, marker=None, color=color, path_effects=path_effects, zorder=8, )
@@ -385,7 +394,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 if 'gmean' in meta['ystats']:
                     # line, = ax.plot(xvals, gvals, marker=None, linestyle='--', color=color, path_effects=path_effects)
                     line = ax.errorbar(x=xvals, y=gvals, yerr=evals, linestyle='--', color=color, path_effects=path_effects)
-                if 'mean' in meta['ystats']:
+                if 'mean' in meta['ystats'] and not meta.get('plotminmaxwin'):
                     line, = ax.plot(xvals, yvals, marker=None, color='black', linewidth=1.0, path_effects=None)
                     # ax.plot(xvals, ybmed, color='red', linestyle=':', linewidth=1.0, path_effects=path_effects)
                     # ax.errorbar(x=xvals, y=ybavg, yerr=ebavg, color='blue', linestyle='-', capsize=1.0, path_effects=path_effects)
@@ -407,29 +416,25 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     ls = '-' if f['figcount'] == 0 else '--'
                     ax.plot(xvals, ymaxw, marker=None, color='black', linestyle=ls, path_effects=None)
                     ax.plot(xvals, yminw, marker=None, color='black', linestyle=ls, path_effects=None)
-                    # ax.plot(xvals, yavgw, marker=None, color='gray', linestyle='-', path_effects=None)
+                    line, = ax.plot(xvals, yavgw, marker=None, color='black', linestyle=ls, path_effects=None)
                     for xval,ymax,emax,color in zip(xvals, ymaxw, emaxw, palette):
                         ax.errorbar(x=xval, y=ymax, yerr=emax, color=color,linestyle='none',capsize=2.0, path_effects=path_effects,zorder=10)
                     for xval, ymin, emin, color in zip(xvals, yminw, eminw, palette):
                         ax.errorbar(x=xval, y=ymin, yerr=emin, color=color, linestyle='none', capsize=2.0, path_effects=path_effects, zorder=10)
+                    for xval, yavg, eavg, color in zip(xvals, yavgw, eavgw, palette):
+                        ax.errorbar(x=xval, y=yavg, yerr=eavg, color=color, linestyle='none', capsize=2.0, path_effects=path_effects, zorder=10)
 
                     if lidx == 0:
                         sub = 'N' if 'number' in meta['dsetname'] else 'E'
                         label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
                         label_avg = f'$\overline S_\mathrm{{{sub}}}$'
                         label_min = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{min}}$'
-                        # xymax_tail = (32.5, 0.245)
-                        # xymax_head = (32.5, 0.245)
-                        # xyavg_tail = (32.5, 0.226)
-                        # xyavg_head = (32.5, 0.226)
-                        # xymin_tail = (32.5, 0.205)
-                        # xymin_head = (32.5, 0.205)
-                        xymax_tail = (24.63, 0.257)
-                        xymax_head = (24.63, 0.257)
-                        xyavg_tail = (24.5, 0.235)
-                        xyavg_head = (24.5, 0.235)
-                        xymin_tail = (24.5, 0.213)
-                        xymin_head = (24.5, 0.213)
+                        xymax_tail = (xvals[2]+0.5, ymaxw[3]+0.01)
+                        xymax_head = (xvals[2]+0.5, ymaxw[3]+0.01)
+                        xyavg_tail = (xvals[2]+0.5, yavgw[3]+0.004)
+                        xyavg_head = (xvals[2]+0.5, yavgw[3]+0.004)
+                        xymin_tail = (xvals[2]+0.5, yminw[3]+0.002)
+                        xymin_head = (xvals[2]+0.5, yminw[3]+0.002)
                         ax.annotate(label_max, xytext=xymax_tail, xy=xymax_head,
                                     arrowprops=dict(arrowstyle="->", color='black', alpha=0)
                                     )

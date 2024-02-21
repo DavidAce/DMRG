@@ -541,19 +541,62 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                                    path_effects=mark_effects,
                                                    zorder=7,
                                                    )
-                        if meta.get('usescatterplot'):
-                            line = ax.scatter(xdata, y, marker='o', s=7.0, edgecolors='gray', linewidths=0.2,
-                                            # linestyle=linestyle,
-                                            label=label, color=color,
-                                            # linewidth=1.8,
-                                            # path_effects=path_effects,
-                                               zorder=8)
-                        else:
-                            line, = ax.plot(xdata, y, marker=None, linestyle=linestyle, label=label, color=color,
-                                            # linewidth=1.2,
-                                            path_effects=path_effects,
-                                            zorder=8,
-                                            )
+
+                        if meta.get('plotminmaxwin'):
+                            tlnln = np.log(np.log(tdata))
+                            # For this we need time series data for all realizations
+                            entropies = datanode[colname][()]
+                            print('Calculating the disorder average... ')
+                            nb.set_num_threads(16)
+                            sn_min_davg, sn_min_dste, sn_max_davg, sn_max_dste, sn_avg_davg, sn_avg_dste, t_win = get_disorder_averaged_peaks(
+                                entropies, tlnln, offset=10)
+                            ax.plot(t_win, sn_min_davg, marker=None, color=color, path_effects=path_effects, zorder=8, )
+                            ax.plot(t_win, sn_max_davg, marker=None, color=color, path_effects=path_effects, zorder=8, )
+                            line, = ax.plot(t_win, sn_avg_davg, marker=None, color=color, path_effects=path_effects, zorder=8, )
+                            # ax.plot(t_win, sn_min_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color, marker='^', markersize=3,  alpha=0.6)
+                            # ax.plot(t_win, sn_max_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color,marker='v', markersize=3, alpha=0.6)
+                            if lidx == 0:
+                                sub = 'N' if 'number' in colname else 'E'
+                                label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
+                                label_avg = f'$\overline S_\mathrm{{{sub}}}$'
+                                label_min = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{min}}$'
+                                xymax_tail = (0.45, 0.245)
+                                xymax_head = (1.20, 0.260)
+                                xyavg_tail = (0.45, 0.220)
+                                xyavg_head = (1.10, 0.218)
+                                xymin_tail = (0.45, 0.180)
+                                xymin_head = (1.10, 0.170)
+
+                                ax.annotate(label_max, xytext=xymax_tail, xy=xymax_head,
+                                            arrowprops=dict(arrowstyle="->", color='black'),
+                                            bbox=dict(pad=0.5, facecolor="none", edgecolor="none"))
+                                ax.annotate(label_avg, xytext=xyavg_tail, xy=xyavg_head,
+                                            arrowprops=dict(arrowstyle="->", color='black'),
+                                            bbox=dict(pad=-1, facecolor="none", edgecolor="none"))
+                                ax.annotate(label_min, xytext=xymin_tail, xy=xymin_head,
+                                            arrowprops=dict(arrowstyle="->", color='black'),
+                                            bbox=dict(pad=-3, facecolor="none", edgecolor="none"))
+
+                            # ax.plot(tlnln, np.mean(sn, axis=1), linestyle='-', color=colors[idx], label=label_avg)
+                            # if adx == 0:
+                            #     ax.axvline(x=tlnln[t.idx_num_lnlnt_begin], color=colors[idx], alpha=1.0,label='$t_{\mathrm{start} \ln\ln t}' +f'({L=})$' ,linewidth=2.0, linestyle='-' if adx==0 else None,zorder=100)
+                            #     ax.axvline(x=tlnln[t.idx_num_lnlnt_cease], color=colors[idx], alpha=1.0,label='$t_{\mathrm{stop} \ln\ln t}' + f'({L=})$' ,linewidth=2.0, linestyle='-' if adx==0 else None,zorder=100)
+                            #     ax.axvline(x=tlnln[t.idx_num_saturated], color=colors[idx], alpha=1.0, label='$t_{\mathrm{saturated}}$',linewidth=4.0, linestyle='-',zorder=100)
+
+                        if not meta.get('plotminmaxwin'):
+                            if meta.get('usescatterplot'):
+                                line = ax.scatter(xdata, y, marker='o', s=7.0, edgecolors='gray', linewidths=0.2,
+                                                # linestyle=linestyle,
+                                                label=label, color=color,
+                                                # linewidth=1.8,
+                                                # path_effects=path_effects,
+                                                   zorder=8)
+                            else:
+                                line, = ax.plot(xdata, y, marker=None, linestyle=linestyle, label=label, color=color,
+                                                # linewidth=1.2,
+                                                path_effects=path_effects,
+                                                zorder=8,
+                                                )
 
 
 
@@ -738,43 +781,6 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                     #         marker='s', markersize=4.5, linestyle='None', markeredgecolor='b',
                                     #         markeredgewidth=0.0, path_effects=path_effects, zorder=10)
 
-                    if meta.get('plotminmaxwin'):
-                        tlnln = np.log(np.log(tdata))
-                        # For this we need time series data for all realizations
-                        entropies = datanode[colname][()]
-                        print('Calculating the disorder average... ')
-                        sn_min_mean, sn_max_mean, t_win = get_disorder_averaged_minmax(entropies, tlnln,offset=10)
-                        ax.plot(t_win, sn_min_mean, marker=None, color=color, path_effects=path_effects, zorder=8,)
-                        ax.plot(t_win, sn_max_mean, marker=None, color=color, path_effects=path_effects, zorder=8,)
-                        # ax.plot(t_win, sn_min_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color, marker='^', markersize=3,  alpha=0.6)
-                        # ax.plot(t_win, sn_max_mean, linestyle='none', markerfacecolor='none', markeredgecolor=color,marker='v', markersize=3, alpha=0.6)
-                        if lidx==0:
-                            sub = 'N' if 'number' in colname else 'E'
-                            label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
-                            label_avg = f'$\overline S_\mathrm{{{sub}}}$'
-                            label_min = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{min}}$'
-                            xymax_tail = (0.45, 0.245)
-                            xymax_head = (1.20, 0.260)
-                            xyavg_tail = (0.45, 0.220)
-                            xyavg_head = (1.10, 0.218)
-                            xymin_tail = (0.45, 0.180)
-                            xymin_head = (1.10, 0.170)
-
-                            ax.annotate(label_max,xytext=xymax_tail,xy=xymax_head,
-                                        arrowprops=dict(arrowstyle="->", color='black'),
-                                        bbox=dict(pad=-1, facecolor="none", edgecolor="none"))
-                            ax.annotate(label_avg,xytext=xyavg_tail,xy=xyavg_head,
-                                        arrowprops=dict(arrowstyle="->", color='black'),
-                                        bbox=dict(pad=-1, facecolor="none", edgecolor="none"))
-                            ax.annotate(label_min,xytext=xymin_tail,xy=xymin_head,
-                                        arrowprops=dict(arrowstyle="->", color='black'),
-                                        bbox=dict(pad=-3, facecolor="none", edgecolor="none"))
-
-                        # ax.plot(tlnln, np.mean(sn, axis=1), linestyle='-', color=colors[idx], label=label_avg)
-                        # if adx == 0:
-                        #     ax.axvline(x=tlnln[t.idx_num_lnlnt_begin], color=colors[idx], alpha=1.0,label='$t_{\mathrm{start} \ln\ln t}' +f'({L=})$' ,linewidth=2.0, linestyle='-' if adx==0 else None,zorder=100)
-                        #     ax.axvline(x=tlnln[t.idx_num_lnlnt_cease], color=colors[idx], alpha=1.0,label='$t_{\mathrm{stop} \ln\ln t}' + f'({L=})$' ,linewidth=2.0, linestyle='-' if adx==0 else None,zorder=100)
-                        #     ax.axvline(x=tlnln[t.idx_num_saturated], color=colors[idx], alpha=1.0, label='$t_{\mathrm{saturated}}$',linewidth=4.0, linestyle='-',zorder=100)
                     #
 
 

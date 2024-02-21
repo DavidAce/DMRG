@@ -25,7 +25,7 @@ def lbit_avg(args):
         datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged3.h5'
+        tgt = datadir + '/averaged.h5'
         if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
@@ -128,12 +128,13 @@ if __name__ == '__main__':
     # args = parse('fLBIT', ['lbit118'])
     # args = parse('fLBIT', ['lbit119'])
     # args = parse('fLBIT', ['lbit120'])
-    args = parse('fLBIT', ['lbit121'], basedir='/mnt/S990PRO/mbl_transition')
+    # args = parse('fLBIT', ['lbit121'], basedir='/mnt/S990PRO/mbl_transition')
     # args = parse('fLBIT', ['lbit122'])
     # args = parse('fLBIT', ['lbit123'])
     # args = parse('fLBIT', ['lbit124'])
     # args = parse('fLBIT', ['lbit125'])
     # args = parse('fLBIT', ['lbit126'])
+    args = parse('fLBIT', ['lbit127'], basedir='/mnt/S990PRO/mbl_transition')
 
     # args = parse('fLBIT', ['lbit106'], )#basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit106'], basedir='/mnt/wdpool/backup/lbit')

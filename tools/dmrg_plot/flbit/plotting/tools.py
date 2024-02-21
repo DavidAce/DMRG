@@ -1,6 +1,6 @@
 import os
 import matplotlib.pyplot
-import numba
+import numba as nb
 import numpy as np
 from numba import njit, prange, float64,int64,boolean,optional
 import matplotlib.pyplot as plt
@@ -18,6 +18,7 @@ import seaborn as sns
 from itertools import product
 from scipy.optimize import curve_fit
 from scipy.stats import linregress
+from scipy.signal import find_peaks
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from random import choices
@@ -278,30 +279,114 @@ def flinear(x, a, b):
     with np.errstate(invalid='ignore'):
         return a + b * x
 
+@njit(cache=True, parallel=False)
+def find_peaks_fast(signal, height=None, peakwidth=1):
+    size = len(signal)
+    peaks = np.zeros((size),dtype=np.float64) * np.nan
+    for i in prange(peakwidth,size-peakwidth):
+        if signal[i] <= np.max(signal[i-peakwidth:i]) or signal[i] <= np.max(signal[i + 1:i + peakwidth + 1]):
+            continue
+        if height is not None and signal[i] <= height[i]:
+            continue
+        peaks[i] = signal[i]
+    peaki = np.where(np.isfinite(peaks))[0]
+    peaks = peaks[peaki]
+
+    return peaki, peaks
+
+
 @njit(cache=True, parallel=True)
 def get_every_realization_minmax(sn, times, offset=5):
-    tindices = np.arange(0, len(times) - offset, 1)
-    # sn_min_mean = np.zeros(len(tindices))
-    # sn_max_mean = np.zeros(len(tindices))
-    sn_min = np.zeros((len(tindices), np.shape(sn)[1]))
-    sn_max = np.zeros((len(tindices), np.shape(sn)[1]))
-    t_win = np.zeros(len(tindices))
-    for t in tindices:
-        for r in prange(np.shape(sn)[1]):
+    tdim = len(times) - offset
+    rdim = np.shape(sn)[1]
+    sn_min = np.zeros((tdim, np.shape(sn)[1]))
+    sn_max = np.zeros((tdim, np.shape(sn)[1]))
+    for t in prange(tdim):
+        for r in prange(rdim):
             sn_min[t, r] = np.min(sn[t:t + offset, r])
             sn_max[t, r] = np.max(sn[t:t + offset, r])
         t_win[t] = times[t]
-    return sn_min, sn_max, t_win
-
+    return sn_min, sn_max, times[:tdim]
 
 @njit(cache=True, parallel=True)
+def get_every_realization_peakavg(sn):
+    ntstep,nreals = np.shape(sn)
+    sn_min = np.zeros((nreals))
+    sn_max = np.zeros((nreals))
+
+    for r in prange(nreals):
+        # avg = np.ones((ntstep)) * np.nanmean(sn[:,r])
+        max_idx, max_val = find_peaks_fast(sn[:,r], height=None, peakwidth=1)
+        min_idx, min_val = find_peaks_fast(-sn[:,r], height=None, peakwidth=1)
+        # print(max_val, max_idx)
+        # print(-min_val, min_idx)
+        # plt.figure()
+        # plt.plot(sn[:,r])
+        # plt.scatter(max_idx, sn[max_idx,r])
+        # plt.scatter(min_idx, sn[min_idx,r])
+        # plt.show()
+
+        if len(max_idx) > 0:
+            sn_max[r] = np.nanmean(max_val) # max_val[0]
+        else:
+            sn_max[r] = np.nanmean(sn[:, r])
+        if len(min_idx) > 0:
+            sn_min[r] = np.nanmean(-min_val) # -min_val[0]
+        else:
+            sn_min[r] = np.nanmean(sn[:, r])
+    return sn_min, sn_max
+
+
+
+@njit(cache=True, parallel=False)
+def get_disorder_averaged_peaks(sn, times, offset=5):
+    tdim = len(times) - offset
+    rdim = np.shape(sn)[1]
+    sn_min_davg = np.zeros(tdim)
+    sn_max_davg = np.zeros(tdim)
+    sn_min_dste = np.zeros(tdim)
+    sn_max_dste = np.zeros(tdim)
+    sn_avg_davg = np.zeros(tdim)
+    sn_avg_dste = np.zeros(tdim)
+    for t in prange(tdim):
+        sn_min, sn_max = get_every_realization_peakavg(sn[t:t+offset, :])
+        nmin = np.count_nonzero(~np.isnan(sn_min))
+        nmax = np.count_nonzero(~np.isnan(sn_max))
+        print(np.shape(sn_max), nmax)
+        print(np.shape(sn_min), nmin)
+        if nmin == 0:
+            print('nmin==0')
+            nmin = rdim
+            sn_min = np.sum(sn[t:t+offset,:], axis=0)/offset
+        if nmax == 0:
+            print('nmax==0')
+            nmax = rdim
+            sn_max = np.sum(sn[t:t+offset,:], axis=0)/offset
+
+        sn_min_davg[t] = np.nanmean(sn_min)
+        sn_min_dste[t] = np.nanstd(sn_min) / np.sqrt(nmin)
+        sn_max_davg[t] = np.nanmean(sn_max)
+        sn_max_dste[t] = np.nanstd(sn_max) / np.sqrt(nmax)
+        sn_avg_davg[t] = 0.5 * (sn_min_davg[t] + sn_max_davg[t])
+        sn_avg_dste[t] = np.sqrt(nmin * sn_min_dste[t] ** 2 + nmax * sn_max_dste[t] ** 2) / np.sqrt(nmin + nmax)
+
+    return (sn_min_davg,
+            sn_min_dste,
+            sn_max_davg,
+            sn_max_dste,
+            sn_avg_davg,
+            sn_avg_dste,
+            times[:tdim])
+
+
 def get_disorder_averaged_minmax(sn,times, offset=5):
     tindices = np.arange(0, len(times) - offset, 1)
-    sn_min_mean = np.zeros(len(tindices))
-    sn_max_mean = np.zeros(len(tindices))
+    nindices = len(tindices)
+    sn_min_mean = np.zeros(nindices)
+    sn_max_mean = np.zeros(nindices)
     sn_min = np.zeros(np.shape(sn)[1])
     sn_max = np.zeros(np.shape(sn)[1])
-    t_win = np.zeros(len(tindices))
+    t_win = np.zeros(nindices)
     for t in tindices:
         for r in prange(np.shape(sn)[1]):
             sn_min[r] = np.min(sn[t:t + offset, r])
@@ -310,6 +395,7 @@ def get_disorder_averaged_minmax(sn,times, offset=5):
         sn_max_mean[t] = np.mean(sn_max)
         t_win[t] = times[t]
     return sn_min_mean, sn_max_mean, t_win
+
 
 
 
@@ -695,7 +781,7 @@ def running_stats(ydata):
 #         # if np.isnan(yval[j]):
 #         #     yval[j] = ydata[-1, j]
 #     return tidx, yval
-@njit(numba.types.Tuple((int64[:],float64[:]))
+@njit(nb.types.Tuple((int64[:],float64[:]))
           (float64[:,:], float64, int64), cache=True,parallel=True)
 def get_saturation_from_diff(ydata, wsize=0.01, setsign = 0):
     tdim,rdim = np.shape(ydata)

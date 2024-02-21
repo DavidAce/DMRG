@@ -23,16 +23,17 @@ struct BufferedTableInfo {
     public:
     h5pp::TableInfo              *info = nullptr;
     std::vector<ContiguousBuffer> recordBuffer;
-    size_t                        maxRecords = 10000;
+    size_t                        maxRecords = 100; // Will hold maxRecords seeds for each crono iter. We would like this to be max 1 GB worth of data
     BufferedTableInfo();
     BufferedTableInfo(h5pp::TableInfo *info_);
     BufferedTableInfo &operator=(h5pp::TableInfo *info_);
     ~BufferedTableInfo();
 
-    void insert(const std::vector<std::byte> &entry, hsize_t index /* index in units of table entries */);
-    void insert(const std::vector<std::byte>::const_iterator begin, const std::vector<std::byte>::const_iterator end, hsize_t index);
-
+    void    insert(const std::vector<std::byte> &entry, hsize_t index /* index in units of table entries */);
+    void    insert(const std::vector<std::byte>::const_iterator begin, const std::vector<std::byte>::const_iterator end, hsize_t index);
+    void    allocateBuffers(size_t expectedIters);
     hsize_t get_count(); /* Number of inserts */
+    size_t  getNumRecordsInBuffer();
     void    flush();
 };
 
@@ -163,8 +164,9 @@ struct InfoId {
 template<>
 struct InfoId<BufferedTableInfo> {
     private:
-    bool                              modified = false;
-    std::unordered_map<long, hsize_t> db;
+    bool modified = false;
+    //    std::unordered_map<long, hsize_t> db;
+    std::vector<std::pair<long, hsize_t>> db;
 
     public:
     h5pp::TableInfo   info = h5pp::TableInfo();
@@ -173,21 +175,38 @@ struct InfoId<BufferedTableInfo> {
     InfoId(long seed_, hsize_t index_);
     InfoId(const h5pp::TableInfo &info_);
     InfoId &operator=(const h5pp::TableInfo &info_);
-    bool    db_modified() const { return modified; }
-    bool    has_index(long seed) const { return db.find(seed) != db.end(); }
+
+    void allocateBuffers(size_t expectedIters) {
+        buff.allocateBuffers(expectedIters);
+        db.reserve(expectedIters);
+    }
+    bool db_modified() const { return modified; }
+    bool has_index(long seed) const {
+        //        return db.contains(seed);
+        auto rit = std::find_if(std::rbegin(db), std::rend(db), [&seed](const auto &p) -> bool { return p.first == seed; });
+        return rit != std::rend(db);
+        //        return db.find(seed) != db.end();
+    }
     hsize_t get_index(long seed) const {
-        auto res = db.find(seed);
-        if(res != db.end())
+        //        auto res = db.find(seed);
+
+        auto res = std::find_if(std::rbegin(db), std::rend(db), [&seed](const auto &p) -> bool { return p.first == seed; });
+        if(res != db.rend())
             return res->second;
         else
             return db.size();
     }
     void insert(long seed, hsize_t index) {
-        auto res = db.insert({seed, index});
-        if(res.second) modified = true;
+        if(!has_index(seed)) {
+            db.emplace_back(std::pair<long, hsize_t>{seed, index});
+            modified = true;
+        }
+
+        //        auto res = db.insert({seed, index});
+        //        if(res.second) modified = true;
     }
 
-    [[nodiscard]] const std::unordered_map<long, hsize_t> &get_db() const { return db; }
+    [[nodiscard]] const auto &get_db() const { return db; }
 };
 
 struct SeedId {

@@ -50,7 +50,7 @@ namespace tools::h5db {
             for(const auto &key : keys) {
                 if(text::match_patterns(group, keywords(key))) {
                     // All keywords were matched --> this key is not missing
-//                    tools::logger::log->trace("Matched {} to {}", keywords(key), group);
+                    //                    tools::logger::log->trace("Matched {} to {}", keywords(key), group);
                     return false;
                 }
             }
@@ -175,9 +175,7 @@ namespace tools::h5db {
                 tgtPath = infoId.info.tablePath.value();
             else
                 throw std::runtime_error(h5pp::format("Failed to identify InfoType: {}", sfinae::type_name<InfoType>()));
-            std::string tgtName   = tgtPath.filename();
-            std::string tgtGroup  = tgtPath.parent_path();
-            std::string tgtDbPath = h5pp::format("{}/.db/{}", tgtGroup, tgtName);
+            std::string tgtDbPath = h5pp::format("{}/.db/{}", tgtPath.parent_path().string(), tgtPath.filename().string());
             tools::logger::log->debug("Saving database: {}", tgtDbPath);
             if(not h5_tgt.linkExists(tgtDbPath)) {
                 H5T_SeedId::register_table_type();

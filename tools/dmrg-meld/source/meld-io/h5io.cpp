@@ -502,6 +502,8 @@ namespace tools::h5io {
                 auto fesdnKeys = std::vector<FesDnKey>();
                 auto cronoKeys = std::vector<CronoKey>();
 
+//                auto mem_gather = prof::mem_hwm_in_mb();
+
                 try {
                     auto t_gather = tid::tic_scope("gather");
                     dsetKeys      = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
@@ -514,6 +516,9 @@ namespace tools::h5io {
                     saveFailedJob(h5_src, "key gathering failed", ex);
                     continue; // File is broken. Do not transfer.
                 }
+//                auto mem_gather_end = prof::mem_hwm_in_mb();
+//                if(mem_gather_end > mem_gather) tools::logger::log->info("gather  : mem += {:.1f} MB", mem_gather_end - mem_gather);
+//                auto mem_xfer = prof::mem_hwm_in_mb();
 
                 try {
                     auto t_xfer = tid::tic_scope("xfer");
@@ -522,10 +527,14 @@ namespace tools::h5io {
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesup, srcdb.fesup, pathid, fesupKeys, fileId);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesdn, srcdb.fesdn, pathid, fesdnKeys, fileId);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
+
                 } catch(const std::runtime_error &ex) {
                     tools::logger::log->warn("Transfer failed in [{}]: {}", pathid.src_path, ex.what());
                     saveFailedJob(h5_src, "transfer failed", ex);
                 }
+                //                h5_tgt.flush();
+//                auto mem_xfer_end = prof::mem_hwm_in_mb();
+//                if(mem_xfer_end > mem_xfer) tools::logger::log->info("transfer: mem += {:.1f} MB", mem_xfer_end - mem_xfer);
 
                 //                try {
                 //                    auto t_dsets  = tid::tic_scope("dsets");
