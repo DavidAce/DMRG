@@ -3,6 +3,7 @@
 #include "log.h"
 #include "matvec/matvec_dense.h"
 #include "matvec/matvec_mpo.h"
+#include "matvec/matvec_mpos.h"
 #include "matvec/matvec_sparse.h"
 #include "solver_arpack/solver_arpack.h"
 #include "tid/tid.h"
@@ -214,9 +215,11 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
         if(eig::log->level() == spdlog::level::trace) config.logTime = 10.0;
         if(eig::log->level() == spdlog::level::debug) config.logTime = 60.0;
         if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+    }
+    if(not config.logIter) {
         if(eig::log->level() == spdlog::level::trace) config.logIter = 100;
         if(eig::log->level() == spdlog::level::debug) config.logIter = 1000;
-        if(eig::log->level() == spdlog::level::info) config.logIter = 5000;
+        if(eig::log->level() >= spdlog::level::info) config.logIter = 5000;
     }
 }
 template void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
@@ -273,6 +276,8 @@ void eig::solver::set_default_config(const MatrixProductType &matrix) {
         if(eig::log->level() == spdlog::level::trace) config.logTime = 10.0;
         if(eig::log->level() == spdlog::level::debug) config.logTime = 60.0;
         if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+    }
+    if(not config.logIter) {
         if(eig::log->level() == spdlog::level::trace) config.logIter = 100;
         if(eig::log->level() == spdlog::level::debug) config.logIter = 1000;
         if(eig::log->level() == spdlog::level::info) config.logIter = 5000;
@@ -285,6 +290,8 @@ template void eig::solver::set_default_config(const MatVecSparse<real> &matrix);
 template void eig::solver::set_default_config(const MatVecSparse<cplx> &matrix);
 template void eig::solver::set_default_config(const MatVecMPO<real> &matrix);
 template void eig::solver::set_default_config(const MatVecMPO<cplx> &matrix);
+template void eig::solver::set_default_config(const MatVecMPOS<real> &matrix);
+template void eig::solver::set_default_config(const MatVecMPOS<cplx> &matrix);
 
 template<typename Scalar, eig::Storage storage>
 void eig::solver::eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma,
@@ -376,3 +383,5 @@ template void eig::solver::eigs(MatVecSparse<real> &matrix);
 template void eig::solver::eigs(MatVecSparse<cplx> &matrix);
 template void eig::solver::eigs(MatVecMPO<real> &matrix);
 template void eig::solver::eigs(MatVecMPO<cplx> &matrix);
+template void eig::solver::eigs(MatVecMPOS<real> &matrix);
+template void eig::solver::eigs(MatVecMPOS<cplx> &matrix);

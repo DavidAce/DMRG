@@ -49,8 +49,9 @@ double tools::infinite::measure::energy_minus_energy_shift(const state_or_mps_ty
         const auto &mpo          = model.get_2site_mpo_AB();
         const auto &env          = edges.get_ene_blk();
         auto        t_ene        = tid::tic_scope("ene");
-        double      e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
-        return e_minus_ered;
+        auto        e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
+        assert(std::abs(std::imag(e_minus_ered)) < 1e-10);
+        return std::real(e_minus_ered);
     }
 }
 
@@ -103,10 +104,10 @@ double tools::infinite::measure::energy_variance_mpo(const state_or_mps_type &st
         const auto &mpo = model.get_2site_mpo_AB();
         const auto &env = edges.get_var_blk();
         tools::log->trace("Measuring energy variance mpo");
-        auto   t_var = tid::tic_scope("var");
-        double H2    = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
-        double var   = std::abs(H2 - E2);
-        return var;
+        auto t_var = tid::tic_scope("var");
+        auto H2    = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
+        assert(std::abs(std::imag(H2)) < 1e-10);
+        return std::abs(H2 - E2);
     }
 }
 

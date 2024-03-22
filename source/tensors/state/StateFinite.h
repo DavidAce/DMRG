@@ -51,14 +51,14 @@ class StateFinite {
     size_t popcount = -1ul; /*!< Number of 1's or particles in the product state pattern. Used in the fLBIT algorithm, which conserves the particle number. */
 
     public:
-    StateFinite();
-    ~StateFinite() noexcept;                              // Read comment on implementation
-    StateFinite(StateFinite &&other) noexcept;            // default move ctor
-    StateFinite &operator=(StateFinite &&other) noexcept; // default move assign
-    StateFinite(const StateFinite &other);                // copy ctor
-    StateFinite &operator=(const StateFinite &other);     // copy assign
-    StateFinite(AlgorithmType algo_type, size_t model_size, long position, long spin_dim = 2);
-    void initialize(AlgorithmType algo_type, size_t model_size, long position, long spin_dim = 2);
+                 StateFinite();
+    ~            StateFinite() noexcept;                    // Read comment on implementation
+                 StateFinite(StateFinite &&other) noexcept; // default move ctor
+    StateFinite &operator=(StateFinite &&other) noexcept;   // default move assign
+                 StateFinite(const StateFinite &other);     // copy ctor
+    StateFinite &operator=(const StateFinite &other);       // copy assign
+                 StateFinite(AlgorithmType algo_type, size_t model_size, long position, long spin_dim = 2);
+    void         initialize(AlgorithmType algo_type, size_t model_size, long position, long spin_dim = 2);
 
     void                           set_name(std::string_view statename);
     [[nodiscard]] std::string_view get_name() const;
@@ -101,15 +101,21 @@ class StateFinite {
     [[nodiscard]] bool                          has_nan() const;
 
     void assert_validity() const;
-
+    // For individual sites
     template<typename T = size_t>
     const MpsSite &get_mps_site(T pos) const;
     template<typename T = size_t>
-    MpsSite             &get_mps_site(T pos);
-    const MpsSite       &get_mps_site() const;
-    MpsSite             &get_mps_site();
-    std::vector<MpsSite> get_mps_sites(const std::vector<size_t> &sites) const;
-    void                 set_mps_sites(const std::vector<MpsSite> &mps_list);
+    MpsSite       &get_mps_site(T pos);
+    const MpsSite &get_mps_site() const;
+    MpsSite       &get_mps_site();
+    // For multiple sites
+    void                                               set_mps(const std::vector<MpsSite> &mps_list);
+    std::vector<std::reference_wrapper<const MpsSite>> get_mps(const std::vector<size_t> &sites) const;
+    std::vector<std::reference_wrapper<MpsSite>>       get_mps(const std::vector<size_t> &sites);
+    std::vector<MpsSite>                               get_mps_copy(const std::vector<size_t> &sites);
+    std::vector<std::reference_wrapper<const MpsSite>> get_mps_active() const;
+    std::vector<std::reference_wrapper<MpsSite>>       get_mps_active();
+
     // For multisite
     std::array<long, 3>              active_dimensions() const;
     long                             active_problem_size() const;

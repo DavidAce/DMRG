@@ -12,6 +12,14 @@ class MpoSite;
 class MpsSite;
 class AlgorithmStatus;
 struct MeasurementsTensorsFinite;
+template<typename T>
+struct env_pair;
+class EnvEne;
+class EnvVar;
+namespace svd {
+    struct config;
+}
+
 namespace tools::finite::measure {
     struct LocalObservableOp {
         Eigen::Tensor<cplx, 2> op;
@@ -61,14 +69,14 @@ namespace tools::finite::measure {
     [[nodiscard]] extern std::vector<double> truncation_errors              (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> truncation_errors_active       (const StateFinite & state);
 
-    template<typename state_or_mps_type>
-    [[nodiscard]] double energy_minus_energy_shift               (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] double energy_minus_energy_shift               (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] double energy_minus_energy_shift               (const Eigen::Tensor<cplx,3> & multisite_mps, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     template<typename state_or_mps_type>
     [[nodiscard]] double energy                                  (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     template<typename state_or_mps_type>
     [[nodiscard]] double energy_per_site                         (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
-    template<typename state_or_mps_type>
-    [[nodiscard]] double energy_variance                         (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] double energy_variance                         (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] double energy_variance                         (const Eigen::Tensor<cplx,3> & multisite_mps, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     template<typename state_or_mps_type>
     [[nodiscard]] double energy_variance_per_site                (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
 
@@ -108,7 +116,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double residual_norm_full           (const StateFinite &state, const ModelFinite &model);
 
 
-    [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & op, const std::vector<LocalObservableOp> & ops);
+    [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state, const std::vector<LocalObservableOp> & ops);
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state, const std::vector<LocalObservableMpo> & mpos);
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state1, const StateFinite & state2,
                                                                           const std::vector<Eigen::Tensor<cplx,4>> & mpos);
@@ -118,19 +126,32 @@ namespace tools::finite::measure {
                                                                           const std::vector<Eigen::Tensor<cplx,4>> & mpos,
                                                                           const Eigen::Tensor<cplx,1> & ledge,
                                                                           const Eigen::Tensor<cplx,1> & redge);
+    template<typename EnvType>
+    [[nodiscard]] extern cplx                     expectation_value      (const std::vector<std::reference_wrapper<const MpsSite>> & mpsBra,
+                                                                          const std::vector<std::reference_wrapper<const MpsSite>> & mpsKet,
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> & mpos,
+                                                                          const env_pair<EnvType> & envs);
+    template<typename EnvType>
+    [[nodiscard]] extern cplx                     expectation_value      (const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs,
+                                                                          std::optional<svd::config> svd_cfg = std::nullopt);
+    template<typename EnvType>
+    [[nodiscard]] extern cplx                     expectation_value      (const Eigen::Tensor<cplx, 3> &multisite_mps,
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs,
+                                                                          std::optional<svd::config> svd_cfg = std::nullopt);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,4> &mpo);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Matrix2cd &op);
     [[nodiscard]] extern cplx                     correlation            (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2, long pos1, long pos2);
     [[nodiscard]] extern Eigen::Tensor<cplx, 2> correlation_matrix       (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
     [[nodiscard]] extern Eigen::Tensor<cplx, 2> kvornings_matrix         (const StateFinite & state);
-    [[nodiscard]] extern Eigen::Tensor<double, 1> kvornings_marker         (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<double, 1> kvornings_marker       (const StateFinite & state);
     [[nodiscard]] extern std::array<Eigen::Tensor<double, 1>, 3>
                                                   expectation_values_xyz (const StateFinite & state);
     [[nodiscard]] extern std::array<double, 3>    expectation_value_xyz  (const StateFinite & state);
     [[nodiscard]] extern std::array<Eigen::Tensor<double,2>, 3>
                                                   correlation_matrix_xyz (const StateFinite & state);
-    [[nodiscard]] extern cplx                     structure_factor       (const StateFinite & state, const Eigen::Tensor<cplx, 2> &correlation_matrix);
+    [[nodiscard]] extern double                   structure_factor       (const StateFinite & state, const Eigen::Tensor<cplx, 2> &correlation_matrix);
     [[nodiscard]] extern std::array<double, 3>    structure_factor_xyz   (const StateFinite & state);
                   extern void                     parity_components(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix);
 

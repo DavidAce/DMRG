@@ -23,7 +23,8 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
     std::optional<size_t> position;                    /*!< Position on a finite chain */
-    double                e_shift                = 0;  /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
+    double                energy_shift_mpo       = 0;  /*!< Energy shift for this mpo (to make energy-shifted MPO views) */
+    double                energy_shift_mpo2      = 0;  /*!< Energy shift for the squared mpo (to make energy-shifted MPO2 views) */
     int                   parity_shift_sign_mpo  = 0;  /*!< Sign of parity sector to shift for the MPO*/
     std::string           parity_shift_axus_mpo  = {}; /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
     int                   parity_shift_sign_mpo2 = 0;  /*!< Sign of parity sector to shift for the MPO²*/
@@ -35,10 +36,26 @@ class MpoSite {
     Eigen::Tensor<cplx_t, 4>              mpo_internal_t;
     std::optional<Eigen::Tensor<cplx, 4>> mpo_squared = std::nullopt;
 
+    virtual Eigen::Tensor<cplx, 4>   get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+                                             std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
+    virtual Eigen::Tensor<cplx_t, 4> get_mpo_t(real_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+                                               std::optional<std::vector<size_t>> skip = std::nullopt) const;
+
+    template<typename Scalar>
+    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_left(const Eigen::Tensor<Scalar, 4> &mpo) const;
+    template<typename Scalar>
+    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_right(const Eigen::Tensor<Scalar, 4> &mpo) const;
+    template<typename Scalar>
+    [[nodiscard]] Eigen::Tensor<Scalar, 4> apply_edge_left(const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 1> &edgeL) const;
+    template<typename Scalar>
+    [[nodiscard]] Eigen::Tensor<Scalar, 4> apply_edge_right(const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 1> &edgeR) const;
+
     public:
     explicit MpoSite(ModelType model_type_, size_t position_);
     virtual ~MpoSite() = default;
 
+    void                                          build_mpo();
+    void                                          build_mpo_t();
     void                                          set_position(size_t new_pos);
     void                                          assert_validity() const;
     void                                          set_energy_shift(double site_energy);
@@ -54,37 +71,42 @@ class MpoSite {
     [[nodiscard]] Eigen::Tensor<cplx, 4>          get_non_compressed_mpo_squared() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4>   &MPO() const;
     [[nodiscard]] const Eigen::Tensor<cplx_t, 4> &MPO_t() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>   &MPO2() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>          MPO2_nbody_view(std::optional<std::vector<size_t>> nbody,
-                                                                  std::optional<std::vector<size_t>> skip = std::nullopt) const;
-    [[nodiscard]] size_t                          get_position() const;
-    [[nodiscard]] std::vector<std::string>        get_parameter_names() const;
-    [[nodiscard]] std::vector<std::any>           get_parameter_values() const;
-    [[nodiscard]] bool                            is_real() const;
-    [[nodiscard]] bool                            has_nan() const;
-    [[nodiscard]] bool                            is_energy_shifted() const;
-    [[nodiscard]] bool                            is_compressed_mpo_squared() const;
-    [[nodiscard]] double                          get_energy_shift() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 1>          get_MPO_edge_left() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 1>          get_MPO_edge_right() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 1>          get_MPO2_edge_left() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 1>          get_MPO2_edge_right() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>          MPO_energy_shifted_view(double energy_shift_per_site) const;
+    [[nodiscard]] Eigen::Tensor<cplx_t, 4>        MPO_energy_shifted_view_t(double energy_shift_per_site) const;
+    [[nodiscard]] Eigen::Tensor<cplx, 4> MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip = std::nullopt) const;
+    [[nodiscard]] Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
+                                                            std::optional<std::vector<size_t>> skip = std::nullopt) const;
 
-    [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                                                                  = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
-                                                                  std::optional<std::vector<size_t>> skip = std::nullopt) const   = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
-                                                                    std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view() const                                                = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view(double energy_shift_per_site) const                    = 0;
-    [[nodiscard]] virtual long                     get_spin_dimension() const                                                     = 0;
-    [[nodiscard]] virtual TableMap                 get_parameters() const                                                         = 0;
-    [[nodiscard]] virtual std::any                 get_parameter(std::string_view name) const                                     = 0;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4> &MPO2() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>        MPO2_nbody_view(std::optional<std::vector<size_t>> nbody,
+                                                                std::optional<std::vector<size_t>> skip = std::nullopt) const;
+    [[nodiscard]] size_t                        get_position() const;
+    [[nodiscard]] std::vector<std::string>      get_parameter_names() const;
+    [[nodiscard]] std::vector<std::any>         get_parameter_values() const;
+    [[nodiscard]] bool                          is_real() const;
+    [[nodiscard]] bool                          has_nan() const;
+    [[nodiscard]] bool                          has_energy_shifted_mpo() const;
+    [[nodiscard]] bool                          has_energy_shifted_mpo2() const;
+    [[nodiscard]] bool                          is_compressed_mpo_squared() const;
+    [[nodiscard]] double                        get_energy_shift_mpo() const;
+    [[nodiscard]] double                        get_energy_shift_mpo2() const;
+    template<typename Scalar = cplx>
+    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_left() const;
+    template<typename Scalar = cplx>
+    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_right() const;
+    template<typename Scalar = cplx>
+    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_left() const;
+    template<typename Scalar = cplx>
+    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_right() const;
+
+    [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                              = 0;
+    [[nodiscard]] virtual long                     get_spin_dimension() const                 = 0;
+    [[nodiscard]] virtual TableMap                 get_parameters() const                     = 0;
+    [[nodiscard]] virtual std::any                 get_parameter(std::string_view name) const = 0;
 
     virtual void print_parameter_names() const                                             = 0;
     virtual void print_parameter_values() const                                            = 0;
     virtual void set_parameters(TableMap &parameters)                                      = 0;
-    virtual void build_mpo()                                                               = 0;
     virtual void randomize_hamiltonian()                                                   = 0;
     virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false) = 0;
     virtual void save_hamiltonian(h5pp::File &file, std::string_view model_prefix) const   = 0;

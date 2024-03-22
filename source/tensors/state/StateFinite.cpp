@@ -30,9 +30,9 @@ StateFinite::StateFinite() = default; // Can't initialize lists since we don't k
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-StateFinite::~StateFinite() noexcept                              = default; // default dtor
-StateFinite::StateFinite(StateFinite &&other) noexcept            = default; // default move ctor
-StateFinite &StateFinite::operator=(StateFinite &&other) noexcept = default; // default move assign
+StateFinite::~StateFinite() noexcept                               = default; // default dtor
+StateFinite:: StateFinite(StateFinite &&other) noexcept            = default; // default move ctor
+StateFinite  &StateFinite::operator=(StateFinite &&other) noexcept = default; // default move assign
 
 /* clang-format off */
 StateFinite::StateFinite(const StateFinite &other):
@@ -309,12 +309,7 @@ const MpsSite &StateFinite::get_mps_site() const { return get_mps_site(get_posit
 
 MpsSite &StateFinite::get_mps_site() { return get_mps_site(get_position()); }
 
-std::vector<MpsSite> StateFinite::get_mps_sites(const std::vector<size_t> &sites) const {
-    std::vector<MpsSite> mps_at_sites;
-    for(const auto &site : sites) mps_at_sites.emplace_back(get_mps_site(site));
-    return mps_at_sites;
-}
-void StateFinite::set_mps_sites(const std::vector<MpsSite> &mps_list) {
+void StateFinite::set_mps(const std::vector<MpsSite> &mps_list) {
     for(const auto &mps_new : mps_list) {
         auto  pos     = mps_new.get_position();
         auto &mps_old = get_mps_site(pos);
@@ -328,6 +323,29 @@ void StateFinite::set_mps_sites(const std::vector<MpsSite> &mps_list) {
         }
     }
 }
+
+std::vector<std::reference_wrapper<const MpsSite>> StateFinite::get_mps(const std::vector<size_t> &sites) const {
+    std::vector<std::reference_wrapper<const MpsSite>> mps;
+    mps.reserve(sites.size());
+    for(auto &site : sites) mps.emplace_back(get_mps_site(site));
+    return mps;
+}
+
+std::vector<std::reference_wrapper<MpsSite>> StateFinite::get_mps(const std::vector<size_t> &sites) {
+    std::vector<std::reference_wrapper<MpsSite>> mps;
+    mps.reserve(sites.size());
+    for(auto &site : sites) mps.emplace_back(get_mps_site(site));
+    return mps;
+}
+std::vector<MpsSite> StateFinite::get_mps_copy(const std::vector<size_t> &sites) {
+    std::vector<MpsSite> mps;
+    mps.reserve(sites.size());
+    for(auto &site : sites) mps.emplace_back(get_mps_site(site));
+    return mps;
+}
+
+std::vector<std::reference_wrapper<const MpsSite>> StateFinite::get_mps_active() const { return get_mps(active_sites); }
+std::vector<std::reference_wrapper<MpsSite>>       StateFinite::get_mps_active() { return get_mps(active_sites); }
 
 std::array<long, 3> StateFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
@@ -375,8 +393,8 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 bool        append_L  = mps.get_label() == "A" and site + 1 < length and site == sites.back();
                 if(prepend_L) {
                     // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
-                    const auto &mps_left  = get_mps_site(site - 1);
-                    const auto &L         = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
+                    const auto &mps_left = get_mps_site(site - 1);
+                    const auto &L        = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
                     if(L.dimension(0) != M.dimension(1))
                         throw except::logic_error("get_multisite_mps<cplx>({}): mismatching dimensions: L (left) {} | M {}", sites, L.dimensions(),
                                                   M.dimensions());

@@ -170,9 +170,9 @@ void fdmrg::update_state() {
     std::optional<double> alpha_expansion = std::nullopt;
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
                       enum2sv(ritz), enum2sv(meta.optType));
-    tensors.activate_sites(settings::solver::eigs_max_size_shift_invert, settings::strategy::multisite_mps_site_def);
-    tensors.rebuild_edges();
+    tensors.activate_sites(settings::solver::eigs_max_size_shift_invert, settings::strategy::multisite_opt_site_def);
     if(not tensors.active_sites.empty()) {
+        tensors.rebuild_edges();
         if(status.env_expansion_alpha > 0) {
             // If we are doing 1-site dmrg, then we better use subspace expansion
             if(tensors.active_sites.size() == 1) alpha_expansion = status.env_expansion_alpha;

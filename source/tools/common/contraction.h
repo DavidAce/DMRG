@@ -16,7 +16,7 @@ namespace tools::common::contraction {
 
     /* clang-format off */
     template<typename Scalar>
-    double expectation_value(const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+    Scalar expectation_value(const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                              const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
                              const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                              const Scalar * const envR_ptr, std::array<long,3> envR_dims);
@@ -36,7 +36,7 @@ namespace tools::common::contraction {
                                        const Scalar * const envR_ptr, std::array<long,3> envR_dims);
 
     template<typename mps_type, typename mpo_type, typename env_type>
-    double expectation_value(const TensorRead<mps_type> & mps,
+    auto expectation_value(const TensorRead<mps_type> & mps,
                              const TensorRead<mpo_type> & mpo,
                              const TensorRead<env_type> & envL,
                              const TensorRead<env_type> & envR){

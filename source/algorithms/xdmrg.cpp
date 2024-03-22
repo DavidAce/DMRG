@@ -134,6 +134,12 @@ void xdmrg::init_energy_limits(std::optional<double> energy_density_target, std:
     status.energy_tgt  = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
     status.energy_ulim = status.energy_tgt + status.energy_dens_window * (status.energy_max - status.energy_min);
     status.energy_llim = status.energy_tgt - status.energy_dens_window * (status.energy_max - status.energy_min);
+
+    if(settings::model::model_type == ModelType::ising_majorana) {
+        // Since the Hamiltonian is traceless, the infinite-temperature limit should be at energy 0
+        status.energy_tgt = std::clamp(0.0, status.energy_llim, status.energy_ulim);
+    }
+
     tools::log->info("Energy minimum     = {:.8f}", status.energy_min);
     tools::log->info("Energy maximum     = {:.8f}", status.energy_max);
     tools::log->info("Energy target      = {:.8f}", status.energy_tgt);
@@ -188,7 +194,6 @@ void xdmrg::run_algorithm() {
         try_parity_shifting_mpo_squared(); // This shifts the variance of the opposite spin parity sector, to resolve degeneracy/spectral pairing
         shift_mpo_energy();                // Subtracts the current energy per site E/L from each MPO.
         try_moving_sites();                // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
-        try_residual_optimization();
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -196,21 +201,6 @@ void xdmrg::run_algorithm() {
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
     //    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
-}
-
-void xdmrg::try_residual_optimization() {
-    if(not tensors.position_is_inward_edge_left()) return;
-    if(status.energy_variance_lowest > 1e-2) return;
-    auto t_resopt = tid::tic_scope("residual_optimization");
-    auto t_var    = tid::tic_scope("variance");
-    auto variance = tools::finite::measure::energy_variance(tensors);
-    t_var.toc();
-    auto t_res    = tid::tic_scope("residual");
-    auto residual = tools::finite::measure::residual_norm_full(*tensors.state, *tensors.model);
-    t_res.toc();
-    tools::log->info("Variance          : {:.3e} | t = {:.3e}", variance, t_var->get_time());
-    tools::log->info("Standard deviation: {:.3e} | t = {:.3e}", std::sqrt(variance), t_var->get_time());
-    tools::log->info("Residual norm full: {:.3e} | t = {:.3e}", residual, t_res->get_time());
 }
 
 void xdmrg::run_fes_analysis() {
@@ -258,18 +248,10 @@ void xdmrg::run_fes_analysis() {
     status.fes_is_running = false;
 }
 
-std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
+xdmrg::OptMeta xdmrg::get_opt_meta() {
     tools::log->trace("Configuring xDMRG optimization trial");
-    std::vector<OptMeta> metas;
-
-    /*
-     *
-     *  First trial
-     *
-     */
     OptMeta m1;
-    m1.label = "m1";
-    m1.retry = false;
+    m1.label = "opt conf 1";
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
@@ -283,7 +265,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // Copy settings
     m1.min_sites     = 1;
-    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def); // Default is 2-site dmrg, unless we specifically ask for 1-site
+    m1.max_sites     = std::min(2ul, settings::strategy::multisite_opt_site_def); // Default is 2-site dmrg, unless we specifically ask for 1-site
     m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
                            ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
@@ -302,13 +284,15 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
     else {
         using namespace settings::strategy;
-        size_t has_stuck_for = status.algorithm_has_stuck_for;
-        size_t saturated_for = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
-        switch(multisite_mps_when) {
+        size_t has_stuck_for  = status.algorithm_has_stuck_for;
+        size_t saturated_for  = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
+        double has_stuck_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(has_stuck_for) / safe_cast<double>(max_stuck_iters);
+        double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(max_saturation_iters);
+        switch(multisite_opt_when) {
             case MultisiteWhen::NEVER: break;
-            case MultisiteWhen::STUCK: m1.max_sites = std::min(multisite_mps_site_def + has_stuck_for, multisite_mps_site_max); break;
-            case MultisiteWhen::SATURATED: m1.max_sites = std::min(multisite_mps_site_def + saturated_for, multisite_mps_site_max); break;
-            case MultisiteWhen::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + saturated_for + 1, multisite_mps_site_max); break;
+            case MultisiteWhen::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, has_stuck_frac)); break;
+            case MultisiteWhen::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, saturated_frac)); break;
+            case MultisiteWhen::ALWAYS: m1.max_sites = multisite_opt_site_max; break;
         }
     }
     m1.optFunc   = OptFunc::VARIANCE;
@@ -320,7 +304,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optFunc   = OptFunc::VARIANCE;
         m1.optAlgo   = OptAlgo::SUBSPACE;
         m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_site_max;
+        m1.max_sites = settings::strategy::multisite_opt_site_max;
         if(settings::xdmrg::opt_subspace_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_lim) {
             tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_lim,
                              settings::xdmrg::opt_subspace_bond_lim);
@@ -333,20 +317,24 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optAlgo   = OptAlgo::SUBSPACE;
         m1.optFunc   = OptFunc::OVERLAP;
         m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_site_max;
-        m1.retry     = false;
+        m1.max_sites = settings::strategy::multisite_opt_site_max;
         if(settings::xdmrg::opt_overlap_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_overlap_bond_lim) {
             tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_lim, settings::xdmrg::opt_subspace_bond_lim);
             m1.bond_lim = settings::xdmrg::opt_subspace_bond_lim;
         }
     }
 
+    if(m1.optFunc == OptFunc::OVERLAP and not settings::precision::use_energy_shifted_mpo_squared) {
+        tools::log->debug("OptFunc::OVERLAP only works with energy-shifted mpo²'s: switching to OptFunc::VARIANCE");
+        m1.optFunc = OptFunc::VARIANCE;
+    }
+
     // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
     if(tensors.state->size_1site() > std::max({settings::solver::eig_max_size, settings::solver::eigs_max_size_shift_invert})) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
         // When this happens, we should use optimize VARIANCE with EIGS instead.
-        m1.optAlgo = OptAlgo::DIRECT;
-        m1.optFunc = OptFunc::VARIANCE;
+        m1.optAlgo   = OptAlgo::DIRECT;
+        m1.optFunc   = OptFunc::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
     }
 
@@ -355,14 +343,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.max_problem_size = settings::solver::eigs_max_size_shift_invert;
     else
         m1.max_problem_size = settings::precision::max_size_multisite;
-    //
-    //    switch(m1.optAlgo) {
-    //        case OptAlgo::OVERLAP:
-    //        case OptFunc::SUBSPACE: m1.max_problem_size = settings::solver::max_size_shift_invert; break;
-    //        case OptFunc::ENERGY:
-    //        case OptFunc::SIMPS:
-    //        case OptFunc::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
-    //    }
 
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
@@ -377,196 +357,106 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     }
 
     m1.validate();
-    metas.emplace_back(m1);
-    if(not m1.retry) return metas;
-    /*
-     *
-     *  Second trial
-     *
-     *  NOTES
-     *      1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
-     *      2) By default, the result from m1 is used as a starting point for m2.
-     *         However, if you change the number of sites, i.e. m2.max_sites,  then you need to start from scratch with the "current state"
-     */
-
-    OptMeta m2 = m1; // Start with m1 as a baseline
-    m2.label   = "m2";
-    m2.optInit = OptInit::LAST_RESULT;
-    m2.retry   = false;
-    if(m1.optAlgo == OptAlgo::SUBSPACE) {
-        // I.e. if we did a SUBSPACE run that did not result in better variance, try VARIANCE optimization
-        // This usually helps to fine-tune the result if the subspace had bad quality.
-        m2.optWhen   = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
-        m2.optFunc   = OptFunc::VARIANCE;
-        m2.optSolver = OptSolver::EIGS;
-        metas.emplace_back(m2);
-    } else if(m1.optSolver == OptSolver::EIGS and m1.optFunc == OptFunc::ENERGY) {
-        // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
-        m2.optWhen   = OptWhen::PREV_FAIL_WORSENED;
-        m2.optSolver = OptSolver::EIGS;
-        m2.optFunc   = OptFunc::VARIANCE;
-        m2.optInit   = OptInit::LAST_RESULT;
-        metas.emplace_back(m2);
-    } else if(m1.optFunc == OptFunc::VARIANCE and m1.optSolver == OptSolver::EIGS) {
-        // If we did a VARIANCE optimization whose residual_norm did succeed, then run again for longer and more sites
-        m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP | OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
-        m2.optSolver = OptSolver::EIGS;
-        m2.optFunc   = OptFunc::VARIANCE;
-        m2.optInit   = OptInit::LAST_RESULT;
-        metas.emplace_back(m2);
-    }
-    for(const auto &config : metas) config.validate();
-    return metas;
+    return m1;
 }
 
-bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, const xdmrg::OptMeta &meta) {
-    if(results.empty()) return true;
-    bool should = meta.should_proceed(results.back().get_optexit());
-    if(should) tools::log->debug("Optimizer status: {} --> try again: {} | when: {}", flag2str(results.back().get_optexit()), should, flag2str(meta.optWhen));
-    return should;
-}
 
 void xdmrg::update_state() {
     using namespace tools::finite;
     using namespace tools::finite::opt;
     auto                                t_step   = tid::tic_scope("step");
-    auto                                confList = get_opt_conf_list();
-    std::vector<opt_mps>                results;
+    auto                                opt_meta = get_opt_meta();
+    opt_mps                             opt_state;
     std::optional<std::vector<MpsSite>> mps_original = std::nullopt;
     variance_before_step                             = std::nullopt;
 
-    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction,
-                      confList.size());
-    for(const auto &[idx_conf, meta] : iter::enumerate(confList)) {
-        if(not try_again(results, meta)) break;
+    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
+    // Try activating the sites asked for;
+    tensors.activate_sites(opt_meta.chosen_sites);
+    if(tensors.active_sites.empty()) {
+        tools::log->warn("Failed to activate sites");
+        return;
+    }
+    tensors.rebuild_edges();
 
-        // Try activating the sites asked for;
-        tensors.activate_sites(meta.chosen_sites);
-        if(tensors.active_sites.empty()) continue;
-        tensors.rebuild_edges();
+    // Hold the variance before the optimization step for comparison
+    if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
 
-        // Hold the variance before the optimization step for comparison
-        if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
-
-        // Use environment expansion if alpha_expansion is set
-        // Note that this changes the mps and edges adjacent to "tensors.active_sites"
-        if(meta.alpha_expansion) {
-            auto pos_expanded = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
-            if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_environment(meta.alpha_expansion, EnvExpandMode::VAR, svd::config(meta.bond_lim));
-        }
-
-        // Announce the current configuration for optimization
-        tools::log->debug("Running meta {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", idx_conf + 1,
-                          confList.size(), meta.label, enum2sv(meta.optInit), enum2sv(meta.optFunc), enum2sv(meta.optSolver), enum2sv(meta.optType),
-                          meta.chosen_sites, tensors.state->active_dimensions(), tensors.state->active_problem_size(), meta.trnc_lim,
-                          (meta.alpha_expansion ? meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
-        // Run the optimization
-        switch(meta.optInit) {
-            case OptInit::CURRENT_STATE: {
-                auto initial_state = opt::get_opt_initial_mps(tensors);
-                results.emplace_back(opt::find_excited_state(tensors, initial_state, status, meta));
-                break;
-            }
-            case OptInit::LAST_RESULT: {
-                if(results.empty()) throw except::logic_error("There are no previous results to select an initial state");
-                results.emplace_back(opt::find_excited_state(tensors, results.back(), status, meta));
-                break;
-            }
-        }
-
-        // Save the neighboring mps that this result is compatible with,
-        // so that we may use them if this result turns out to be the winner
-        if(meta.alpha_expansion) {
-            results.back().set_alpha(meta.alpha_expansion);
-            auto pos_expanded         = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
-            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);                   // Backup the mps sites that this run was compatible with
-        }
-
-        // Reset the mps to the original if they were backed up earlier
-        // This is so that the next meta starts with unchanged mps as neighbors
-        if(mps_original) {
-            tensors.state->set_mps_sites(mps_original.value());
-            tensors.rebuild_edges(); // Make sure the edges are up-to-date
-        }
-
-        // We can now decide if we are happy with the result or not.
-        results.back().set_relchange(results.back().get_variance() / variance_before_step.value());
-        results.back().set_bond_limit(meta.bond_lim);
-        results.back().set_trnc_limit(meta.trnc_lim);
-        /* clang-format off */
-        meta.optExit = OptExit::SUCCESS;
-        if(results.back().get_grad_max()       > 1.000                         ) meta.optExit |= OptExit::FAIL_GRADIENT;
-        if(results.back().get_rnorm()          > settings::solver::eigs_tol_max) meta.optExit |= OptExit::FAIL_RESIDUAL;
-        if(results.back().get_eigs_nev()       == 0 and
-                          meta.optSolver       == OptSolver::EIGS              ) meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
-        if(results.back().get_overlap()        < 0.010                         ) meta.optExit |= OptExit::FAIL_OVERLAP;
-        if(results.back().get_relchange()      > 1.001                         ) meta.optExit |= OptExit::FAIL_WORSENED;
-        else if(results.back().get_relchange() > 0.999                         ) meta.optExit |= OptExit::FAIL_NOCHANGE;
-
-        results.back().set_optexit(meta.optExit);
-        /* clang-format on */
-
-        tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(meta.optFunc),
-                          enum2sv(meta.optSolver), flag2str(meta.optExit), variance_before_step.value(), results.back().get_variance(),
-                          results.back().get_relchange() * 100);
-        if(results.back().get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
+    // Use environment expansion if alpha_expansion is set
+    // Note that this changes the mps and edges adjacent to "tensors.active_sites"
+    if(opt_meta.alpha_expansion) {
+        auto pos_expanded = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
+        if(not mps_original) mps_original = tensors.state->get_mps_copy(pos_expanded);
+        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, svd::config(opt_meta.bond_lim, 0.1 * opt_meta.trnc_lim));
     }
 
-    if(not results.empty()) {
-        if(tools::log->level() <= spdlog::level::debug)
-            for(const auto &r : results)
-                tools::log->debug("Candidate: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
-                                             "alpha {:8.2e} | "
-                                             "sites {} |"
-                                             "{:20} | {} | time {:.2e} s",
-                                  r.get_name(), r.get_energy(), r.get_variance(), r.get_rnorm(), r.get_overlap(), r.get_alpha(), r.get_sites(),
-                                  fmt::format("[{}][{}]", enum2sv(r.get_optfunc()), enum2sv(r.get_optsolver())), flag2str(r.get_optexit()), r.get_time());
+    // Announce the current configuration for optimization
+    tools::log->debug("Updating state: {} | mode {} | space {} | type {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", opt_meta.label,
+                      enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver), enum2sv(opt_meta.optType), opt_meta.chosen_sites,
+                      tensors.state->active_dimensions(), tensors.state->active_problem_size(), opt_meta.trnc_lim,
+                      (opt_meta.alpha_expansion ? opt_meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
+    // Run the optimization
+    auto initial_state = opt::get_opt_initial_mps(tensors);
+    opt_state          = opt::find_excited_state(tensors, initial_state, status, opt_meta);
 
-        // Sort the results in order of increasing variance
-        auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
-            if(std::isnan(lhs.get_variance())) throw except::logic_error("Result error: state [{}] has variance NAN", lhs.get_name());
-            if(std::isnan(rhs.get_variance())) throw except::logic_error("Result error: state [{}] has variance NAN", rhs.get_name());
-            return lhs.get_variance() < rhs.get_variance();
-        };
-        std::sort(results.begin(), results.end(), comp_variance);
+    // Determine the quality of the optimized state.
+    opt_state.set_relchange(opt_state.get_variance() / variance_before_step.value());
+    opt_state.set_bond_limit(opt_meta.bond_lim);
+    opt_state.set_trnc_limit(opt_meta.trnc_lim);
+    /* clang-format off */
+    opt_meta.optExit = OptExit::SUCCESS;
+    if(opt_state.get_grad_max()       > 1.000                         ) opt_meta.optExit |= OptExit::FAIL_GRADIENT;
+    if(opt_state.get_rnorm()          > settings::solver::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
+    if(opt_state.get_eigs_nev()       == 0 and
+       opt_meta.optSolver              == OptSolver::EIGS             ) opt_meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
+    if(opt_state.get_overlap()        < 0.010                         ) opt_meta.optExit |= OptExit::FAIL_OVERLAP;
+    if(opt_state.get_relchange()      > 1.001                         ) opt_meta.optExit |= OptExit::FAIL_WORSENED;
+    else if(opt_state.get_relchange() > 0.999                         ) opt_meta.optExit |= OptExit::FAIL_NOCHANGE;
 
-        // Take the best result
-        const auto &winner = results.front();
-        last_optspace      = winner.get_optsolver();
-        last_optmode       = winner.get_optfunc();
-        tensors.activate_sites(winner.get_sites());
-        tensors.state->tag_active_sites_normalized(false);
-        if(not winner.mps_backup.empty()) {
-            // Restore the neighboring mps that are compatible with this winner
-            tensors.state->set_mps_sites(winner.mps_backup);
-            tensors.rebuild_edges();
-        }
+    opt_state.set_optexit(opt_meta.optExit);
+    /* clang-format on */
 
-        // Do the truncation with SVD
-        tensors.merge_multisite_mps(winner.get_tensor(), svd::config(winner.get_bond_lim(), winner.get_trnc_lim()));
-        tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
-        if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.2e}", tensors.state->get_truncation_errors_active());
+    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver),
+                      flag2str(opt_meta.optExit), variance_before_step.value(), opt_state.get_variance(), opt_state.get_relchange() * 100);
+    if(opt_state.get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
 
-        if constexpr(settings::debug) {
-            auto variance_before_svd = winner.get_variance();
-            auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-            tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
-            tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
-            tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
-        }
-
-        // Update current energy density ε
-        status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
-
-        if(not tensors.active_sites.empty()) {
-            tools::log->trace("Updating variance record holder");
-            auto var = tools::finite::measure::energy_variance(tensors);
-            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
-            var_mpo_step.emplace_back(var);
-        }
-        if constexpr(settings::debug) tensors.assert_validity();
+    if(tools::log->level() <= spdlog::level::debug) {
+        tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
+                          "alpha {:8.2e} | "
+                          "sites {} |"
+                          "{:20} | {} | time {:.2e} s",
+                          opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
+                          opt_state.get_alpha(), opt_state.get_sites(),
+                          fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
+                          opt_state.get_time());
     }
+
+    last_optspace = opt_state.get_optsolver();
+    last_optmode  = opt_state.get_optfunc();
+    tensors.state->tag_active_sites_normalized(false);
+
+    // Do the truncation with SVD
+    // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merger
+    tensors.merge_multisite_mps(opt_state.get_tensor(), svd::config(opt_state.get_bond_lim(), opt_state.get_trnc_lim()));
+    tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
+    if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.2e}", tensors.state->get_truncation_errors_active());
+
+    // if constexpr(settings::debug) {
+    auto variance_before_svd = opt_state.get_variance();
+    auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
+    tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
+    tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
+    tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
+    // }
+
+    // Update current energy density ε
+    status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
+
+    tools::log->trace("Updating variance record holder");
+    auto var = tools::finite::measure::energy_variance(tensors);
+    if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+    var_mpo_step.emplace_back(var);
+    if constexpr(settings::debug) tensors.assert_validity();
 }
 
 void xdmrg::check_convergence() {

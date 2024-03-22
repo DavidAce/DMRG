@@ -62,7 +62,8 @@ std::any IsingMajorana::get_parameter(const std::string_view name) const {
     throw except::logic_error("Invalid parameter name for IsingMajorana model: {}", name);
 }
 
-void IsingMajorana::build_mpo()
+Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+                                              [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
 /*! Builds the MPO hamiltonian as a rank 4 tensor.
  *
  * H = Σ J_{i} σx_{i} σx_{i+1} + h_{i} σz_{i} + g*(σz_i σz_{i+1} + σx_{i} σx_{i+2})
@@ -91,17 +92,29 @@ void IsingMajorana::build_mpo()
     tools::log->debug("mpo({}): building ising-majorana mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
-    mpo_internal.resize(5, 5, h5tb.param.spin_dim, h5tb.param.spin_dim);
-    mpo_internal.setZero();
-    mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
-    mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
-    mpo_internal.slice(std::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - e_shift * id);
-    mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_coupling() * sx);
-    mpo_internal.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(h5tb.param.g * sz);
-    mpo_internal.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(h5tb.param.g * sx);
-    mpo_internal.slice(std::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+
+    double J1 = 1.0, J2 = 1.0;
+    if(nbody.has_value()) {
+        J1 = 0;
+        J2 = 0;
+        for(const auto &n : nbody.value()) {
+            if(n == 1) J1 = 1.0;
+            if(n == 2) J2 = 1.0;
+        }
+    }
+
+    Eigen::Tensor<cplx, 4> mpo_build;
+    mpo_build.resize(5, 5, h5tb.param.spin_dim, h5tb.param.spin_dim);
+    mpo_build.setZero();
+    mpo_build.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+    mpo_build.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
+    mpo_build.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
+    mpo_build.slice(std::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+    mpo_build.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J1 * get_field() * sz - energy_shift_per_site * id);
+    mpo_build.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * get_coupling() * sx);
+    mpo_build.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sz);
+    mpo_build.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sx);
+    mpo_build.slice(std::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
 
     if(parity_shift_sign_mpo != 0 and not parity_shift_axus_mpo.empty()) {
         // This redefines H --> H² + Q(σ), where
@@ -113,27 +126,30 @@ void IsingMajorana::build_mpo()
         //     such that
         //              (H + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (E + 0) |ψ+⟩
         //              (H + Q(σ)) |ψ-⟩ = (σ² + 0.5(1+1)) |ψ-⟩ = (E + 1) |ψ-⟩
-        auto d0 = mpo_internal.dimension(0);
-        auto d1 = mpo_internal.dimension(1);
-        auto d2 = mpo_internal.dimension(2);
-        auto d3 = mpo_internal.dimension(3);
+        auto d0 = mpo_build.dimension(0);
+        auto d1 = mpo_build.dimension(1);
+        auto d2 = mpo_build.dimension(2);
+        auto d3 = mpo_build.dimension(3);
         auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo);
 
         Eigen::Tensor<cplx, 4> mpo_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
         mpo_with_parity_shift_op.setZero();
-        mpo_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_internal.dimensions())          = mpo_internal;
+        mpo_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
         mpo_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
         mpo_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-        mpo_internal                                                                                 = mpo_with_parity_shift_op;
+        mpo_build                                                                                    = mpo_with_parity_shift_op;
     }
 
-    if(tenx::hasNaN(mpo_internal)) {
+    // On MPO's at the system's edge we can apply the edges so that the outermost virtual dimension becomes thin (i.e. dim == 1)
+    // We expect the "get_MPO_edge_left/right" functions to adapt automatically to return thin edges after this step
+    if(tenx::hasNaN(mpo_build)) {
         print_parameter_names();
         print_parameter_values();
         throw except::runtime_error("mpo({}): found nan", get_position());
     }
-    unique_id = std::nullopt;
+    return mpo_build;
 }
+
 
 void IsingMajorana::randomize_hamiltonian() {
     if(h5tb.param.distribution != "uniform") throw except::runtime_error("IsingMajorana expects a uniform distribution. Got: {}", h5tb.param.distribution);
@@ -144,41 +160,6 @@ void IsingMajorana::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
     unique_id                        = std::nullopt;
     unique_id_sq                     = std::nullopt;
-}
-
-Eigen::Tensor<cplx, 4> IsingMajorana::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
-    // This function returns a view of the MPO including only n-body terms.
-    // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
-    // Next-nearest neighbor terms are counted as 3-body terms because 3 sites are involved: the skipped site counts
-
-    if(not nbody) return MPO();
-    double J1 = 0, J2 = 0, J3 = 0;
-    for(const auto &n : nbody.value()) {
-        if(n == 1) J1 = 1.0;
-        if(n == 2) J2 = 1.0;
-        if(n == 3) J3 = 1.0;
-    }
-    using namespace qm::spin::half;
-    Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
-    MPO_nbody.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J1 * get_field() * sz - e_shift * id);
-    MPO_nbody.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * get_coupling() * sx);
-    MPO_nbody.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sz);
-    MPO_nbody.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J3 * h5tb.param.g * sx);
-    return MPO_nbody;
-}
-
-Eigen::Tensor<cplx_t, 4> IsingMajorana::MPO_nbody_view_t([[maybe_unused]] std::optional<std::vector<size_t>> nbody,
-                                                         [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
-    throw except::runtime_error("IsingMajorana::MPO_nbody_view_t is not implemented");
-}
-
-Eigen::Tensor<cplx, 4> IsingMajorana::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(e_shift); }
-
-Eigen::Tensor<cplx, 4> IsingMajorana::MPO_energy_shifted_view(double energy_shift_per_site) const {
-    using namespace qm::spin::half;
-    Eigen::Tensor<cplx, 4> temp                                           = MPO();
-    temp.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - energy_shift_per_site * id);
-    return temp;
 }
 
 std::unique_ptr<MpoSite> IsingMajorana::clone() const { return std::make_unique<IsingMajorana>(*this); }

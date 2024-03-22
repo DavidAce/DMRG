@@ -40,7 +40,7 @@ namespace tools::finite::opt::internal {
     opt_mps optimize_energy_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
         if(meta.optFunc != OptFunc::ENERGY)
             throw except::logic_error("optimize_energy_eig: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::ENERGY), enum2sv(meta.optFunc));
-        if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
+        if(meta.optRitz == OptRitz::SM and not tensors.model->has_energy_shifted_mpo())
             throw std::logic_error("optimize_energy_eig: Ritz [SM] requires energy-shifted MPO ");
 
         const auto problem_size = tensors.active_problem_size();

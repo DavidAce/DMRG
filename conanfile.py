@@ -54,7 +54,7 @@ class DMRGConan(ConanFile):
 
 
     def requirements(self):
-        self.requires("h5pp/[>=1.11.2 <1.12]@davidace/dev")
+        self.requires("h5pp/[>=1.11.3 <1.12]@davidace/dev")
         self.requires("fmt/[>=10.2.0 <11]")
         self.requires("spdlog/[>=1.13.0 <1.14]")
         self.requires("eigen/3.4.0")

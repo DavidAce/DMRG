@@ -202,7 +202,7 @@ def get_h5_status(filename, batch):
                     evn_neel = np.resize([0,1], int(length))
                     odd_neel = np.resize([1,0], int(length))
                     has_neel_init_pattern = np.all(optional_dsets[0][()] == evn_neel) or np.all(optional_dsets[0][()] == odd_neel)
-                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123', 'lbit124', 'lbit125', 'lbit126', 'lbit127', 'lbit128']])
+                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123', 'lbit124', 'lbit125', 'lbit126', 'lbit127', 'lbit128', 'lbit129']])
                     if should_be_neel and not has_neel_init_pattern:
                         return f"FAILED|initial state is not neel"
                     if not should_be_neel and has_neel_init_pattern:
@@ -211,7 +211,7 @@ def get_h5_status(filename, batch):
                     evn_neel = 'b'+''.join(np.resize(['0','1'], int(length)))
                     odd_neel = 'b'+''.join(np.resize(['1','0'], int(length)))
                     has_neel_init_pattern = np.all(optional_attrs[0] == evn_neel) or np.all(optional_attrs[0] == odd_neel)
-                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123', 'lbit124', 'lbit125', 'lbit126', 'lbit127', 'lbit128']])
+                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123', 'lbit124', 'lbit125', 'lbit126', 'lbit127', 'lbit128', 'lbit129']])
                     if should_be_neel and not has_neel_init_pattern:
                         return f"FAILED|initial state pattern is not neel: {optional_attrs[0]}"
                     if not should_be_neel and has_neel_init_pattern:

@@ -1,6 +1,7 @@
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
+#include "../matvec/matvec_mpos.h"
 #include "../matvec/matvec_sparse.h"
 #include "../sfinae.h"
 #include "../solver.h"
@@ -403,6 +404,8 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
 
 template int eig::solver::eigs_primme(MatVecMPO<real> &matrix);
 template int eig::solver::eigs_primme(MatVecMPO<cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecMPOS<real> &matrix);
+template int eig::solver::eigs_primme(MatVecMPOS<cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecDense<real> &matrix);
 template int eig::solver::eigs_primme(MatVecDense<cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecSparse<real> &matrix);

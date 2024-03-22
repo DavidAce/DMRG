@@ -24,7 +24,7 @@ namespace tools::finite::opt::internal {
         initial_mps.validate_basis_vector();
         if(meta.optFunc != OptFunc::VARIANCE)
             throw except::logic_error("optimize_variance_eig: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::VARIANCE), enum2sv(meta.optFunc));
-        if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eig requires energy-shifted MPO²");
+        // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eig requires energy-shifted MPO²");
 
         const auto problem_size = tensors.active_problem_size();
         if(problem_size > settings::solver::eig_max_size)

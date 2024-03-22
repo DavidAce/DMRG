@@ -160,10 +160,11 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturation_iters);
     dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
     dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
-    dmrg_config.load_parameter("strategy::multisite_mps_site_def"             , strategy::multisite_mps_site_def);
-    dmrg_config.load_parameter("strategy::multisite_mps_site_max"             , strategy::multisite_mps_site_max);
-    dmrg_config.load_parameter("strategy::multisite_mps_move"                 , strategy::multisite_mps_move);
-    dmrg_config.load_parameter("strategy::multisite_mps_when"                 , strategy::multisite_mps_when);
+    dmrg_config.load_parameter("strategy::multisite_opt_site_def"             , strategy::multisite_opt_site_def);
+    dmrg_config.load_parameter("strategy::multisite_opt_site_max"             , strategy::multisite_opt_site_max);
+    dmrg_config.load_parameter("strategy::multisite_opt_move"                 , strategy::multisite_opt_move);
+    dmrg_config.load_parameter("strategy::multisite_opt_when"                 , strategy::multisite_opt_when);
+    dmrg_config.load_parameter("strategy::multisite_opt_grow"                 , strategy::multisite_opt_grow);
     dmrg_config.load_parameter("strategy::target_axis"                        , strategy::target_axis);
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
@@ -190,6 +191,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
     dmrg_config.load_parameter("precision::use_compressed_mpo_on_the_fly"     , precision::use_compressed_mpo_on_the_fly);
     dmrg_config.load_parameter("precision::use_energy_shifted_mpo"            , precision::use_energy_shifted_mpo);
+    dmrg_config.load_parameter("precision::use_energy_shifted_mpo_squared"    , precision::use_energy_shifted_mpo_squared);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo"            , precision::use_parity_shifted_mpo);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo_squared"    , precision::use_parity_shifted_mpo_squared);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);

@@ -220,10 +220,11 @@ namespace settings {
         inline size_t              min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
         inline size_t              min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
         inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment expansion */
-        inline size_t              multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
-        inline size_t              multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
-        inline MultisiteMove       multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline MultisiteWhen       multisite_mps_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {OFF, STUCK, SATURATED, ALWAYS} */
+        inline size_t              multisite_opt_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
+        inline size_t              multisite_opt_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
+        inline MultisiteMove       multisite_opt_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multisite optimization step, choose between {ONE, MID, MAX} */
+        inline MultisiteWhen       multisite_opt_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {NEVER, STUCK, SATURATED, ALWAYS} */
+        inline MultisiteGrow       multisite_opt_grow          = MultisiteGrow::OFF;                     /*!< OFF: Increase to max sites immediately when conditions are right, ON: grow up to max linearly with stuck/saturated iters */
         inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
@@ -241,7 +242,8 @@ namespace settings {
     namespace precision {
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_on_the_fly   = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
-        inline bool     use_energy_shifted_mpo          = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
+        inline bool     use_energy_shifted_mpo          = false ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
+        inline bool     use_energy_shifted_mpo_squared  = false ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
         inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */

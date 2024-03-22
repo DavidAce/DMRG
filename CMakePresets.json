@@ -34,10 +34,10 @@
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
         "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always",
-        "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g3 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Og -g3 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always",
-        "CMAKE_C_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_DEBUG": "-O0 -g3 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
         "CMAKE_EXE_LINKER_FLAGS": "-Wl,--enable-new-dtags",
@@ -115,16 +115,22 @@
         "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
-        "COMPILER_ENABLE_ASAN": "TRUE",
-        "COMPILER_ENABLE_USAN": "TRUE",
-        "COMPILER_ENABLE_PCH": "FALSE",
-        "COMPILER_ENABLE_CCACHE": "FALSE",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
       },
       "environment": {
         "VERBOSE": "1"
       }
     },
+    {
+      "name": "asan",
+      "hidden": true,
+      "inherits": [ "debug" ],
+      "cacheVariables": {
+        "COMPILER_ENABLE_ASAN": "TRUE",
+        "COMPILER_ENABLE_USAN": "TRUE"
+      }
+    },
+
     {
       "name": "profiling",
       "hidden": true,
@@ -326,6 +332,16 @@
       "inherits": [
         "flexiblas",
         "conan",
+        "debug-gcc-13"
+      ]
+    },
+    {
+      "name": "debug-gcc-13-asan-conan-flexiblas",
+      "displayName": "Debug|gcc-13|fsanitize|conan|flexiblas",
+      "inherits": [
+        "flexiblas",
+        "conan",
+        "asan",
         "debug-gcc-13"
       ]
     },
@@ -717,6 +733,10 @@
     {
       "name": "debug-gcc-13-conan-flexiblas",
       "configurePreset": "debug-gcc-13-conan-flexiblas"
+    },
+    {
+      "name": "debug-gcc-13-asan-conan-flexiblas",
+      "configurePreset": "debug-gcc-13-asan-conan-flexiblas"
     },
     {
       "name": "debug-gcc-13-cmake-flexiblas",

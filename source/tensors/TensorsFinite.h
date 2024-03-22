@@ -42,25 +42,26 @@ class TensorsFinite {
     //  - Activate sites
     //  - Manage caches
 
-    TensorsFinite();
-    ~TensorsFinite();                                     // Read comment on implementation
-    TensorsFinite(TensorsFinite &&other);                 // default move ctor
-    TensorsFinite &operator=(TensorsFinite &&other);      // default move assign
-    TensorsFinite(const TensorsFinite &other);            // copy ctor
-    TensorsFinite &operator=(const TensorsFinite &other); // copy assign
-    TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
+                   TensorsFinite();
+    ~              TensorsFinite();                           // Read comment on implementation
+                   TensorsFinite(TensorsFinite &&other);      // default move ctor
+    TensorsFinite &operator=(TensorsFinite &&other);          // default move assign
+                   TensorsFinite(const TensorsFinite &other); // copy ctor
+    TensorsFinite &operator=(const TensorsFinite &other);     // copy assign
+                   TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
 
     void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
     void initialize_model();
-    void initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors,
-                         long bond_lim, std::string & pattern);
+    void initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors, long bond_lim,
+                          std::string &pattern);
     void normalize_state(std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
-
-    [[nodiscard]] const Eigen::Tensor<cplx, 3>          &get_multisite_mps() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>          &get_multisite_mpo() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>          &get_multisite_mpo_squared() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3>> get_multisite_env_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3>> get_multisite_env_var_blk() const;
+    [[nodiscard]] const std::vector<Eigen::Tensor<cplx, 4>> get_mpos() const;         // Multiple mpos not merged
+    [[nodiscard]] const std::vector<Eigen::Tensor<cplx, 4>> get_mpos_squared() const; // Multiple mpos not merged
+    [[nodiscard]] const Eigen::Tensor<cplx, 3>             &get_multisite_mps() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4>             &get_multisite_mpo() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4>             &get_multisite_mpo_squared() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &>  get_multisite_env_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &>  get_multisite_env_var_blk() const;
     /* clang-format off */
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian() const;
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;

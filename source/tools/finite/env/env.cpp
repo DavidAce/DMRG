@@ -41,7 +41,6 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
     // force us to insert a non-normalized mps into the environment ahead.
     // The rule is to optimize the site which loses normalization during the expansion.
 
-    using Scalar = cplx;
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -66,8 +65,6 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
         return pos_expanded;
     }
 
-    // Set up the SVD
-    svd::solver svd(svd_cfg);
 
     // Define the left and right mps that will get modified
     state.clear_cache();
@@ -78,10 +75,13 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
     auto  dimL_old = mpsL.dimensions();
     auto  dimR_old = mpsR.dimensions();
 
-    // Set up the svd
+
+    // Set up the SVD
+    svd::solver svd(svd_cfg);
     auto bond_lim = mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
     if(not svd_cfg) svd_cfg = svd::config();
     if(not svd_cfg->rank_max) svd_cfg->rank_max = bond_lim;
+    if(not svd_cfg->truncation_limit) svd_cfg->truncation_limit = settings::solver::svd_truncation_lim;
     svd_cfg->rank_max = std::min(bond_lim, svd_cfg->rank_max.value());
 
     if(state.get_direction() > 0) {
@@ -90,14 +90,14 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
         //      * mpsR is an "B"  and belongs in envR later in the optimization step
         auto &mpoR = model.get_mpo(posR);
         mpsR.set_M(state.get_multisite_mps({posR})); // mpsR absorbs the C bond so that the SVD makes sense later
-        Eigen::Tensor<Scalar, 3> PR;
+        Eigen::Tensor<cplx, 3> PR;
         switch(envExpandMode) {
             case EnvExpandMode::ENE: PR = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha.value()); break;
             case EnvExpandMode::VAR: PR = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha.value()); break;
         }
-        Eigen::Tensor<Scalar, 3> P0    = tenx::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
-        Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
-        Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1); // mpsR is going into the environment, enriched with PR.
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+        Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
+        Eigen::Tensor<cplx, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1); // mpsR is going into the environment, enriched with PR.
 
         auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg.value());
         mpsR.set_M(V);
@@ -108,8 +108,8 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
 
         {
             // Make mpsL normalized. This is strictly optional, but we do it so that normalization checks can succeed
-            cplx                     norm_old = tools::common::contraction::contract_mps_norm(mpsL.get_M());
-            Eigen::Tensor<Scalar, 3> M_tmp    = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
+            cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsL.get_M());
+            Eigen::Tensor<cplx, 3> M_tmp    = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
             mpsL.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
                 auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
@@ -119,8 +119,8 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
             }
         }
 
-        tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimL_old[2],
-                          MR_PR.dimension(1), mpsL.get_chiR(), bond_lim);
+        tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | ε {:.2e} | χlim {}", pos_expanded, alpha.value(), dimL_old[2],
+                          MR_PR.dimension(1), mpsL.get_chiR(), svd_cfg->truncation_limit, bond_lim);
     }
     if(state.get_direction() < 0) {
         // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
@@ -128,14 +128,14 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
         //      * mpsR is an "AC" and is the active site
         auto &mpoL = model.get_mpo(posL);
         mpsL.set_M(state.get_multisite_mps({posL})); // mpsL absorbs the C bond so that the SVD makes sense later
-        Eigen::Tensor<Scalar, 3> PL;
+        Eigen::Tensor<cplx, 3> PL;
         switch(envExpandMode) {
             case EnvExpandMode::ENE: PL = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha.value()); break;
             case EnvExpandMode::VAR: PL = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha.value()); break;
         }
-        Eigen::Tensor<Scalar, 3> P0    = tenx::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
-        Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
-        Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
+        Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
         auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg.value());
         // Recall: the following lines hold because we demand that mpsL is an "A" and mpsR an "AC"
@@ -147,8 +147,8 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
 
         {
             // Make mpsR normalized. This is strictly optional, but we do it so that normalization checks can succeed
-            cplx                     norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
-            Eigen::Tensor<Scalar, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
+            cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
+            Eigen::Tensor<cplx, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
             mpsR.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
                 auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
@@ -157,8 +157,8 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
                                   std::abs(norm_new));
             }
         }
-        tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimR_old[1],
-                          ML_PL.dimension(2), mpsR.get_chiL(), bond_lim);
+        tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | ε {:.2e} |χlim {}", pos_expanded, alpha.value(), dimR_old[1],
+                          ML_PL.dimension(2), mpsR.get_chiL(),svd_cfg->truncation_limit, bond_lim);
     }
 
     if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());

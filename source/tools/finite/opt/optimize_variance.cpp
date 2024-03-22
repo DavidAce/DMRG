@@ -6,6 +6,7 @@
 #include "general/iter.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_mpo.h"
+#include "math/eig/matvec/matvec_mpos.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -16,6 +17,7 @@
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include <primme/primme.h>
+#include <tensors/edges/EdgesFinite.h>
 
 namespace tools::finite::opt {
 
@@ -105,18 +107,19 @@ namespace tools::finite::opt {
         return eig::view::get_eigvals<double>(solver.result).cwiseAbs().maxCoeff();
     }
 
-    template<typename Scalar>
-    void eigs_variance_executor(eig::solver &solver, MatVecMPO<Scalar> &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
+    template<typename MatVecType>
+    void eigs_variance_executor(eig::solver &solver, MatVecType &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
                                 std::vector<opt_mps> &results, const OptMeta &meta) {
+        using Scalar = typename MatVecType::Scalar;
         if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL)
             throw except::logic_error("eigs_launcher error: Mixed Scalar:cplx with OptType::REAL");
         if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX)
             throw except::logic_error("eigs_launcher error: Mixed Scalar:real with OptType::CPLX");
 
-        const auto       &mpo = tensors.get_multisite_mpo();
-        const auto       &env = tensors.get_multisite_env_ene_blk();
-        MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
-        solver.config.primme_effective_ham    = &hamiltonian;
+        // const auto       &mpo = tensors.get_multisite_mpo();
+        // const auto       &env = tensors.get_multisite_env_ene_blk();
+        // MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
+        // solver.config.primme_effective_ham    = &hamiltonian;
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
 
         hamiltonian_squared.reset();
@@ -157,8 +160,9 @@ namespace tools::finite::opt {
         cfg.lib             = eig::Lib::PRIMME;
         cfg.ritz            = eig::Ritz::primme_smallest; // eig::Ritz::SA;
         cfg.compute_eigvecs = eig::Vecs::ON;
-        cfg.loglevel        = 2;
-        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
+        cfg.loglevel        = 1;
+        // cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
+        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS; // eig::PrimmeMethod::PRIMME_JDQMR;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
@@ -172,17 +176,25 @@ namespace tools::finite::opt {
         if(meta.eigs_ncv) cfg.maxNcv = meta.eigs_ncv;
         if(meta.eigs_iter_max) cfg.maxIter = meta.eigs_iter_max;
 
-        const auto &env2                = tensors.get_multisite_env_var_blk();
-        auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-        if(initial_mps.get_tensor().size() <= settings::solver::eigs_max_size_shift_invert) {
-            cfg.shift_invert                  = eig::Shinv::ON;
-            cfg.sigma                         = 0.0;
-            cfg.primme_target_shifts          = {};
-            cfg.ritz                          = eig::Ritz::primme_largest_abs;
-            hamiltonian_squared.factorization = eig::Factorization::LLT;
-            hamiltonian_squared.set_readyCompress(tensors.model->is_compressed_mpo_squared());
+        // const auto &env2                = tensors.get_multisite_env_var_blk();
+        // auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
+        const auto &model               = *tensors.model;
+        const auto &edges               = *tensors.edges;
+        const auto &envs                = edges.get_var_active();
+        const auto &mpos                = model.get_mpo_active();
+        auto        hamiltonian_squared = MatVecMPOS<Scalar>(mpos, envs);
+        if constexpr(hamiltonian_squared.can_shift_invert) {
+            if(initial_mps.get_tensor().size() <= settings::solver::eigs_max_size_shift_invert) {
+                cfg.shift_invert                  = eig::Shinv::ON;
+                cfg.sigma                         = cplx(0.0, 0.0);
+                cfg.primme_target_shifts          = {};
+                cfg.ritz                          = eig::Ritz::primme_largest_abs;
+                hamiltonian_squared.factorization = eig::Factorization::LLT;
+                hamiltonian_squared.set_readyCompress(tensors.model->is_compressed_mpo_squared());
+            }
         }
-        eigs_variance_executor<Scalar>(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
+
+        eigs_variance_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
     }
 
     opt_mps internal::optimize_variance_eigs(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
@@ -190,7 +202,7 @@ namespace tools::finite::opt {
         using namespace internal;
         using namespace settings::precision;
         initial_mps.validate_basis_vector();
-        if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eigs requires energy-shifted MPO²");
+        // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eigs requires energy-shifted MPO²");
         reports::eigs_add_entry(initial_mps, spdlog::level::debug);
 
         auto                 t_var = tid::tic_scope("eigs-var", tid::level::higher);
@@ -213,5 +225,4 @@ namespace tools::finite::opt {
 
         return results.front();
     }
-
 }

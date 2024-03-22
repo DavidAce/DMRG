@@ -27,7 +27,7 @@ using namespace tools::common::contraction;
 
 /* clang-format off */
 template<typename Scalar>
-double tools::common::contraction::expectation_value(const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+Scalar tools::common::contraction::expectation_value(const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                                      const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
                                                      const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                                      const Scalar * const envR_ptr, std::array<long,3> envR_dims){
@@ -52,11 +52,11 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
     auto envL = Eigen::TensorMap<const Eigen::Tensor<Scalar,3>>(envL_ptr,envL_dims);
     auto envR = Eigen::TensorMap<const Eigen::Tensor<Scalar,3>>(envR_ptr,envR_dims);
 
-    if(mps.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
-    if(mps.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
-    if(mps.dimension(0) != mpo.dimension(2)) throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
-    if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
-    if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
+    assert(mps.dimension(1)  == envL.dimension(0));
+    assert(mps.dimension(2)  == envR.dimension(0));
+    assert(mps.dimension(0)  == mpo.dimension(2));
+    assert(envL.dimension(2) == mpo.dimension(0));
+    assert(envR.dimension(2) == mpo.dimension(1));
 
     Eigen::Tensor<Scalar, 0> expval;
     auto &threads = tenx::threads::get();
@@ -67,16 +67,7 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
             .contract(mps.conjugate(), tenx::idx({3, 0}, {0, 1}))
             .contract(envR,            tenx::idx({0, 2, 1}, {0, 1, 2}));
 
-    double moment = 0;
-    if constexpr(std::is_same_v<Scalar,cplx>){
-        moment = std::real(expval(0));
-        if(abs(std::imag(expval(0))) > 1e-10)
-            fmt::print("Expectation value has an imaginary part: {:.16f} + i {:.16f}\n", std::real(expval(0)), std::imag(expval(0)));
-        //        throw except::runtime_error("Expectation value has an imaginary part: {:.16f} + i {:.16f}", std::real(expval(0)), std::imag(expval(0))));
-    }else
-        moment = expval(0);
-    if(std::isnan(moment) or std::isinf(moment)) throw except::runtime_error("First moment is invalid: {}", moment);
-
+    Scalar result = expval(0);
     #if defined(DMRG_SAVE_CONTRACTION)
     {
         t_expval.toc();
@@ -91,17 +82,17 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
     }
     #endif
 
-    return moment;
+    return result;
 }
 
-template double tools::common::contraction::expectation_value(const real * const mps_ptr,  std::array<long,3> mps_dims,
-                                                              const real * const mpo_ptr,  std::array<long,4> mpo_dims,
-                                                              const real * const envL_ptr, std::array<long,3> envL_dims,
-                                                              const real * const envR_ptr, std::array<long,3> envR_dims);
-template double tools::common::contraction::expectation_value(const cplx * const mps_ptr,  std::array<long,3> mps_dims,
-                                                              const cplx * const mpo_ptr,  std::array<long,4> mpo_dims,
-                                                              const cplx * const envL_ptr, std::array<long,3> envL_dims,
-                                                              const cplx * const envR_ptr, std::array<long,3> envR_dims);
+template real tools::common::contraction::expectation_value(const real * const mps_ptr,  std::array<long,3> mps_dims,
+                                                            const real * const mpo_ptr,  std::array<long,4> mpo_dims,
+                                                            const real * const envL_ptr, std::array<long,3> envL_dims,
+                                                            const real * const envR_ptr, std::array<long,3> envR_dims);
+template cplx tools::common::contraction::expectation_value(const cplx * const mps_ptr,  std::array<long,3> mps_dims,
+                                                            const cplx * const mpo_ptr,  std::array<long,4> mpo_dims,
+                                                            const cplx * const envL_ptr, std::array<long,3> envL_dims,
+                                                            const cplx * const envR_ptr, std::array<long,3> envR_dims);
 
 /* clang-format on */
 

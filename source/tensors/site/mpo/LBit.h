@@ -7,18 +7,13 @@
 class LBit : public MpoSite {
     private:
     h5tb_lbit h5tb;
-    //    [[nodiscard]] double get_field() const;
-    //    [[nodiscard]] double get_coupling() const;
-
+    Eigen::Tensor<cplx, 4> get_mpo(double energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+                                   std::optional<std::vector<size_t>> skip = std::nullopt) const final;
+    Eigen::Tensor<cplx_t, 4> get_mpo_t(real_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+                                 std::optional<std::vector<size_t>> skip = std::nullopt) const final;
     public:
-    LBit(ModelType model_type_, size_t position_);
+                                           LBit(ModelType model_type_, size_t position_);
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
-                                                          std::optional<std::vector<size_t>> skip = std::nullopt) const final;
-    [[nodiscard]] Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
-                                                            std::optional<std::vector<size_t>> skip = std::nullopt) const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view() const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view(double site_energy) const final;
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
     [[nodiscard]] std::any                 get_parameter(std::string_view name) const final;
@@ -29,8 +24,6 @@ class LBit : public MpoSite {
     void print_parameter_names() const final;
     void print_parameter_values() const final;
     void set_parameters(TableMap &parameters) final;
-    void build_mpo() final;
-    void build_mpo_t();
     void randomize_hamiltonian() final;
     void set_averages(std::vector<TableMap> all_parameters, bool infinite = false) final;
 

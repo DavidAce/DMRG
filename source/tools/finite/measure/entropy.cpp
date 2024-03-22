@@ -639,8 +639,9 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     if(state.measurements.number_entropies) return state.measurements.number_entropies.value();
     if(state.get_algorithm() != AlgorithmType::fLBIT) {
         // Only fLBIT has particle-number conservation
-        tools::log->warn("Called number_entropies(StateFinite) from algorithm [{}]: This has only been tested for the [fLBIT] algorithm",
+        tools::log->warn("Called number_entropies(StateFinite) from algorithm [{}]: This is currently only valid with the [fLBIT] algorithm",
                          enum2sv(state.get_algorithm()));
+        return std::vector<double>(state.get_length<size_t>(), 0.0);
     }
     if(state.popcount == -1ul or state.popcount > state.get_length()) {
         tools::log->error("Canceled number entropy calculation because state.popcount == {}", state.popcount);

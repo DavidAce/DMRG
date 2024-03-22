@@ -9,7 +9,6 @@ enum class OptSolver;
 enum class OptFunc;
 enum class OptAlgo;
 enum class OptType;
-enum class OptInit;
 enum class OptWhen;
 enum class OptExit;
 enum class OptRitz;
@@ -20,7 +19,6 @@ namespace tools::finite::opt {
         OptAlgo               optAlgo;
         OptSolver             optSolver;
         OptType               optType;
-        OptInit               optInit;
         OptWhen               optWhen;
         OptRitz               optRitz;
         OptExit               optExit;
@@ -30,7 +28,6 @@ namespace tools::finite::opt {
         double                trnc_lim         = -1.0;
         long                  max_problem_size = 0;
         long                  problem_size     = 0;
-        bool                  retry            = true;
         std::optional<double> alpha_expansion  = std::nullopt;
         std::array<long, 3>   problem_dims     = {};
         std::vector<size_t>   chosen_sites     = {};

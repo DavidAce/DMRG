@@ -159,12 +159,12 @@ Eigen::DSizes<long, 4> ModelInfinite::dimensions() const {
     return Eigen::DSizes<long, 4>{dim0, dim1, dim2, dim3};
 }
 
-bool ModelInfinite::is_shifted() const { return HA->is_energy_shifted() and HB->is_energy_shifted(); }
+bool ModelInfinite::is_shifted() const { return HA->has_energy_shifted_mpo() and HB->has_energy_shifted_mpo(); }
 
 double ModelInfinite::get_energy_shift_per_site() const {
-    if(not num::all_equal(HA->get_energy_shift(), get_mpo_siteB().get_energy_shift()))
-        throw except::runtime_error("Energy shift mismatch: HA {:.16f} != HB {:.16f}", get_mpo_siteA().get_energy_shift(), get_mpo_siteB().get_energy_shift());
-    return HA->get_energy_shift();
+    if(not num::all_equal(HA->get_energy_shift_mpo(), get_mpo_siteB().get_energy_shift_mpo()))
+        throw except::runtime_error("Energy shift mismatch: HA {:.16f} != HB {:.16f}", get_mpo_siteA().get_energy_shift_mpo(), get_mpo_siteB().get_energy_shift_mpo());
+    return HA->get_energy_shift_mpo();
 }
 
 void ModelInfinite::set_energy_shift_per_site(double energy_shift_per_site) {

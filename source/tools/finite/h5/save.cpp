@@ -225,6 +225,11 @@ namespace tools::finite::h5 {
     }
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::dataset::number_probabilities::policy)) return;
+        if(state.get_algorithm() != AlgorithmType::fLBIT) {
+            tools::log->warn("Called save::number_probabilities from algorithm [{}]: This is currently only valid with the [fLBIT] algorithm",
+                             enum2sv(state.get_algorithm()));
+            return;
+        }
         if(not state.measurements.number_probabilities)
             throw except::logic_error("Number probabilities have not been computed yet.\n"
                                       "Make sure to compute the number entropies before saving the number probabilities");
@@ -264,6 +269,11 @@ namespace tools::finite::h5 {
 
     void save::number_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::table::number_entropies::policy)) return;
+        if(state.get_algorithm() != AlgorithmType::fLBIT) {
+            tools::log->warn("Called save::number_entropies from algorithm [{}]: This is currently only valid with the [fLBIT] algorithm",
+                             enum2sv(state.get_algorithm()));
+            return;
+        }
         auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
     }

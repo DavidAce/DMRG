@@ -202,7 +202,7 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(std:
             else
                 T_mpo = T_l2r.contract(mpo, tenx::idx({1}, {0}));
 
-            if(idx == mpos.size() - 1) {
+            if(idx + 1 == mpos.size()) {
                 mpo = T_mpo;
             } else {
                 std::tie(mpo, T_l2r) = svd.split_mpo_l2r(T_mpo);

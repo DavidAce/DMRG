@@ -31,6 +31,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 results.emplace_back(opt_mps());
                 auto &mps           = results.back();
                 mps.is_basis_vector = true;
+                if constexpr(settings::debug) tools::log->trace("Extracting result: idx {} | eigval {:.16f}", idx, eigvals(idx));
                 mps.set_name(fmt::format("{:<8}eigenvector {}", solver.config.tag, idx));
                 mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_sites(initial_mps.get_sites());

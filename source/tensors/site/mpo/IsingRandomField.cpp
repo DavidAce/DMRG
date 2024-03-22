@@ -73,9 +73,7 @@ std::any IsingRandomField::get_parameter(std::string_view name) const {
     throw except::logic_error("Invalid parameter name for IsingRandomField model: {}", name);
 }
 
-void IsingRandomField::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
-
  * H = - Σ J sz_{i} sz_{i+1} +  g_{i} sx_{i}
  *
  *  |      I        0   0   |
@@ -89,24 +87,35 @@ void IsingRandomField::build_mpo()
  *        3
  *
  */
-{
+Eigen::Tensor<cplx, 4> IsingRandomField::get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+                                                 [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     using namespace qm::spin::half;
     tools::log->debug("mpo({}): building tf-rf ising mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
-    mpo_internal.resize(3, 3, h5tb.param.spin_dim, h5tb.param.spin_dim);
-    mpo_internal.setZero();
-    mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
-    mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_shift * id);
-    mpo_internal.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_coupling() * sz);
-    mpo_internal.slice(std::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+    double J1 = 1.0, J2 = 1.0;
+    if(nbody.has_value()) {
+        J1 = 0;
+        J2 = 0;
+        for(const auto &n : nbody.value()) {
+            if(n == 1) J1 = 1.0;
+            if(n == 2) J2 = 1.0;
+        }
+    }
+    Eigen::Tensor<cplx, 4> mpo_build;
+    mpo_build.resize(3, 3, h5tb.param.spin_dim, h5tb.param.spin_dim);
+    mpo_build.setZero();
+    mpo_build.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+    mpo_build.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
+    mpo_build.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - energy_shift_per_site * id);
+    mpo_build.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
+    mpo_build.slice(std::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
         throw except::runtime_error("mpo({}): found nan", get_position());
     }
-    unique_id = std::nullopt;
+    return mpo_build;
 }
 
 void IsingRandomField::randomize_hamiltonian() {
@@ -123,36 +132,6 @@ void IsingRandomField::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
     unique_id                        = std::nullopt;
     unique_id_sq                     = std::nullopt;
-}
-
-Eigen::Tensor<cplx, 4> IsingRandomField::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
-                                                        [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
-    // This function returns a view of the MPO including only n-body terms.
-    // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
-    if(not nbody) return MPO();
-    double J1 = 0, J2 = 0.0;
-    for(const auto &n : nbody.value()) {
-        if(n == 1) J1 = 1.0;
-        if(n == 2) J2 = 1.0;
-    }
-    using namespace qm::spin::half;
-    Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
-    MPO_nbody.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_shift * id);
-    MPO_nbody.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
-    return MPO_nbody;
-}
-Eigen::Tensor<cplx_t, 4> IsingRandomField::MPO_nbody_view_t([[maybe_unused]] std::optional<std::vector<size_t>> nbody,
-                                                            [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
-    throw except::runtime_error("IsingRandomField::MPO_nbody_view_t is not implemented");
-}
-Eigen::Tensor<cplx, 4> IsingRandomField::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(e_shift); }
-
-Eigen::Tensor<cplx, 4> IsingRandomField::MPO_energy_shifted_view(double site_energy) const {
-    using namespace qm::spin::half;
-    if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<cplx, 4> temp                                           = MPO();
-    temp.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - site_energy * id);
-    return temp;
 }
 
 std::unique_ptr<MpoSite> IsingRandomField::clone() const { return std::make_unique<IsingRandomField>(*this); }

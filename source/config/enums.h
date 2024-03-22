@@ -12,6 +12,10 @@ enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDO
 enum class MeanType { ARITHMETIC, GEOMETRIC };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
+enum class MultisiteGrow {
+    OFF, /*!< Use the maximum number of sites immediately when conditions allow */
+    ON   /*!< Slowly ramp up to the maximum number of sites as the number of stuck/saturated iterations increase */
+};
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
@@ -158,7 +162,6 @@ enum class OptMark {
     PASS,
     FAIL,
 };
-enum class OptInit { CURRENT_STATE, LAST_RESULT };
 enum class StateInitType { REAL, CPLX };
 enum class StateInit {
     RANDOM_PRODUCT_STATE,
@@ -351,6 +354,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         MeanType,
         MultisiteMove,
         MultisiteWhen,
+        MultisiteGrow,
         SVDLibrary,
         UpdateWhen,
         GateMove,
@@ -378,7 +382,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         OptWhen,
         OptExit,
         OptMark,
-        OptInit,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -407,6 +410,11 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case MultisiteWhen::SATURATED :                                 return "SATURATED";
         case MultisiteWhen::ALWAYS :                                    return "ALWAYS";
         default: return "MultisiteWhen::UNDEFINED";
+    }
+    if constexpr(std::is_same_v<T, MultisiteGrow>) switch(item){
+        case MultisiteGrow::OFF :                                       return "NEVER";
+        case MultisiteGrow::ON :                                        return "ON";
+        default: return "MultisiteGrow::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::SR)                                         return "SR";
@@ -653,10 +661,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptMark::PASS)                                      return "PASS";
         if(item == OptMark::FAIL)                                      return "FAIL";
     }
-    if constexpr(std::is_same_v<T,OptInit>){
-        if(item == OptInit::CURRENT_STATE)                             return "CURRENT_STATE";
-        if(item == OptInit::LAST_RESULT)                               return "LAST_RESULT";
-    }
     if constexpr(std::is_same_v<T,OptExit>){
         if(item == OptExit::SUCCESS)                                   return "SUCCESS";
         if(item == OptExit::FAIL_GRADIENT)                             return "FAIL_GRADIENT";
@@ -681,6 +685,7 @@ constexpr auto sv2enum(std::string_view item) {
         MeanType,
         MultisiteMove,
         MultisiteWhen,
+        MultisiteGrow,
         SVDLibrary,
         UpdateWhen,
         GateMove,
@@ -707,7 +712,6 @@ constexpr auto sv2enum(std::string_view item) {
         OptWhen,
         OptExit,
         OptMark,
-        OptInit,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -735,6 +739,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "STUCK")                                 return MultisiteWhen::STUCK;
         if(item == "SATURATED")                             return MultisiteWhen::SATURATED;
         if(item == "ALWAYS")                                return MultisiteWhen::ALWAYS;
+    }
+    if constexpr(std::is_same_v<T, MultisiteGrow>) {
+        if(item == "OFF")                                   return MultisiteGrow::OFF;
+        if(item == "ON")                                    return MultisiteGrow::ON;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "SR")                                    return OptRitz::SR;
@@ -987,10 +995,6 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == "PASS")                                  return OptMark::PASS;
         if(item == "FAIL")                                  return OptMark::FAIL;
-    }
-    if constexpr(std::is_same_v<T,OptInit>){
-        if(item == "CURRENT_STATE")                         return OptInit::CURRENT_STATE;
-        if(item == "LAST_RESULT")                           return OptInit::LAST_RESULT;
     }
     if constexpr(std::is_same_v<T,OptExit>){
         if(item == "SUCCESS")                               return OptExit::SUCCESS;

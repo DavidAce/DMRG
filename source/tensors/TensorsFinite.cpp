@@ -34,9 +34,9 @@ TensorsFinite::TensorsFinite() : state(std::make_unique<StateFinite>()), model(s
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-TensorsFinite::~TensorsFinite()                                = default; // default dtor
-TensorsFinite::TensorsFinite(TensorsFinite &&other)            = default; // default move ctor
-TensorsFinite &TensorsFinite::operator=(TensorsFinite &&other) = default; // default move assign
+TensorsFinite::~TensorsFinite()                                 = default; // default dtor
+TensorsFinite:: TensorsFinite(TensorsFinite &&other)            = default; // default move ctor
+TensorsFinite  &TensorsFinite::operator=(TensorsFinite &&other) = default; // default move assign
 
 TensorsFinite::TensorsFinite(const TensorsFinite &other)
     : state(std::make_unique<StateFinite>(*other.state)), model(std::make_unique<ModelFinite>(*other.model)),
@@ -124,7 +124,7 @@ Eigen::Tensor<Scalar, 2> contract_mpo_env(const Eigen::Tensor<Scalar, 4> &mpo, c
     std::array<long, 2>      dims    = {dim0_up * dim1_up * dim2_up, dim0_dn * dim1_dn * dim2_dn};
     auto                     t_con   = tid::tic_token("contract");
     Eigen::Tensor<Scalar, 2> ham(dims);
-    auto &threads = tenx::threads::get();
+    auto                    &threads = tenx::threads::get();
     ham.device(*threads->dev) =
         envL.contract(mpo, tenx::idx({2}, {0})).contract(envR, tenx::idx({2}, {2})).shuffle(tenx::array6{3, 1, 5, 2, 0, 4}).reshape(dims);
     return ham;
@@ -177,8 +177,8 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
 template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
 template const Eigen::Tensor<cplx, 2>                &TensorsFinite::get_effective_hamiltonian_squared() const;
 
-env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_ene_blk() const { return std::as_const(*edges).get_multisite_env_ene_blk(); }
-env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_var_blk() const { return std::as_const(*edges).get_multisite_env_var_blk(); }
+env_pair<const Eigen::Tensor<cplx, 3> &> TensorsFinite::get_multisite_env_ene_blk() const { return std::as_const(*edges).get_multisite_env_ene_blk(); }
+env_pair<const Eigen::Tensor<cplx, 3> &> TensorsFinite::get_multisite_env_var_blk() const { return std::as_const(*edges).get_multisite_env_var_blk(); }
 
 void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg) {
     auto sign = tools::finite::ops::project_to_nearest_axis(*state, axis, svd_cfg);
@@ -240,8 +240,8 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     deb.red     = tools::finite::measure::energy_shift(tensors);
     deb.var     = tools::finite::measure::energy_variance(tensors);
     deb.tag     = tag;
-    deb.env_ids = tensors.edges->get_active_ids();
     deb.mpo_ids = tensors.model->get_active_ids();
+    deb.env_ids = tensors.edges->get_active_ids();
     return deb;
 }
 
@@ -270,7 +270,10 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
         if(bef and aft) {
             if(std::abs(bef->red - aft->red) > std::numeric_limits<double>::epsilon()) {
                 if(bef->mpo_ids == aft->mpo_ids) throw except::runtime_error("MPO id's are unchanged after energy shift\n{}\n{}", bef->msg(), aft->msg());
-                if(bef->env_ids == aft->env_ids) throw except::runtime_error("ENV id's are unchanged after energy shift\n{}\n{}", bef->msg(), aft->msg());
+                // It only makes sense to check the interior envs, since the edges are constant.
+                // When the number of active sites is L, then only the edge envs are affected, but these are constant anyway!
+                if(bef->env_ids == aft->env_ids and edges->active_sites.size() != get_length<size_t>())
+                    throw except::runtime_error("ENV id's are unchanged after energy shift\n{}\n{}", bef->msg(), aft->msg());
             }
         }
     }
@@ -350,6 +353,7 @@ void TensorsFinite::clear_active_sites() {
 }
 
 void TensorsFinite::activate_sites(const std::vector<size_t> &sites) {
+    tools::log->trace("Activating sites: {}", sites);
     if(num::all_equal(sites, active_sites, state->active_sites, model->active_sites, edges->active_sites)) return;
     active_sites        = sites;
     state->active_sites = active_sites;

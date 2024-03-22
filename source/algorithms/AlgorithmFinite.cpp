@@ -127,11 +127,11 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
                 // On the other edge this is not necessary!
                 num_moves = std::max<long>(1, num_active - 1) + 1;   // to the edge without flipping, +1 to flip
                 if(reached_edgeL) num_moves = num_moves.value() + 1; // , +1 to get pos == 0
-            } else if(settings::strategy::multisite_mps_move == MultisiteMove::ONE)
+            } else if(settings::strategy::multisite_opt_move == MultisiteMove::ONE)
                 num_moves = 1ul;
-            else if(settings::strategy::multisite_mps_move == MultisiteMove::MID) {
+            else if(settings::strategy::multisite_opt_move == MultisiteMove::MID) {
                 num_moves = std::max<long>(1, num_active / 2);
-            } else if(settings::strategy::multisite_mps_move == MultisiteMove::MAX) {
+            } else if(settings::strategy::multisite_opt_move == MultisiteMove::MAX) {
                 num_moves = std::max<long>(1, num_active - 1); // Move so that the center point moves out of the active region
             } else
                 throw except::logic_error("Could not determine how many sites to move");
@@ -152,6 +152,9 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
             // It's important to stay at the inward edge, so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
         }
+        // if(tensors.position_is_outward_edge())
+            // throw except::logic_error("Invalid position after moving {} steps: the position is outward edge: pos {} | dir {}", num_moves, tensors.get_position<long>(),
+                                   // tensors.state->get_direction());
         tensors.clear_active_sites();
     } catch(std::exception &e) {
         tools::finite::print::dimensions(tensors);
@@ -181,15 +184,15 @@ void AlgorithmFinite::try_moving_sites() {
     auto eigs_iter_max_backup                  = settings::solver::eigs_iter_max;
     auto eigs_tol_min_backup                   = settings::solver::eigs_tol_min;
     auto eigs_ncv_backup                       = settings::solver::eigs_ncv;
-    auto multisite_mps_when_backup             = settings::strategy::multisite_mps_when;
-    auto multisite_mps_site_max_backup         = settings::strategy::multisite_mps_site_max;
-    auto multisite_mps_site_def_backup         = settings::strategy::multisite_mps_site_def;
+    auto multisite_opt_when_backup             = settings::strategy::multisite_opt_when;
+    auto multisite_opt_site_max_backup         = settings::strategy::multisite_opt_site_max;
+    auto multisite_opt_site_def_backup         = settings::strategy::multisite_opt_site_def;
     settings::solver::eigs_iter_max            = 100;
     settings::solver::eigs_tol_min             = std::min(1e-14, settings::solver::eigs_tol_min);
     settings::solver::eigs_ncv                 = std::max(35ul, settings::solver::eigs_ncv);
-    settings::strategy::multisite_mps_when     = MultisiteWhen::ALWAYS;
-    settings::strategy::multisite_mps_site_max = 2;
-    settings::strategy::multisite_mps_site_def = 2;
+    settings::strategy::multisite_opt_when     = MultisiteWhen::ALWAYS;
+    settings::strategy::multisite_opt_site_max = 2;
+    settings::strategy::multisite_opt_site_def = 2;
 
     auto len      = tensors.get_length<long>();
     auto pos      = tensors.get_position<long>();
@@ -243,9 +246,9 @@ void AlgorithmFinite::try_moving_sites() {
     settings::solver::eigs_iter_max            = eigs_iter_max_backup;
     settings::solver::eigs_tol_min             = eigs_tol_min_backup;
     settings::solver::eigs_ncv                 = eigs_ncv_backup;
-    settings::strategy::multisite_mps_when     = multisite_mps_when_backup;
-    settings::strategy::multisite_mps_site_max = multisite_mps_site_max_backup;
-    settings::strategy::multisite_mps_site_def = multisite_mps_site_def_backup;
+    settings::strategy::multisite_opt_when     = multisite_opt_when_backup;
+    settings::strategy::multisite_opt_site_max = multisite_opt_site_max_backup;
+    settings::strategy::multisite_opt_site_def = multisite_opt_site_def_backup;
 }
 
 void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
@@ -883,9 +886,9 @@ void AlgorithmFinite::print_status() {
     report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
-    if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
+    if(settings::strategy::multisite_opt_site_def == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
     report += fmt::format("χ:{:<3}|{:<3}|", settings::get_bond_max(status.algo_type), status.bond_lim);
-    auto bonds_maxims = std::vector<long>(std::max<size_t>(1, settings::strategy::multisite_mps_site_def - 1), settings::get_bond_max(status.algo_type));
+    auto bonds_maxims = std::vector<long>(std::max<size_t>(1, settings::strategy::multisite_opt_site_def - 1), settings::get_bond_max(status.algo_type));
     auto bonds_merged = tools::finite::measure::bond_dimensions_active(*tensors.state);
     auto bonds_padlen = fmt::format("{}", bonds_maxims).size();
     auto bonds_string = fmt::format("{}", bonds_merged);

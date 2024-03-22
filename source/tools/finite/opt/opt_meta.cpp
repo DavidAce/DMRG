@@ -4,7 +4,7 @@
 
 namespace tools::finite::opt {
     OptMeta::OptMeta()
-        : optFunc(OptFunc::VARIANCE), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optInit(OptInit::CURRENT_STATE), optWhen(OptWhen::ALWAYS),
+        : optFunc(OptFunc::VARIANCE), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optWhen(OptWhen::ALWAYS),
           optRitz(OptRitz::SR), optExit(OptExit::NONE) {}
 
     OptMeta::OptMeta(OptRitz ritz, OptFunc mode) : OptMeta() {

@@ -60,7 +60,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     } else {
         double eigval_target;
         double energy_target = tools::finite::measure::energy(tensors);
-        if(model.is_shifted()) {
+        if(model.has_energy_shifted_mpo()) {
             eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors);
             tools::log->trace("Energy shift  = {:.16f} | per site = {:.16f}", model.get_energy_shift(), model.get_energy_shift_per_site());
             tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);

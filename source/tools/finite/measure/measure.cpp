@@ -14,6 +14,8 @@
 #include "qm/spin.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
+#include "tensors/site/env/EnvEne.h"
+#include "tensors/site/env/EnvVar.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
@@ -24,6 +26,11 @@
 #include "tools/finite/mpo.h"
 #include "tools/finite/ops.h"
 #include <fmt/ranges.h>
+#include <tools/common/split.h>
+#include <tools/finite/mps.h>
+namespace settings {
+    constexpr bool debug_expval = false;
+}
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const StateFinite &state) { return state.get_length(); }
@@ -43,7 +50,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         Eigen::Tensor<cplx, 2> chain;
         Eigen::Tensor<cplx, 2> temp;
         bool                   first   = true;
-        auto &threads = tenx::threads::get();
+        auto                  &threads = tenx::threads::get();
 
         for(const auto &mps : state.mps_sites) {
             const auto &M = mps->get_M();
@@ -244,14 +251,14 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
         if(q == inf)
             RE(0) = -2.0 * std::log(L(0));
         else
-            RE = 1.0 / (1.0 - q) * L.pow(2.0 * q).sum().log();
+            RE = 1.0 / cplx(1.0 - q, 0.0) * L.pow(cplx(2.0 * q, 0.0)).sum().log();
         renyi_q.emplace_back(std::abs(RE(0)));
         if(mps->isCenter()) {
             const auto &LC = mps->get_LC();
             if(q == inf)
                 RE(0) = -2.0 * std::log(LC(0));
             else
-                RE = 1.0 / (1.0 - q) * LC.pow(2.0 * q).sum().log();
+                RE = 1.0 / cplx(1.0 - q, 0.0) * LC.pow(cplx(2.0 * q, 0.0)).sum().log();
             renyi_q.emplace_back(std::abs(RE(0)));
         }
     }
@@ -284,7 +291,7 @@ double tools::finite::measure::renyi_entropy_midchain(const StateFinite &state, 
     if(q == inf)
         renyi_q(0) = -2.0 * std::log(LC(0));
     else
-        renyi_q = 1.0 / (1.0 - q) * LC.pow(2.0 * q).sum().log();
+        renyi_q = 1.0 / cplx(1.0 - q, 0.0) * LC.pow(cplx(2.0 * q, 0.0)).sum().log();
     return std::abs(renyi_q(0));
 }
 
@@ -403,7 +410,7 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         if constexpr(std::is_same_v<Scalar, cplx>) {
             statev.slice(off1, ext1).device(*threads->dev) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
         } else {
-            Eigen::Tensor<real, 3> M                      = mps->get_M().real();
+            Eigen::Tensor<real, 3> M                       = mps->get_M().real();
             statev.slice(off1, ext1).device(*threads->dev) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
         }
     }
@@ -416,32 +423,103 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
 
 Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites, state.get_name()); }
 
-template<typename state_or_mps_type>
-double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
+double tools::finite::measure::energy_minus_energy_shift(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                                                          MeasurementsTensorsFinite *measurements) {
-    if(measurements != nullptr and measurements->energy_minus_energy_shift) return measurements->energy_minus_energy_shift.value();
-    if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
-        if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-            throw except::runtime_error("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
-                                        model.active_sites, edges.active_sites);
-        return tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements);
-    } else {
-        auto        t_ene = tid::tic_scope("ene", tid::level::highest);
-        const auto &mpo   = model.get_multisite_mpo();
-        const auto &env   = edges.get_multisite_env_ene_blk();
-        if constexpr(settings::debug)
-            tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
-                              model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
-        double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
-        if(measurements != nullptr) measurements->energy_minus_energy_shift = e_minus_ered;
-        return e_minus_ered;
+    if(measurements != nullptr and measurements->energy_minus_energy_shift) {
+        tools::log->info("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
+        if constexpr(!settings::debug_expval) {
+            // Return the cache hit when not debugging. Otherwise check that it is correct!
+            return measurements->energy_minus_energy_shift.value();
+        }
     }
+    assert(num::all_equal(state.active_sites, model.active_sites, edges.active_sites));
+    auto t_ene = tid::tic_scope("ene", tid::level::highest);
+    auto mps   = state.get_mps_active();
+    auto mpo   = model.get_mpo_active();
+    auto env   = edges.get_ene_active();
+    if constexpr(settings::debug) tools::log->trace("Measuring energy: sites {}", state.active_sites);
+    auto e_minus_ered = tools::finite::measure::expectation_value(mps, mps, mpo, env);
+    if constexpr(settings::debug_expval) {
+        const auto &multisite_mps = state.get_multisite_mps();
+        const auto &multisite_mpo = model.get_multisite_mpo();
+        const auto &multisite_env = edges.get_multisite_env_ene_blk();
+        auto        edbg          = tools::common::contraction::expectation_value(multisite_mps, multisite_mpo, multisite_env.L, multisite_env.R);
+        tools::log->trace("e_minus_ered: {:.16f}{:+.16f}i", e_minus_ered.real(), e_minus_ered.imag());
+        tools::log->trace("e_minus_edbg: {:.16f}{:+.16f}i", edbg.real(), edbg.imag());
+        if(measurements != nullptr and measurements->energy_minus_energy_shift) {
+            tools::log->trace("e_minus_ehit: {:.16f}", measurements->energy_minus_energy_shift.value());
+            assert(std::abs(e_minus_ered - measurements->energy_minus_energy_shift.value()) < 1e-14);
+        }
+        assert(std::abs(e_minus_ered - edbg) < 1e-14);
+    }
+
+    assert(std::abs(std::imag(e_minus_ered)) < 1e-10);
+    if(measurements != nullptr) measurements->energy_minus_energy_shift = std::real(e_minus_ered);
+    return std::real(e_minus_ered);
 }
 
-template double tools::finite::measure::energy_minus_energy_shift(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                  MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                  MeasurementsTensorsFinite *measurements);
+double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+                                                         MeasurementsTensorsFinite *measurements) {
+    if(measurements != nullptr and measurements->energy_minus_energy_shift) {
+        tools::log->info("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
+        if constexpr(!settings::debug_expval) {
+            // Return the cache hit when not debugging. Otherwise check that it is correct!
+            return measurements->energy_minus_energy_shift.value();
+        }
+    }
+    auto t_ene = tid::tic_scope("ene", tid::level::highest);
+    assert(not model.active_sites.empty());
+    assert(not edges.active_sites.empty());
+    assert(num::all_equal(model.active_sites, edges.active_sites));
+    // Check if we can contract directly or if we need to use the split method
+    // Normally it's only worth splitting the multisite mps when it has more than 3 sites
+    auto e_minus_ered = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    if(model.active_sites.size() <= 3) {
+        // Contract directly
+        const auto &mpo = model.get_multisite_mpo();
+        const auto &env = edges.get_multisite_env_ene_blk();
+        if constexpr(settings::debug)
+            tools::log->trace("Measuring energy: multisite_mps dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", multisite_mps.dimensions(),
+                              model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
+        e_minus_ered = tools::common::contraction::expectation_value(multisite_mps, mpo, env.L, env.R);
+        if constexpr(settings::debug_expval) {
+            // Split the multisite mps first
+            const auto mpos = model.get_mpo_active();
+            const auto envs = edges.get_ene_active();
+            const auto edbg = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
+            tools::log->trace("e_minus_ered: {:.16f}{:+.16f}i", e_minus_ered.real(), e_minus_ered.imag());
+            tools::log->trace("e_minus_edbg: {:.16f}{:+.16f}i", edbg.real(), edbg.imag());
+            if(measurements != nullptr and measurements->energy_minus_energy_shift) {
+                tools::log->trace("e_minus_ehit: {:.16f}", measurements->energy_minus_energy_shift.value());
+                assert(std::abs(e_minus_ered - measurements->energy_minus_energy_shift.value()) < 1e-14);
+            }
+            assert(std::abs(e_minus_ered - edbg) < 1e-14);
+        }
+    } else {
+        model.clear_cache();
+        // Split the multisite mps first
+        const auto mpos = model.get_mpo_active();
+        const auto envs = edges.get_ene_active();
+        tools::log->trace("Measuring energy: multisite_mps dims {} | sites {} | eshift {:.16f} | norm {:.16f}", multisite_mps.dimensions(), model.active_sites,
+                          model.get_energy_shift(), tenx::norm(multisite_mps));
+        e_minus_ered = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
+        if constexpr(settings::debug_expval) {
+            const auto &mpo  = model.get_multisite_mpo();
+            const auto &env  = edges.get_multisite_env_ene_blk();
+            const auto  edbg = tools::common::contraction::expectation_value(multisite_mps, mpo, env.L, env.R);
+            tools::log->trace("e_minus_ered: {:.16f}{:+.16f}i", e_minus_ered.real(), e_minus_ered.imag());
+            tools::log->trace("e_minus_edbg: {:.16f}{:+.16f}i", edbg.real(), edbg.imag());
+            if(measurements != nullptr and measurements->energy_minus_energy_shift) {
+                tools::log->trace("e_minus_ehit: {:.16f}", measurements->energy_minus_energy_shift.value());
+                assert(std::abs(e_minus_ered - measurements->energy_minus_energy_shift.value()) < 1e-14);
+            }
+            assert(std::abs(e_minus_ered - edbg) < 1e-10);
+        }
+    }
+    assert(std::abs(std::imag(e_minus_ered)) < 1e-10);
+    if(measurements != nullptr) measurements->energy_minus_energy_shift = std::real(e_minus_ered);
+    return std::real(e_minus_ered);
+}
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
@@ -452,12 +530,10 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const Mode
     //      "Actual energy" = (E - E_shift) + E_shift = (~0) + E_shift = E
     // Else
     //      "Actual energy" = (E - E_shift) + E_shift = E  + 0 = E
-    double energy;
-    if constexpr(std::is_same_v<state_or_mps_type, StateFinite>)
-        energy = tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements) + model.get_energy_shift();
-    else
-        energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements) + model.get_energy_shift();
-
+    auto e_minus_eshift = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
+    auto eshift         = model.get_energy_shift();
+    auto energy         = e_minus_eshift + eshift;
+    tools::log->info("(E-Eshift) + Eshift = ({:.16f}) + {:.16f} = {:.16f}", e_minus_eshift, eshift, energy);
     if(measurements != nullptr) measurements->energy = energy;
     return energy;
 }
@@ -483,8 +559,48 @@ template double tools::finite::measure::energy_per_site(const StateFinite &, con
 template double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
                                                         MeasurementsTensorsFinite *measurements);
 
-template<typename state_or_mps_type>
-double tools::finite::measure::energy_variance(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
+double tools::finite::measure::energy_variance(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
+                                               MeasurementsTensorsFinite *measurements) {
+    // Here we show that the variance calculated with energy-shifted mpo²'s is equivalent to the usual way.
+    // If mpo's are shifted in the mpo²:
+    //      Var H = <(H-E_shf)²> - <H-E_shf>²     = <H²>  - 2<H>E_shf + E_shf² - (<H> - E_shf)²
+    //                                            = H²    - 2*E*E_shf + E_shf² - E² + 2*E*E_shf - E_shf²
+    //                                            = H²    - E²
+    //      Note that in the last line, H²-E² is a subtraction of two large numbers --> catastrophic cancellation --> loss of precision.
+    //      On the other hand Var H = <(H-E_shf)²> - energy_minus_energy_shift² = <(H-E_red)²> - ~dE², where both terms are always  << 1.
+    //      The first term is computed from a double-layer of shifted mpo's.
+    //      In the second term dE is usually very small, in fact identically zero immediately after an energy-reduction operation,
+    //      but may grow if the optimization steps make significant progress refining E. Thus wethe first term is a good approximation to
+    //      the variance by itself.
+    //
+    // Else, if E_shf = 0 (i.e. not shifted) we get the usual formula:
+    //      Var H = <(H - 0)²> - <H - 0>² = H² - E²
+    if(measurements != nullptr and measurements->energy_variance) return measurements->energy_variance.value();
+    assert(not state.active_sites.empty());
+    assert(not model.active_sites.empty());
+    assert(not edges.active_sites.empty());
+    assert(num::all_equal(state.active_sites, model.active_sites, edges.active_sites));
+    if constexpr(settings::debug) tools::log->trace("Measuring energy variance: sites {}", state.active_sites);
+    double energy = 0;
+    if(model.has_energy_shifted_mpo_squared())
+        energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
+    else
+        energy = tools::finite::measure::energy(state, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
+
+    auto        t_var = tid::tic_scope("var", tid::level::highest);
+    double      E2    = energy * energy;
+    const auto &mps   = state.get_mps_active();
+    const auto &mpo   = model.get_mpo_active();
+    const auto &env   = edges.get_var_active();
+    auto        H2    = tools::finite::measure::expectation_value(mps, mps, mpo, env);
+    assert(std::abs(std::imag(H2)) < 1e-10);
+    double var = std::abs(H2 - E2);
+    tools::log->trace("Variance |H2-E2| = |{:.3e} - {:.3e}| = {:.3e}", std::real(H2), E2, var);
+    if(measurements != nullptr) measurements->energy_variance = var;
+    return var;
+}
+
+double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
                                                MeasurementsTensorsFinite *measurements) {
     // Here we show that the variance calculated with energy-shifted mpo's is equivalent to the usual way.
     // If mpo's are shifted:
@@ -501,46 +617,56 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
     // Else, if E_shf = 0 (i.e. not shifted) we get the usual formula:
     //      Var H = <(H - 0)²> - <H - 0>² = H² - E²
     if(measurements != nullptr and measurements->energy_variance) return measurements->energy_variance.value();
+    assert(not model.active_sites.empty());
+    assert(not edges.active_sites.empty());
+    if(not num::all_equal(model.active_sites, edges.active_sites))
+        throw std::runtime_error(
+            fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
+    double energy = 0;
+    if(model.has_energy_shifted_mpo())
+        energy = tools::finite::measure::energy_minus_energy_shift(multisite_mps, model, edges, measurements);
+    else
+        energy = tools::finite::measure::energy(multisite_mps, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
 
-    if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
-        if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-            throw except::runtime_error("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
-                                        model.active_sites, edges.active_sites);
-        if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
-        return tools::finite::measure::energy_variance(state.get_multisite_mps(), model, edges, measurements);
-    } else {
-        double energy = 0;
-        if(model.is_shifted())
-            energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
-        else
-            energy = tools::finite::measure::energy(state, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
+    auto   t_var = tid::tic_scope("var", tid::level::highest);
+    double E2    = energy * energy;
 
-        auto   t_var = tid::tic_scope("var", tid::level::highest);
-        double E2    = energy * energy;
-
-        if(not num::all_equal(model.active_sites, edges.active_sites))
-            throw std::runtime_error(
-                fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
+    // Check if we can contract directly or if we need to use the split method
+    // Normally it's only worth splitting the multisite mps when it has more than 3 sites
+    cplx H2 = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    if(model.active_sites.size() <= 3) {
+        // Direct contraction
         const auto &mpo2 = model.get_multisite_mpo_squared();
         const auto &env2 = edges.get_multisite_env_var_blk();
         if constexpr(settings::debug)
-            tools::log->trace("Measuring energy variance: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
+            tools::log->trace("Measuring energy variance: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", multisite_mps.dimensions(),
                               model.active_sites, mpo2.dimensions(), edges.active_sites, env2.L.dimensions(), env2.R.dimensions());
 
-        if(state.dimension(0) != mpo2.dimension(2))
-            throw std::runtime_error(
-                fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo2.dimension(2)));
-        double H2  = tools::common::contraction::expectation_value(state, mpo2, env2.L, env2.R);
-        double var = std::abs(H2 - E2);
-        if(measurements != nullptr) measurements->energy_variance = var;
-        return var;
+        if(multisite_mps.dimension(0) != mpo2.dimension(2))
+            throw std::runtime_error(fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}",
+                                                 multisite_mps.dimension(0), mpo2.dimension(2)));
+        H2 = tools::common::contraction::expectation_value(multisite_mps, mpo2, env2.L, env2.R);
+    } else {
+        // Split the multisite mps first
+        const auto mpos = model.get_mpo_active();
+        const auto envs = edges.get_var_active();
+        tools::log->trace("Measuring energy variance: state dims {} | sites {}", multisite_mps.dimensions(), model.active_sites);
+        H2 = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
+        if constexpr(settings::debug_expval) {
+            const auto &mpo   = model.get_multisite_mpo_squared();
+            const auto &env   = edges.get_multisite_env_var_blk();
+            const auto  H2dbg = tools::common::contraction::expectation_value(multisite_mps, mpo, env.L, env.R);
+            tools::log->trace("H2   : {:.16f}{:+.16f}i", H2.real(), H2.imag());
+            tools::log->trace("H2dbg: {:.16f}{:+.16f}i", H2dbg.real(), H2dbg.imag());
+            assert(std::abs(H2 - H2dbg) < 1e-10);
+        }
     }
-}
 
-template double tools::finite::measure::energy_variance(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        MeasurementsTensorsFinite *measurements);
+    assert(std::abs(std::imag(H2)) < 1e-10);
+    double var = std::abs(H2 - E2);
+    if(measurements != nullptr) measurements->energy_variance = var;
+    return var;
+}
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_variance_per_site(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
@@ -700,14 +826,14 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
             // Reverse to apply operators right to left, if they are on the same position
             // i.e. ABC|psi> should apply C first and A last (if A and C are on the same site).
             if(op.used or op.pos != pos) continue;
-            auto temp                 = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
+            auto temp                  = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
             temp.device(*threads->dev) = op.op.contract(M, tenx::idx({1}, {0}));
-            M                         = std::move(temp);
-            op.used                   = true;
+            M                          = std::move(temp);
+            op.used                    = true;
         }
-        auto temp                 = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
+        auto temp                  = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
         temp.device(*threads->dev) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
-        chain                     = std::move(temp);
+        chain                      = std::move(temp);
     }
 
     Eigen::Tensor<cplx, 0> expval = chain.trace();
@@ -762,7 +888,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
 
     // Generate an identity mpo with the same dimensions as the ones in obs
     Eigen::Tensor<cplx, 1> ones(mpodims[0] * mpodims[2]);
-    ones.setConstant(1.0);
+    ones.setConstant(cplx(1.0, 0.0));
     Eigen::Tensor<cplx, 4> mpoI = tenx::asDiagonal(ones).reshape(mpodims);
 
     // Start applying the mpo or identity on each site starting from Ledge3
@@ -806,7 +932,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
     Eigen::Tensor<cplx, 4> result, tmp;
-    auto &threads = tenx::threads::get();
+    auto                  &threads = tenx::threads::get();
     for(size_t pos = 0; pos < L; ++pos) {
         Eigen::Tensor<cplx, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
         const auto            &mps2 = state2.get_mps_site(pos).get_M();
@@ -845,11 +971,11 @@ cplx_t tools::finite::measure::expectation_value(const StateFinite &state1, cons
     if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
     if(mpos_t.back().dimension(1) != 1) throw except::logic_error("mpos_t right bond dimension != 1: got {}", mpos_t.back().dimension(1));
     Eigen::Tensor<cplx_t, 4> result, tmp;
-    auto &threads = tenx::threads::get();
+    auto                    &threads = tenx::threads::get();
     for(size_t pos = 0; pos < L; ++pos) {
-        const Eigen::Tensor<cplx_t, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate().cast<cplx_t>();
-        const Eigen::Tensor<cplx_t, 3> mps2 = state2.get_mps_site(pos).get_M().cast<cplx_t>();
-        const auto            &mpo_t  = mpos_t[pos];
+        const Eigen::Tensor<cplx_t, 3> mps1  = state1.get_mps_site(pos).get_M().conjugate().cast<cplx_t>();
+        const Eigen::Tensor<cplx_t, 3> mps2  = state2.get_mps_site(pos).get_M().cast<cplx_t>();
+        const auto                    &mpo_t = mpos_t[pos];
         if(pos == 0) {
             auto dim4 = tenx::array4{mpo_t.dimension(0) * mps1.dimension(1) * mps2.dimension(1), mps1.dimension(2), mpo_t.dimension(1), mps2.dimension(2)};
             auto shf6 = tenx::array6{0, 2, 4, 1, 3, 5};
@@ -868,7 +994,6 @@ cplx_t tools::finite::measure::expectation_value(const StateFinite &state1, cons
     if(result.size() != 1) tools::log->warn("expectation_value: result does not have size 1!");
     return result.coeff(0);
 }
-
 
 cplx tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
                                                const Eigen::Tensor<cplx, 1> &ledge, const Eigen::Tensor<cplx, 1> &redge) {
@@ -894,6 +1019,199 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFin
     Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
     return expectation_values(state, tensor_op);
 }
+template<typename EnvType>
+cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
+                                               const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
+                                               const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
+    /*!
+     * Calculates <mpsBra | mpos | mpsKet>
+     */
+    auto t_expval = tid::tic_scope("expval", tid::level::highest);
+
+    assert(num::all_equal(mpsBra.size(), mpsKet.size(), mpos.size()));
+    const auto            &envL = envs.L.get_block();
+    const auto            &envR = envs.R.get_block();
+    Eigen::Tensor<cplx, 3> resL = envL.shuffle(tenx::array3{0, 2, 1});
+    Eigen::Tensor<cplx, 3> tmp;
+    auto                   mporef  = std::optional<std::reference_wrapper<const Eigen::Tensor<cplx, 4>>>(std::nullopt);
+    auto                  &threads = tenx::threads::get();
+    for(size_t pos = 0; pos < mpos.size(); ++pos) {
+        if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvEne>)
+            mporef = mpos[pos].get().MPO();
+        else if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvVar>)
+            mporef = mpos[pos].get().MPO2();
+        else
+            static_assert(h5pp::type::sfinae::invalid_type_v<EnvType>);
+        const auto &mpo = mporef->get();
+        const auto &bra = mpsBra[pos].get().get_M();
+        const auto &ket = mpsKet[pos].get().get_M();
+        assert(resL.dimension(0) == bra.dimension(1));
+        assert(resL.dimension(1) == mpo.dimension(0));
+        assert(resL.dimension(2) == ket.dimension(1));
+        assert(mpo.dimension(2) == ket.dimension(0));
+        assert(mpo.dimension(3) == bra.dimension(0));
+
+        auto dim3 = tenx::array3{ket.dimension(2), mpo.dimension(1), bra.dimension(2)};
+        tmp.resize(dim3);
+        tmp.device(*threads->dev) =
+            resL.contract(ket, tenx::idx({0}, {1})).contract(mpo, tenx::idx({0, 2}, {0, 2})).contract(bra.conjugate(), tenx::idx({0, 3}, {1, 0}));
+        resL = std::move(tmp);
+    }
+
+    Eigen::Tensor<cplx, 0> res = resL.contract(envR, tenx::idx({0, 1, 2}, {0, 2, 1}));
+    return res.coeff(0);
+}
+
+template cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
+                                                        const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs);
+template cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
+                                                        const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs);
+
+template<typename EnvType>
+cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                               const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs,
+                                               std::optional<svd::config> svd_cfg) {
+    /*!
+     * Calculates <mpsBra | mpos | mpsKet>, where the mps are already multisite.
+     * E.g. for 3 sites we have
+     *
+     *  |----0             chiL---[ket]---chiR            0----|
+     *  |                          d^3                         |
+     *  |               2           2           2              |
+     *  |----2      0---|---1   0---|---1   0---|---1     2----|
+     *  |               3           3           3              |
+     *  |                          d^3                         |
+     *  |----1             chiL---[bra]---chiR            1----|
+     *
+     * To apply the mpo's one by one efficiently, we need to split the mps using SVD first
+     * Here we make the assumption that bra and ket are not necessarily equal
+     */
+    std::vector<long>   spin_dims_bra, spin_dims_ket;
+    std::vector<size_t> positions;
+    spin_dims_bra.reserve(mpos.size());
+    spin_dims_ket.reserve(mpos.size());
+    positions.reserve(mpos.size());
+    for(const auto &mpo : mpos) {
+        spin_dims_bra.emplace_back(mpo.get().get_spin_dimension());
+        spin_dims_ket.emplace_back(mpo.get().get_spin_dimension());
+        positions.emplace_back(mpo.get().get_position());
+    }
+
+    auto mpsBra_split = tools::common::split::split_mps(mpsBra, spin_dims_bra, positions, positions.back(), svd_cfg);
+    auto mpsKet_split = tools::common::split::split_mps(mpsKet, spin_dims_ket, positions, positions.back(), svd_cfg);
+
+    // Put them into a vector of reference wrappers for compatibility with the other expectation_value function
+    auto mpsBra_refs = std::vector<std::reference_wrapper<const MpsSite>>(mpsBra_split.begin(), mpsBra_split.end());
+    auto mpsKet_refs = std::vector<std::reference_wrapper<const MpsSite>>(mpsKet_split.begin(), mpsKet_split.end());
+
+    return expectation_value(mpsBra_refs, mpsKet_refs, mpos, envs);
+}
+
+template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs,
+                                                        std::optional<svd::config> svd_cfg);
+template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs,
+                                                        std::optional<svd::config> svd_cfg);
+
+template<typename EnvType>
+cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
+                                               const env_pair<EnvType> &envs, std::optional<svd::config> svd_cfg) {
+    /*!
+     * Calculates <mpsBra | mpos | mpsKet>, where the mps are already multisite.
+     * E.g. for 3 sites we have
+     *
+     *  |----0             chiL---[ket]---chiR            0----|
+     *  |                          d^3                         |
+     *  |               2           2           2              |
+     *  |----2      0---|---1   0---|---1   0---|---1     2----|
+     *  |               3           3           3              |
+     *  |                          d^3                         |
+     *  |----1             chiL---[bra]---chiR            1----|
+     *
+     * To apply the mpo's one by one efficiently, we need to split the mps using SVD first
+     * Here we make the assumption that bra and ket are not necessarily equal
+     */
+    std::vector<long>   spin_dims_bra, spin_dims_ket;
+    std::vector<size_t> positions;
+    spin_dims_bra.reserve(mpos.size());
+    spin_dims_ket.reserve(mpos.size());
+    positions.reserve(mpos.size());
+    for(const auto &mpo : mpos) {
+        spin_dims_bra.emplace_back(mpo.get().get_spin_dimension());
+        spin_dims_ket.emplace_back(mpo.get().get_spin_dimension());
+        positions.emplace_back(mpo.get().get_position());
+    }
+    if(positions.size() < 2) {
+        tools::log->warn("expectation_value: skipped splitting a single-site multisite_mps");
+        // No need to split. Also, splitting would require stashing artifacts from SVD for neighboring sites,
+        // which we can't really do here.
+        auto oneL = Eigen::Tensor<cplx, 1>(multisite_mps.dimension(1));
+        auto oneR = Eigen::Tensor<cplx, 1>(multisite_mps.dimension(2));
+        auto mps  = MpsSite(multisite_mps, oneL, positions.front(), 0.0, "AC");
+        mps.set_LC(oneR);
+        // Put them into a vector of reference wrappers for compatibility with the other expectation_value function
+        auto mps_refs = std::vector<std::reference_wrapper<const MpsSite>>{mps};
+        return expectation_value(mps_refs, mps_refs, mpos, envs);
+    } else {
+        // Set the new center position in the interior of the set of positions, so we don't get stashes that need to be thrown away.
+        auto mps_split = tools::common::split::split_mps(multisite_mps, spin_dims_bra, positions, positions.front(), svd_cfg);
+        // Put them into a vector of reference wrappers for compatibility with the other expectation_value function
+        auto mps_refs = std::vector<std::reference_wrapper<const MpsSite>>(mps_split.begin(), mps_split.end());
+        return expectation_value(mps_refs, mps_refs, mpos, envs);
+    }
+}
+
+template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3>                             &multisite_mps,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs,
+                                                        std::optional<svd::config> svd_cfg);
+template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3>                             &multisite_mps,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs,
+                                                        std::optional<svd::config> svd_cfg);
+
+// cplx tools::finite::measure::expectation_value(const std::vector<MpsSite> &mpsBra, const std::vector<MpsSite> &mpsKet, const std::vector<MpoSite> &mpos,
+//                                                const env_pair<EnvVar> &envs) {
+//     /*!
+//      * Calculates <mpsBra | mpos | mpsKet>
+//      */
+//     auto t_expval = tid::tic_scope("expval", tid::level::highest);
+//
+//     assert(num::all_equal(mpsBra.size(), mpsKet.size(), mpos.size()));
+//     assert(mpsBra.front().get_chiL() == envs.L.get_dims()[0]);
+//     assert(mpsBra.back().get_chiR() == envs.R.get_dims()[0]);
+//     assert(mpsKet.front().get_chiL() == envs.L.get_dims()[1]);
+//     assert(mpsKet.back().get_chiR() == envs.R.get_dims()[1]);
+//     assert(mpos.front().MPO2().dimension(0) == envs.L.get_dims()[2]);
+//     //    if(state1.get_mps_site(0).get_chiL() != 1) throw except::logic_error("state1 left bond dimension != 1: got {}", state1.get_mps_site(0).get_chiL());
+//     //    if(state2.get_mps_site(0).get_chiL() != 1) throw except::logic_error("state2 left bond dimension != 1: got {}", state2.get_mps_site(0).get_chiL());
+//     //    if(mpos.front().dimension(0) != 1) throw except::logic_error("mpos left bond dimension != 1: got {}", mpos.front().dimension(0));
+//     //    if(state1.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state1 right bond dimension != 1: got {}", state1.get_mps_site(L -
+//     //    1).get_chiR()); if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}",
+//     //    state2.get_mps_site(L - 1).get_chiR()); if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}",
+//     //    mpos.back().dimension(1));
+//     Eigen::Tensor<cplx, 3> resL = envs.L.get_block();
+//     Eigen::Tensor<cplx, 3> tmp;
+//     auto                  &threads = tenx::threads::get();
+//
+//     for(size_t pos = 0; pos < mpos.size(); ++pos) {
+//         const auto &bra = mpsBra[pos].get_M();
+//         const auto &ket = mpsKet[pos].get_M();
+//         const auto &mpo = mpos[pos].MPO2();
+//
+//         auto dim3 = tenx::array3{ket.dimension(2), mpo.dimension(1), bra.dimension(2)};
+//         tmp.resize(dim3);
+//         tmp.device(*threads->dev) = resL.contract(ket, tenx::idx({0}, {1}))
+//                                         .contract(mpo, tenx::idx({1, 2}, {0, 2}))
+//                                         .contract(bra.conjugate(), tenx::idx({0, 2}, {1, 0}))
+//                                         .shuffle(tenx::array3{0, 2, 1});
+//         resL = std::move(tmp);
+//     }
+//
+//     Eigen::Tensor<cplx, 0> res = resL.contract(envs.R.get_block(), tenx::idx({0, 1, 2}, {0, 1, 2}));
+//     return res.coeff(0);
+// }
 
 cplx tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1, long pos2) {
     if(pos1 == pos2) {
@@ -1024,7 +1342,7 @@ Eigen::Tensor<double, 1> tools::finite::measure::kvornings_marker(const StateFin
     return state.measurements.kvornings_marker.value();
 }
 
-cplx tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<cplx, 2> &correlation_matrix) {
+double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<cplx, 2> &correlation_matrix) {
     tools::log->trace("Measuring structure factor");
     if(correlation_matrix.dimension(0) != correlation_matrix.dimension(1))
         throw except::logic_error("Correlation matrix is not square: dims {}", correlation_matrix.dimensions());
@@ -1069,17 +1387,17 @@ std::array<double, 3> tools::finite::measure::structure_factor_xyz(const StateFi
     if(not state.measurements.structure_factor_x) {
         auto correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
         if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = correlation_matrix_sx.real();
-        state.measurements.structure_factor_x = measure::structure_factor(state, correlation_matrix_sx).real();
+        state.measurements.structure_factor_x = measure::structure_factor(state, correlation_matrix_sx);
     }
     if(not state.measurements.structure_factor_y) {
         auto correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
         if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = correlation_matrix_sy.real();
-        state.measurements.structure_factor_y = measure::structure_factor(state, correlation_matrix_sy).real();
+        state.measurements.structure_factor_y = measure::structure_factor(state, correlation_matrix_sy);
     }
     if(not state.measurements.structure_factor_z) {
         auto correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
         if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = correlation_matrix_sz.real();
-        state.measurements.structure_factor_z = measure::structure_factor(state, correlation_matrix_sz).real();
+        state.measurements.structure_factor_z = measure::structure_factor(state, correlation_matrix_sz);
     }
 
     return {state.measurements.structure_factor_x.value(), state.measurements.structure_factor_y.value(), state.measurements.structure_factor_z.value()};

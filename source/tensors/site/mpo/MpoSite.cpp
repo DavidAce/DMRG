@@ -10,14 +10,34 @@
 #include "qm/qm.h"
 #include "qm/spin.h"
 #include "tools/common/log.h"
+#include <config/settings.h>
+#include <general/sfinae.h>
 #include <h5pp/h5pp.h>
 #include <utility>
 
 MpoSite::MpoSite(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
+void MpoSite::build_mpo() {
+    mpo_internal = get_mpo(energy_shift_mpo);
+    mpo_internal = apply_edge_left(mpo_internal, get_MPO_edge_left(mpo_internal));
+    mpo_internal = apply_edge_right(mpo_internal, get_MPO_edge_right(mpo_internal));
+    unique_id    = std::nullopt;
+}
+
+void MpoSite::build_mpo_t() {
+    mpo_internal_t = get_mpo_t(energy_shift_mpo);
+    mpo_internal_t = apply_edge_left(mpo_internal_t, get_MPO_edge_left(mpo_internal_t));
+    mpo_internal_t = apply_edge_right(mpo_internal_t, get_MPO_edge_right(mpo_internal_t));
+}
+
+void MpoSite::build_mpo_squared() {
+    mpo_squared  = get_non_compressed_mpo_squared();
+    unique_id_sq = std::nullopt;
+}
+
 Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     tools::log->trace("mpo({}): building mpo²", get_position());
-    Eigen::Tensor<cplx, 4> mpo = MPO();
+    Eigen::Tensor<cplx, 4> mpo = MPO_energy_shifted_view(energy_shift_mpo2);
     Eigen::Tensor<cplx, 4> mpo2;
 
     {
@@ -79,18 +99,6 @@ Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     return mpo2;
 }
 
-void MpoSite::build_mpo_squared() {
-    mpo_squared  = get_non_compressed_mpo_squared();
-    unique_id_sq = std::nullopt;
-    if constexpr(settings::debug) {
-        if(tenx::hasNaN(mpo_squared.value())) {
-            print_parameter_names();
-            print_parameter_values();
-            throw except::runtime_error("MPO squared at position {} has NAN's", get_position());
-        }
-    }
-}
-
 void MpoSite::set_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     mpo_internal = mpo;
     unique_id    = std::nullopt;
@@ -108,6 +116,13 @@ void MpoSite::clear_mpo_squared() {
 
 bool MpoSite::has_mpo_squared() const { return mpo_squared.has_value(); }
 
+Eigen::Tensor<cplx_t, 4> MpoSite::get_mpo_t(real_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+                                            std::optional<std::vector<size_t>> skip) const {
+    tools::log->warn("MpoSite::get_mpo_t(): Pointless upcast {} -> {}", sfinae::type_name<cplx>(), sfinae::type_name<cplx_t>());
+    auto mpo = get_mpo(static_cast<double>(energy_shift_per_site), nbody, skip);
+    return mpo.unaryExpr([](auto z) { return std::complex<real_t>(static_cast<real_t>(z.real()), static_cast<real_t>(z.imag())); });
+}
+
 const Eigen::Tensor<cplx, 4> &MpoSite::MPO() const {
     if(all_mpo_parameters_have_been_set) {
         return mpo_internal;
@@ -122,6 +137,21 @@ const Eigen::Tensor<cplx_t, 4> &MpoSite::MPO_t() const {
     } else {
         throw std::runtime_error("All MPO parameters haven't been set yet.");
     }
+}
+
+Eigen::Tensor<cplx, 4> MpoSite::MPO_energy_shifted_view(double energy_shift_per_site) const {
+    auto mpo_shifted = get_mpo(energy_shift_per_site);
+    mpo_shifted      = apply_edge_left(mpo_shifted, get_MPO_edge_left(mpo_shifted));
+    mpo_shifted      = apply_edge_right(mpo_shifted, get_MPO_edge_right(mpo_shifted));
+    return mpo_shifted;
+}
+
+Eigen::Tensor<cplx, 4> MpoSite::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
+    return get_mpo(energy_shift_mpo, nbody, skip);
+}
+
+Eigen::Tensor<cplx_t, 4> MpoSite::MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
+    return get_mpo_t(energy_shift_mpo, nbody, skip);
 }
 
 const Eigen::Tensor<cplx, 4> &MpoSite::MPO2() const {
@@ -212,7 +242,8 @@ size_t MpoSite::get_position() const {
     }
 }
 
-bool MpoSite::is_energy_shifted() const { return e_shift != 0.0; }
+bool MpoSite::has_energy_shifted_mpo() const { return energy_shift_mpo != 0.0; }
+bool MpoSite::has_energy_shifted_mpo2() const { return energy_shift_mpo2 != 0.0; }
 
 bool MpoSite::is_compressed_mpo_squared() const {
     // When H² = mpo*mpo is compressed, we typically find that the virtual bonds
@@ -229,18 +260,25 @@ bool MpoSite::is_compressed_mpo_squared() const {
     auto        d0     = mpo.dimension(0);
     auto        d1     = mpo.dimension(1);
     auto        d2     = parity_shift_sign_mpo2 == 0 ? 0 : 2;
-    return mpo_sq.dimension(0) != d0 * d0 + d2 or mpo_sq.dimension(1) != d1 * d1 + d2;
+    if(get_position() == 0)
+        return mpo_sq.dimension(1) < d1 * d1 + d2;
+    else if(get_position() + 1 == settings::model::model_size)
+        return mpo_sq.dimension(0) < d0 * d0 + d2;
+    else
+        return mpo_sq.dimension(0) < d0 * d0 + d2 or mpo_sq.dimension(1) < d1 * d1 + d2;
 }
 
-double MpoSite::get_energy_shift() const { return e_shift; }
+double MpoSite::get_energy_shift_mpo() const { return energy_shift_mpo; }
+double MpoSite::get_energy_shift_mpo2() const { return energy_shift_mpo2; }
 
 void MpoSite::set_energy_shift(double site_energy) {
-    if(e_shift != site_energy) {
-        e_shift      = site_energy;
-        mpo_internal = MPO_energy_shifted_view();
-        mpo_squared  = std::nullopt;
-        unique_id    = std::nullopt;
-        unique_id_sq = std::nullopt;
+    if(energy_shift_mpo != site_energy and settings::precision::use_energy_shifted_mpo) {
+        energy_shift_mpo = site_energy;
+        build_mpo();
+    }
+    if(energy_shift_mpo2 != site_energy and settings::precision::use_energy_shifted_mpo_squared) {
+        energy_shift_mpo2 = site_energy;
+        build_mpo_squared();
     }
 }
 
@@ -274,69 +312,146 @@ void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
 
 std::pair<int, std::string_view> MpoSite::get_parity_shift_mpo_squared() const { return {parity_shift_sign_mpo2, parity_shift_axus_mpo2}; }
 
-Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_left() const {
-    if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build the left edge: mpo has not been built yet", get_position());
-    auto                   ldim = mpo_internal.dimension(0);
-    Eigen::Tensor<cplx, 1> ledge(ldim);
-    ledge.setZero();
-    if(parity_shift_sign_mpo == 0) {
-        /*
-         *  MPO = |1 0|
-         *        |h 1|
-         *  So the left edge picks out the row for h
-         */
-        ledge(ldim - 1) = 1;
+template<typename Scalar>
+Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 4> &mpo) const {
+    if(mpo.size() == 0) throw except::runtime_error("mpo({}): can't build the left edge: mpo has not been built yet", get_position());
+    auto                     ldim = mpo.dimension(0);
+    Eigen::Tensor<Scalar, 1> ledge(ldim);
+    if(ldim == 1) {
+        // Thin edge (it was probably already applied to the left-most MPO
+        ledge.setConstant(cplx(1.0, 0.0));
     } else {
-        /*
-         *  MPO = |1 0 0 0|
-         *        |h 1 0 0|
-         *        |0 0 1 0|
-         *        |0 0 0 σ|
-         *  So the left edge picks out the row for h, as well as 1 and σ along the diagonal
-         */
-        ledge(ldim - 3) = 1; // The bottom left corner
-        ledge(ldim - 2) = 1;
-        ledge(ldim - 1) = 1;
+        ledge.setZero();
+        if(parity_shift_sign_mpo == 0) {
+            /*
+             *  MPO = |1 0|
+             *        |h 1|
+             *  So the left edge picks out the row for h
+             */
+            ledge(ldim - 1) = 1;
+        } else {
+            /*
+             *  MPO = |1 0 0 0|
+             *        |h 1 0 0|
+             *        |0 0 1 0|
+             *        |0 0 0 σ|
+             *  So the left edge picks out the row for h, as well as 1 and σ along the diagonal
+             */
+            ledge(ldim - 3) = 1; // The bottom left corner
+            ledge(ldim - 2) = 1;
+            ledge(ldim - 1) = 1;
+        }
     }
     return ledge;
 }
+template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO_edge_left(const Eigen::Tensor<cplx, 4> &mpo) const;
+template Eigen::Tensor<cplx_t, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<cplx_t, 4> &mpo) const;
 
-Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_right() const {
-    if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build the right edge: mpo has not been built yet", get_position());
-    auto                   rdim = mpo_internal.dimension(1);
-    Eigen::Tensor<cplx, 1> redge(rdim);
-    redge.setZero();
-
-    if(parity_shift_sign_mpo == 0) {
-        /*
-         *  MPO = |1 0|
-         *        |h 1|
-         *  So the right edge picks out the column for h
-         */
-        redge(0) = 1; // The bottom left corner
+template<typename Scalar>
+Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_right(const Eigen::Tensor<Scalar, 4> &mpo) const {
+    if(mpo.size() == 0) throw except::runtime_error("mpo({}): can't build the right edge: mpo has not been built yet", get_position());
+    auto                     rdim = mpo.dimension(1);
+    Eigen::Tensor<Scalar, 1> redge(rdim);
+    if(rdim == 1) {
+        // Thin edge (it was probably already applied to the right-most MPO
+        redge.setConstant(Scalar(1.0, 0.0));
     } else {
-        /*
-         *  MPO = |1 0 0 0|
-         *        |h 1 0 0|
-         *        |0 0 1 0|
-         *        |0 0 0 σ|
-         *  So the right edge picks out the column for h, as well as 1 and σ along the diagonal
-         *  We also put the overall - sign on prod(σ) if this is the first site.
-         */
-        auto q          = position == 0 ? -parity_shift_sign_mpo : 1.0; // Selects the opposite sector sign (only needed on one MPO)
-        redge(0)        = 1;                                            // The bottom left corner of the original non-parity-shifted mpo
-        redge(rdim - 2) = 0.5;
-        redge(rdim - 1) = 0.5 * q;
+        redge.setZero();
+
+        if(parity_shift_sign_mpo == 0) {
+            /*
+             *  MPO = |1 0|
+             *        |h 1|
+             *  So the right edge picks out the column for h
+             */
+            redge(0) = 1; // The bottom left corner
+        } else {
+            /*
+             *  MPO = |1 0 0 0|
+             *        |h 1 0 0|
+             *        |0 0 1 0|
+             *        |0 0 0 σ|
+             *  So the right edge picks out the column for h, as well as 1 and σ along the diagonal
+             *  We also put the overall - sign on prod(σ) if this is the first site.
+             */
+            auto q          = position == 0 ? -parity_shift_sign_mpo : 1.0; // Selects the opposite sector sign (only needed on one MPO)
+            redge(0)        = 1;                                            // The bottom left corner of the original non-parity-shifted mpo
+            redge(rdim - 2) = 0.5;
+            redge(rdim - 1) = 0.5 * q;
+        }
     }
     return redge;
 }
 
-Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_left() const {
-    auto ledge  = get_MPO_edge_left();
+template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO_edge_right(const Eigen::Tensor<cplx, 4> &mpo) const;
+template Eigen::Tensor<cplx_t, 1> MpoSite::get_MPO_edge_right(const Eigen::Tensor<cplx_t, 4> &mpo) const;
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 4> MpoSite::apply_edge_left(const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 1> &edgeL) const {
+    if(mpo.dimension(0) == 1 or get_position() != 0) return mpo;
+    if(mpo.dimension(0) != edgeL.dimension(0))
+        throw except::logic_error("apply_edge_left: dimension mismatch: mpo {} | edgeL {}", mpo.dimensions(), edgeL.dimensions());
+    auto  tmp     = mpo;
+    auto  dim     = tmp.dimensions();
+    auto &threads = tenx::threads::get();
+    tmp.resize(tenx::array4{1, dim[1], dim[2], dim[3]});
+    tmp.device(*threads->dev) = edgeL.reshape(tenx::array2{1, edgeL.size()}).contract(mpo, tenx::idx({1}, {0}));
+    return tmp;
+}
+
+template Eigen::Tensor<cplx, 4>   MpoSite::apply_edge_left(const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 1> &edgeL) const;
+template Eigen::Tensor<cplx_t, 4> MpoSite::apply_edge_left(const Eigen::Tensor<cplx_t, 4> &mpo, const Eigen::Tensor<cplx_t, 1> &edgeL) const;
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 4> MpoSite::apply_edge_right(const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 1> &edgeR) const {
+    if(mpo.dimension(1) == 1 or get_position() + 1 != settings::model::model_size) return mpo;
+    if(mpo.dimension(1) != edgeR.dimension(0))
+        throw except::logic_error("apply_edge_right: dimension mismatch: mpo {} | edgeR {}", mpo.dimensions(), edgeR.dimensions());
+    auto  tmp     = mpo;
+    auto  dim     = tmp.dimensions();
+    auto &threads = tenx::threads::get();
+    tmp.resize(tenx::array4{dim[0], 1, dim[2], dim[3]});
+    tmp.device(*threads->dev) = mpo.contract(edgeR.reshape(tenx::array2{edgeR.size(), 1}), tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+    return tmp;
+}
+template Eigen::Tensor<cplx, 4>   MpoSite::apply_edge_right(const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 1> &edgeR) const;
+template Eigen::Tensor<cplx_t, 4> MpoSite::apply_edge_right(const Eigen::Tensor<cplx_t, 4> &mpo, const Eigen::Tensor<cplx_t, 1> &edgeR) const;
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left() const {
+    if constexpr(std::is_same_v<Scalar, cplx>)
+        return get_MPO_edge_left(mpo_internal);
+    else if constexpr(std::is_same_v<Scalar, cplx_t>)
+        return get_MPO_edge_left(mpo_internal_t);
+    else {
+        static_assert(sfinae::invalid_type_v<Scalar>);
+        throw std::logic_error("Invalid type");
+    }
+}
+template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO_edge_left() const;
+template Eigen::Tensor<cplx_t, 1> MpoSite::get_MPO_edge_left() const;
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_right() const {
+    if constexpr(std::is_same_v<Scalar, cplx>)
+        return get_MPO_edge_right(mpo_internal);
+    else if constexpr(std::is_same_v<Scalar, cplx_t>)
+        return get_MPO_edge_right(mpo_internal_t);
+    else {
+        static_assert(sfinae::invalid_type_v<Scalar>);
+        throw std::logic_error("Invalid type");
+    }
+}
+template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO_edge_right() const;
+template Eigen::Tensor<cplx_t, 1> MpoSite::get_MPO_edge_right() const;
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_left() const {
+    auto ledge  = get_MPO_edge_left<Scalar>();
     auto d0     = ledge.dimension(0);
     auto ledge2 = ledge.contract(ledge, tenx::idx()).reshape(tenx::array1{d0 * d0});
     if(parity_shift_sign_mpo2 != 0) {
-        auto ledge2_with_shift = Eigen::Tensor<cplx, 1>(d0 * d0 + 2);
+        auto ledge2_with_shift = Eigen::Tensor<Scalar, 1>(d0 * d0 + 2);
         ledge2_with_shift.setZero();
         ledge2_with_shift.slice(tenx::array1{0}, ledge2.dimensions()) = ledge2;
         ledge2_with_shift(d0 * d0 + 0)                                = 1.0;
@@ -345,14 +460,17 @@ Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_left() const {
     }
     return ledge2;
 }
+template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO2_edge_left() const;
+template Eigen::Tensor<cplx_t, 1> MpoSite::get_MPO2_edge_left() const;
 
-Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_right() const {
-    auto redge = get_MPO_edge_right();
+template<typename Scalar>
+Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_right() const {
+    auto redge = get_MPO_edge_right<Scalar>();
     auto d0    = redge.dimension(0);
     auto edge2 = redge.contract(redge.conjugate(), tenx::idx()).reshape(tenx::array1{d0 * d0});
     if(parity_shift_sign_mpo2 != 0) {
         auto q                 = position == 0 ? -parity_shift_sign_mpo2 : 1.0; // Selects the opposite sector sign (only needed on one MPO)
-        auto redge2_with_shift = Eigen::Tensor<cplx, 1>(d0 * d0 + 2);
+        auto redge2_with_shift = Eigen::Tensor<Scalar, 1>(d0 * d0 + 2);
         redge2_with_shift.setZero();
         redge2_with_shift.slice(tenx::array1{0}, edge2.dimensions()) = edge2;
         redge2_with_shift(d0 * d0 + 0)                               = 0.5;
@@ -361,6 +479,8 @@ Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_right() const {
     }
     return edge2;
 }
+template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO2_edge_right() const;
+template Eigen::Tensor<cplx_t, 1> MpoSite::get_MPO2_edge_right() const;
 
 void MpoSite::print_parameter_names() const {
     for(auto &item : get_parameters()) fmt::print("{:<16}", item.first);
@@ -397,7 +517,7 @@ void MpoSite::print_parameter_values() const {
 
 void MpoSite::save_mpo(h5pp::File &file, std::string_view mpo_prefix) const {
     std::string dataset_name = fmt::format("{}/H_{}", mpo_prefix, get_position());
-    file.writeDataset(MPO(), dataset_name, H5D_layout_t::H5D_CONTIGUOUS);
+    file.writeDataset(MPO_energy_shifted_view(0.0), dataset_name, H5D_layout_t::H5D_CONTIGUOUS);
     file.writeAttribute(get_position(), dataset_name, "position");
     for(auto &params : get_parameters()) {
         if(params.second.type() == typeid(double)) file.writeAttribute(std::any_cast<double>(params.second), dataset_name, params.first);

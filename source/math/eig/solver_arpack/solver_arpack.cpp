@@ -21,6 +21,7 @@
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
+#include "../matvec/matvec_mpos.h"
 #include "../matvec/matvec_sparse.h"
 #include "general/sfinae.h"
 #include "math/cast.h"
@@ -56,7 +57,7 @@
     #include <arpackpp/ardscomp.h>
     #include <arpackpp/arsnsym.h>
     #include <arpackpp/arssym.h>
-#elif __has_include(<arpack++/arcomp.h>)
+#elif __has_include(<arpack++/arcomp.h> )
     #include <arpack++/ardnsmat.h>
     #include <arpack++/ardscomp.h>
     #include <arpack++/arsnsym.h>
@@ -518,7 +519,8 @@ template class eig::solver_arpack<MatVecSparse<real>>;
 template class eig::solver_arpack<MatVecSparse<cplx>>;
 template class eig::solver_arpack<MatVecMPO<real>>;
 template class eig::solver_arpack<MatVecMPO<cplx>>;
-
+template class eig::solver_arpack<MatVecMPOS<real>>;
+template class eig::solver_arpack<MatVecMPOS<cplx>>;
 #if defined(__clang__)
     // turn the warnings back on
     #pragma clang diagnostic pop

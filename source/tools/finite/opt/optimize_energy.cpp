@@ -33,7 +33,7 @@ namespace tools::finite::opt {
     std::vector<opt_mps> eigs_energy_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta) {
         if(meta.optFunc != OptFunc::ENERGY)
             throw except::runtime_error("eigs_energy_executor: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::ENERGY), enum2sv(meta.optFunc));
-        if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
+        if(meta.optRitz == OptRitz::SM and not tensors.model->has_energy_shifted_mpo())
             throw std::runtime_error("eigs_energy_executor with ritz [SM] requires energy-shifted MPO");
 
         eig::Ritz ritz = eig::stringToRitz(enum2sv(meta.optRitz));
@@ -78,7 +78,7 @@ namespace tools::finite::opt {
                 hamiltonian.factorization       = eig::Factorization::LU;
                 solver.config.shift_invert      = eig::Shinv::ON;
                 solver.config.ritz              = eig::Ritz::primme_largest_abs;
-                solver.config.sigma             = initial_mps.get_eigval();
+                solver.config.sigma             = cplx(initial_mps.get_eigval(), 0.0);
                 solver.config.maxIter           = 500;
                 solver.config.maxNev            = static_cast<eig::size_type>(1);
                 solver.config.maxNcv            = static_cast<eig::size_type>(4);

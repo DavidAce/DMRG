@@ -2,8 +2,8 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
-#include "math/num.h"
 #include "math/cast.h"
+#include "math/num.h"
 #include "tensors/site/env/EnvEne.h"
 #include "tensors/site/env/EnvPair.h"
 #include "tensors/site/env/EnvVar.h"
@@ -20,9 +20,9 @@ EdgesFinite::EdgesFinite() = default; // Can't initialize lists since we don't k
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-EdgesFinite::~EdgesFinite()                            = default;            // default dtor
-EdgesFinite::EdgesFinite(EdgesFinite &&other) noexcept = default;            // default move ctor
-EdgesFinite &EdgesFinite::operator=(EdgesFinite &&other) noexcept = default; // default move assign
+EdgesFinite::~EdgesFinite()                                        = default; // default dtor
+EdgesFinite:: EdgesFinite(EdgesFinite &&other) noexcept            = default; // default move ctor
+EdgesFinite  &EdgesFinite::operator=(EdgesFinite &&other) noexcept = default; // default move assign
 
 EdgesFinite::EdgesFinite(const EdgesFinite &other) : active_sites(other.active_sites) {
     eneL.clear();
@@ -191,85 +191,110 @@ EnvEne &EdgesFinite::get_env_eneR(size_t pos) { return const_cast<EnvEne &>(std:
 EnvVar &EdgesFinite::get_env_varL(size_t pos) { return const_cast<EnvVar &>(std::as_const(*this).get_env_varL(pos)); }
 EnvVar &EdgesFinite::get_env_varR(size_t pos) { return const_cast<EnvVar &>(std::as_const(*this).get_env_varR(pos)); }
 
-env_pair<const EnvEne> EdgesFinite::get_env_ene(size_t posL, size_t posR) const {
+env_pair<const EnvEne &> EdgesFinite::get_ene_active() const {
+    if(active_sites.empty()) throw std::logic_error("get_ene_active: no active sites");
+    auto posL = active_sites.front();
+    auto posR = active_sites.back();
+    return {get_env_eneL(posL), get_env_eneR(posR)};
+}
+env_pair<const EnvVar &> EdgesFinite::get_var_active() const {
+    if(active_sites.empty()) throw std::logic_error("get_var_active: no active sites");
+    auto posL = active_sites.front();
+    auto posR = active_sites.back();
+    return {get_env_varL(posL), get_env_varR(posR)};
+}
+env_pair<EnvEne &> EdgesFinite::get_ene_active() {
+    if(active_sites.empty()) throw std::logic_error("get_ene_active: no active sites");
+    auto posL = active_sites.front();
+    auto posR = active_sites.back();
+    return {get_env_eneL(posL), get_env_eneR(posR)};
+}
+env_pair<EnvVar &> EdgesFinite::get_var_active() {
+    if(active_sites.empty()) throw std::logic_error("get_var_active: no active sites");
+    auto posL = active_sites.front();
+    auto posR = active_sites.back();
+    return {get_env_varL(posL), get_env_varR(posR)};
+}
+
+env_pair<const EnvEne &> EdgesFinite::get_env_ene(size_t posL, size_t posR) const {
     if(posL > posR) throw except::range_error("get_env_ene(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_eneL(posL), get_env_eneR(posR)};
 }
-env_pair<const EnvVar> EdgesFinite::get_env_var(size_t posL, size_t posR) const {
+env_pair<const EnvVar &> EdgesFinite::get_env_var(size_t posL, size_t posR) const {
     if(posL > posR) throw except::range_error("get_env_var(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_varL(posL), get_env_varR(posR)};
 }
 
-env_pair<EnvEne> EdgesFinite::get_env_ene(size_t posL, size_t posR) {
+env_pair<EnvEne &> EdgesFinite::get_env_ene(size_t posL, size_t posR) {
     if(posL > posR) throw except::range_error("get_env_ene(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_eneL(posL), get_env_eneR(posR)};
 }
-env_pair<EnvVar> EdgesFinite::get_env_var(size_t posL, size_t posR) {
+env_pair<EnvVar &> EdgesFinite::get_env_var(size_t posL, size_t posR) {
     if(posL > posR) throw except::range_error("get_env_var(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_varL(posL), get_env_varR(posR)};
 }
 
-env_pair<const EnvEne> EdgesFinite::get_env_ene(size_t pos) const { return {get_env_eneL(pos), get_env_eneR(pos)}; }
-env_pair<const EnvVar> EdgesFinite::get_env_var(size_t pos) const { return {get_env_varL(pos), get_env_varR(pos)}; }
-env_pair<EnvEne>       EdgesFinite::get_env_ene(size_t pos) { return {get_env_eneL(pos), get_env_eneR(pos)}; }
-env_pair<EnvVar>       EdgesFinite::get_env_var(size_t pos) { return {get_env_varL(pos), get_env_varR(pos)}; }
+env_pair<const EnvEne &> EdgesFinite::get_env_ene(size_t pos) const { return {get_env_eneL(pos), get_env_eneR(pos)}; }
+env_pair<const EnvVar &> EdgesFinite::get_env_var(size_t pos) const { return {get_env_varL(pos), get_env_varR(pos)}; }
+env_pair<EnvEne &>       EdgesFinite::get_env_ene(size_t pos) { return {get_env_eneL(pos), get_env_eneR(pos)}; }
+env_pair<EnvVar &>       EdgesFinite::get_env_var(size_t pos) { return {get_env_varL(pos), get_env_varR(pos)}; }
 
-env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_env_ene_blk(size_t posL, size_t posR) const {
+env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_env_ene_blk(size_t posL, size_t posR) const {
     return {get_env_ene(posL).L.get_block(), get_env_ene(posR).R.get_block()};
 }
 
-env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_env_var_blk(size_t posL, size_t posR) const {
+env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_env_var_blk(size_t posL, size_t posR) const {
     return {get_env_var(posL).L.get_block(), get_env_var(posR).R.get_block()};
 }
 
-env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_ene_blk(size_t posL, size_t posR) {
+env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_ene_blk(size_t posL, size_t posR) {
     return {get_env_ene(posL).L.get_block(), get_env_ene(posR).R.get_block()};
 }
 
-env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_var_blk(size_t posL, size_t posR) {
+env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_var_blk(size_t posL, size_t posR) {
     return {get_env_var(posL).L.get_block(), get_env_var(posR).R.get_block()};
 }
 
-env_pair<const EnvEne> EdgesFinite::get_multisite_env_ene(std::optional<std::vector<size_t>> sites) const {
+env_pair<const EnvEne &> EdgesFinite::get_multisite_env_ene(std::optional<std::vector<size_t>> sites) const {
     if(not sites) sites = active_sites;
     if(sites.value().empty()) throw std::runtime_error("Could not get edges: active site list is empty");
     return get_env_ene(sites.value().front(), sites.value().back());
 }
 
-env_pair<const EnvVar> EdgesFinite::get_multisite_env_var(std::optional<std::vector<size_t>> sites) const {
+env_pair<const EnvVar &> EdgesFinite::get_multisite_env_var(std::optional<std::vector<size_t>> sites) const {
     if(not sites) sites = active_sites;
     if(sites.value().empty()) throw std::runtime_error("Could not get edges: active site list is empty");
     return get_env_var(sites.value().front(), sites.value().back());
 }
 
-env_pair<EnvEne> EdgesFinite::get_multisite_env_ene(std::optional<std::vector<size_t>> sites) {
+env_pair<EnvEne &> EdgesFinite::get_multisite_env_ene(std::optional<std::vector<size_t>> sites) {
     if(not sites) sites = active_sites;
     if(sites.value().empty()) throw std::runtime_error("Could not get edges: active site list is empty");
     return get_env_ene(sites.value().front(), sites.value().back());
 }
 
-env_pair<EnvVar> EdgesFinite::get_multisite_env_var(std::optional<std::vector<size_t>> sites) {
+env_pair<EnvVar &> EdgesFinite::get_multisite_env_var(std::optional<std::vector<size_t>> sites) {
     if(not sites) sites = active_sites;
     if(sites.value().empty()) throw std::runtime_error("Could not get edges: active site list is empty");
     return get_env_var(sites.value().front(), sites.value().back());
 }
 
-env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_multisite_env_ene_blk(std::optional<std::vector<size_t>> sites) const {
+env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_multisite_env_ene_blk(std::optional<std::vector<size_t>> sites) const {
     const auto &envs = get_multisite_env_ene(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
 
-env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites) const {
+env_pair<const Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites) const {
     const auto &envs = get_multisite_env_var(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
 
-env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_multisite_env_ene_blk(std::optional<std::vector<size_t>> sites) {
+env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_multisite_env_ene_blk(std::optional<std::vector<size_t>> sites) {
     auto envs = get_multisite_env_ene(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
 
-env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3>> EdgesFinite::get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites) {
+env_pair<Eigen::Tensor<EdgesFinite::Scalar, 3> &> EdgesFinite::get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites) {
     auto envs = get_multisite_env_var(std::move(sites));
     return {envs.L.get_block(), envs.R.get_block()};
 }
