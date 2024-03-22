@@ -20,6 +20,7 @@ def plot_v3_opdm_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
     if db['version'] != 3:
         raise ValueError("plot_v3_opdm_fig3_sub3_line1 requires db version 3")
     path_effects = [pe.SimpleLineShadow(offset=(-0.35, -0.35), alpha=0.4), pe.Normal()]
+    mark_effects = [pe.SimpleLineShadow(offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.4), pe.Normal()]
     path_effects_dashed = [pe.SimpleLineShadow(offset=(-0.1, -0.1), alpha=0.1), pe.Normal()]
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
@@ -47,7 +48,7 @@ def plot_v3_opdm_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             logger.debug('-- plotting subkeys: {}'.format(subvals))
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name, meta.get('filter'))
-            for linvals, color, lstyle in zip(linprod, palette, lstyles):
+            for lidx, (linvals, color, lstyle) in enumerate(zip(linprod, palette, lstyles)):
                 logger.debug('--- plotting linkeys: {}'.format(linvals))
                 print('--- plotting linkeys: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
@@ -70,12 +71,27 @@ def plot_v3_opdm_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     Ldata = dbval['vals']['L']
                     # xdata = np.array(range(Ldata))
                     ndata = np.shape(datanode[()])[1]
-                    ydata = np.mean(np.abs(datanode[()]), axis=1)
-                    edata = np.std(np.abs(datanode[()]), axis=1)/np.sqrt(ndata)
+                    ydata = np.nanmean(np.abs(datanode[()]), axis=1)
+                    edata = np.nanstd(np.abs(datanode[()]), axis=1)/np.sqrt(ndata)
                     xdata = np.arange(len(ydata))
-                    # line = ax.errorbar(xdata, ydata, marker='o', color=color, path_effects=path_effects, zorder=1)
-                    line = ax.errorbar(x=xdata, y=ydata, yerr=edata, linestyle='none',capsize=4.0,
-                                       marker='o', color=color, path_effects=path_effects)
+                    if meta.get('reversed'):
+                        ydata = np.flip(ydata)
+
+                    # line = ax.errorbar(x=xdata, y=ydata, yerr=edata, linestyle='none',
+                    #                    capsize=4.0, markersize=4.0,
+                    #                    markeredgewidth=0.6,
+                    #                    marker='o', color=color,
+                    #                    markeredgecolor=color,
+                    #                    path_effects=mark_effects)
+                    markersize=7.0 - lidx/1.7
+                    line, = ax.plot(xdata,ydata, linestyle='none',
+                                       #capsize=4.0,
+                                       markersize=markersize,
+                                       markeredgewidth=0.5,
+                                       marker='o', color=color,
+                                       markeredgecolor=color,
+                                       markerfacecolor='none',
+                                       path_effects=mark_effects)
 
                     legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                     for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
@@ -84,11 +100,22 @@ def plot_v3_opdm_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                         f['legends'][idx][icol]['label'].append(col)
                         f['legends'][idx][icol]['title'] = db['tex'][key]
 
+                    if lidx == 0:
+                        # ax.axvline(x=xdata[-1]/2,ymax=0.905, color='grey', linestyle='-')
+                        # ax.axhline(y=1,xmax=0.5, color='grey', linestyle='-')
+                        ax.axhline(y=0.002,xmax=0.5, color='grey', linestyle='-')
+                        # ax.axhline(y=1e-16,xmax=1.0, color='grey', linestyle='-')
+
             if not idx in f['axes_used']:
                 f['axes_used'].append(idx)
 
             if subspec_title := get_subspec_title(meta,dbval,subspec):
                 ax.set_title(subspec_title,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
+            if meta.get('legendreversed'):
+                for icol in range(len(f['legends'][idx])):
+                    f['legends'][idx][icol]['handle'].reverse()
+                    f['legends'][idx][icol]['label'].reverse()
+
 
         if figspec_title := get_figspec_title(meta,dbval,figspec):
             f['fig'].suptitle(figspec_title, y=0.66, x=0.85)

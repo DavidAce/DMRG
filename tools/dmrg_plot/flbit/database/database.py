@@ -23,14 +23,17 @@ def get_bond_info(statenode, datanode):
     if bavg_key is None:
         if mmntnode := datanode.parent.get('measurements'):
             return get_bond_info(statenode, mmntnode)
-        if mmntnode := statenode.get('cronos').get('measurements'):
-            return get_bond_info(statenode, mmntnode)
+        if crononode := statenode.get('cronos'):
+            if mmntnode := crononode.get('measurements'):
+                return get_bond_info(statenode, mmntnode)
 
 
     if bavg is None:
-        raise LookupError(f'Could not find bavg in\n{statenode=}\nor\n{datanode=}')
+        print(f'WARNING: Could not find bavg in\n{statenode=}\nor\n{datanode=}')
+        # raise LookupError(f'Could not find bavg in\n{statenode=}\nor\n{datanode=}')
     if bmax is None:
-        raise LookupError(f'Could not find bmax in\n{statenode=}\nor\n{datanode=}')
+        print(f'WARNING: Could not find bmax in\n{statenode=}\nor\n{datanode=}')
+        # raise LookupError(f'Could not find bmax in\n{statenode=}\nor\n{datanode=}')
     return bavg_key, bavg, bmax_key, bmax
 
 def get_num_info(statenode, datanode):
@@ -206,6 +209,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             'u': set(), 'f': set(), 'tstd': set(), 'cstd': set(), 'tgw8': set(), 'cgw8': set(), 'g8w8' : set(), 'type': set(),'l': set(), 'wkind':set(), 'mkind':set(), 'ubond': set(),
         },
         'dsets': {},
+        'filename': h5_src.filename,
         'plotdir': meta['common']['plotdir'],
         'cachedir': meta['common']['cachedir']
     }
@@ -262,7 +266,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
 
 
         rval = 'L' if r == np.iinfo(np.uint64).max else r
-
+        print(f'found {rval=}')
 
         db['vals']['L'].add(L)
         db['vals']['J'].add(J)
@@ -290,8 +294,10 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
 
         if debug:
             print(' Looking for datasets in meta: {}'.format(meta.keys()))
+            print(f' {dsetlist=}')
+            print(f' {grouplist=}')
 
-        for datakey, datapath, datanode in h5py_node_iterator(node=modelnode,
+        for datakey, datapath, datanode in h5py_node_iterator(node=algonode,
                                                               keypattern=dsetlist,
                                                               excludeKeys=db['dsets'].keys(),
                                                               dep=4):
@@ -309,7 +315,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 num = np.max(datanode['num'][()])
                 avgnode = datanode['avg']
             if isinstance(datanode, h5py.Dataset):
-                num = np.shape(datanode[()])[0] # We usually set sample number on axis 0
+                num = np.shape(datanode)[0] # We usually set sample number on axis 0
 
             for dname in [datanode.name]:
                 db['dsets'][dname] = {}
@@ -341,6 +347,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 db['dsets'][dname]['vals']['num'] = num
                 db['dsets'][dname]['vals']['plotdir'] = meta['common']['plotdir']
                 db['dsets'][dname]['vals']['cachedir'] = meta['common']['cachedir']
+                db['dsets'][dname]['vals']['filename'] = h5_src.filename
 
                 db['dsets'][dname]['node'] = {}
                 db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
@@ -458,6 +465,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         db['dsets'][dname]['vals']['bmax'] = bmax
                         db['dsets'][dname]['vals']['plotdir'] = meta['common']['plotdir']
                         db['dsets'][dname]['vals']['cachedir'] = meta['common']['cachedir']
+                        db['dsets'][dname]['vals']['filename'] = h5_src.filename
+
 
 
                         db['dsets'][dname]['node'] = {}
@@ -693,7 +702,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
     db['vals']['cstd'] = sorted(db['vals']['cstd'])
     db['vals']['tgw8'] = sorted(db['vals']['tgw8'])
     db['vals']['cgw8'] = sorted(db['vals']['cgw8'])
-    db['vals']['l'] = sorted(db['vals']['l'])
+    db['vals']['l'] = list(reversed(sorted(db['vals']['l'])))
     db['vals']['wkind'] = sorted(db['vals']['wkind'])
     db['vals']['mkind'] = sorted(db['vals']['mkind'])
     db['vals']['ubond'] = sorted(db['vals']['ubond'])

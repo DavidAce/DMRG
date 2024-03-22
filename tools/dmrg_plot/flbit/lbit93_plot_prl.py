@@ -39,6 +39,8 @@ def lbit_plot(args):
             cachedir = f'{batchdir}/analysis/cache'
             for avgfile in [
                             f'{batchdir}/analysis/data/averaged.h5',
+                            # f'{batchdir}/analysis/data/averaged-hartley-1e-8.h5',
+                            # f'{batchdir}/analysis/data/averaged-hartley-1e-10.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit106-lin/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit103-nil/analysis/data/averaged.h5',
@@ -146,17 +148,37 @@ def lbit_plot(args):
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u']
     linspec_lbit = ['f','L']
+    # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_tsat_fig_sub_line(db=db, meta=meta['ent-sat'], figspec=figspec_Lf, subspec=subspec_Lf,
+    #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette, dbidx=idx,
+    #                                dbnum=len(dbs))
+    # # # save_figure(f)
+    # # # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_tsat_fig_sub_line(db=db, meta=meta['num-sat'], figspec=figspec_Lf, subspec=subspec_Lf,
+    #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette, dbidx=idx,
+    #                                dbnum=len(dbs))
+    # save_figure(f)
+    #
+
+
+    # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_time_fig_sub_line(db=db, meta=meta['numa-powerfit'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    # save_figure(f)
 
     # f = None
     # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
     #     f = plot_time_fig_sub_line(db=db, meta=meta['hartley-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
     #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
     # save_figure(f)
-    f = None
-    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-        f = plot_time_fig_sub_line(db=db, meta=meta['numa-hartley'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    save_figure(f)
+    # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_time_fig_sub_line(db=db, meta=meta['numa-hartley'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    # save_figure(f)
 
 
     # f = None

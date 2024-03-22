@@ -8,6 +8,34 @@ from line_profiler_pycharm import profile
 from cProfile import Profile
 from pstats import SortKey, Stats
 
+def get_value(key_candidates, node_candidates, optional = True, default=None):
+    if isinstance(key_candidates, str):
+        keys = [key_candidates]
+    elif isinstance(key_candidates, list):
+        keys = key_candidates
+    else:
+        raise TypeError(f'key_candidates must be str or list: got {type(key_candidates)}: {key_candidates}')
+
+    for key in keys:
+        for node in node_candidates:
+            if node is None:
+                continue
+            if key in node.attrs:
+                return node.attrs[key][()]
+            if isinstance(node, h5py.Dataset):
+                if key in node.dtype.fields:
+                    return node[key][0] # Just the first element
+            if isinstance(node, h5py.Group):
+                if key in node:
+                    val = node[key][()]
+                    if isinstance(val, np.ndarray):
+                        return val[0]
+                    return val
+    if not optional:
+        raise LookupError(f'could not find keys {keys} among node candidates: [{node_candidates}]')
+    return default
+
+
 def write_stats_to_node(data, tgt_node, axis):
     print(f'writing stat to node: {tgt_node.name}')
     std = np.nanstd(data, axis=axis)
@@ -193,7 +221,8 @@ def write_statistics_dset(meta, props, h5_tgt):
         if maxbatchsize is None:
             maxr = d3
         modelnode = dsetnode.parent.parent['model']
-        L = modelnode['hamiltonian'].attrs['model_size'][()]
+        hamiltonian = modelnode['hamiltonian']
+        L = get_value('model_size', [modelnode, hamiltonian], optional=False)
         if L+1 != d1:  # We have length L + 1 on the d0 and d1 dimensions
             raise AssertionError(f"System size mismatch: {L=} != {d1-1=}")
         # Site indexing
@@ -209,14 +238,11 @@ def write_statistics_dset(meta, props, h5_tgt):
 
         # Get the time points
         print('get timepoints ...')
-        hamiltonian = modelnode['hamiltonian']
         db = {'vals': {}}
-        db['vals']['L'] = hamiltonian.attrs['model_size'][()]
-        db['vals']['r'] = hamiltonian['J2_span'][0]
-        db['vals']['x'] = hamiltonian['xi_Jcls'][0]
-        db['vals']['w'] = (hamiltonian['J1_wdth'][0],
-                           hamiltonian['J2_wdth'][0],
-                           hamiltonian['J3_wdth'][0])
+        db['vals']['L'] = L
+        db['vals']['r'] = get_value('J2_span', [hamiltonian], optional=False)
+        db['vals']['x'] = get_value(['xi_Jcls', 'J2_xcls'], [hamiltonian], optional=False)
+        db['vals']['w'] = tuple([get_value(key, [hamiltonian], optional=False) for key in ['J1_wdth', 'J2_wdth', 'J3_wdth']])
         tdata = get_tdata(dsetnode.parent['cronos'])
         # idx_num, idx_ent = find_saturation_idx3(tdata, db)
         t = get_timepoints(tdata, db)
@@ -496,35 +522,39 @@ def write_statistics(src, tgt, reqs):
             for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
                                                                    nodeType=h5py.Dataset):
                 print('Found dset: {}'.format(dsetpath))
+                if 'r8' not in dsetpath:
+                    continue
                 write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
 
-        print('Averaging tables')
-        for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
-                                                                  excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
-                                                                  nodeType=h5py.Dataset):
-            write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
-
-
-        with tb.File(tgt, 'a') as h5f:
-            print('Averaging cronos v4')
-            node_cache = {}
-            done_crono = {}
-            for crononame, cronopath, crononode in h5py_node_iterator(node=h5_src, keypattern='cronos', dep=20,
-                                                                      excludeKeys=['.db', 'model', 'tables',
-                                                                                   'dsets'],
-                                                                      nodeType=h5py.Group, godeeper=False):
-                print('found cronos:', cronopath)
-                if done := done_crono.get(cronopath):
+            print('Averaging tables')
+            for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
+                                                                      excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
+                                                                      nodeType=h5py.Dataset):
+                if 'r8' not in tablepath:
                     continue
-                else:
-                    for iternode in h5py_node_iterator(node=crononode, keypattern='iter_', dep=1,
-                                                       nodeType=h5py.Group,
-                                                       godeeper=False):
-                        done_crono[cronopath] = write_statistics_crono4(iternode, reqs['cronos'], h5f, node_cache)
-                        # print('found iter:', iternode[1])
-                        if done := done_crono.get(cronopath):
-                            print('{} is done'.format(cronopath))
-                            break
+                write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
+
+
+        # with tb.File(tgt, 'a') as h5f:
+        #     print('Averaging cronos v4')
+        #     node_cache = {}
+        #     done_crono = {}
+        #     for crononame, cronopath, crononode in h5py_node_iterator(node=h5_src, keypattern='cronos', dep=20,
+        #                                                               excludeKeys=['.db', 'model', 'tables',
+        #                                                                            'dsets'],
+        #                                                               nodeType=h5py.Group, godeeper=False):
+        #         print('found cronos:', cronopath)
+        #         if done := done_crono.get(cronopath):
+        #             continue
+        #         else:
+        #             for iternode in h5py_node_iterator(node=crononode, keypattern='iter_', dep=1,
+        #                                                nodeType=h5py.Group,
+        #                                                godeeper=False):
+        #                 done_crono[cronopath] = write_statistics_crono4(iternode, reqs['cronos'], h5f, node_cache)
+        #                 # print('found iter:', iternode[1])
+        #                 if done := done_crono.get(cronopath):
+        #                     print('{} is done'.format(cronopath))
+        #                     break
 
 
     with h5py.File(tgt, 'a') as h5_tgt:

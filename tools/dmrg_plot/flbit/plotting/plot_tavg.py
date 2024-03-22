@@ -78,8 +78,8 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
     numfigs = len(figprod)
     numsubs = len(subprod)
 
-    numsubs *= dbnum
-    subprod *= dbnum
+    # numsubs *= dbnum
+    # subprod *= dbnum
 
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
@@ -90,8 +90,8 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
         luitz = []
         for idx, (subvals, ax) in enumerate(zip(subprod, f['ax'])):
             idx_palette = idx % len(palette_name)
-            if dbidx != int(idx / dbnum):
-                continue
+            # if dbidx != int(idx / dbnum):
+            #     continue
             popt = None
             pcov = None
             dbval = None
@@ -214,8 +214,13 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                             print('Calculating the disorder average... ')
 
                             tlnln = np.log(np.log(tdata))
+                            tdiff = np.mean(np.diff(tdata))
+                            print(tdiff)
                             # sn_min, sn_max = get_every_realization_peakavg(y,keepnan=False)
-                            sn_min_davg,sn_min_dste, sn_max_davg, sn_max_dste, sn_davg, sn_dste ,t_win = get_disorder_averaged_peaks(y, tlnln, offset=10) # 8 works well?
+                            offset = 40
+                            if tdiff >= 0.5:
+                                offset = 15
+                            sn_min_davg,sn_min_dste, sn_max_davg, sn_max_dste, sn_davg, sn_dste ,t_win = get_disorder_averaged_peaks(y, tlnln, offset=offset) # 8 works well?
 
                             # print(f"{sn_max=}")
                             # sn_min, sn_max, t_win = get_every_realization_minmax(y, tdata, offset=5)
@@ -294,9 +299,10 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                             dsetname = 'hartley'
                         elif meta.get('plotminmaxwin'):
                             dsetname = 'minmax'
-
-                        filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(
+                        pipename = dbval['vals']['filename'].replace('/', '|')
+                        filenamejson = "{}/tsat_{}|{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(
                             dbval['vals']['cachedir'],
+                            pipename,
                             dsetname,
                             dbval['vals']['L'],
                             dbval['vals']['x'],
@@ -424,7 +430,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     for xval, yavg, eavg, color in zip(xvals, yavgw, eavgw, palette):
                         ax.errorbar(x=xval, y=yavg, yerr=eavg, color=color, linestyle='none', capsize=2.0, path_effects=path_effects, zorder=10)
 
-                    if lidx == 0:
+                    if lidx == 0 and len(ymaxw) > 3:
                         sub = 'N' if 'number' in meta['dsetname'] else 'E'
                         label_max = f'$\overline S_\mathrm{{{sub}}}^\mathrm{{max}}$'
                         label_avg = f'$\overline S_\mathrm{{{sub}}}$'

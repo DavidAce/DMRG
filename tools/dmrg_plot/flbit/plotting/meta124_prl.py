@@ -2220,7 +2220,7 @@ def get_meta(plotdir, cachedir):
             'plotminmaxwin': True,
             # 'ymin': 0.220,
             # 'ymax': 0.240,
-            'ymin': 0.13,
+            'ymin': 0.160,
             'ymax': 0.279,
             'xmin': 11,
             'xmax': 33,

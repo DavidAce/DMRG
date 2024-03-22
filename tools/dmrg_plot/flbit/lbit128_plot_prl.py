@@ -7,7 +7,7 @@ from dmrg_plot.common.io.parse import parse
 
 from database.database import *
 from lbit_avg import lbit_avg
-from plotting.meta127_prl import *
+from plotting.meta128_prl import *
 from plotting.multiplot import *
 
 
@@ -37,8 +37,8 @@ def lbit_plot(args):
             plotdir = f'{batchdir}/analysis/plots'
             cachedir = f'{batchdir}/analysis/cache'
             for avgfile in [
-                            f'{batchdir}/analysis/data/averaged3.h5',
-                            # f'/mnt/WDB-AN1500/mbl_transition/lbit118-mbl/analysis/data/averaged3.h5',
+                            f'{batchdir}/analysis/data/averaged.h5',
+                            f'/mnt/WDB-AN1500/mbl_transition/lbit124-linspaced/analysis/data/averaged3.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit106-lin/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit103-nil/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit100-rps/analysis/data/averaged.h5'
@@ -55,8 +55,8 @@ def lbit_plot(args):
                     dbs.append(load_time_database2(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
                                                    state_filter=state_filter, debug=False))
                 if version3:
-                    print(f'loading database v3: states: {state_filter}')
                     for state in state_filter:
+                        print(f'loading database v3: file {h5avgs[-1].filename} | state filter: {state}')
                         metas.append(get_meta(plotdir, cachedir))
                         dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
                                                        state_filter=[state], debug=True))
@@ -102,9 +102,8 @@ def lbit_plot(args):
         "Paired",
     ]
     palettes = [  # Palette group for up to 4 categories
-        # ["Dark2"]
-        ["tab10"]
-        # ["autumn_r", "autumn_r", "winter_r", "spring_r"],
+        ["viridis_r",],
+        ["autumn_r",],
         # ["winter_r", "autumn_r", "winter_r", "spring_r"],
         # ["viridis_r"]
         # ["winter_r",  "summer_r", "autumn_r", "spring_r"]
@@ -142,12 +141,35 @@ def lbit_plot(args):
     xaxspec_c = ['f']
 
     figspec = ['J','w','f']
-    subspec = ['L','u']
-    linspec = [ 'r' ]
+    subspec = ['r','u']
+    linspec = [ 'L' ]
 
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u','f', 'mkind']
     linspec_lbit = ['L', 'l', ]
+
+
+    # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_tsat_fig_sub_line(db=db, meta=meta['ent-sat'], figspec=figspec_r, subspec=subspec_r,
+    #                                linspec=linspec_r, xaxspec=xaxspec_r, figs=f, palette_name=palette, dbidx=idx,
+    #                                dbnum=len(dbs))
+    # # save_figure(f)
+    # # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_tsat_fig_sub_line(db=db, meta=meta['num-sat'], figspec=figspec_r, subspec=subspec_r,
+    #                                linspec=linspec_r, xaxspec=xaxspec_r, figs=f, palette_name=palette, dbidx=idx,
+    #                                dbnum=len(dbs))
+    # save_figure(f)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_tavg_fig_sub_line(db=db, meta=meta['tavg-num-minmax'], figspec=figspec_L, subspec=subspec_L,
+                                   linspec=linspec_L, xaxspec=xaxspec_L, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
+    plt.show()
+    exit(0)
+
     # logging.basicConfig(level=logging.DEBUG)
     #
     # f = None
@@ -201,20 +223,10 @@ def lbit_plot(args):
 
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-        f = plot_time_fig_sub_line(db=db, meta=meta['ent-minmax'], figspec=figspec, subspec=subspec, linspec=linspec,
+        f = plot_time_fig_sub_line(db=db, meta=meta['num-minmax'], figspec=figspec, subspec=subspec, linspec=linspec,
                                    figs=f,
                                    palette_name=palette,dbidx=0,dbnum=1)
-
     save_figure(f)
-    plt.show()
-
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['num-minmax'], figspec=figspec, subspec=subspec, linspec=linspec,
-    #                                figs=f,
-    #                                palette_name=palette,dbidx=0,dbnum=1)
-    #
-    # save_figure(f)
     plt.show()
     exit(0)
 
@@ -975,7 +987,7 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit127'], basedir='/mnt/S990PRO/mbl_transition')
+    args = parse('fLBIT', ['lbit128'], basedir='/mnt/S990PRO/mbl_transition')
     #lbit_avg(args)
     lbit_plot(args)
 

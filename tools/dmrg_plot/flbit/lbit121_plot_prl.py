@@ -76,7 +76,6 @@ def lbit_plot(args):
             #                                        state_filter=state_filter, debug=False))
 
 
-
     palettes = [  # Distinguishable colors
         "tab10",
         "husl",
@@ -104,10 +103,11 @@ def lbit_plot(args):
         # ["autumn_r", "autumn_r", "winter_r", "spring_r"],
         # ["winter_r", "autumn_r", "winter_r", "spring_r"],
         # ["viridis_r"]
-        # ["winter_r",  "summer_r", "autumn_r", "spring_r"]
-        ["Blues", "Greens", "Oranges", "Purples"],
-        ["Oranges", "Greens", "Oranges", "Purples"],
-        ["Greens", "Greens", "Oranges", "Purples"],
+        ["cool_r",  "summer_r", "autumn_r", "spring_r"]
+        # ["cool_r",  "summer_r", "autumn_r", "spring_r"]
+        # ["Blues", "Greens", "Oranges", "Purples"],
+        # ["Oranges", "Greens", "Oranges", "Purples"],
+        # ["Greens", "Greens", "Oranges", "Purples"],
         # ["winter_r", "autumn_r"],
         # ["Blues", "Oranges"],
         # ["Greens", "Reds"],
@@ -139,8 +139,8 @@ def lbit_plot(args):
     xaxspec_c = ['f']
 
     figspec = ['J','w', 'r','f']
-    subspec = ['u', 'L']
-    linspec = ['mkind', 'l' ]
+    subspec = ['u', 'L','mkind', ]
+    linspec = ['l' ]
 
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u','f']
@@ -151,7 +151,12 @@ def lbit_plot(args):
                                    linspec=linspec, figs=f, palette_name=palette)
         break
     save_figure(f)
-
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['num-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f,
+                                   palette_name=palette,dbidx=0,dbnum=1)
+    save_figure(f)
     plt.show()
     exit(0)
 

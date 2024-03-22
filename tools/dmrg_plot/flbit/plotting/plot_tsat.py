@@ -137,14 +137,17 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         # ext = int(reals / 5)
                         # Plot the saturation time
                         if 'saturated' in meta['timepoints']:
-                            filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(dbval['vals']['cachedir'],
-                                                                                      meta['dsetname'],
-                                                                                      dbval['vals']['L'],
-                                                                                      dbval['vals']['x'],
-                                                                                      dbval['vals']['w'],
-                                                                                      dbval['vals']['r'],
-                                                                                      dbval['vals']['f'],
-                                                                                      dbval['vals']['l'])
+                            filenamejson = "{}/tsat_{}|{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(
+                                dbval['vals']['cachedir'],
+                                dbval['vals']['filename'].replace('/', '|'),
+                                meta['dsetname'],
+                                dbval['vals']['L'],
+                                dbval['vals']['x'],
+                                dbval['vals']['w'],
+                                dbval['vals']['r'],
+                                dbval['vals']['f'],
+                                dbval['vals']['l'])
+
                             if meta.get('loadjson') and os.path.isfile(filenamejson):
                                 with open(filenamejson, 'r') as fp:
                                     tsb_json = json.load(fp)

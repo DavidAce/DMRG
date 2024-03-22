@@ -653,7 +653,7 @@ def get_meta(plotdir, cachedir):
 
         },
         'num-lnlnt': {
-            'default': default,
+            'default': default_square,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -679,7 +679,7 @@ def get_meta(plotdir, cachedir):
 
             'ylabel_inner_visible': False,
             'ymin': 0.206,
-            'ymax': 0.237,
+            'ymax': 0.240,
             'xmin': -1.75,
             'xmax': 3.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
@@ -699,7 +699,7 @@ def get_meta(plotdir, cachedir):
             'legendcollect': False,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'l'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [''],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper left', 'center right', 'upper left', 'center right'],
             'bbox_to_anchor': [(-0.00, 1.00), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
 

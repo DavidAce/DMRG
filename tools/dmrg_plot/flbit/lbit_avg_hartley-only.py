@@ -22,10 +22,10 @@ def lbit_avg(args):
         print(f'Averaging: {batchdir}')
         analysisdir = batchdir + '/analysis'
         plotdir = analysisdir + '/plots'
-        datadir = analysisdir + '/data-numprobs'
+        datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged-r8.h5'
+        tgt = datadir + '/averaged-hartley-1e-8.h5'
         if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
@@ -54,27 +54,27 @@ def lbit_avg(args):
                 'model/lbits/decay_avg': {'axis': 0, },
                 'model/lbits/decay_err': {'axis': 0, },
                 'model/lbits/corrmat': {
-                    'copy': True,
+                    'copy': False,
                 },
                 'model/lbits/corroff': {
-                    'copy': True,
+                    'copy': False,
                 },
                 'model/lbits/data': {
-                    'copy': True,
+                    'copy': False,
                 },
                 'model/lbits/data_shifted': {
-                    'copy': True,
+                    'copy': False,
                 },
                 'number_probabilities': {
                     'maxrealizations': None, # None is infinite
-                    'maxbatchsize': 100, # None is infinite
-                    'copy': True,  # Copy the dataset as is, without averaging
-                    'qin_probability' : True, # Compute (and store) q_i(n), the nth particle probability at each site
+                    'maxbatchsize': 5000, # None is infinite
+                    'copy': False,  # Copy the dataset as is, without averaging
+                    'qin_probability' : False, # Compute (and store) q_i(n), the nth particle probability at each site
                     'pos_expvalue' : False, # Compute the position expectation value of each particle
                     'pos_expvalue_davg' : False, # Compute also the disorder average of pos_expvals
                     'pos_variance' : False, # Compute the position standard deviation of each particle
                     'pos_variance_davg' : False, # Compute also the disorder average of pos_stddevs
-                    'hartley': False,  # Compute the hartley number entropy
+                    'hartley': True,  # Compute the hartley number entropy
                     'renyi2': False, # Compute the second renyi entropy of the number probabilities
                     'pinfty': False, # Compute the shannon entropy of the saturation value of the number probabilities
                 },
@@ -107,7 +107,7 @@ def lbit_avg(args):
                     'entanglement_entropies': 'ALL',
                     'number_entropies': 'ALL',
                     # 'truncation_errors': 'ALL',
-                    'number_probabilities': 'ALL',
+                    # 'number_probabilities': 'ALL',
                     # If a table with this name exists, save its midchain column to a new dataset with the same name
                     '__save_mid__': ['entanglement_entropies', 'number_entropies'],
                     # If a table has this column, save all columns to a new dataset with the same name
@@ -122,8 +122,7 @@ def lbit_avg(args):
 if __name__ == '__main__':
     # args = parse('fLBIT', ['lbit113'],)# basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit114'],)# basedir='/mnt/wdpool/backup/lbit')
-    args = parse('fLBIT', ['lbit109'], basedir='/mnt/wdpool/backup/lbit')
-    # args = parse('fLBIT', ['lbit93'])
+    args = parse('fLBIT', ['lbit93'])
     # args = parse('fLBIT', ['lbit115'])
     # args = parse('fLBIT', ['lbit117'])
     # args = parse('fLBIT', ['lbit118'])
@@ -137,7 +136,6 @@ if __name__ == '__main__':
     # args = parse('fLBIT', ['lbit126'])
     # args = parse('fLBIT', ['lbit127'], basedir='/mnt/S990PRO/mbl_transition')
     # args = parse('fLBIT', ['lbit128'], basedir='/mnt/S990PRO/mbl_transition')
-    # args = parse('fLBIT', ['lbit129'], basedir='/mnt/S990PRO/mbl_transition')
 
     # args = parse('fLBIT', ['lbit106'], )#basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit106'], basedir='/mnt/wdpool/backup/lbit')

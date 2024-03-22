@@ -100,6 +100,7 @@ def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition', states=N
         'lbit126',  # L[12,16] with MATRIX_V3 to compare lbit with the effective model
         'lbit127',  # L16 u16 MATRIX_V2, r=0...8, to check linspaced sampling with neel, for J2 ranges, with J3
         'lbit128',  # REDO lbit124 with the correct time step 0.25!!!!!11!!!!!
+        'lbit129',  # L16 u16 MATRIX_V2, r=0...8, to check linspaced sampling with neel, for J2 ranges, without J3
 
     ]
     xdmrg_batches = ['data170',  #

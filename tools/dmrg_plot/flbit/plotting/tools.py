@@ -74,7 +74,7 @@ def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
             # The number of colors in each palette == the size of the second linspec
             palette_prod = []
             for pidx in range(slens[0]):
-                if any([x in default_palette[pidx] for x in ['viridis', 'autumn', 'Dark2'] ]):
+                if any([x in default_palette[pidx] for x in ['viridis', 'autumn','cool', 'Dark2', 'tab10'] ]):
                     # Colors at the edge of the palette are sometimes missing, so here we force them to appear
                     cmap = plt.colormaps[default_palette[pidx]]
                     palette = [cmap(i) for i in np.linspace(0, cmap.N, slens[1], endpoint=True, dtype=int)]
@@ -86,7 +86,7 @@ def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
         else:
             default_palette = default_palette[idx]
 
-    if any([x in default_palette for x in ['viridis', 'autumn', 'Dark2']]):
+    if any([x in default_palette for x in ['viridis', 'autumn', 'cool', 'Dark2', 'tab10']]):
         # Colors at the edge of the palette are sometimes missing, so here we force them to appear
         cmap = plt.colormaps[default_palette]
         palette = [cmap(i) for i in np.linspace(0, cmap.N, len(linprod), endpoint=True, dtype=int)]
@@ -327,11 +327,11 @@ def get_every_realization_peakavg(sn):
         # plt.show()
 
         if len(max_idx) > 0:
-            sn_max[r] = np.nanmean(max_val) # max_val[0]
+            sn_max[r] = max_val[0] # np.nanmean(max_val) # max_val[0]
         else:
             sn_max[r] = np.nanmean(sn[:, r])
         if len(min_idx) > 0:
-            sn_min[r] = np.nanmean(-min_val) # -min_val[0]
+            sn_min[r] =  -min_val[0] # np.nanmean(-min_val) # -min_val[0]
         else:
             sn_min[r] = np.nanmean(sn[:, r])
     return sn_min, sn_max
@@ -352,8 +352,8 @@ def get_disorder_averaged_peaks(sn, times, offset=5):
         sn_min, sn_max = get_every_realization_peakavg(sn[t:t+offset, :])
         nmin = np.count_nonzero(~np.isnan(sn_min))
         nmax = np.count_nonzero(~np.isnan(sn_max))
-        print(np.shape(sn_max), nmax)
-        print(np.shape(sn_min), nmin)
+        # print(np.shape(sn_max), nmax)
+        # print(np.shape(sn_min), nmin)
         if nmin == 0:
             print('nmin==0')
             nmin = rdim
@@ -1353,7 +1353,8 @@ def get_timepoints(tdata, db):
     try:
         if not 'cachedir' in db['vals']:
             raise LookupError("Could not find 'cachedir' in db['vals']")
-        entfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
+        entfile = "{}/tsat_{}|{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
+                                                                                  db['vals']['filename'].replace('/', '|'),
                                                                                'entanglement_entropy',
                                                                                db['vals']['L'],
                                                                                db['vals']['x'],
@@ -1361,7 +1362,8 @@ def get_timepoints(tdata, db):
                                                                                db['vals']['r'],
                                                                                db['vals']['f'],
                                                                                db['vals']['l'])
-        numfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
+        numfile = "{}/tsat_{}|{}_L[{}]_x[{}]_w[{}]_r[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
+                                                                               db['vals']['filename'].replace('/', '|'),
                                                                                'number_entropy',
                                                                                db['vals']['L'],
                                                                                db['vals']['x'],

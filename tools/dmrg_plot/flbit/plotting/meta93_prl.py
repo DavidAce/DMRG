@@ -38,6 +38,7 @@ def get_meta(plotdir, cachedir):
     # For a 2x3 grid, the easiest is to divide the width 7.05687/3 for each figure
     # figsize1x1_halfcol = 2.35229, 3.404 * 0.450, # Third-size for spanning a two-column document  with 3 figures
     figsize1x1_halfcol = 2.26926, 3.404 * 0.440, # Third-size for spanning a two-column document  with 3 figures
+    figsize1x2_1col_square = 0.5 * 3.4039, 0.46 * 3.4039,  # For two plots side by side in 1 column of a two-column doc
     subplots1x1 = {
         'top': 0.997,
         'bottom': 0.17,
@@ -64,6 +65,14 @@ def get_meta(plotdir, cachedir):
         'bottom': 0.15,
         'left': 0.030,#0.17,#0.02,
         'right': 0.70,#1.0,
+        'wspace': 0,
+        'hspace': 0,
+    }
+    subplots1x2_1col_square = {
+        'top': 0.997,
+        'bottom': 0.135,
+        'left': 0.21,
+        'right': 0.980,
         'wspace': 0,
         'hspace': 0,
     }
@@ -130,6 +139,19 @@ def get_meta(plotdir, cachedir):
             'left': 0.30,
             'right': 0.990,
             },
+        'cachedir': Path(cachedir),
+        'plotdir': Path(plotdir, Path(mplstyle).stem),
+    }
+    default1x2_1col_square = {
+        'box_aspect': 1.0,
+        'subspec_title': False,
+        'figspec_title': False,
+        'legendoutside': False,
+        'legendcollect': False,
+        'constrained_layout': False,
+        'axtitle': False,
+        'figsize': figsize1x2_1col_square,
+        'subplots': subplots1x2_1col_square,
         'cachedir': Path(cachedir),
         'plotdir': Path(plotdir, Path(mplstyle).stem),
     }
@@ -883,7 +905,7 @@ def get_meta(plotdir, cachedir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'filename': 'SN-appr-f0.2-powerfit',
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'markerlist': ['growth-begin', 'num-saturated', 'ent-saturated'],
+            'markerlist': ['growth-begin', 'num-saturated',],
             'findloglogwindow': True,
             'markloglogwindow': False,
             'marklogwindow': False,
@@ -951,6 +973,7 @@ def get_meta(plotdir, cachedir):
             'legendlocation': 'upper right',
             'bbox_to_anchor': (1.04, 1.06),
         },
+
         'numHa': {
             'default': default,
             'groupname': 'measurements',
@@ -1147,7 +1170,7 @@ def get_meta(plotdir, cachedir):
             # 'legendlocation': (0.01, 0.65),
         },
         'hartley-lnlnt': {
-            'default': default,
+            'default': default1x2_1col_square,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -1166,9 +1189,10 @@ def get_meta(plotdir, cachedir):
             'sharex': 'all',
             'sharey': 'none',
             'xticks': [-1, 0, 1, 2, 3],
-            'yticks': [1.058, 1.060, 1.064, 1.066],
-            'yticklabels': ["$1.058", "$1.060", "$1.064", "$1.066"],
-            'ylabelpad': -16,
+            # 'yticks': [1.058, 1.060, 1.064, 1.066],
+            # 'yticklabels': ["$1.058", "$1.060", "$1.064", "$1.066"],
+            # 'ylabelpad': -16,
+            'ycoords': (-0.1,0.47),
             'ytickparams': {
                 'axis': 'y',
                 'direction': 'in',
@@ -1196,13 +1220,14 @@ def get_meta(plotdir, cachedir):
             'legendoutside': False,
             'legendcollect': False,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendreversed': True,  # Flip the row order in the legend
             # 'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper left', 'center right', 'upper left', 'center right'],
             'bbox_to_anchor': [(-0.05, 1.05), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
         },
         'numa-hartley': {
-            'default': default,
+            'default': default1x2_1col_square,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -1229,7 +1254,7 @@ def get_meta(plotdir, cachedir):
             'ymax': 0.008,
             'xmin': -0.0,
             'xmax': 3.1,
-            'markerlist': ['growth-begin', 'num-lnlnt-cease', 'num-saturated'],
+            'markerlist': ['growth-begin', 'num-saturated',],
             'marklogwindow': True,
             'marksaturation': True,
             'markloglogoffset': 0.008,
@@ -1250,9 +1275,10 @@ def get_meta(plotdir, cachedir):
             'timenormalization': '',
             'mplstyle': mplstyle,
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendreversed': True,  # Flip the row order in the legend
             # 'legendlocation': (0.55, 0.44),
             'legendlocation': 'upper right',
-            'bbox_to_anchor': (1.04, 1.05),
+            'bbox_to_anchor': (1.05, 1.05),
         },
         'chi': {
             'default': default,
@@ -2556,9 +2582,9 @@ def get_meta(plotdir, cachedir):
             # 'f': [0.3,0.5],
             # 'u': [16],
             # },
-            'ylabel': '$\Delta \overline{\langle x_n \\rangle}$',
+            'ylabel': '$\overline{|\Delta \langle x_n \\rangle|}$',
             'xlabel': '$\ln\ln t$',
-            'ycoords': (-0.1, 0.6),
+            # 'ycoords': (-0.1, 0.6),
             # 'yformat': '%.3f',
             # 'yscale': 'log',
             'plotprefix': 'PosX',
@@ -2567,19 +2593,21 @@ def get_meta(plotdir, cachedir):
             # 'sharex': 'all',
             # 'sharey': 'none',
             'xticks': [-1, 0, 1, 2, 3],
-            'yticks': [-0.002, -0.001, 0, 0.001],
+            # 'yticks': [-0.002, -0.001, 0, 0.001],
             # 'ytickparams': {
             #     'axis': 'y',
             #     'direction': 'in',
             #     'pad': -22,
             # },
             # 'yticks': [0.145,0.15,0.155, 0.16, 0.165],
-            'yticklabels': ["$-0.002$", "$-0.001$", "$0$", "$0.001$"],
-            'ylabelpad': -10,
+            # 'yticklabels': ["$-0.002$", "$-0.001$", "$0$", "$0.001$"],
+            # 'ylabelpad': -10,
             # 'ylabelrotation': 0,
             'ylabel_inner_visible': False,
-            'ymin': -0.0023,
-            'ymax': 0.0012,
+            # 'ymin': -0.0023,
+            # 'ymax': 0.0012,
+            'ymin': 0.120,
+            'ymax': 0.155,
             'xmin': -1.75,
             'xmax': 3.5,
             # 'plotVarX': True,
@@ -2591,7 +2619,7 @@ def get_meta(plotdir, cachedir):
             'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
-            'markloglogoffset': 0.008,
+            'markloglogoffset': -0.005,
             'fitloglogwindow': False,
             'fillerror': False,
             'markerror': False,
