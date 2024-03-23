@@ -194,7 +194,7 @@ void xdmrg::run_algorithm() {
         try_parity_shifting_mpo_squared(); // This shifts the variance of the opposite spin parity sector, to resolve degeneracy/spectral pairing
         shift_mpo_energy();                // Subtracts the current energy per site E/L from each MPO.
         try_moving_sites();                // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
-        move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
+        move_center_point();               // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }
@@ -251,10 +251,12 @@ void xdmrg::run_fes_analysis() {
 xdmrg::OptMeta xdmrg::get_opt_meta() {
     tools::log->trace("Configuring xDMRG optimization trial");
     OptMeta m1;
-    m1.label = "opt conf 1";
+    m1.label = "opt_meta1";
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
+    // Set the target eigenvalue
+    m1.optRitz = settings::xdmrg::ritz;
 
     // Set the default svd limits
     m1.bond_lim = status.bond_lim;
@@ -264,9 +266,10 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
 
     // Copy settings
-    m1.min_sites     = 1;
-    m1.max_sites     = std::min(2ul, settings::strategy::multisite_opt_site_def); // Default is 2-site dmrg, unless we specifically ask for 1-site
+    m1.min_sites     = settings::strategy::multisite_opt_site_def;
+    m1.max_sites     = settings::strategy::multisite_opt_site_def;
     m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
+    m1.eigs_ncv      = settings::solver::eigs_ncv;
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
                            ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
                            : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
@@ -277,13 +280,21 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min; // Set to high precision when stuck
     if(status.fes_is_running) m1.eigs_tol = settings::solver::eigs_tol_max;              // No need for high precision during FES.
 
-    m1.eigs_ncv = settings::solver::eigs_ncv;
+    m1.optFunc   = OptFunc::VARIANCE;
+    m1.optAlgo   = OptAlgo::DIRECT;
+    m1.optSolver = OptSolver::EIGS;
 
-    // Adjust the maximum number of sites to consider
-    if(status.algorithm_has_succeeded)
-        m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
-    else {
+    if(status.iter < settings::xdmrg::warmup_iters) {
+        // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
+        m1.max_sites        = settings::strategy::multisite_opt_site_max;
+        m1.max_problem_size = settings::solver::eig_max_size; // Try to use full diagonalization instead
+        if(settings::xdmrg::bond_init > 0 and m1.bond_lim > settings::xdmrg::bond_init) {
+            tools::log->info("Bond dimension limit is kept back during warmup {} -> {}", m1.bond_lim, settings::xdmrg::bond_init);
+            m1.bond_lim = settings::xdmrg::bond_init;
+        }
+    } else {
         using namespace settings::strategy;
+        m1.max_problem_size   = settings::precision::max_size_multisite;
         size_t has_stuck_for  = status.algorithm_has_stuck_for;
         size_t saturated_for  = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
         double has_stuck_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(has_stuck_for) / safe_cast<double>(max_stuck_iters);
@@ -295,60 +306,14 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
             case MultisiteWhen::ALWAYS: m1.max_sites = multisite_opt_site_max; break;
         }
     }
-    m1.optFunc   = OptFunc::VARIANCE;
-    m1.optAlgo   = OptAlgo::DIRECT;
-    m1.optSolver = OptSolver::EIGS;
+    if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
 
-    if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
-        // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
-        m1.optFunc   = OptFunc::VARIANCE;
-        m1.optAlgo   = OptAlgo::SUBSPACE;
-        m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_opt_site_max;
-        if(settings::xdmrg::opt_subspace_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_lim) {
-            tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_lim,
-                             settings::xdmrg::opt_subspace_bond_lim);
-            m1.bond_lim = settings::xdmrg::opt_subspace_bond_lim;
-        }
-    }
-
-    if(status.iter < settings::xdmrg::opt_overlap_iters) {
-        // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
-        m1.optAlgo   = OptAlgo::SUBSPACE;
-        m1.optFunc   = OptFunc::OVERLAP;
-        m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_opt_site_max;
-        if(settings::xdmrg::opt_overlap_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_overlap_bond_lim) {
-            tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_lim, settings::xdmrg::opt_subspace_bond_lim);
-            m1.bond_lim = settings::xdmrg::opt_subspace_bond_lim;
-        }
-    }
-
-    if(m1.optFunc == OptFunc::OVERLAP and not settings::precision::use_energy_shifted_mpo_squared) {
-        tools::log->debug("OptFunc::OVERLAP only works with energy-shifted mpo²'s: switching to OptFunc::VARIANCE");
-        m1.optFunc = OptFunc::VARIANCE;
-    }
-
-    // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
-    if(tensors.state->size_1site() > std::max({settings::solver::eig_max_size, settings::solver::eigs_max_size_shift_invert})) {
-        // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
-        // When this happens, we should use optimize VARIANCE with EIGS instead.
-        m1.optAlgo   = OptAlgo::DIRECT;
-        m1.optFunc   = OptFunc::VARIANCE;
-        m1.optSolver = OptSolver::EIGS;
-    }
-
-    // Set up the maximum problem size here
-    if(m1.optAlgo == OptAlgo::SUBSPACE)
-        m1.max_problem_size = settings::solver::eigs_max_size_shift_invert;
-    else
-        m1.max_problem_size = settings::precision::max_size_multisite;
-
-    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
+    // Set up the problem size here
+    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
-    // Do eig instead of eigs when it's cheap
+    // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
 
     if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
@@ -359,7 +324,6 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.validate();
     return m1;
 }
-
 
 void xdmrg::update_state() {
     using namespace tools::finite;
@@ -391,8 +355,8 @@ void xdmrg::update_state() {
     }
 
     // Announce the current configuration for optimization
-    tools::log->debug("Updating state: {} | mode {} | space {} | type {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", opt_meta.label,
-                      enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver), enum2sv(opt_meta.optType), opt_meta.chosen_sites,
+    tools::log->debug("Updating state: {} | mode {} | space {} | type {} | ritz {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", opt_meta.label,
+                      enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver), enum2sv(opt_meta.optType), enum2sv(opt_meta.optRitz), opt_meta.chosen_sites,
                       tensors.state->active_dimensions(), tensors.state->active_problem_size(), opt_meta.trnc_lim,
                       (opt_meta.alpha_expansion ? opt_meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
     // Run the optimization
@@ -437,9 +401,9 @@ void xdmrg::update_state() {
 
     // Do the truncation with SVD
     // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merger
-    tensors.merge_multisite_mps(opt_state.get_tensor(), svd::config(opt_state.get_bond_lim(), opt_state.get_trnc_lim()));
+    tensors.merge_multisite_mps(opt_state.get_tensor(), svd::config(opt_meta.bond_lim, opt_meta.trnc_lim));
     tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
-    if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.2e}", tensors.state->get_truncation_errors_active());
+    if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
 
     // if constexpr(settings::debug) {
     auto variance_before_svd = opt_state.get_variance();
@@ -478,6 +442,7 @@ void xdmrg::check_convergence() {
     //            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
     //        }
     //    }
+    if(status.iter < settings::xdmrg::warmup_iters) clear_convergence_status();
     update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
@@ -597,6 +562,16 @@ void xdmrg::find_energy_range() {
 
     // Reset our logger
     tools::log = tools::Logger::getLogger(fmt::format("{}", status.algo_type_sv()));
+}
+
+void xdmrg::shift_mpo_energy() {
+    if(not settings::precision::use_energy_shifted_mpo) return;
+    if(not tensors.position_is_inward_edge()) return;
+    if(settings::xdmrg::ritz == OptRitz::SM) return; // No point in shifting when we use he folded spectrum method with SM since E² ~ 0 anyway.
+    tensors.set_energy_shift_mpo();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
+    tensors.rebuild_mpo_squared(); // The shift clears our squared mpo's. So we have to rebuild them. Compression is retained.
+    tensors.rebuild_edges();       // The shift modified all our mpo's. So we have to rebuild all the edges.
+    if constexpr(settings::debug) tensors.assert_validity();
 }
 
 void xdmrg::update_time_step() {

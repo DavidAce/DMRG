@@ -271,7 +271,6 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
 
     // Split the multisite mps into single-site mps objects
     auto mps_list = tools::common::split::split_mps(multisite_mps, spin_dims, sites, center_position, svd_cfg);
-
     // Sanity checks
     if(sites.size() != mps_list.size())
         throw std::runtime_error(

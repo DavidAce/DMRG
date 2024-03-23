@@ -70,7 +70,7 @@ class TensorsFinite {
     void project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg = std::nullopt);
     void set_parity_shift_mpo(std::string_view axis);
     void set_parity_shift_mpo_squared(std::string_view axis);
-    void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
+    void set_energy_shift_mpo(std::optional<double> energy_shift_per_site = std::nullopt);
     void rebuild_mpo();
     void rebuild_mpo_squared();
 

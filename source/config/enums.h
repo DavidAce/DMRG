@@ -134,7 +134,13 @@ enum class OptSolver {
     EIG, /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
     EIGS /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
 };
-enum class OptRitz { LR, SR, SM }; // Smallest Real or Largest Real, i.e. ground state or max state. Use SM for middle of spectrum states.
+enum class OptRitz {
+    LR, /*!< Largest Real eigenvalue */
+    SR, /*!< Smallest Real eigenvalue */
+    SM, /*!< Smallest magnitude eigenvalue (use this to find a middle-of-spectrum state with energy closest to 0) */
+    CR  /*!< Closest real eigenvalue to the current one (use this for middle-of-spectrum states close to the initial product state) */
+};
+
 enum class OptWhen : int {
     NEVER              = 0,
     PREV_FAIL_GRADIENT = 1,
@@ -420,6 +426,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptRitz::SR)                                         return "SR";
         if(item == OptRitz::LR)                                         return "LR";
         if(item == OptRitz::SM)                                         return "SM";
+        if(item == OptRitz::CR)                                         return "CR";
     }
     if constexpr(std::is_same_v<T, SVDLibrary>) {
         if(item == SVDLibrary::EIGEN)                                   return "EIGEN";
@@ -748,6 +755,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "SR")                                    return OptRitz::SR;
         if(item == "LR")                                    return OptRitz::LR;
         if(item == "SM")                                    return OptRitz::SM;
+        if(item == "CR")                                    return OptRitz::CR;
     }
     if constexpr(std::is_same_v<T, SVDLibrary>) {
         if(item == "EIGEN")                                 return SVDLibrary::EIGEN;

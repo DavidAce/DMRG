@@ -110,34 +110,13 @@ namespace tools::finite::opt {
 
         std::vector<opt_mps> results;
         internal::extract_results(tensors, initial_mps, meta, solver, results, false);
-
-        auto comparator = [&ritz, &meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
-            auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
-            if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
-            switch(ritz) {
-                case eig::Ritz::SA:
-                case eig::Ritz::SR: return lhs.get_energy() < rhs.get_energy();
-                case eig::Ritz::LA:
-                case eig::Ritz::LR: return lhs.get_energy() > rhs.get_energy();
-                case eig::Ritz::SM:
-                case eig::Ritz::primme_closest_abs: {
-                    // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
-                    auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
-                    auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
-                    return diff_energy_lhs < diff_energy_rhs;
-                }
-                default: throw except::runtime_error("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz));
-            }
-        };
-        if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
-        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
         return results;
     }
 
     opt_mps internal::optimize_energy_eigs(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta) {
         if(meta.optSolver == OptSolver::EIG) return optimize_energy_eig(tensors, initial_mps, status, meta);
-
-        tools::log->debug("Energy optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
+        tools::log->debug("optimize_energy_eigs: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),
+                          enum2sv(meta.optAlgo));
         auto                 t_eigs = tid::tic_scope("eigs-ene", tid::higher);
         std::vector<opt_mps> results;
         if(meta.optType == OptType::REAL) results = eigs_energy_executor<real>(tensors, initial_mps, meta);
@@ -148,6 +127,25 @@ namespace tools::finite::opt {
             meta.optExit = OptExit::FAIL_ERROR;
             return initial_mps; // The solver failed
         }
+
+        auto      comparator = [&meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
+            auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
+            if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
+            switch(meta.optRitz) {
+                case OptRitz::SR: return lhs.get_energy() < rhs.get_energy();
+                case OptRitz::LR: return lhs.get_energy() > rhs.get_energy();
+                case OptRitz::SM: {
+                    // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
+                    auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
+                    auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
+                    return diff_energy_lhs < diff_energy_rhs;
+                }
+                default: throw except::runtime_error("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz));
+            }
+        };
+
+        if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
         return results.front();
     }
 

@@ -167,7 +167,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
 void AlgorithmFinite::shift_mpo_energy() {
     if(not settings::precision::use_energy_shifted_mpo) return;
     if(not tensors.position_is_inward_edge()) return;
-    tensors.shift_mpo_energy();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
+    tensors.set_energy_shift_mpo();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
     tensors.rebuild_mpo_squared(); // The shift clears our squared mpo's. So we have to rebuild them. Compression is retained.
     tensors.rebuild_edges();       // The shift modified all our mpo's. So we have to rebuild all the edges.
     if constexpr(settings::debug) tensors.assert_validity();

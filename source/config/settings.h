@@ -224,7 +224,7 @@ namespace settings {
         inline size_t              multisite_opt_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove       multisite_opt_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multisite optimization step, choose between {ONE, MID, MAX} */
         inline MultisiteWhen       multisite_opt_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {NEVER, STUCK, SATURATED, ALWAYS} */
-        inline MultisiteGrow       multisite_opt_grow          = MultisiteGrow::OFF;                     /*!< OFF: Increase to max sites immediately when conditions are right, ON: grow up to max linearly with stuck/saturated iters */
+        inline MultisiteGrow       multisite_opt_grow          = MultisiteGrow::OFF;                     /*!< ON: grow up to max linearly with stuck/saturated iters. OFF: increase to max sites immediately when conditions are right */
         inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
@@ -243,7 +243,6 @@ namespace settings {
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_on_the_fly   = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
         inline bool     use_energy_shifted_mpo          = false ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_energy_shifted_mpo_squared  = false ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
         inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
@@ -381,14 +380,12 @@ namespace settings {
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
         inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
-        inline size_t     max_iters                     = 10;                      /*!< Max number of iterations. One iterations moves L steps. */
+        inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select what part of the energy eigenspectrum to target */
+        inline size_t     max_iters                     = 50;                      /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t     min_iters                     = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
-        inline long       bond_max                      = 768;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long       bond_init                     = 8;                       /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
-        inline size_t     opt_overlap_iters             = 2;                       /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
-        inline long       opt_overlap_bond_lim          = 16;                      /*!< Bond limit during initial OVERLAP optimization. set to <= 0 for unlimited */
-        inline size_t     opt_subspace_iters            = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
-        inline long       opt_subspace_bond_lim         = 32;                      /*!< Bond limit during initial SUBSPACE optimization. set to <= 0 for unlimited */
+        inline size_t     warmup_iters                  = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
+        inline long       bond_max                      = 1024;                    /*!< Maximum bond dimension (number of singular values to keep after SVD). */
+        inline long       bond_init                     = 8;                       /*!< Initial bond dimension limit. Used during warmup or when bond_increase_when == true, or starting from an entangled state */
         inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline double     energy_density_target         = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
         inline double     energy_density_window         = 0.05;                    /*!< Accept states inside of energy_tgt +- energy_dens_window. */

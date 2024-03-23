@@ -20,7 +20,7 @@ namespace tools::finite::ed {
         auto tensors_ed = tensors;
         tensors_ed.clear_cache();
         tensors_ed.clear_measurements();
-        tensors_ed.shift_mpo_energy(0);
+        tensors_ed.set_energy_shift_mpo(0);
         // The reduction clears our squared mpo's. So we have to rebuild.
         tensors_ed.rebuild_mpo_squared();
         tensors_ed.rebuild_edges();

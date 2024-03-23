@@ -168,8 +168,8 @@ double ModelInfinite::get_energy_shift_per_site() const {
 }
 
 void ModelInfinite::set_energy_shift_per_site(double energy_shift_per_site) {
-    HA->set_energy_shift(energy_shift_per_site);
-    HB->set_energy_shift(energy_shift_per_site);
+    HA->set_energy_shift_mpo(energy_shift_per_site);
+    HB->set_energy_shift_mpo(energy_shift_per_site);
 }
 
 const Eigen::Tensor<cplx, 4> &ModelInfinite::get_2site_mpo_AB() const {

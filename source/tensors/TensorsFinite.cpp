@@ -245,10 +245,10 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     return deb;
 }
 
-void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site) {
-    if(not energy_shift_per_site) energy_shift_per_site = tools::finite::measure::energy_per_site(*this);
-    if(std::abs(model->get_energy_shift_per_site() - energy_shift_per_site.value()) <= std::numeric_limits<double>::epsilon()) {
-        tools::log->debug("Energy per site is already shifted by {:.16f}: No shift needed.", energy_shift_per_site.value());
+void TensorsFinite::set_energy_shift_mpo(std::optional<double> energy_shift_mpo_per_site) {
+    if(not energy_shift_mpo_per_site) energy_shift_mpo_per_site = tools::finite::measure::energy_per_site(*this);
+    if(std::abs(model->get_energy_shift_mpo_per_site() - energy_shift_mpo_per_site.value()) <= std::numeric_limits<double>::epsilon()) {
+        tools::log->debug("Energy per site is already shifted by {:.16f}: No shift needed.", energy_shift_mpo_per_site.value());
         return;
     }
     std::vector<std::optional<DebugStatus>> debs;
@@ -257,14 +257,13 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->info("Shifting MPO energy: {:.16f}", get_length<double>() * energy_shift_per_site.value());
-    model->set_energy_shift_per_site(energy_shift_per_site.value());
-    model->clear_mpo_squared();
+    tools::log->info("Shifting MPO energy: {:.16f}", get_length<double>() * energy_shift_mpo_per_site.value());
+    model->set_energy_shift_mpo_per_site(energy_shift_mpo_per_site.value());
     model->assert_validity();
 
     debs.emplace_back(get_status(*this, "After shift"));
 
-    if(energy_shift_per_site.value() != 0) {
+    if(energy_shift_mpo_per_site.value() != 0) {
         auto &bef = debs.front();
         auto &aft = debs.back();
         if(bef and aft) {
@@ -291,7 +290,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
             double delta_ene_rel = delta_ene / std::abs(aft->ene) * 100;
             double delta_var_rel = delta_var / std::abs(aft->var) * 100;
             double critical_cancellation_max_decimals =
-                std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(get_length<double>() * energy_shift_per_site.value(), 2)));
+                std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(get_length<double>() * energy_shift_mpo_per_site.value(), 2)));
             double critical_cancellation_error = std::pow(10, -critical_cancellation_max_decimals);
             tools::log->debug("Variance change              {:>20.16f}", delta_var);
             tools::log->debug("Variance change percent      {:>20.16f}", delta_var_rel);

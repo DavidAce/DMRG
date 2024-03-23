@@ -44,6 +44,7 @@ class xdmrg : public AlgorithmFinite {
     void     resume() final;
     void     check_convergence() final;
     void     update_time_step();
+    void     shift_mpo_energy() final;
     void     create_hamiltonian_gates();
     void     create_time_evolution_gates();
 };

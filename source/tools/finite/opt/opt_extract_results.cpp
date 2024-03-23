@@ -65,6 +65,8 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.set_energy(energy);
                 mps.set_eigval(eigval);
                 mps.set_variance(variance);
+                tools::log->info("extract_results: set variance: {:.16f}", variance);
+
                 mps.validate_basis_vector();
 
                 // Sum up the contributions. Since full diag gives an orthonormal basis, this adds up to one. Normally only
@@ -84,7 +86,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                     // are looking for is naturally the eigenpair with smallest eigenvalue.
                     // Lapack gives us the results sorted in order of increasing eigenvalue, so it's enough
                     // to keep the first few eigenvectors here.
-                    if(num_solutions >= 2) break;
+                    // if(num_solutions >= 2) break;
                 }
                 //                if(fulldiag and meta.optFunc == OptFunc::ENERGY) {
                 //                    // This happens when we optimize energy (i.e. <(H-E)>) using full diagonalization.
@@ -149,6 +151,7 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 mps.set_energy(energy);
                 mps.set_eigval(eigval);
                 mps.set_variance(variance);
+                tools::log->info("extract_results_subspace: set variance: {:.16f}", variance);
                 //                mps.set_grad_max(grad_max);
                 mps.validate_basis_vector();
             }

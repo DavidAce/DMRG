@@ -16,8 +16,8 @@ class AlgorithmFinite : public AlgorithmBase {
     public:
     // Inherit the constructor of class_algorithm_base
     using AlgorithmBase::AlgorithmBase;
-    explicit AlgorithmFinite(AlgorithmType algo_type);
-    explicit AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
+    explicit      AlgorithmFinite(AlgorithmType algo_type);
+    explicit      AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
     TensorsFinite tensors; // State, model and edges
 
     size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
@@ -36,7 +36,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         try_parity_shifting_mpo_squared();
     void         try_moving_sites();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
-    void         shift_mpo_energy();
+    virtual void shift_mpo_energy(); // We override this in xdmrg
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
     void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
@@ -47,9 +47,9 @@ class AlgorithmFinite : public AlgorithmBase {
     void         run_postprocessing() override;
     void         clear_convergence_status() override;
     void         initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
-                                 std::optional<std::string> axis = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
-                                 std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
-                                 std::optional<double> trnc_lim = std::nullopt);
+                                  std::optional<std::string> axis = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
+                                  std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
+                                  std::optional<double> trnc_lim = std::nullopt);
 
     void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY) override;
     void print_status() override;
@@ -66,7 +66,7 @@ class AlgorithmFinite : public AlgorithmBase {
         AlgorithmStatus     status;
         double              variance;
         std::vector<double> entropies;
-        log_entry(const AlgorithmStatus &s, const TensorsFinite &t);
+                            log_entry(const AlgorithmStatus &s, const TensorsFinite &t);
     };
 
     std::vector<log_entry> algorithm_history;

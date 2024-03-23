@@ -25,7 +25,8 @@ namespace tools::finite::opt::internal {
         switch(meta.optRitz) {
             case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
             case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;
-            case OptRitz::SM: {
+            case OptRitz::SM:
+            case OptRitz::CR: {
                 auto eigval = initial_mps.get_eigval();
                 auto eigvar = initial_mps.get_variance();
                 auto vl     = eigval - 2 * eigvar;

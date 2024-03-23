@@ -168,11 +168,13 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         if(dL == spin_dims.front()) {
             auto [U3, S1, V3] = svd.schmidt_multisite(multisite_mps, d0, 1, d1, d2, svd_cfg.value());
             if(static_cast<long>(pos) == center_position) {
+                tools::log->info("split_mps AC: truncation_error: {:.3e}", svd.get_truncation_error());
                 auto mps_site = MpsSite(U3, pos, "AC"); // Single site
                 mps_site.set_LC(S1, svd.get_truncation_error());
                 mps_site.stash_V(V3, pos + 1);
                 return {mps_site};
             } else {
+                tools::log->info("split_mps A: truncation_error: {:.3e}", svd.get_truncation_error());
                 auto mps_site = MpsSite(U3, pos, "A"); // Single site
                 mps_site.stash_S(S1, svd.get_truncation_error(), pos + 1);
                 mps_site.stash_V(V3, pos + 1);
@@ -181,7 +183,8 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
         } else if(dR == spin_dims.front()) {
             auto [U3, S1, V3] = svd.schmidt_multisite(multisite_mps, 1, d0, d1, d2, svd_cfg.value());
-            auto mps_site     = MpsSite(V3, positions.front(), "B"); // Single site
+            tools::log->info("split_mps B: truncation_error: {:.3e}", svd.get_truncation_error());
+            auto mps_site = MpsSite(V3, positions.front(), "B"); // Single site
             if(static_cast<long>(pos) == center_position + 1) {
                 mps_site.stash_C(S1, svd.get_truncation_error(), static_cast<size_t>(center_position)); // The site to the left is a center, S1 belongs to it
             } else {

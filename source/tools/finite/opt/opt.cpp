@@ -34,9 +34,9 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                           enum2sv(meta.optSolver), enum2sv(OptSolver::EIGS));
         meta.optSolver = OptSolver::EIGS;
     }
-    tools::log->trace("Starting optimization: func [{}] | algo [{}] | solver [{}] | type [{}] | position [{}] | sites {} | shape {} = {}",
-                      enum2sv(meta.optFunc), enum2sv(meta.optAlgo), enum2sv(meta.optSolver), enum2sv(meta.optType), status.position, tensors.active_sites,
-                      tensors.active_problem_dims(), tensors.active_problem_size());
+    tools::log->trace("Starting optimization: func [{}] | algo [{}] | solver [{}] | type [{}] | ritz [{}] | position [{}] | sites {} | shape {} = {}",
+                      enum2sv(meta.optFunc), enum2sv(meta.optAlgo), enum2sv(meta.optSolver), enum2sv(meta.optType), enum2sv(meta.optRitz), status.position,
+                      tensors.active_sites, tensors.active_problem_dims(), tensors.active_problem_size());
 
     using namespace opt::internal;
 
@@ -57,7 +57,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     break;
                 case OptAlgo::SHIFTINV: throw except::runtime_error("OptFunc::VARIANCE is not compatible with OptAlgo::SHIFTINV");
                 case OptAlgo::MPSEIGS: throw except::runtime_error("OptAlgo::MPSEIGS has not been implemented yet");
-                default : throw except::logic_error("Unrecognized OptAlgo::{}", static_cast<std::underlying_type_t<OptAlgo>>(meta.optAlgo));
+                default: throw except::logic_error("Unrecognized OptAlgo::{}", static_cast<std::underlying_type_t<OptAlgo>>(meta.optAlgo));
             }
             break;
         }
@@ -75,8 +75,15 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
 tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
                                                                   OptMeta &meta) {
-    auto t_opt = tid::tic_scope("opt");
-    return internal::optimize_energy_eigs(tensors, initial_mps, status, meta);
+    auto t_opt  = tid::tic_scope("opt");
+    auto result = internal::optimize_energy_eigs(tensors, initial_mps, status, meta);
+    tools::finite::opt::reports::print_eigs_report();
+    // Finish up
+    result.set_optsolver(meta.optSolver);
+    result.set_optfunc(meta.optFunc);
+    result.set_optexit(meta.optExit);
+    result.validate_result();
+    return result;
 }
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
@@ -176,6 +183,7 @@ namespace tools::finite::opt::internal {
     }
 
     Comparator::Comparator(const OptMeta &meta_, double target_energy_) : meta(&meta_), target_energy(target_energy_) {}
+
     bool Comparator::operator()(const opt_mps &lhs, const opt_mps &rhs) {
         if(not meta) throw except::logic_error("No opt_meta given to comparator");
         // The variance case first
@@ -188,6 +196,7 @@ namespace tools::finite::opt::internal {
                 case OptRitz::SR: return comparator::energy(lhs, rhs);
                 case OptRitz::LR: return comparator::energy(rhs, lhs);
                 case OptRitz::SM: return comparator::energy_distance(lhs, rhs, target_energy);
+                case OptRitz::CR: return comparator::energy_distance(lhs, rhs, target_energy);
             }
         }
         return comparator::eigval(lhs, rhs);

@@ -37,9 +37,8 @@ void MpoSite::build_mpo_squared() {
 
 Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     tools::log->trace("mpo({}): building mpo²", get_position());
-    Eigen::Tensor<cplx, 4> mpo = MPO_energy_shifted_view(energy_shift_mpo2);
+    Eigen::Tensor<cplx, 4> mpo = MPO_energy_shifted_view(energy_shift_mpo);
     Eigen::Tensor<cplx, 4> mpo2;
-
     {
         auto d0 = mpo.dimension(0) * mpo.dimension(0);
         auto d1 = mpo.dimension(1) * mpo.dimension(1);
@@ -243,7 +242,6 @@ size_t MpoSite::get_position() const {
 }
 
 bool MpoSite::has_energy_shifted_mpo() const { return energy_shift_mpo != 0.0; }
-bool MpoSite::has_energy_shifted_mpo2() const { return energy_shift_mpo2 != 0.0; }
 
 bool MpoSite::is_compressed_mpo_squared() const {
     // When H² = mpo*mpo is compressed, we typically find that the virtual bonds
@@ -269,16 +267,12 @@ bool MpoSite::is_compressed_mpo_squared() const {
 }
 
 double MpoSite::get_energy_shift_mpo() const { return energy_shift_mpo; }
-double MpoSite::get_energy_shift_mpo2() const { return energy_shift_mpo2; }
-
-void MpoSite::set_energy_shift(double site_energy) {
+void MpoSite::set_energy_shift_mpo(double site_energy) {
     if(energy_shift_mpo != site_energy and settings::precision::use_energy_shifted_mpo) {
         energy_shift_mpo = site_energy;
         build_mpo();
-    }
-    if(energy_shift_mpo2 != site_energy and settings::precision::use_energy_shifted_mpo_squared) {
-        energy_shift_mpo2 = site_energy;
         build_mpo_squared();
+
     }
 }
 

@@ -176,8 +176,6 @@ namespace tools::finite::opt {
         if(meta.eigs_ncv) cfg.maxNcv = meta.eigs_ncv;
         if(meta.eigs_iter_max) cfg.maxIter = meta.eigs_iter_max;
 
-        // const auto &env2                = tensors.get_multisite_env_var_blk();
-        // auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
         const auto &model               = *tensors.model;
         const auto &edges               = *tensors.edges;
         const auto &envs                = edges.get_var_active();

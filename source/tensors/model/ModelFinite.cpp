@@ -113,25 +113,12 @@ bool ModelFinite::has_energy_shifted_mpo() const {
     for(const auto &mpo : MPO)
         if(shifted != mpo->has_energy_shifted_mpo())
             throw except::logic_error(
-                fmt::format("Mismatching has_energy_shifted_mpo: pos 0:{} | {}:{}", shifted, mpo->get_position(), mpo->has_energy_shifted_mpo2()));
-
+                fmt::format("Mismatching has_energy_shifted_mpo: pos 0:{} | {}:{}", shifted, mpo->get_position(), mpo->has_energy_shifted_mpo()));
     if(shifted and not settings::precision::use_energy_shifted_mpo)
         throw except::logic_error("The MPO's are energy-shifted but settings::precision::use_energy_shifted_mpo is false");
     return shifted;
 }
 
-// For energy-shifted MPO squared
-bool ModelFinite::has_energy_shifted_mpo_squared() const {
-    bool shifted = MPO.front()->has_energy_shifted_mpo2();
-    for(const auto &mpo : MPO)
-        if(shifted != mpo->has_energy_shifted_mpo2())
-            throw except::logic_error(
-                fmt::format("Mismatching has_energy_shifted_mpo2: pos 0:{} | {}:{}", shifted, mpo->get_position(), mpo->has_energy_shifted_mpo2()));
-
-    if(shifted and not settings::precision::use_energy_shifted_mpo_squared)
-        throw except::logic_error("The MPO²'s are energy-shifted but settings::precision::use_energy_shifted_mpo_squared is false");
-    return shifted;
-}
 
 bool ModelFinite::is_compressed_mpo_squared() const {
     bool compressed = MPO.front()->is_compressed_mpo_squared();
@@ -142,9 +129,9 @@ bool ModelFinite::is_compressed_mpo_squared() const {
     return compressed;
 }
 
-double ModelFinite::get_energy_shift() const { return get_energy_shift_per_site() * static_cast<double>(get_length()); }
+double ModelFinite::get_energy_shift_mpo() const { return get_energy_shift_mpo_per_site() * static_cast<double>(get_length()); }
 
-double ModelFinite::get_energy_shift_per_site() const {
+double ModelFinite::get_energy_shift_mpo_per_site() const {
     // Check that all energies are the same
     double e_shift = MPO.front()->get_energy_shift_mpo();
     for(const auto &mpo : MPO)
@@ -309,12 +296,12 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared(Mpo
     }
 }
 
-void ModelFinite::set_energy_shift(double total_energy) { set_energy_shift_per_site(total_energy / static_cast<double>(get_length())); }
+void ModelFinite::set_energy_shift_mpo(double total_energy) { set_energy_shift_mpo_per_site(total_energy / static_cast<double>(get_length())); }
 
-void ModelFinite::set_energy_shift_per_site(double energy_shift_per_site) {
-    if(get_energy_shift_per_site() == energy_shift_per_site) return;
-    tools::log->debug("Shifting MPO energy per site: {:.16f}", energy_shift_per_site);
-    for(const auto &mpo : MPO) mpo->set_energy_shift(energy_shift_per_site);
+void ModelFinite::set_energy_shift_mpo_per_site(double energy_shift_per_site) {
+    if(get_energy_shift_mpo_per_site() == energy_shift_per_site) return;
+    tools::log->trace("Shifting MPO energy per site: {:.16f}", energy_shift_per_site);
+    for(const auto &mpo : MPO) mpo->set_energy_shift_mpo(energy_shift_per_site);
     clear_cache();
 }
 

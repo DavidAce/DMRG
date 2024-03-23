@@ -24,7 +24,6 @@ class MpoSite {
     // Common parameters
     std::optional<size_t> position;                    /*!< Position on a finite chain */
     double                energy_shift_mpo       = 0;  /*!< Energy shift for this mpo (to make energy-shifted MPO views) */
-    double                energy_shift_mpo2      = 0;  /*!< Energy shift for the squared mpo (to make energy-shifted MPO2 views) */
     int                   parity_shift_sign_mpo  = 0;  /*!< Sign of parity sector to shift for the MPO*/
     std::string           parity_shift_axus_mpo  = {}; /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
     int                   parity_shift_sign_mpo2 = 0;  /*!< Sign of parity sector to shift for the MPO²*/
@@ -58,7 +57,8 @@ class MpoSite {
     void                                          build_mpo_t();
     void                                          set_position(size_t new_pos);
     void                                          assert_validity() const;
-    void                                          set_energy_shift(double site_energy);
+    void                                          set_energy_shift_mpo(double site_energy);
+    void                                          set_energy_shift_mpo2(double site_energy);
     void                                          set_parity_shift_mpo(int sign, std::string_view axis);
     std::pair<int, std::string_view>              get_parity_shift_mpo() const;
     void                                          set_parity_shift_mpo_squared(int sign, std::string_view axis);

@@ -501,7 +501,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
         const auto mpos = model.get_mpo_active();
         const auto envs = edges.get_ene_active();
         tools::log->trace("Measuring energy: multisite_mps dims {} | sites {} | eshift {:.16f} | norm {:.16f}", multisite_mps.dimensions(), model.active_sites,
-                          model.get_energy_shift(), tenx::norm(multisite_mps));
+                          model.get_energy_shift_mpo(), tenx::norm(multisite_mps));
         e_minus_ered = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
         if constexpr(settings::debug_expval) {
             const auto &mpo  = model.get_multisite_mpo();
@@ -531,7 +531,7 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const Mode
     // Else
     //      "Actual energy" = (E - E_shift) + E_shift = E  + 0 = E
     auto e_minus_eshift = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
-    auto eshift         = model.get_energy_shift();
+    auto eshift         = model.get_energy_shift_mpo();
     auto energy         = e_minus_eshift + eshift;
     tools::log->info("(E-Eshift) + Eshift = ({:.16f}) + {:.16f} = {:.16f}", e_minus_eshift, eshift, energy);
     if(measurements != nullptr) measurements->energy = energy;
@@ -581,21 +581,16 @@ double tools::finite::measure::energy_variance(const StateFinite &state, const M
     assert(not edges.active_sites.empty());
     assert(num::all_equal(state.active_sites, model.active_sites, edges.active_sites));
     if constexpr(settings::debug) tools::log->trace("Measuring energy variance: sites {}", state.active_sites);
-    double energy = 0;
-    if(model.has_energy_shifted_mpo_squared())
-        energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
-    else
-        energy = tools::finite::measure::energy(state, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
-
-    auto        t_var = tid::tic_scope("var", tid::level::highest);
-    double      E2    = energy * energy;
-    const auto &mps   = state.get_mps_active();
-    const auto &mpo   = model.get_mpo_active();
-    const auto &env   = edges.get_var_active();
-    auto        H2    = tools::finite::measure::expectation_value(mps, mps, mpo, env);
+    double      energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
+    double      E2     = energy * energy;
+    auto        t_var  = tid::tic_scope("var", tid::level::highest);
+    const auto &mps    = state.get_mps_active();
+    const auto &mpo    = model.get_mpo_active();
+    const auto &env    = edges.get_var_active();
+    auto        H2     = tools::finite::measure::expectation_value(mps, mps, mpo, env);
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
-    tools::log->trace("Variance |H2-E2| = |{:.3e} - {:.3e}| = {:.3e}", std::real(H2), E2, var);
+    tools::log->trace("Variance |H2-E2| = |{:.16f} - {:.16f}| = {:.16f}", std::real(H2), E2, var);
     if(measurements != nullptr) measurements->energy_variance = var;
     return var;
 }
@@ -622,14 +617,10 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
     if(not num::all_equal(model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
-    double energy = 0;
-    if(model.has_energy_shifted_mpo())
-        energy = tools::finite::measure::energy_minus_energy_shift(multisite_mps, model, edges, measurements);
-    else
-        energy = tools::finite::measure::energy(multisite_mps, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
+    double energy = tools::finite::measure::energy_minus_energy_shift(multisite_mps, model, edges, measurements);
+    double E2     = energy * energy;
 
-    auto   t_var = tid::tic_scope("var", tid::level::highest);
-    double E2    = energy * energy;
+    auto t_var = tid::tic_scope("var", tid::level::highest);
 
     // Check if we can contract directly or if we need to use the split method
     // Normally it's only worth splitting the multisite mps when it has more than 3 sites
@@ -661,9 +652,9 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
             assert(std::abs(H2 - H2dbg) < 1e-10);
         }
     }
-
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
+    tools::log->info("Var H = H² - E² = {:.16f} - {:.16f} = {:.16f}", std::real(H2), E2, var);
     if(measurements != nullptr) measurements->energy_variance = var;
     return var;
 }
@@ -695,8 +686,8 @@ template double tools::finite::measure::energy_normalized(const StateFinite &, c
 template double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges, double, double,
                                                           MeasurementsTensorsFinite *measurements);
 
-extern double tools::finite::measure::energy_shift(const TensorsFinite &tensors) { return tensors.model->get_energy_shift(); }
-extern double tools::finite::measure::energy_shift_per_site(const TensorsFinite &tensors) { return tensors.model->get_energy_shift_per_site(); }
+extern double tools::finite::measure::energy_shift(const TensorsFinite &tensors) { return tensors.model->get_energy_shift_mpo(); }
+extern double tools::finite::measure::energy_shift_per_site(const TensorsFinite &tensors) { return tensors.model->get_energy_shift_mpo_per_site(); }
 
 double tools::finite::measure::energy_minus_energy_shift(const TensorsFinite &tensors) {
     tensors.assert_edges_ene();

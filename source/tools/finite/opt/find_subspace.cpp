@@ -62,11 +62,11 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
         double energy_target = tools::finite::measure::energy(tensors);
         if(model.has_energy_shifted_mpo()) {
             eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors);
-            tools::log->trace("Energy shift  = {:.16f} | per site = {:.16f}", model.get_energy_shift(), model.get_energy_shift_per_site());
+            tools::log->trace("Energy shift  = {:.16f} | per site = {:.16f}", model.get_energy_shift_mpo(), model.get_energy_shift_mpo_per_site());
             tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);
             tools::log->trace("Eigval target = {:.16f} | per site = {:.16f}", eigval_target, eigval_target / dbl_length);
             tools::log->trace("Eigval target + Energy shift = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length,
-                              model.get_energy_shift_per_site(), energy_target / dbl_length);
+                              model.get_energy_shift_mpo_per_site(), energy_target / dbl_length);
         } else {
             eigval_target = energy_target;
         }
@@ -74,8 +74,8 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     }
     /* clang-format off */
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
-    tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_shift(), eigvals.maxCoeff() + model.get_energy_shift());
-    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_shift_per_site(), eigvals.maxCoeff() / dbl_length + model.get_energy_shift_per_site());
+    tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_shift_mpo(), eigvals.maxCoeff() + model.get_energy_shift_mpo());
+    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_shift_mpo_per_site(), eigvals.maxCoeff() / dbl_length + model.get_energy_shift_mpo_per_site());
     /* clang-format on */
     reports::print_subs_report();
 
@@ -87,7 +87,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     }
     const auto     &multisite_mps = state.get_multisite_mps();
     const auto      multisite_vec = Eigen::Map<const Eigen::VectorXcd>(multisite_mps.data(), multisite_mps.size());
-    auto            energy_shift  = model.get_energy_shift();
+    auto            energy_shift  = model.get_energy_shift_mpo();
     Eigen::VectorXd overlaps      = (multisite_vec.adjoint() * eigvecs).cwiseAbs().real();
 
     double eigvec_time = 0;
@@ -145,7 +145,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
     // Create a reusable config for multiple nev trials
     eig::settings config;
     config.tol             = settings::solver::eigs_tol_min;
-    config.sigma           = energy_target;
+    config.sigma           = cplx(energy_target, 0.0);
     config.shift_invert    = eig::Shinv::ON;
     config.compute_eigvecs = eig::Vecs::ON;
     config.ritz            = eig::Ritz::LM;
@@ -250,7 +250,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
         hamiltonian.factorization   = eig::Factorization::LU;
         config.shift_invert         = eig::Shinv::ON;
         config.ritz                 = eig::Ritz::primme_largest_abs;
-        config.sigma                = eigval_target;
+        config.sigma                = cplx(eigval_target, 0.0);
         config.primme_projection    = "primme_proj_default";
         config.primme_locking       = false;
         config.primme_target_shifts = {};
@@ -372,10 +372,10 @@ MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &m
         tools::common::contraction::matrix_vector_product(H2_mps, mps_j, mpo2, env2.L, env2.R);
         auto &threads = tenx::threads::get();
         for(auto row = col; row < eignum; row++) {
-            const auto &mps_i          = std::next(eigvecs.begin(), row)->get_tensor();
+            const auto &mps_i           = std::next(eigvecs.begin(), row)->get_tensor();
             H2_ij.device(*threads->dev) = mps_i.conjugate().contract(H2_mps, tenx::idx({0, 1, 2}, {0, 1, 2}));
-            H2_sub(row, col)           = H2_ij(0);
-            H2_sub(col, row)           = std::conj(H2_ij(0));
+            H2_sub(row, col)            = H2_ij(0);
+            H2_sub(col, row)            = std::conj(H2_ij(0));
         }
     }
     if constexpr(std::is_same_v<T, double>)

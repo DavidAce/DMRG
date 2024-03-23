@@ -191,7 +191,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
     dmrg_config.load_parameter("precision::use_compressed_mpo_on_the_fly"     , precision::use_compressed_mpo_on_the_fly);
     dmrg_config.load_parameter("precision::use_energy_shifted_mpo"            , precision::use_energy_shifted_mpo);
-    dmrg_config.load_parameter("precision::use_energy_shifted_mpo_squared"    , precision::use_energy_shifted_mpo_squared);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo"            , precision::use_parity_shifted_mpo);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo_squared"    , precision::use_parity_shifted_mpo_squared);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
@@ -241,15 +240,12 @@ void settings::load(Loader &dmrg_config) {
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
+    dmrg_config.load_parameter("xdmrg::ritz"                         , xdmrg::ritz);
     dmrg_config.load_parameter("xdmrg::max_iters"                    , xdmrg::max_iters);
     dmrg_config.load_parameter("xdmrg::min_iters"                    , xdmrg::min_iters);
-    dmrg_config.load_parameter("xdmrg::opt_overlap_iters"            , xdmrg::opt_overlap_iters);
-    dmrg_config.load_parameter("xdmrg::opt_overlap_bond_lim"         , xdmrg::opt_overlap_bond_lim);
-    dmrg_config.load_parameter("xdmrg::opt_subspace_iters"           , xdmrg::opt_subspace_iters);
-    dmrg_config.load_parameter("xdmrg::opt_subspace_bond_lim"        , xdmrg::opt_subspace_bond_lim);
+    dmrg_config.load_parameter("xdmrg::warmup_iters"                 , xdmrg::warmup_iters);
     dmrg_config.load_parameter("xdmrg::bond_max"                     , xdmrg::bond_max);
     dmrg_config.load_parameter("xdmrg::bond_init"                    , xdmrg::bond_init);
-
     dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
     dmrg_config.load_parameter("xdmrg::store_wavefn"                 , xdmrg::store_wavefn);
     dmrg_config.load_parameter("xdmrg::energy_density_target"        , xdmrg::energy_density_target);
@@ -257,6 +253,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::max_states"                   , xdmrg::max_states);
     dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
     dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
+
     //Parameters controlling infinite-DMRG
     dmrg_config.load_parameter("idmrg::on"                           , idmrg::on);
     dmrg_config.load_parameter("idmrg::max_iters"                    , idmrg::max_iters);
