@@ -174,22 +174,22 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
     auto            len     = state.get_length<long>();
     auto            bee     = measure::entanglement_entropies(state); // bipartite entanglement entropies
     auto            solver  = eig::solver();
-    Eigen::ArrayXXd ees     = Eigen::ArrayXXd::Zero(len, len); // entanglement entropy for sgements
+    Eigen::ArrayXXd see     = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
     bool            is_real = state.is_real();
     for(long off = 0; off < len; ++off) {
         for(long ext = 1; ext <= len / 2; ++ext) {
-            if(off + ext >= len) continue;
+            if(off + ext > len) continue;
             // Check if the segment includes the edge, in which case
             // we can simply take the bipartite entanglement entropy
             bool is_left_edge  = off == 0;
             bool is_right_edge = off + ext == len;
-            tools::log->info("Calculating subsystem entanglement entropy off {}, ext {}", off, ext);
+            tools::log->info("Calculating subsystem entanglement entropy: extent (l): {} | offset (n) {}", ext, off);
             if(is_left_edge) {
                 auto idx          = safe_cast<size_t>(off + ext);
-                ees(ext - 1, off) = bee[idx];
+                see(ext - 1, off) = bee[idx];
             } else if(is_right_edge) {
                 auto idx          = safe_cast<size_t>(off);
-                ees(ext - 1, off) = bee[idx];
+                see(ext - 1, off) = bee[idx];
             } else {
                 auto sites = num::range<size_t>(off, off + ext);
                 auto evs   = Eigen::ArrayXd();
@@ -221,16 +221,18 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
                 //                tools::log->debug("evs > 1e-16: {}", (evs > 1e-16).count());
                 for(const auto &e : evs) {
                     if(e > 0) s += -e * std::log(e);
+                    // #pragma error "std::log2 -> std::log"
+                    // if(e > 0) s += -e * std::log2(e);
                 }
-                ees(ext - 1, off) = s; // -evs.cwiseProduct(evs.log()).sum();
+                see(ext - 1, off) = s; // -evs.cwiseProduct(evs.log()).sum();
                                        //                tools::log->info("evs({},{}) = {}", ext - 1, off, evs.size());
-                tools::log->debug("ees({},{}) = {}", ext - 1, off, ees(ext - 1, off));
+                tools::log->debug("ees({},{}) = {}", ext - 1, off, see(ext - 1, off));
             }
             tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
         }
         state.clear_cache();
     }
-    state.measurements.subsystem_entanglement_entropies = ees;
+    state.measurements.subsystem_entanglement_entropies = see;
     return state.measurements.subsystem_entanglement_entropies.value();
 }
 
@@ -426,9 +428,9 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &sta
 double tools::finite::measure::energy_minus_energy_shift(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                                                          MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_shift) {
-        tools::log->info("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
         if constexpr(!settings::debug_expval) {
             // Return the cache hit when not debugging. Otherwise check that it is correct!
+            // tools::log->trace("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
             return measurements->energy_minus_energy_shift.value();
         }
     }
@@ -459,11 +461,11 @@ double tools::finite::measure::energy_minus_energy_shift(const StateFinite &stat
 }
 
 double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
-                                                         MeasurementsTensorsFinite *measurements) {
+                                                         std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_shift) {
-        tools::log->info("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
         if constexpr(!settings::debug_expval) {
             // Return the cache hit when not debugging. Otherwise check that it is correct!
+            // tools::log->trace("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
             return measurements->energy_minus_energy_shift.value();
         }
     }
@@ -486,7 +488,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
             // Split the multisite mps first
             const auto mpos = model.get_mpo_active();
             const auto envs = edges.get_ene_active();
-            const auto edbg = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
+            const auto edbg = tools::finite::measure::expectation_value(multisite_mps, mpos, envs, svd_cfg);
             tools::log->trace("e_minus_ered: {:.16f}{:+.16f}i", e_minus_ered.real(), e_minus_ered.imag());
             tools::log->trace("e_minus_edbg: {:.16f}{:+.16f}i", edbg.real(), edbg.imag());
             if(measurements != nullptr and measurements->energy_minus_energy_shift) {
@@ -502,7 +504,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
         const auto envs = edges.get_ene_active();
         tools::log->trace("Measuring energy: multisite_mps dims {} | sites {} | eshift {:.16f} | norm {:.16f}", multisite_mps.dimensions(), model.active_sites,
                           model.get_energy_shift_mpo(), tenx::norm(multisite_mps));
-        e_minus_ered = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
+        e_minus_ered = tools::finite::measure::expectation_value(multisite_mps, mpos, envs, svd_cfg);
         if constexpr(settings::debug_expval) {
             const auto &mpo  = model.get_multisite_mpo();
             const auto &env  = edges.get_multisite_env_ene_blk();
@@ -521,9 +523,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
     return std::real(e_minus_ered);
 }
 
-template<typename state_or_mps_type>
-double tools::finite::measure::energy(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                      MeasurementsTensorsFinite *measurements) {
+double tools::finite::measure::energy(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy) return measurements->energy.value();
     // This measures the actual energy of the system regardless of the energy shift in the MPO's
     // If they are shifted, then
@@ -533,31 +533,24 @@ double tools::finite::measure::energy(const state_or_mps_type &state, const Mode
     auto e_minus_eshift = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
     auto eshift         = model.get_energy_shift_mpo();
     auto energy         = e_minus_eshift + eshift;
-    tools::log->info("(E-Eshift) + Eshift = ({:.16f}) + {:.16f} = {:.16f}", e_minus_eshift, eshift, energy);
     if(measurements != nullptr) measurements->energy = energy;
     return energy;
 }
 
-template double tools::finite::measure::energy(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                               MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                               MeasurementsTensorsFinite *measurements);
-
-template<typename state_or_mps_type>
-double tools::finite::measure::energy_per_site(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                               MeasurementsTensorsFinite *measurements) {
-    double energy = tools::finite::measure::energy(state, model, edges, measurements);
-    if(measurements != nullptr) {
-        measurements->length = model.get_length();
-        measurements->energy = energy;
-    }
-    return energy / static_cast<double>(model.get_length());
+double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+                                      std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
+    if(measurements != nullptr and measurements->energy) return measurements->energy.value();
+    // This measures the actual energy of the system regardless of the energy shift in the MPO's
+    // If they are shifted, then
+    //      "Actual energy" = (E - E_shift) + E_shift = (~0) + E_shift = E
+    // Else
+    //      "Actual energy" = (E - E_shift) + E_shift = E  + 0 = E
+    auto e_minus_eshift = tools::finite::measure::energy_minus_energy_shift(multisite_mps, model, edges, svd_cfg, measurements);
+    auto eshift         = model.get_energy_shift_mpo();
+    auto energy         = e_minus_eshift + eshift;
+    if(measurements != nullptr) measurements->energy = energy;
+    return energy;
 }
-
-template double tools::finite::measure::energy_per_site(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                        MeasurementsTensorsFinite *measurements);
 
 double tools::finite::measure::energy_variance(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                                                MeasurementsTensorsFinite *measurements) {
@@ -580,7 +573,7 @@ double tools::finite::measure::energy_variance(const StateFinite &state, const M
     assert(not model.active_sites.empty());
     assert(not edges.active_sites.empty());
     assert(num::all_equal(state.active_sites, model.active_sites, edges.active_sites));
-    if constexpr(settings::debug) tools::log->trace("Measuring energy variance: sites {}", state.active_sites);
+    if constexpr(settings::debug_expval) tools::log->trace("Measuring energy variance: sites {}", state.active_sites);
     double      energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
     double      E2     = energy * energy;
     auto        t_var  = tid::tic_scope("var", tid::level::highest);
@@ -590,13 +583,13 @@ double tools::finite::measure::energy_variance(const StateFinite &state, const M
     auto        H2     = tools::finite::measure::expectation_value(mps, mps, mpo, env);
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
-    tools::log->trace("Variance |H2-E2| = |{:.16f} - {:.16f}| = {:.16f}", std::real(H2), E2, var);
+    if constexpr(settings::debug_expval) tools::log->trace("Variance |H2-E2| = |{:.16f} - {:.16f}| = {:.16f}", std::real(H2), E2, var);
     if(measurements != nullptr) measurements->energy_variance = var;
     return var;
 }
 
 double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
-                                               MeasurementsTensorsFinite *measurements) {
+                                               std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     // Here we show that the variance calculated with energy-shifted mpo's is equivalent to the usual way.
     // If mpo's are shifted:
     //      Var H = <(H-E_shf)²> - <H-E_shf>²     = <H²>  - 2<H>E_shf + E_shf² - (<H> - E_shf)²
@@ -617,7 +610,7 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
     if(not num::all_equal(model.active_sites, edges.active_sites))
         throw std::runtime_error(
             fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
-    double energy = tools::finite::measure::energy_minus_energy_shift(multisite_mps, model, edges, measurements);
+    double energy = tools::finite::measure::energy_minus_energy_shift(multisite_mps, model, edges, svd_cfg, measurements);
     double E2     = energy * energy;
 
     auto t_var = tid::tic_scope("var", tid::level::highest);
@@ -654,40 +647,22 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
     }
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
-    tools::log->info("Var H = H² - E² = {:.16f} - {:.16f} = {:.16f}", std::real(H2), E2, var);
+    tools::log->trace("Var H = H² - E² = {:.16f} - {:.16f} = {:.16f}", std::real(H2), E2, var);
     if(measurements != nullptr) measurements->energy_variance = var;
     return var;
 }
 
-template<typename state_or_mps_type>
-double tools::finite::measure::energy_variance_per_site(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                                        MeasurementsTensorsFinite *measurements) {
-    double energy_variance = tools::finite::measure::energy_variance(state, model, edges, measurements);
-    if(measurements != nullptr) {
-        measurements->length          = model.get_length();
-        measurements->energy_variance = energy_variance;
-    }
-    return energy_variance / static_cast<double>(model.get_length());
-}
-
-template double tools::finite::measure::energy_variance_per_site(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                 MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                 MeasurementsTensorsFinite *measurements);
-
-template<typename state_or_mps_type>
-double tools::finite::measure::energy_normalized(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges, double energy_min,
+double tools::finite::measure::energy_normalized(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, double energy_min,
                                                  double energy_max, MeasurementsTensorsFinite *measurements) {
     return (tools::finite::measure::energy(state, model, edges, measurements) - energy_min) / (energy_max - energy_min);
 }
-
-template double tools::finite::measure::energy_normalized(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges, double, double,
-                                                          MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges, double, double,
-                                                          MeasurementsTensorsFinite *measurements);
+double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+                                                 double energy_min, double energy_max, std::optional<svd::config> svd_cfg,
+                                                 MeasurementsTensorsFinite *measurements) {
+    return (tools::finite::measure::energy(multisite_mps, model, edges, svd_cfg, measurements) - energy_min) / (energy_max - energy_min);
+}
 
 extern double tools::finite::measure::energy_shift(const TensorsFinite &tensors) { return tensors.model->get_energy_shift_mpo(); }
-extern double tools::finite::measure::energy_shift_per_site(const TensorsFinite &tensors) { return tensors.model->get_energy_shift_mpo_per_site(); }
 
 double tools::finite::measure::energy_minus_energy_shift(const TensorsFinite &tensors) {
     tensors.assert_edges_ene();
@@ -702,22 +677,12 @@ double tools::finite::measure::energy(const TensorsFinite &tensors) {
     return tensors.measurements.energy.value();
 }
 
-double tools::finite::measure::energy_per_site(const TensorsFinite &tensors) {
-    return tools::finite::measure::energy(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements) /
-           static_cast<double>(tools::finite::measure::length(tensors));
-}
-
 double tools::finite::measure::energy_variance(const TensorsFinite &tensors) {
     if(not tensors.measurements.energy_variance) {
         tensors.assert_edges_var();
         tensors.measurements.energy_variance = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
     }
     return tensors.measurements.energy_variance.value();
-}
-
-double tools::finite::measure::energy_variance_per_site(const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements) /
-           static_cast<double>(tools::finite::measure::length(tensors));
 }
 
 double tools::finite::measure::energy_normalized(const TensorsFinite &tensors, double emin, double emax) {
@@ -731,40 +696,33 @@ double tools::finite::measure::energy_minus_energy_shift(const StateFinite &stat
 double tools::finite::measure::energy(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_per_site(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_per_site(state, *tensors.model, *tensors.edges, measurements);
-}
+
 double tools::finite::measure::energy_variance(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy_variance(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_variance_per_site(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_variance_per_site(state, *tensors.model, *tensors.edges, measurements);
-}
+
 double tools::finite::measure::energy_normalized(const StateFinite &state, const TensorsFinite &tensors, double emin, double emax,
                                                  MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax, measurements);
 }
 
-double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors,
+double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
                                                          MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_minus_energy_shift(mps, *tensors.model, *tensors.edges, measurements);
+    return tools::finite::measure::energy_minus_energy_shift(mps, *tensors.model, *tensors.edges, svd_cfg, measurements);
 }
-double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges, measurements);
+double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
+                                      MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges, svd_cfg, measurements);
 }
-double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_per_site(mps, *tensors.model, *tensors.edges, measurements);
+
+double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
+                                               MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_variance(mps, *tensors.model, *tensors.edges, svd_cfg, measurements);
 }
-double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_variance(mps, *tensors.model, *tensors.edges, measurements);
-}
-double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors,
-                                                        MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_variance_per_site(mps, *tensors.model, *tensors.edges, measurements);
-}
+
 double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, double emin, double emax,
-                                                 MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax, measurements);
+                                                 std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax, svd_cfg, measurements);
 }
 
 double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &envL,

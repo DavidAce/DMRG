@@ -140,7 +140,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     int         mn = std::min(rowsA, colsA);
     std::string errmsg;
     //    auto t_pre = tid::tic_scope("preamble", tid::highest);
-
+    long nonzeros = 0;
     try {
         // Sanity checks
         if constexpr(!ndebug) { // We usually get a negative "info" value if there are nans anyway.
@@ -157,8 +157,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             std::vector<int>    iwork;
             std::vector<double> rwork;
             if constexpr(!ndebug)
-                log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
-                                switchsize_gesdd, sizeS);
+                log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim, switchsize_gesdd,
+                           sizeS);
             switch(svd_rtn) {
                 case rtn::gesvd: {
                     U.resize(rowsU, colsU);
@@ -295,8 +295,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             std::vector<std::complex<double>> cwork;
             std::vector<double>               rwork;
             if constexpr(!ndebug)
-                log->debug("Running Lapacke z{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
-                                switchsize_gesdd, sizeS);
+                log->debug("Running Lapacke z{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim, switchsize_gesdd,
+                           sizeS);
             switch(svd_rtn) {
                 case rtn::gesvd: {
                     U.resize(rowsU, colsU);
@@ -450,8 +450,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         }
 
         log->trace("Truncating singular values");
-        auto max_size                    = S.nonZeros();
-        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size));
+        nonzeros                         = S.nonZeros();
+        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(nonzeros));
         // Do the truncation
 
         U  = U.leftCols(rank).eval();
@@ -465,7 +465,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         if(static_cast<size_t>(rank) != valid_rows.size()) {
             // We have a choice. If the problem size is huge, Jacobi is too expensive. It may just be better to salvage this result.
             // If the problem size is small, we can let the Jacobi solvers try instead.
-            if(sizeS <= 1024){
+            if(sizeS <= 1024) {
                 throw except::runtime_error("Detected non-finite rows/cols in U, S or VT. The problem size is small ({}). Try another solver.", sizeS);
             }
             log->warn("Pruning non-finite rows/cols from the results! rank {} -> {}", rank, valid_rows.size());
@@ -518,10 +518,10 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         saveMetaData = svd::internal::SaveMetaData{}; // Clear
     }
     if(log->level() == spdlog::level::trace)
-        log->trace(
-            "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
-            truncation_lim, rank, rank_max, rows, cols, truncation_error, 0.0
-            //            t_lpk->get_last_interval()
+        log->trace("SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | nonzeros {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc "
+                   "{:8.2e}, time {:8.2e}",
+                   truncation_lim, rank, nonzeros, rank_max, rows, cols, truncation_error, 0.0
+                   //            t_lpk->get_last_interval()
         );
     return std::make_tuple(U, S, VT);
 }

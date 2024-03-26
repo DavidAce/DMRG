@@ -32,11 +32,12 @@ class AlgorithmFinite : public AlgorithmBase {
     virtual void resume()                = 0;
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
-    void         try_parity_shifting_mpo();
-    void         try_parity_shifting_mpo_squared();
+    void         set_parity_shift_mpo();
+    void         set_parity_shift_mpo_squared();
     void         try_moving_sites();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
-    virtual void shift_mpo_energy(); // We override this in xdmrg
+    virtual void set_energy_shift_mpo(); // We override this in xdmrg
+    void     rebuild_tensors();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
     void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);

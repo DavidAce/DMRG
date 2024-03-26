@@ -32,17 +32,17 @@ class ModelFinite {
     };
     mutable Cache cache;
     //    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos);
-    void                                           randomize();
-    [[nodiscard]] bool                             has_mpo_squared() const;
-    void                                           clear_mpo_squared();
-    void                                           set_energy_shift_mpo(double total_energy);
-    void                                           set_energy_shift_mpo_per_site(double energy_shift_per_site);
-    [[nodiscard]] bool                             set_parity_shift_mpo(int sign, std::string_view axis);
-    [[nodiscard]] std::pair<int, std::string_view> get_parity_shift_mpo() const;
-    [[nodiscard]] bool                             has_parity_shift_mpo() const;
-    [[nodiscard]] bool                             set_parity_shift_mpo_squared(int sign, std::string_view axis);
-    [[nodiscard]] std::pair<int, std::string_view> get_parity_shift_mpo_squared() const;
-    [[nodiscard]] bool                             has_parity_shift_mpo_squared() const;
+    void                                                     randomize();
+    [[nodiscard]] bool                                       has_mpo() const;
+    [[nodiscard]] bool                                       has_mpo_squared() const;
+    void                                                     clear_mpo_squared();
+    void                                                     set_energy_shift_mpo(double energy_shift);
+    void                                                     set_parity_shift_mpo(OptRitz, int sign, std::string_view axis);
+    void                                                     set_parity_shift_mpo_squared(int sign, std::string_view axis);
+    [[nodiscard]] std::tuple<OptRitz, int, std::string_view> get_parity_shift_mpo() const;
+    [[nodiscard]] std::pair<int, std::string_view>           get_parity_shift_mpo_squared() const;
+    [[nodiscard]] bool                                       has_parity_shifted_mpo() const;
+    [[nodiscard]] bool                                       has_parity_shifted_mpo_squared() const;
 
     public:
     std::vector<std::unique_ptr<MpoSite>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
@@ -81,7 +81,7 @@ class ModelFinite {
     [[nodiscard]] bool                  has_energy_shifted_mpo() const; // For shifted energy MPO's
     [[nodiscard]] double                get_energy_shift_mpo() const;
     [[nodiscard]] double                get_energy_shift_mpo_per_site() const;
-    [[nodiscard]] bool                  is_compressed_mpo_squared() const;
+    [[nodiscard]] bool                  has_compressed_mpo_squared() const;
     [[nodiscard]] std::vector<std::any> get_parameter(std::string_view fieldname);
 
     // For local operations

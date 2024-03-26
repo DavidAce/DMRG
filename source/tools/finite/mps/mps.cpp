@@ -284,7 +284,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         // inject lc_move if there is any waiting
         if(lc_move and pos == lc_move->pos_dst) { mps_src.set_L(lc_move->data, lc_move->error); }
 
-        // No need to copy the svd truncation errors if no svd config was given. This
+        // No need to copy the svd truncation errors if no svd config was given.
         if(not svd_cfg) mps_src.drop_stashed_errors();
 
         mps_tgt.fuse_mps(mps_src);

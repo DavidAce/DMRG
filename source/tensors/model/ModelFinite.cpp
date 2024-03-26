@@ -119,24 +119,21 @@ bool ModelFinite::has_energy_shifted_mpo() const {
     return shifted;
 }
 
-
-bool ModelFinite::is_compressed_mpo_squared() const {
-    bool compressed = MPO.front()->is_compressed_mpo_squared();
+bool ModelFinite::has_compressed_mpo_squared() const {
+    bool compressed = MPO.front()->has_compressed_mpo_squared();
     for(const auto &mpo : MPO)
-        if(compressed != mpo->is_compressed_mpo_squared())
-            throw except::runtime_error("First MPO has is_compressed_mpo_squared: {}, but MPO at pos {} has is_compressed_mpo_squared: {}", compressed,
-                                        mpo->get_position(), mpo->is_compressed_mpo_squared());
+        if(compressed != mpo->has_compressed_mpo_squared())
+            throw except::runtime_error("MPO² at pos 0: has_compressed_mpo_squared == {}, but MPO² at pos {} has_compressed_mpo_squared == {}", compressed,
+                                        mpo->get_position(), mpo->has_compressed_mpo_squared());
     return compressed;
 }
 
-double ModelFinite::get_energy_shift_mpo() const { return get_energy_shift_mpo_per_site() * static_cast<double>(get_length()); }
-
-double ModelFinite::get_energy_shift_mpo_per_site() const {
+double ModelFinite::get_energy_shift_mpo() const {
     // Check that all energies are the same
     double e_shift = MPO.front()->get_energy_shift_mpo();
     for(const auto &mpo : MPO)
-        if(mpo->get_energy_shift_mpo() != e_shift) throw std::runtime_error("Shifted energy mismatch!");
-    return e_shift;
+        if(mpo->get_energy_shift_mpo() != e_shift) throw std::runtime_error("Shifted energy per site mismatch!");
+    return e_shift * static_cast<double>(get_length());
 }
 
 std::vector<std::any> ModelFinite::get_parameter(std::string_view fieldname) {
@@ -162,6 +159,7 @@ void ModelFinite::build_mpo() {
     cache.multisite_ham_t = std::nullopt;
     cache.multisite_mpo_t = std::nullopt;
     for(const auto &mpo : MPO) mpo->build_mpo();
+    for(const auto &mpo : MPO) mpo->build_mpo_t();
 }
 
 void ModelFinite::build_mpo_squared() {
@@ -191,6 +189,10 @@ void ModelFinite::compress_mpo_squared() {
     cache.multisite_ham_squared = std::nullopt;
     auto mpo_squared_compressed = get_compressed_mpos_squared();
     for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_squared_compressed[pos]);
+}
+
+bool ModelFinite::has_mpo() const {
+    return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo(); });
 }
 
 bool ModelFinite::has_mpo_squared() const {
@@ -296,49 +298,60 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared(Mpo
     }
 }
 
-void ModelFinite::set_energy_shift_mpo(double total_energy) { set_energy_shift_mpo_per_site(total_energy / static_cast<double>(get_length())); }
-
-void ModelFinite::set_energy_shift_mpo_per_site(double energy_shift_per_site) {
-    if(get_energy_shift_mpo_per_site() == energy_shift_per_site) return;
-    tools::log->trace("Shifting MPO energy per site: {:.16f}", energy_shift_per_site);
+void ModelFinite::set_energy_shift_mpo(double energy_shift) {
+    if(std::abs(get_energy_shift_mpo() - energy_shift) <= std::numeric_limits<double>::epsilon()) { return; }
+    tools::log->trace("Shifting MPO energy: {:.16f}", energy_shift);
+    double energy_shift_per_site = energy_shift / static_cast<double>(get_length());
     for(const auto &mpo : MPO) mpo->set_energy_shift_mpo(energy_shift_per_site);
     clear_cache();
 }
 
-bool ModelFinite::set_parity_shift_mpo(int sign, std::string_view axis) {
-    if(not qm::spin::half::is_valid_axis(axis)) return false;
-    if(get_parity_shift_mpo() == std::make_pair(sign, axis)) return false;
-    tools::log->info("Setting MPO parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
-    for(const auto &mpo : MPO) mpo->set_parity_shift_mpo(sign, axis);
+void ModelFinite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) return;
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(get_parity_shift_mpo() == std::make_tuple(ritz, sign, axus)) return;
+    tools::log->info("Setting MPO parity shift: {} {}", enum2sv(ritz), axis);
+    for(const auto &mpo : MPO) mpo->set_parity_shift_mpo(ritz, sign, axis);
     clear_cache();
-    return true;
 }
 
-std::pair<int, std::string_view> ModelFinite::get_parity_shift_mpo() const {
-    auto parity_shift     = std::pair<int, std::string_view>{0, ""};
-    bool parity_shift_set = false;
+std::tuple<OptRitz, int, std::string_view> ModelFinite::get_parity_shift_mpo() const {
+    auto parity_shift_front = MPO.front()->get_parity_shift_mpo();
     for(const auto &mpo : MPO) {
-        if(not parity_shift_set) {
-            parity_shift     = mpo->get_parity_shift_mpo();
-            parity_shift_set = true;
-        } else if(parity_shift != mpo->get_parity_shift_mpo())
+        if(mpo->get_parity_shift_mpo() != parity_shift_front)
             throw except::logic_error("mpo parity shift at site {} differs from shift at site 0", mpo->get_position());
     }
-    return parity_shift;
+    return parity_shift_front;
 }
 
-bool ModelFinite::has_parity_shift_mpo() const {
-    auto parity_shift = get_parity_shift_mpo();
-    return parity_shift.first != 0 and not parity_shift.second.empty();
+bool ModelFinite::has_parity_shifted_mpo() const {
+    auto shifted = MPO.front()->has_parity_shifted_mpo();
+    for(const auto &mpo : MPO)
+        if(shifted != mpo->has_parity_shifted_mpo())
+            throw except::logic_error(
+                fmt::format("Mismatching has_parity_shifted_mpo: pos 0:{} | {}:{}", shifted, mpo->get_position(), mpo->has_parity_shifted_mpo()));
+    if(shifted and not settings::precision::use_parity_shifted_mpo)
+        throw except::logic_error("The MPO's are parity-shifted but settings::precision::use_parity_shifted_mpo is false");
+    return shifted;
 }
 
-bool ModelFinite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
-    if(not qm::spin::half::is_valid_axis(axis)) return false;
-    if(get_parity_shift_mpo_squared() == std::make_pair(sign, axis)) return false;
+bool ModelFinite::has_parity_shifted_mpo_squared() const {
+    auto shifted = MPO.front()->has_parity_shifted_mpo2();
+    for(const auto &mpo : MPO)
+        if(shifted != mpo->has_parity_shifted_mpo2())
+            throw except::logic_error(
+                fmt::format("Mismatching has_parity_shifted_mpo2: pos 0:{} | {}:{}", shifted, mpo->get_position(), mpo->has_parity_shifted_mpo2()));
+    if(shifted and not settings::precision::use_parity_shifted_mpo_squared)
+        throw except::logic_error("The MPO's are parity-shifted but settings::precision::use_parity_shifted_mpo_squared is false");
+    return shifted;
+}
+
+void ModelFinite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) return;
+    if(get_parity_shift_mpo_squared() == std::make_pair(sign, axis)) return;
     tools::log->info("Setting MPO² parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
     for(const auto &mpo : MPO) mpo->set_parity_shift_mpo_squared(sign, axis);
     clear_cache();
-    return true;
 }
 
 std::pair<int, std::string_view> ModelFinite::get_parity_shift_mpo_squared() const {
@@ -354,10 +367,6 @@ std::pair<int, std::string_view> ModelFinite::get_parity_shift_mpo_squared() con
     return parity_shift;
 }
 
-bool ModelFinite::has_parity_shift_mpo_squared() const {
-    auto parity_shift = get_parity_shift_mpo_squared();
-    return parity_shift.first != 0 and not parity_shift.second.empty();
-}
 ModelLocal ModelFinite::get_local(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     auto mlocal    = ModelLocal();
@@ -668,11 +677,15 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
 }
 
 Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
+    /*! We use edges without particle content to get a hamiltonian for a subsystem.
+     *  To get an effective hamiltonian with particle-full edges, use TensorsFinite::get_effective_hamiltonian.
+     */
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     if(sites == active_sites and cache.multisite_ham and not nbody) {
         tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
         return cache.multisite_ham.value();
     }
+    tools::log->trace("get_multisite_ham(): Contracting effective Hamiltonian");
     long spin_dim = 1;
     for(const auto &pos : sites) { spin_dim *= get_mpo(pos).get_spin_dimension(); }
     auto dim2 = tenx::array2{spin_dim, spin_dim};
@@ -905,8 +918,12 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_squared(const std::vector<
 }
 
 Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
+    /*! We use edges without particle content to get a hamiltonian for a subsystem.
+     *  To get an effective hamiltonian with particle-full edges, use TensorsFinite::get_effective_hamiltonian_squared.
+     */
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     if(sites == active_sites and cache.multisite_ham and not nbody) return cache.multisite_ham.value();
+    tools::log->trace("ModelFinite::get_multisite_ham_squared(): contracting active sites {}", sites);
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
     auto edgeL = get_mpo(sites.front()).get_MPO2_edge_left();
     auto edgeR = get_mpo(sites.back()).get_MPO2_edge_right();

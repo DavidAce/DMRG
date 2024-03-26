@@ -579,7 +579,7 @@ void flbit::check_convergence() {
 
     status.algorithm_converged_for = status.iter + 1 - std::min(settings::flbit::time_num_steps, status.iter + 1);
     status.algorithm_has_succeeded = status.algorithm_converged_for > 0;
-    if (status.algorithm_saturated_for > settings::strategy::min_saturation_iters and
+    if (status.algorithm_saturated_for > settings::strategy::min_saturated_iters and
         status.algorithm_converged_for == 0)
         status.algorithm_has_stuck_for++;
     else

@@ -49,7 +49,6 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     const auto &model = *tensors.model;
     tools::log->trace("Finding subspace");
     auto t_find     = tid::tic_scope("find");
-    auto dbl_length = static_cast<double>(state.get_length());
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -62,11 +61,10 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
         double energy_target = tools::finite::measure::energy(tensors);
         if(model.has_energy_shifted_mpo()) {
             eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors);
-            tools::log->trace("Energy shift  = {:.16f} | per site = {:.16f}", model.get_energy_shift_mpo(), model.get_energy_shift_mpo_per_site());
-            tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);
-            tools::log->trace("Eigval target = {:.16f} | per site = {:.16f}", eigval_target, eigval_target / dbl_length);
-            tools::log->trace("Eigval target + Energy shift = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length,
-                              model.get_energy_shift_mpo_per_site(), energy_target / dbl_length);
+            tools::log->trace("Energy shift  = {:.16f}", model.get_energy_shift_mpo());
+            tools::log->trace("Energy target = {:.16f}", energy_target);
+            tools::log->trace("Eigval target = {:.16f}", eigval_target);
+            tools::log->trace("Eigval target + Energy shift = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target, model.get_energy_shift_mpo(), energy_target);
         } else {
             eigval_target = energy_target;
         }
@@ -75,7 +73,6 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     /* clang-format off */
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
     tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_shift_mpo(), eigvals.maxCoeff() + model.get_energy_shift_mpo());
-    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_shift_mpo_per_site(), eigvals.maxCoeff() / dbl_length + model.get_energy_shift_mpo_per_site());
     /* clang-format on */
     reports::print_subs_report();
 
@@ -246,7 +243,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     config.primme_locking = 1;
     config.loglevel       = 2;
     if(initial_mps.size() <= settings::solver::eigs_max_size_shift_invert) {
-        hamiltonian.set_readyCompress(tensors.model->is_compressed_mpo_squared());
+        hamiltonian.set_readyCompress(tensors.model->has_compressed_mpo_squared());
         hamiltonian.factorization   = eig::Factorization::LU;
         config.shift_invert         = eig::Shinv::ON;
         config.ritz                 = eig::Ritz::primme_largest_abs;

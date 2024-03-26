@@ -44,7 +44,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
         throw except::runtime_error("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites);
     opt_mps result;
     switch(meta.optFunc) {
-        case OptFunc::OVERLAP: result = internal::optimize_overlap(tensors, initial_mps, status, meta); break;
+        case OptFunc::OVERLAP: result = internal::optimize_overlap(tensors, initial_mps, meta); break;
         case OptFunc::ENERGY: result = internal::optimize_energy_eigs(tensors, initial_mps, status, meta); break;
         case OptFunc::VARIANCE: {
             switch(meta.optAlgo) {
@@ -196,7 +196,8 @@ namespace tools::finite::opt::internal {
                 case OptRitz::SR: return comparator::energy(lhs, rhs);
                 case OptRitz::LR: return comparator::energy(rhs, lhs);
                 case OptRitz::SM: return comparator::energy_distance(lhs, rhs, target_energy);
-                case OptRitz::CR: return comparator::energy_distance(lhs, rhs, target_energy);
+                case OptRitz::IS: return comparator::energy_distance(lhs, rhs, target_energy);
+                case OptRitz::TE: return comparator::energy_distance(lhs, rhs, target_energy);
             }
         }
         return comparator::eigval(lhs, rhs);

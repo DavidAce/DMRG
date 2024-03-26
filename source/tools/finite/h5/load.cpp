@@ -176,9 +176,11 @@ namespace tools::finite::h5 {
             compare(tools::finite::measure::energy_variance(tensors), expected_measurements.energy_variance, 1e-5, "Energy variance");
 
             if(settings::precision::use_energy_shifted_mpo) {
-                tensors.set_energy_shift_mpo();
+                auto energy_shift = tools::finite::measure::energy(tensors);
+                tensors.set_energy_shift_mpo(energy_shift);
                 tensors.rebuild_mpo();
                 tensors.rebuild_mpo_squared();
+                tensors.compress_mpo_squared();
                 tensors.rebuild_edges();
                 tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
                 tensors.clear_measurements();

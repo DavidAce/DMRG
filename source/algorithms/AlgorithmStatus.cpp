@@ -19,11 +19,8 @@ void AlgorithmStatus::reset() {
     energy_min         = status.energy_min;
     energy_max         = status.energy_max;
     energy_tgt         = status.energy_tgt;
-    energy_ulim        = status.energy_ulim;
-    energy_llim        = status.energy_llim;
     energy_dens        = status.energy_dens;
     energy_dens_target = status.energy_dens_target;
-    energy_dens_window = status.energy_dens_window;
     algo_type          = status.algo_type;
 }
 std::string_view AlgorithmStatus::algo_type_sv() const { return enum2sv(algo_type); }
@@ -48,11 +45,8 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->energy_min                    == s.energy_min and
         this->energy_max                    == s.energy_max and
         this->energy_tgt                    == s.energy_tgt and
-        this->energy_ulim                   == s.energy_ulim and
-        this->energy_llim                   == s.energy_llim and
         this->energy_dens                   == s.energy_dens and
         this->energy_dens_target            == s.energy_dens_target and
-        this->energy_dens_window            == s.energy_dens_window and
         this->energy_variance_lowest        == s.energy_variance_lowest and
         this->energy_variance_max_digits    == s.energy_variance_max_digits and
         this->energy_variance_prec_limit    == s.energy_variance_prec_limit and

@@ -11,9 +11,8 @@
 #include "tools/finite/measure.h"
 #include "tools/finite/opt/opt-internal.h"
 
-void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta,
-                                                        const eig::solver &solver, std::vector<opt_mps> &results, bool converged_only,
-                                                        double max_overlap_sq_sum) {
+void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta, const eig::solver &solver,
+                                                   std::vector<opt_mps> &results, bool converged_only, double max_overlap_sq_sum) {
     auto t_ext    = tid::tic_scope("extract");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
@@ -58,14 +57,14 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 else
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
-                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);
+                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
-                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, &measurements);
+                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
 
                 mps.set_energy(energy);
                 mps.set_eigval(eigval);
                 mps.set_variance(variance);
-                tools::log->info("extract_results: set variance: {:.16f}", variance);
+                // tools::log->info("extract_results: set variance: {:.16f}", variance);
 
                 mps.validate_basis_vector();
 
@@ -102,8 +101,8 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
 }
 
 void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta,
-                                                                 const eig::solver &solver, const std::vector<opt_mps> &subspace_mps,
-                                                                 std::vector<opt_mps> &results) {
+                                                            const eig::solver &solver, const std::vector<opt_mps> &subspace_mps,
+                                                            std::vector<opt_mps> &results) {
     auto t_ext    = tid::tic_scope("extract");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
@@ -144,14 +143,14 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 else
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
-                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);
+                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
-                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, &measurements);
+                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
 
                 mps.set_energy(energy);
                 mps.set_eigval(eigval);
                 mps.set_variance(variance);
-                tools::log->info("extract_results_subspace: set variance: {:.16f}", variance);
+                // tools::log->info("extract_results_subspace: set variance: {:.16f}", variance);
                 //                mps.set_grad_max(grad_max);
                 mps.validate_basis_vector();
             }

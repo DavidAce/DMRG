@@ -153,8 +153,8 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
             if(tensors.position_is_inward_edge()) break;
         }
         // if(tensors.position_is_outward_edge())
-            // throw except::logic_error("Invalid position after moving {} steps: the position is outward edge: pos {} | dir {}", num_moves, tensors.get_position<long>(),
-                                   // tensors.state->get_direction());
+        // throw except::logic_error("Invalid position after moving {} steps: the position is outward edge: pos {} | dir {}", num_moves,
+        // tensors.get_position<long>(), tensors.state->get_direction());
         tensors.clear_active_sites();
     } catch(std::exception &e) {
         tools::finite::print::dimensions(tensors);
@@ -164,12 +164,19 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
     status.direction = tensors.state->get_direction();
 }
 
-void AlgorithmFinite::shift_mpo_energy() {
+void AlgorithmFinite::set_energy_shift_mpo() {
     if(not settings::precision::use_energy_shifted_mpo) return;
     if(not tensors.position_is_inward_edge()) return;
-    tensors.set_energy_shift_mpo();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
-    tensors.rebuild_mpo_squared(); // The shift clears our squared mpo's. So we have to rebuild them. Compression is retained.
-    tensors.rebuild_edges();       // The shift modified all our mpo's. So we have to rebuild all the edges.
+    auto energy_shift = tools::finite::measure::energy(tensors);
+    tensors.set_energy_shift_mpo(energy_shift); // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
+}
+
+void AlgorithmFinite::rebuild_tensors() {
+    if(not tensors.position_is_inward_edge()) return;
+    tensors.rebuild_mpo();          // The shift clears our squared mpo's. So we have to rebuild them.
+    tensors.rebuild_mpo_squared();  // The shift clears our squared mpo's. So we have to rebuild them.
+    tensors.compress_mpo_squared(); // Compress the mpo's if compression is enabled
+    tensors.rebuild_edges();        // The shift modified all our mpo's. So we have to rebuild all the edges.
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
@@ -481,6 +488,7 @@ void AlgorithmFinite::initialize_model() {
     tools::log->info("Initializing model");
     tensors.initialize_model();
     clear_convergence_status();
+    tools::finite::print::model(*tensors.model);
 }
 
 void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> axis,
@@ -546,8 +554,9 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     tools::log->info("-- bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
 
     if(status.algo_type != AlgorithmType::fLBIT) {
-        tools::log->info("-- energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-        tools::log->info("-- energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
+        tools::log->info("-- energy                   : {}", tools::finite::measure::energy(tensors));
+        if(!std::isnan(status.energy_min + status.energy_max))
+            tools::log->info("-- energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
         tools::log->info("-- energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     }
     write_to_file(StorageEvent::INIT);
@@ -649,17 +658,17 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     }
 }
 
-void AlgorithmFinite::try_parity_shifting_mpo() {
+void AlgorithmFinite::set_parity_shift_mpo() {
     if(not settings::precision::use_parity_shifted_mpo) return;
     if(not tensors.position_is_inward_edge()) return;
-    if(not qm::spin::half::is_valid_axis(settings::strategy::target_axis)) return;
-    tensors.set_parity_shift_mpo(settings::strategy::target_axis);
+    // If ritz == SR we shift the spectrum of the non-targeted sector UP in energy.
+    // If ritz == LR we shift the spectrum of the non-targetd sector DOWN in energy
+    tensors.set_parity_shift_mpo(settings::get_ritz(status.algo_type), settings::strategy::target_axis);
 }
 
-void AlgorithmFinite::try_parity_shifting_mpo_squared() {
+void AlgorithmFinite::set_parity_shift_mpo_squared() {
     if(not settings::precision::use_parity_shifted_mpo_squared) return;
     if(not tensors.position_is_inward_edge()) return;
-    if(not qm::spin::half::is_valid_axis(settings::strategy::target_axis)) return;
     tensors.set_parity_shift_mpo_squared(settings::strategy::target_axis);
 }
 
@@ -846,10 +855,10 @@ void AlgorithmFinite::write_to_file(const T &data, std::string_view name, Storag
     status.event = StorageEvent::NONE;
 }
 
-template void AlgorithmFinite::write_to_file(const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name, StorageEvent storage_event,
-                                             CopyPolicy copy_policy);
-
-void AlgorithmFinite::print_status() {
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cplx, 2> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cplx, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<real, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+void          AlgorithmFinite::print_status() {
     if(num::mod(status.step, settings::print_freq(status.algo_type)) != 0) return;
     if(settings::print_freq(status.algo_type) == 0) return;
 
@@ -878,7 +887,7 @@ void AlgorithmFinite::print_status() {
         report += fmt::format("l:⟨{}| ", site_str);
     }
 
-    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format("e:{:<5.3f} ", status.energy_dens); }
+    if(status.algo_type == AlgorithmType::xDMRG and !std::isnan(status.energy_dens)) { report += fmt::format("e:{:<5.3f} ", status.energy_dens); }
     double ene = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
     double var = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
     report += fmt::format("E:{:<20.16f} ", ene);
@@ -894,8 +903,7 @@ void AlgorithmFinite::print_status() {
     auto bonds_string = fmt::format("{}", bonds_merged);
     report += fmt::format("{0:<{1}} ", bonds_string, bonds_padlen);
 
-    if(last_optmode and last_optspace)
-        report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
+    if(last_optmode and last_optspace) report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()), enum2sv(last_optspace.value()));
     report += fmt::format("con:{:<1} ", status.algorithm_converged_for);
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report +=
@@ -922,9 +930,7 @@ void AlgorithmFinite::print_status_full() {
 
     if(status.algo_type != AlgorithmType::fLBIT) {
         double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
-        double epsite = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
         tools::log->info("Energy          E                  = {:<.16f}", energy);
-        tools::log->info("Energy per site E/L                = {:<.16f}", epsite);
         if(status.algo_type == AlgorithmType::xDMRG)
             tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                              tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));

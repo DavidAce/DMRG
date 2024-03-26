@@ -85,10 +85,9 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN: initialize_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state); break;
             case xdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case xdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
-            case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
+            case xdmrg_task::INIT_ENERGY_TARGET: init_energy_target(); break;
             case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
             case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case xdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
@@ -114,53 +113,53 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
     }
 }
 
-void xdmrg::init_energy_limits(std::optional<double> energy_density_target, std::optional<double> energy_density_window) {
-    if(not energy_density_target) energy_density_target = settings::xdmrg::energy_density_target;
-    if(not energy_density_window) energy_density_window = settings::xdmrg::energy_density_window;
-    if(energy_density_target.value() < 0.0 or energy_density_target.value() > 1.0)
-        throw except::runtime_error(
-            fmt::format("Error setting energy density target: Expected value in range [0 - 1.0], got: [{:.8f}]", energy_density_target.value()));
-    if(energy_density_window.value() < 0.0 or energy_density_window.value() > 0.5)
-        throw except::runtime_error(
-            fmt::format("Error setting energy density window: Expected value in range [0 - 0.5], got: [{:.8f}]", energy_density_window.value()));
-    status.energy_dens_target = energy_density_target.value();
-    status.energy_dens_window = energy_density_window.value();
+void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
+    switch(settings::xdmrg::ritz) {
+        case OptRitz::SR: throw std::logic_error("settings::xdmrg::ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
+        case OptRitz::LR: throw std::logic_error("settings::xdmrg::ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+        case OptRitz::SM: {
+            status.energy_tgt = 0.0; // When the Hamiltonian is traceless, the energy level nearest zero is closest to the infinite-temperature limit
+            break;
+        }
+        case OptRitz::IS: {
+            status.energy_tgt = tools::finite::measure::energy(tensors); // Should take the energy from the initial state
+            break;
+        }
+        case OptRitz::TE: {
+            if(not energy_density_target) energy_density_target = settings::xdmrg::energy_density_target;
+            if(energy_density_target.value() < 0.0 or energy_density_target.value() > 1.0)
+                throw except::runtime_error(fmt::format(
+                    "xdmrg::init_energy_target: with OptRitz::TE: invalid energy_density_target: Expected value in range [0.0 - 1.0], got: [{:.8f}]",
+                    energy_density_target));
+            // Set energy boundaries. This function is supposed to run after find_energy_range!
+            if(status.energy_max == status.energy_min)
+                throw except::runtime_error("xdmrg::init_energy_target: with OptRitz::TE Failed because energy_max == {} and energy_min == {}\n"
+                                            "Try running find_energy_range() first",
+                                            status.energy_max, status.energy_min);
 
-    // Set energy boundaries. This function is supposed to run after find_energy_range!
-    if(status.energy_max == status.energy_min)
-        throw except::runtime_error("Could not set energy limits because energy_max == {} and energy_min == {}\n"
-                                    "Try running find_energy_range() first",
-                                    status.energy_max, status.energy_min);
-    status.energy_tgt  = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
-    status.energy_ulim = status.energy_tgt + status.energy_dens_window * (status.energy_max - status.energy_min);
-    status.energy_llim = status.energy_tgt - status.energy_dens_window * (status.energy_max - status.energy_min);
-
-    if(settings::model::model_type == ModelType::ising_majorana) {
-        // Since the Hamiltonian is traceless, the infinite-temperature limit should be at energy 0
-        status.energy_tgt = std::clamp(0.0, status.energy_llim, status.energy_ulim);
+            status.energy_dens_target = energy_density_target.value();
+            status.energy_tgt         = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
+            tools::log->info("Energy minimum     = {:.8f}", status.energy_min);
+            tools::log->info("Energy maximum     = {:.8f}", status.energy_max);
+            tools::log->info("Energy target      = {:.8f}", status.energy_tgt);
+            break;
+        }
     }
-
-    tools::log->info("Energy minimum     = {:.8f}", status.energy_min);
-    tools::log->info("Energy maximum     = {:.8f}", status.energy_max);
-    tools::log->info("Energy target      = {:.8f}", status.energy_tgt);
-    tools::log->info("Energy lower limit = {:.8f}", status.energy_llim);
-    tools::log->info("Energy upper limit = {:.8f}", status.energy_ulim);
 }
 
 void xdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     status.clear();
-    initialize_model(); // First use of random!
-    tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
     init_truncation_error_limits();
+    initialize_model();                                                     // First use of random!
+    initialize_state(ResetReason::INIT, settings::strategy::initial_state); // Second use of random!
     find_energy_range();
-    init_energy_limits();
-    if(settings::xdmrg::energy_density_window != 0.5)
-        initialize_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
-    else
-        initialize_state(ResetReason::INIT, settings::strategy::initial_state);
+    init_energy_target();
+    set_energy_shift_mpo();
+    set_parity_shift_mpo_squared();
+    rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
     write_to_file(StorageEvent::MODEL);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -187,14 +186,12 @@ void xdmrg::run_algorithm() {
         // Prepare for next step
 
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
-        update_bond_dimension_limit();     // Will update bond dimension if the state precision is being limited by bond dimension
-        update_truncation_error_limit();   // Will update truncation error limit if the state is being truncated
-        update_expansion_factor_alpha();   // Will update the subspace expansion factor
-        try_projection();                  // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
-        try_parity_shifting_mpo_squared(); // This shifts the variance of the opposite spin parity sector, to resolve degeneracy/spectral pairing
-        shift_mpo_energy();                // Subtracts the current energy per site E/L from each MPO.
-        try_moving_sites();                // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
-        move_center_point();               // Moves the center point AC to the next site and increments status.iter and status.step
+        update_bond_dimension_limit();   // Updates the bond dimension if the state precision is being limited by bond dimension
+        update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
+        update_expansion_factor_alpha(); // Updates the subspace expansion factor for growing the bond dimension during 1-site dmrg
+        try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
+        try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+        move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }
@@ -259,8 +256,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.optRitz = settings::xdmrg::ritz;
 
     // Set the default svd limits
-    m1.bond_lim = status.bond_lim;
-    m1.trnc_lim = status.trnc_lim;
+    m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
     // Set up a multiplier for number of iterations
     size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
@@ -288,9 +284,9 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_sites        = settings::strategy::multisite_opt_site_max;
         m1.max_problem_size = settings::solver::eig_max_size; // Try to use full diagonalization instead
-        if(settings::xdmrg::bond_init > 0 and m1.bond_lim > settings::xdmrg::bond_init) {
-            tools::log->info("Bond dimension limit is kept back during warmup {} -> {}", m1.bond_lim, settings::xdmrg::bond_init);
-            m1.bond_lim = settings::xdmrg::bond_init;
+        if(settings::xdmrg::bond_init > 0 and m1.svd_cfg->rank_max > settings::xdmrg::bond_init) {
+            tools::log->info("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::xdmrg::bond_init);
+            m1.svd_cfg->rank_max = settings::xdmrg::bond_init;
         }
     } else {
         using namespace settings::strategy;
@@ -298,7 +294,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
         size_t has_stuck_for  = status.algorithm_has_stuck_for;
         size_t saturated_for  = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
         double has_stuck_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(has_stuck_for) / safe_cast<double>(max_stuck_iters);
-        double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(max_saturation_iters);
+        double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(max_saturated_iters);
         switch(multisite_opt_when) {
             case MultisiteWhen::NEVER: break;
             case MultisiteWhen::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, has_stuck_frac)); break;
@@ -351,13 +347,13 @@ void xdmrg::update_state() {
     if(opt_meta.alpha_expansion) {
         auto pos_expanded = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
         if(not mps_original) mps_original = tensors.state->get_mps_copy(pos_expanded);
-        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, svd::config(opt_meta.bond_lim, 0.1 * opt_meta.trnc_lim));
+        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, opt_meta.svd_cfg);
     }
 
     // Announce the current configuration for optimization
     tools::log->debug("Updating state: {} | mode {} | space {} | type {} | ritz {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", opt_meta.label,
                       enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver), enum2sv(opt_meta.optType), enum2sv(opt_meta.optRitz), opt_meta.chosen_sites,
-                      tensors.state->active_dimensions(), tensors.state->active_problem_size(), opt_meta.trnc_lim,
+                      tensors.state->active_dimensions(), tensors.state->active_problem_size(), opt_meta.svd_cfg->truncation_limit,
                       (opt_meta.alpha_expansion ? opt_meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
     // Run the optimization
     auto initial_state = opt::get_opt_initial_mps(tensors);
@@ -365,8 +361,8 @@ void xdmrg::update_state() {
 
     // Determine the quality of the optimized state.
     opt_state.set_relchange(opt_state.get_variance() / variance_before_step.value());
-    opt_state.set_bond_limit(opt_meta.bond_lim);
-    opt_state.set_trnc_limit(opt_meta.trnc_lim);
+    opt_state.set_bond_limit(opt_meta.svd_cfg->rank_max.value());
+    opt_state.set_trnc_limit(opt_meta.svd_cfg->truncation_limit.value());
     /* clang-format off */
     opt_meta.optExit = OptExit::SUCCESS;
     if(opt_state.get_grad_max()       > 1.000                         ) opt_meta.optExit |= OptExit::FAIL_GRADIENT;
@@ -400,10 +396,14 @@ void xdmrg::update_state() {
     tensors.state->tag_active_sites_normalized(false);
 
     // Do the truncation with SVD
-    // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merger
-    tensors.merge_multisite_mps(opt_state.get_tensor(), svd::config(opt_meta.bond_lim, opt_meta.trnc_lim));
+    // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merge
+    auto logPolicy = LogPolicy::QUIET;
+    if constexpr(settings::debug) logPolicy = LogPolicy::NORMAL;
+    tensors.merge_multisite_mps(opt_state.get_tensor(), opt_meta.svd_cfg, logPolicy);
     tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
-    if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
+    if constexpr(settings::debug) {
+        if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
+    }
 
     // if constexpr(settings::debug) {
     auto variance_before_svd = opt_state.get_variance();
@@ -414,7 +414,8 @@ void xdmrg::update_state() {
     // }
 
     // Update current energy density ε
-    status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
+    if(settings::xdmrg::ritz == OptRitz::TE)
+        status.energy_dens = (tools::finite::measure::energy(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
 
     tools::log->trace("Updating variance record holder");
     auto var = tools::finite::measure::energy_variance(tensors);
@@ -427,27 +428,11 @@ void xdmrg::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
     auto t_con = tid::tic_scope("conv");
 
-    // TODO: Move this reset block away from here
-    //    bool outside_of_window = std::abs(status.energy_dens - status.energy_dens_target) > status.energy_dens_window;
-    //    if(status.iter > 2 and tensors.position_is_inward_edge()) {
-    //        if(outside_of_window and
-    //           (status.variance_mpo_has_saturated or status.variance_mpo_has_converged or tools::finite::measure::energy_variance_per_site(tensors) < 1e-4)) {
-    //            double      old_energy_dens_window = status.energy_dens_window;
-    //            double      new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);
-    //            std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}",
-    //            tools::finite::measure::energy_per_site(tensors),
-    //                                             status.energy_dens_target, status.energy_dens_window);
-    //            tools::log->info("Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
-    //            status.energy_dens_window = new_energy_dens_window;
-    //            randomize_into_state_in_energy_window(ResetReason::SATURATED, settings::strategy::initial_state, settings::strategy::target_sector);
-    //        }
-    //    }
-    if(status.iter < settings::xdmrg::warmup_iters) clear_convergence_status();
     update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_axis);
-    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturation_iters or
+    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturated_iters or
        (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
         status.algorithm_saturated_for++;
     else
@@ -463,8 +448,13 @@ void xdmrg::check_convergence() {
     else
         status.algorithm_has_stuck_for = 0;
 
+    if(status.iter < settings::xdmrg::warmup_iters) {
+        status.algorithm_saturated_for = 0;
+        status.algorithm_has_stuck_for = 0;
+    }
+
     status.algorithm_has_succeeded = status.bond_limit_has_reached_max and status.algorithm_converged_for >= settings::strategy::min_converged_iters and
-                                     status.algorithm_saturated_for >= settings::strategy::min_saturation_iters;
+                                     status.algorithm_saturated_for >= settings::strategy::min_saturated_iters;
     status.algorithm_has_to_stop = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
     tools::log->info(
@@ -487,43 +477,10 @@ void xdmrg::check_convergence() {
     }
 }
 
-void xdmrg::initialize_state_in_energy_window(ResetReason reason, StateInit state_type, const std::optional<std::string> &sector) {
-    tools::log->info("Resetting to state in energy window -- reason: {}", enum2sv(reason));
-    tools::log->info("Searching for state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
-
-    status.num_resets++;
-    if(reason == ResetReason::SATURATED and status.num_resets > settings::strategy::max_resets) {
-        tools::log->info("Not allowed more resets due to saturation: num resets {} > max resets {}", status.num_resets, settings::strategy::max_resets);
-        return;
-    }
-    auto t_rnd             = tid::tic_scope("rnd_state_ewin", tid::level::higher);
-    int  counter           = 0;
-    bool outside_of_window = true;
-    tensors.activate_sites(settings::solver::eig_max_size, 2);
-    tensors.rebuild_edges();
-    while(true) {
-        initialize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, ""); // Do not use the pattern: set to empty string
-        status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
-        outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
-        tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);
-        if(not outside_of_window) break;
-        counter++;
-        if(counter >= 200) throw except::runtime_error("Failed to find initial state in energy window after {}. retries: ", counter);
-        if(counter % 10 == 0 and energy_window_growth_factor != 1.0) {
-            double old_energy_dens_window = status.energy_dens_window;
-            double new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);
-
-            tools::log->info("Can't find state in energy window.  Increasing energy window: {} --> {}", old_energy_dens_window, new_energy_dens_window);
-            status.energy_dens_window = new_energy_dens_window;
-        }
-    }
-    tools::log->info("Energy initial = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy(tensors), status.energy_dens, counter);
-    clear_convergence_status();
-    init_energy_limits(std::nullopt, status.energy_dens_window);
-    tools::log->info("Number of product state resets: {}", status.num_resets);
-}
-
 void xdmrg::find_energy_range() {
+    // We only need to find an energy range if we are targeting a particular energy density window or target
+    if(settings::xdmrg::ritz != OptRitz::TE) return; // We only need the extremal for OptRitz::TED
+
     tools::log->trace("Finding energy range");
     auto t_init = tid::tic_scope("init");
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
@@ -564,13 +521,25 @@ void xdmrg::find_energy_range() {
     tools::log = tools::Logger::getLogger(fmt::format("{}", status.algo_type_sv()));
 }
 
-void xdmrg::shift_mpo_energy() {
-    if(not settings::precision::use_energy_shifted_mpo) return;
+void xdmrg::set_energy_shift_mpo() {
+    // In xdmrg we find an excited energy eigenstate by optimizing the energy variance of some state close to a target energy.
+    // We can target a particular energy by setting an energy shift (equal to the target energy), which then becomes the energy minimum
+    // once we fold the spectrum by squaring the Hamiltonian (i.e. we optimize (H-E_tgt)²):
+    //      Var H = <(H-E_tgt)²> - <H-E_tgt>²     = <H²> - 2<H>E_tgt + E_tgt² - (<H> - E_tgt)²
+    //                                            =  H²  - 2*E*E_tgt + E_tgt² - E² + 2*E*E_tgt - E_tgt²
+    //                                            =  H²  - E²
+    // The first term <(H-E_tgt)²> is computed using a double-layer of mpos with energy shifted by E_tgt.
+    // If we didn't shift mpo's, the last line, H²-E² is subtraction of two large numbers --> catastrophic cancellation --> loss of precision.
+    // However, by minimizing the variance of shifted mpos:
+    //              Var H = <(H-E_tgt)²> - <H-E_tgt>² = <(H-E_tgt)²> - (E-E_tgt)²
+    // we get the subtraction of two very small terms since E-E_shf should be small.
+
     if(not tensors.position_is_inward_edge()) return;
-    if(settings::xdmrg::ritz == OptRitz::SM) return; // No point in shifting when we use he folded spectrum method with SM since E² ~ 0 anyway.
-    tensors.set_energy_shift_mpo();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
-    tensors.rebuild_mpo_squared(); // The shift clears our squared mpo's. So we have to rebuild them. Compression is retained.
-    tensors.rebuild_edges();       // The shift modified all our mpo's. So we have to rebuild all the edges.
+    tensors.set_energy_shift_mpo(status.energy_tgt);
+    tensors.rebuild_mpo();          // The shift clears our squared mpo's. So we have to rebuild them.
+    tensors.rebuild_mpo_squared();  // The shift clears our squared mpo's. So we have to rebuild them.
+    tensors.compress_mpo_squared(); // Compress the mpo's if compression is enabled
+    tensors.rebuild_edges();        // The shift modified all our mpo's. So we have to rebuild all the edges.
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
@@ -579,48 +548,4 @@ void xdmrg::update_time_step() {
     status.delta_t = std::complex<double>(1e-6, 0);
 }
 
-void xdmrg::create_hamiltonian_gates() {
-    tools::log->info("Creating Hamiltonian gates");
-    ham_gates_1body.clear();
-    ham_gates_2body.clear();
-    ham_gates_3body.clear();
-    // Create the hamiltonian gates with n-site terms
-    auto list_1site = num::range<size_t>(0, settings::model::model_size - 0, 1);
-    auto list_2site = num::range<size_t>(0, settings::model::model_size - 1, 1);
-    auto list_3site = num::range<size_t>(0, settings::model::model_size - 2, 1);
-    //    for(auto pos : list_1site) ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, {1}), {pos},
-    //    tensors.state->get_spin_dims({pos}))); for(auto pos : list_2site) ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos +
-    //    1}, {2}), {pos, pos + 1},tensors.state->get_spin_dims({pos, pos + 1}))); for(auto pos : list_3site)
-    //    ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos, pos + 1, pos + 2}, {3}), {pos, pos + 1, pos + 2},
-    //    tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
-    //
 
-    for(auto pos : list_1site) {
-        auto sites = num::range<size_t>(pos, pos + 1);
-        auto nbody = {1ul};
-        auto spins = tensors.state->get_spin_dims(sites);
-        ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
-    }
-    for(auto pos : list_2site) {
-        auto sites = num::range<size_t>(pos, pos + 2);
-        auto nbody = {2ul};
-        auto spins = tensors.state->get_spin_dims(sites);
-        ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
-    }
-    for(auto pos : list_3site) {
-        auto sites = num::range<size_t>(pos, pos + 3);
-        auto nbody = {3ul};
-        auto spins = tensors.state->get_spin_dims(sites);
-        ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
-    }
-}
-
-void xdmrg::create_time_evolution_gates() {
-    // Create the time evolution operators
-    auto delta_t = status.delta_t.to_floating_point<cplx_t>();
-    if(abs_t(delta_t) == 0) update_time_step();
-    tools::log->info("Creating time evolution gates");
-    time_gates_1site = qm::time::get_time_evolution_gates(delta_t, ham_gates_1body);
-    time_gates_2site = qm::time::get_time_evolution_gates(delta_t, ham_gates_2body);
-    time_gates_3site = qm::time::get_time_evolution_gates(delta_t, ham_gates_3body);
-}

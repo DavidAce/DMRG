@@ -57,7 +57,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     readyCompress = false;
     if constexpr(std::is_same_v<EnvType, EnvVar>) {
         for(const auto &mpo : mpos_) {
-            if(mpo.get().is_compressed_mpo_squared()) {
+            if(mpo.get().has_compressed_mpo_squared()) {
                 readyCompress = true;
                 break;
             }

@@ -71,6 +71,7 @@ void TensorsFinite::initialize_model() {
     model->randomize();
     rebuild_mpo();
     rebuild_mpo_squared();
+    if(settings::precision::use_compressed_mpo_squared_all) compress_mpo_squared();
 }
 
 void TensorsFinite::initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors,
@@ -162,9 +163,9 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
     } else {
         if(cache.effective_hamiltonian_squared_cplx and active_sites == cache.cached_sites_hamiltonian) return cache.effective_hamiltonian_squared_cplx.value();
     }
-    const auto &mpo = model->get_multisite_mpo_squared();
-    const auto &env = edges->get_multisite_env_var_blk();
-    tools::log->trace("Contracting effective Hamiltonian squared");
+    tools::log->trace("TensorsFinite::get_effective_hamiltonian_squared(): contracting active sites {}", active_sites);
+    const auto &mpo                        = model->get_multisite_mpo_squared();
+    const auto &env                        = edges->get_multisite_env_var_blk();
     cache.cached_sites_hamiltonian_squared = active_sites;
     if constexpr(std::is_same_v<Scalar, double>) {
         cache.effective_hamiltonian_squared_real = contract_mpo_env<double>(mpo.real(), env.L.real(), env.R.real());
@@ -185,26 +186,33 @@ void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional
     if(sign != 0) clear_cache();
 }
 
-void TensorsFinite::set_parity_shift_mpo(std::string_view axis) {
+void TensorsFinite::set_parity_shift_mpo(OptRitz ritz, std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) return;
     auto sign = qm::spin::half::get_sign(axis);
-    if(sign == 0) sign = tools::finite::measure::spin_sign(*state, axis);
-    bool modified = model->set_parity_shift_mpo(sign, axis); // will ignore the sign on the axis string if present
-    if(modified) {
-        clear_cache();
-        rebuild_edges_ene();
-        if constexpr(settings::debug) assert_validity();
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(sign == 0) {
+        tools::log->debug("set_parity_shift_mpo: no sector sign given for the target axis");
+        return;
     }
+    auto parity_shift_new = std::make_tuple(ritz, sign, axus);
+    auto parity_shift_old = model->get_parity_shift_mpo();
+    if(parity_shift_new == parity_shift_old) return;
+    model->set_parity_shift_mpo(ritz, sign, axus); // will ignore the sign on the axis string if present
 }
 
 void TensorsFinite::set_parity_shift_mpo_squared(std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) return;
     auto sign = qm::spin::half::get_sign(axis);
-    if(sign == 0) sign = tools::finite::measure::spin_sign(*state, axis);
-    bool modified = model->set_parity_shift_mpo_squared(sign, axis); // will ignore the sign on the axis string if present
-    if(modified) {
-        clear_cache();
-        rebuild_edges_var();
-        if constexpr(settings::debug) assert_validity();
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(sign == 0) {
+        tools::log->debug("set_parity_shift_mpo_squared: no sector sign given for the target axis: taking the closest sector");
+        sign = tools::finite::measure::spin_sign(*state, axis);
+        return;
     }
+    auto parity_shift_new = std::make_pair(sign, axus);
+    auto parity_shift_old = model->get_parity_shift_mpo_squared();
+    if(parity_shift_new == parity_shift_old) return;
+    model->set_parity_shift_mpo_squared(sign, axus); // will ignore the sign on the axis string if present
 }
 
 struct DebugStatus {
@@ -233,6 +241,7 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     if constexpr(not settings::debug) return std::nullopt;
     tensors.model->clear_cache();
     tensors.measurements = MeasurementsTensorsFinite();
+    tensors.rebuild_mpo();
     tensors.rebuild_mpo_squared();
     tensors.rebuild_edges();
     DebugStatus deb;
@@ -245,10 +254,10 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     return deb;
 }
 
-void TensorsFinite::set_energy_shift_mpo(std::optional<double> energy_shift_mpo_per_site) {
-    if(not energy_shift_mpo_per_site) energy_shift_mpo_per_site = tools::finite::measure::energy_per_site(*this);
-    if(std::abs(model->get_energy_shift_mpo_per_site() - energy_shift_mpo_per_site.value()) <= std::numeric_limits<double>::epsilon()) {
-        tools::log->debug("Energy per site is already shifted by {:.16f}: No shift needed.", energy_shift_mpo_per_site.value());
+void TensorsFinite::set_energy_shift_mpo(double energy_shift) {
+    if(std::isnan(energy_shift)) throw std::logic_error("TensorsFinite::set_energy_shift_mpo: got energy_shift == NAN");
+    if(std::abs(model->get_energy_shift_mpo() - energy_shift) <= std::numeric_limits<double>::epsilon()) {
+        tools::log->debug("MPO energy is already shifted by {:.16f}: No shift needed.", energy_shift);
         return;
     }
     std::vector<std::optional<DebugStatus>> debs;
@@ -257,13 +266,13 @@ void TensorsFinite::set_energy_shift_mpo(std::optional<double> energy_shift_mpo_
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->info("Shifting MPO energy: {:.16f}", get_length<double>() * energy_shift_mpo_per_site.value());
-    model->set_energy_shift_mpo_per_site(energy_shift_mpo_per_site.value());
+    tools::log->info("Shifting MPO energy: {:.16f}", energy_shift);
+    model->set_energy_shift_mpo(energy_shift);
     model->assert_validity();
 
     debs.emplace_back(get_status(*this, "After shift"));
 
-    if(energy_shift_mpo_per_site.value() != 0) {
+    if(energy_shift != 0) {
         auto &bef = debs.front();
         auto &aft = debs.back();
         if(bef and aft) {
@@ -284,14 +293,13 @@ void TensorsFinite::set_energy_shift_mpo(std::optional<double> energy_shift_mpo_
         auto &bef = debs.front();
         auto &aft = debs.back();
         if(bef and aft) {
-            double ratio_var     = std::abs(aft->var / bef->var);
-            double delta_ene     = std::abs(bef->ene - aft->ene);
-            double delta_var     = std::abs(bef->var - aft->var);
-            double delta_ene_rel = delta_ene / std::abs(aft->ene) * 100;
-            double delta_var_rel = delta_var / std::abs(aft->var) * 100;
-            double critical_cancellation_max_decimals =
-                std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(get_length<double>() * energy_shift_mpo_per_site.value(), 2)));
-            double critical_cancellation_error = std::pow(10, -critical_cancellation_max_decimals);
+            double ratio_var                          = std::abs(aft->var / bef->var);
+            double delta_ene                          = std::abs(bef->ene - aft->ene);
+            double delta_var                          = std::abs(bef->var - aft->var);
+            double delta_ene_rel                      = delta_ene / std::abs(aft->ene) * 100;
+            double delta_var_rel                      = delta_var / std::abs(aft->var) * 100;
+            double critical_cancellation_max_decimals = std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy_shift, 2)));
+            double critical_cancellation_error        = std::pow(10, -critical_cancellation_max_decimals);
             tools::log->debug("Variance change              {:>20.16f}", delta_var);
             tools::log->debug("Variance change percent      {:>20.16f}", delta_var_rel);
             tools::log->debug("Critical cancellation decs   {:>20.16f}", critical_cancellation_max_decimals);
@@ -314,17 +322,40 @@ void TensorsFinite::set_energy_shift_mpo(std::optional<double> energy_shift_mpo_
 }
 
 void TensorsFinite::rebuild_mpo() {
+    if(model->has_mpo()) {
+        tools::log->trace("rebuild_mpo: the model already has mpos.");
+        return; // They should have been cleared before rebulding them
+    }
     tools::log->trace("Rebuilding MPO");
+    measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
+    model->clear_cache();
     model->build_mpo();
+    if constexpr(settings::debug) model->assert_validity();
 }
 
 void TensorsFinite::rebuild_mpo_squared() {
     if(state->get_algorithm() == AlgorithmType::fLBIT) return;
+    if(model->has_mpo_squared()) {
+        tools::log->trace("rebuild_mpo_squared: the model already has mpos squared.");
+        return; // They should have been cleared before rebulding them
+    }
     tools::log->trace("Rebuilding MPO²");
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
-    model->build_mpo_squared(); // Will apply energy and parity shifts if there are any, but not compress.
-    if(settings::precision::use_compressed_mpo_squared_all) model->compress_mpo_squared();
+    model->build_mpo_squared(); // Will build with energy and parity shifts if they are set, but it will not compress.
+    if constexpr(settings::debug) model->assert_validity();
+}
+
+void TensorsFinite::compress_mpo_squared() {
+    if(settings::precision::use_compressed_mpo_squared_all) {
+        if(model->has_compressed_mpo_squared()) {
+            tools::log->trace("compress_mpo_squared: the model already has compressed mpo squared.");
+            return; // They don't need to be compressed again. Rebbild before compressing them
+        }
+        tools::log->trace("Compressing MPO²");
+        measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
+        model->compress_mpo_squared();
+    }
     if constexpr(settings::debug) model->assert_validity();
 }
 
@@ -463,7 +494,7 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw except::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}", active_sites, state->active_sites,
                                     model->active_sites, edges->active_sites);
-    clear_measurements(LogPolicy::QUIET);
+    clear_measurements(log_policy);
     tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), svd_cfg, log_policy);
     normalize_state(svd_cfg, NormPolicy::IFNEEDED);
 }

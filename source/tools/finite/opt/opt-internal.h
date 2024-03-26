@@ -12,7 +12,7 @@ namespace tools::finite::opt::internal{
     template<typename T, auto rank = 3>
     using TensorType = Eigen::Tensor<T, rank>;
 
-    extern opt_mps optimize_overlap             (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps optimize_overlap             (const TensorsFinite & tensors, const opt_mps & initial_mps, OptMeta & meta);
     extern opt_mps optimize_energy_eigs         (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps optimize_energy_eig          (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps optimize_variance_eigs       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
@@ -69,9 +69,9 @@ namespace tools::finite::opt::internal{
         filter_subspace(std::vector<opt_mps> & subspace, size_t max_accept);
 
 
-        extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, double energy_llim, double energy_ulim);
-        extern std::optional<size_t> get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> & eigvecs, double energy_llim, double energy_ulim);
-        extern std::vector<size_t>   get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, size_t max_eigvecs, double energy_llim, double energy_ulim);
+        extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs);
+        extern std::optional<size_t> get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> & eigvecs);
+        extern std::vector<size_t>   get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, size_t max_eigvecs);
 
         extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_mps> & eigvecs);
         extern Eigen::VectorXd get_eigvals(const std::vector<opt_mps> & eigvecs);

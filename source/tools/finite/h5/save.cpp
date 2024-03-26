@@ -370,17 +370,19 @@ namespace tools::finite::h5 {
             layout = H5D_layout_t::H5D_COMPACT;
         else
             layout = H5D_layout_t::H5D_CHUNKED;
-        tools::log->trace("Writing to dataset: {} | event {} | policy {}", data_path, enum2sv(sinfo.storage_event),
-                          flag2str(sinfo.get_dataset_storage_policy(data_name)));
+        tools::log->trace("Writing to dataset: {} | event {}", data_path, enum2sv(sinfo.storage_event));
         h5file.writeDataset(data, data_path, layout);
         tools::common::h5::save::set_save_attrs(h5file, data_path, sinfo);
     }
 
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<double, 2> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
                              std::string_view prefix);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<double, 1> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 2> &data, std::string_view data_name,
+                         std::string_view prefix);
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 1> &data, std::string_view data_name,
                              std::string_view prefix);
-
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,
+                             std::string_view prefix);
     template<typename T>
     void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, CopyPolicy copy_policy) {
         // Setup this save
@@ -403,9 +405,12 @@ namespace tools::finite::h5 {
         tools::common::h5::tmp::copy_from_tmp(h5file, sinfo.iter, sinfo.step, sinfo.storage_event, copy_policy);
     }
 
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx,2> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
-
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,
+                             CopyPolicy copy_policy);
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 1> &data, std::string_view data_name,
+                         CopyPolicy copy_policy);
     void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, CopyPolicy copy_policy) {
         save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, copy_policy);
     }

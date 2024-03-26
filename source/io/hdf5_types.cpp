@@ -186,11 +186,8 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "energy_min",                  HOFFSET(table, energy_min),                 H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max",                  HOFFSET(table, energy_max),                 H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_tgt",                  HOFFSET(table, energy_tgt),                 H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_ulim",                 HOFFSET(table, energy_ulim),                H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_llim",                 HOFFSET(table, energy_llim),                H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens",                 HOFFSET(table, energy_dens),                H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_target",          HOFFSET(table, energy_dens_target),         H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_dens_window",          HOFFSET(table, energy_dens_window),         H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_variance_lowest",      HOFFSET(table, energy_variance_lowest),     H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_variance_max_digits",  HOFFSET(table, energy_variance_max_digits), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "energy_variance_prec_limit",  HOFFSET(table, energy_variance_prec_limit), H5T_NATIVE_DOUBLE);

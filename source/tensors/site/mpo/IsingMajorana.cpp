@@ -62,8 +62,6 @@ std::any IsingMajorana::get_parameter(const std::string_view name) const {
     throw except::logic_error("Invalid parameter name for IsingMajorana model: {}", name);
 }
 
-Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
-                                              [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
 /*! Builds the MPO hamiltonian as a rank 4 tensor.
  *
  * H = Σ J_{i} σx_{i} σx_{i+1} + h_{i} σz_{i} + g*(σz_i σz_{i+1} + σx_{i} σx_{i+2})
@@ -87,6 +85,9 @@ Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std:
  *  delta = <ln J_i> - <ln h_i> =  2ln(W).
  *
  */
+Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+                                              [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
+
 {
     using namespace qm::spin::half;
     tools::log->debug("mpo({}): building ising-majorana mpo", get_position());
@@ -116,32 +117,6 @@ Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std:
     mpo_build.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sx);
     mpo_build.slice(std::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
 
-    if(parity_shift_sign_mpo != 0 and not parity_shift_axus_mpo.empty()) {
-        // This redefines H --> H² + Q(σ), where
-        //      * Q(σ) = 0.5 * ( I - prod(σ) ) = Proj(-σ), i.e. the "conjugate" projection operator (sign flipped).
-        //      * σ is a pauli matrix (usually σ^z)
-        // Observe that Q(σ)|ψ+-⟩ = (1 -+ 1) |ψ+-⟩
-        // For ground state DMRG (fDMRG) we can add the projection on H directly, as
-        //              H --> (H + Q(σ))
-        //     such that
-        //              (H + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (E + 0) |ψ+⟩
-        //              (H + Q(σ)) |ψ-⟩ = (σ² + 0.5(1+1)) |ψ-⟩ = (E + 1) |ψ-⟩
-        auto d0 = mpo_build.dimension(0);
-        auto d1 = mpo_build.dimension(1);
-        auto d2 = mpo_build.dimension(2);
-        auto d3 = mpo_build.dimension(3);
-        auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo);
-
-        Eigen::Tensor<cplx, 4> mpo_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
-        mpo_with_parity_shift_op.setZero();
-        mpo_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
-        mpo_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
-        mpo_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-        mpo_build                                                                                    = mpo_with_parity_shift_op;
-    }
-
-    // On MPO's at the system's edge we can apply the edges so that the outermost virtual dimension becomes thin (i.e. dim == 1)
-    // We expect the "get_MPO_edge_left/right" functions to adapt automatically to return thin edges after this step
     if(tenx::hasNaN(mpo_build)) {
         print_parameter_names();
         print_parameter_values();
@@ -149,7 +124,6 @@ Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std:
     }
     return mpo_build;
 }
-
 
 void IsingMajorana::randomize_hamiltonian() {
     if(h5tb.param.distribution != "uniform") throw except::runtime_error("IsingMajorana expects a uniform distribution. Got: {}", h5tb.param.distribution);

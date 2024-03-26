@@ -102,9 +102,16 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
 }
 
 void fdmrg::run_default_task_list() {
+    fdmrg_task fdmrg_task_find_state_ritz;
+    switch(settings::fdmrg::ritz) {
+        case OptRitz::SR: fdmrg_task_find_state_ritz = fdmrg_task::FIND_GROUND_STATE; break;
+        case OptRitz::LR: fdmrg_task_find_state_ritz = fdmrg_task::FIND_HIGHEST_STATE; break;
+        default: throw except::logic_error("fdmrg expects ritz SR or LR. Got: {}", enum2sv(settings::fdmrg::ritz));
+    }
+
     std::deque<fdmrg_task> default_task_list = {
         fdmrg_task::INIT_DEFAULT,
-        fdmrg_task::FIND_GROUND_STATE,
+        fdmrg_task_find_state_ritz,
         fdmrg_task::POST_DEFAULT,
     };
 
@@ -125,6 +132,9 @@ void fdmrg::run_preprocessing() {
     init_bond_dimension_limits();
     init_truncation_error_limits();
     initialize_state(ResetReason::INIT, settings::strategy::initial_state);
+    set_parity_shift_mpo(); // This shifts the energy of the opposite spin parity sector, to resolve degeneracy/spectral pairing
+    set_energy_shift_mpo();
+    rebuild_tensors();
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -148,14 +158,14 @@ void fdmrg::run_algorithm() {
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
-        try_parity_shifting_mpo(); // This shifts the energy of the opposite spin parity sector, to resolve degeneracy/spectral pairing
-        shift_mpo_energy();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
+    Eigen::Tensor<real, 1> vec    = tools::finite::measure::mps2tensor(*tensors.state).real();
+    write_to_file(vec, "vec", StorageEvent::FINISHED);
 }
 
 void fdmrg::run_fes_analysis() {
@@ -205,7 +215,7 @@ void fdmrg::check_convergence() {
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_axis);
 
-    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturation_iters or
+    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturated_iters or
        (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
         status.algorithm_saturated_for++;
     else
@@ -222,7 +232,7 @@ void fdmrg::check_convergence() {
         status.algorithm_has_stuck_for = 0;
 
     status.algorithm_has_succeeded = status.bond_limit_has_reached_max and status.algorithm_converged_for >= settings::strategy::min_converged_iters and
-                                     status.algorithm_saturated_for >= settings::strategy::min_saturation_iters;
+                                     status.algorithm_saturated_for >= settings::strategy::min_saturated_iters;
     status.algorithm_has_to_stop = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
     tools::log->info(

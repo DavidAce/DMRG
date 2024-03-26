@@ -128,12 +128,12 @@ namespace tools::finite::opt {
         tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
         if(solver.config.lib == eig::Lib::ARPACK) {
-            if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("optimize_variance_eigs with ARPACK requires non-compressed MPO²");
+            if(tensors.model->has_compressed_mpo_squared()) throw std::runtime_error("optimize_variance_eigs with ARPACK requires non-compressed MPO²");
             if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
             if(not solver.config.sigma) solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one to shift enough
         } else if(solver.config.lib == eig::Lib::PRIMME) {
             if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
-            if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->is_compressed_mpo_squared())
+            if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->has_compressed_mpo_squared())
                 throw except::logic_error("optimize_variance_eigs with PRIMME with sigma requires non-compressed MPO²");
         }
         tools::log->debug("Finding excited state of operator [(H-E)²{}]{}{} | {} {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
@@ -188,7 +188,7 @@ namespace tools::finite::opt {
                 cfg.primme_target_shifts          = {};
                 cfg.ritz                          = eig::Ritz::primme_largest_abs;
                 hamiltonian_squared.factorization = eig::Factorization::LLT;
-                hamiltonian_squared.set_readyCompress(tensors.model->is_compressed_mpo_squared());
+                hamiltonian_squared.set_readyCompress(tensors.model->has_compressed_mpo_squared());
             }
         }
 

@@ -159,7 +159,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     if(positions.size() == 1) {
         auto t_short = tid::tic_scope("short", tid::level::highest);
-        auto svd     = svd::solver();
+        auto svd     = svd::solver(svd_cfg);
         // We can take a shortcut when given a multisite_mps with just a single site
         auto d0  = multisite_mps.dimension(0);
         auto d1  = multisite_mps.dimension(1);

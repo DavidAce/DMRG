@@ -129,29 +129,6 @@ Eigen::Tensor<cplx, 4> IsingSelfDual::get_mpo(real energy_shift_per_site, std::o
         print_parameter_values();
         throw except::runtime_error("mpo({}): found nan", get_position());
     }
-    if(parity_shift_sign_mpo != 0 and not parity_shift_axus_mpo.empty()) {
-        // This redefines H --> H² + Q(σ), where
-        //      * Q(σ) = 0.5 * ( I - prod(σ) ) = Proj(-σ), i.e. the "conjugate" projection operator (sign flipped).
-        //      * σ is a pauli matrix (usually σ^z)
-        // Observe that Q(σ)|ψ+-⟩ = (1 -+ 1) |ψ+-⟩
-        // For ground state DMRG (fDMRG) we can add the projection on H directly, as
-        //              H --> (H + Q(σ))
-        //     such that
-        //              (H + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (E + 0) |ψ+⟩
-        //              (H + Q(σ)) |ψ-⟩ = (σ² + 0.5(1+1)) |ψ-⟩ = (E + 1) |ψ-⟩
-        auto d0 = mpo_build.dimension(0);
-        auto d1 = mpo_build.dimension(1);
-        auto d2 = mpo_build.dimension(2);
-        auto d3 = mpo_build.dimension(3);
-        auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo);
-
-        Eigen::Tensor<cplx, 4> mpo_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
-        mpo_with_parity_shift_op.setZero();
-        mpo_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
-        mpo_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
-        mpo_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-        mpo_build                                                                                    = mpo_with_parity_shift_op;
-    }
     return mpo_build;
 }
 

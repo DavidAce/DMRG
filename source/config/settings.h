@@ -27,6 +27,7 @@ namespace settings {
     extern size_t   print_freq(AlgorithmType algo_type);
     extern long     get_bond_init(AlgorithmType algo_type);
     extern long     get_bond_max(AlgorithmType algo_type);
+    extern OptRitz  get_ritz(AlgorithmType algo_type);
     extern bool     store_wave_function(AlgorithmType algo_type);
 
     /*!  \namespace settings::threading Parameters for multithreading
@@ -216,9 +217,9 @@ namespace settings {
         inline bool                use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
         inline size_t              max_resets                  = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
         inline size_t              max_stuck_iters             = 5;                                      /*!< If stuck for this many iterations -> stop. */
-        inline size_t              max_saturation_iters        = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
-        inline size_t              min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
-        inline size_t              min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
+        inline size_t              max_saturated_iters         = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
+        inline size_t              min_saturated_iters         = 1;                                      /*!< Saturated at least this many iterations before stopping */
+        inline size_t              min_converged_iters         = 1;                                      /*!< Converged at least this many iterations before success */
         inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment expansion */
         inline size_t              multisite_opt_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t              multisite_opt_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
@@ -333,6 +334,7 @@ namespace settings {
     /*! \namespace settings::fdmrg Settings for the finite DMRG algorithm */
     namespace fdmrg {
         inline bool      on                  = false;                              /*!< Turns fdmrg simulation on/off. */
+        inline auto      ritz                = OptRitz::SR;                        /*!< Select what part of the energy eigenspectrum to target (SR:smallest real / LR: largest real) */
         inline size_t    max_iters           = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t    min_iters           = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
         inline long      bond_max            = 128;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
@@ -381,14 +383,13 @@ namespace settings {
     namespace xdmrg {
         inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
         inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select what part of the energy eigenspectrum to target */
+        inline double     energy_density_target         = 0.5;                     /*!< (Used with ritz == OptRitz::TE) Target energy in [0-1], Target energy = energy_density_target * (EMAX+EMIN) + EMIN. */
         inline size_t     max_iters                     = 50;                      /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t     min_iters                     = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
         inline size_t     warmup_iters                  = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
         inline long       bond_max                      = 1024;                    /*!< Maximum bond dimension (number of singular values to keep after SVD). */
         inline long       bond_init                     = 8;                       /*!< Initial bond dimension limit. Used during warmup or when bond_increase_when == true, or starting from an entangled state */
         inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
-        inline double     energy_density_target         = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double     energy_density_window         = 0.05;                    /*!< Accept states inside of energy_tgt +- energy_dens_window. */
         inline size_t     max_states                    = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool       store_wavefn                  = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline bool       finish_if_entanglm_saturated  = true;                    /*!< Finish early as soon as entanglement has saturated */

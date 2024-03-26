@@ -134,11 +134,14 @@ enum class OptSolver {
     EIG, /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
     EIGS /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
 };
+
+/*! Choose the target energy eigenpair */
 enum class OptRitz {
     LR, /*!< Largest Real eigenvalue */
     SR, /*!< Smallest Real eigenvalue */
-    SM, /*!< Smallest magnitude eigenvalue (use this to find a middle-of-spectrum state with energy closest to 0) */
-    CR  /*!< Closest real eigenvalue to the current one (use this for middle-of-spectrum states close to the initial product state) */
+    SM, /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
+    IS, /*!< Initial State energy. MPO² Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
+    TE  /*!< Target Energy density in normalized units [0,1]. MPO² Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
 };
 
 enum class OptWhen : int {
@@ -233,11 +236,10 @@ enum class xdmrg_task {
     INIT_RANDOMIZE_MODEL,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
-    INIT_RANDOMIZE_INTO_STATE_IN_WIN,
     INIT_RANDOMIZE_FROM_CURRENT_STATE,
     INIT_BOND_LIMITS,
     INIT_TRNC_LIMITS,
-    INIT_ENERGY_LIMITS,
+    INIT_ENERGY_TARGET,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
     INIT_CLEAR_CONVERGENCE,
@@ -426,7 +428,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptRitz::SR)                                         return "SR";
         if(item == OptRitz::LR)                                         return "LR";
         if(item == OptRitz::SM)                                         return "SM";
-        if(item == OptRitz::CR)                                         return "CR";
+        if(item == OptRitz::IS)                                         return "IS";
+        if(item == OptRitz::TE)                                         return "TE";
     }
     if constexpr(std::is_same_v<T, SVDLibrary>) {
         if(item == SVDLibrary::EIGEN)                                   return "EIGEN";
@@ -607,11 +610,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == xdmrg_task::INIT_RANDOMIZE_MODEL)                   return "INIT_RANDOMIZE_MODEL";
         if(item == xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)      return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
         if(item == xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)    return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
-        if(item == xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN)       return "INIT_RANDOMIZE_INTO_STATE_IN_WIN";
         if(item == xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE)      return "INIT_RANDOMIZE_FROM_CURRENT_STATE";
         if(item == xdmrg_task::INIT_BOND_LIMITS)                       return "INIT_BOND_LIMITS";
         if(item == xdmrg_task::INIT_TRNC_LIMITS)                       return "INIT_TRNC_LIMITS";
-        if(item == xdmrg_task::INIT_ENERGY_LIMITS)                     return "INIT_ENERGY_LIMITS";
+        if(item == xdmrg_task::INIT_ENERGY_TARGET)                     return "INIT_ENERGY_TARGET";
         if(item == xdmrg_task::INIT_WRITE_MODEL)                       return "INIT_WRITE_MODEL";
         if(item == xdmrg_task::INIT_CLEAR_STATUS)                      return "INIT_CLEAR_STATUS";
         if(item == xdmrg_task::INIT_CLEAR_CONVERGENCE)                 return "INIT_CLEAR_CONVERGENCE";
@@ -755,7 +757,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "SR")                                    return OptRitz::SR;
         if(item == "LR")                                    return OptRitz::LR;
         if(item == "SM")                                    return OptRitz::SM;
-        if(item == "CR")                                    return OptRitz::CR;
+        if(item == "IS")                                    return OptRitz::IS;
+        if(item == "TE")                                    return OptRitz::TE;
     }
     if constexpr(std::is_same_v<T, SVDLibrary>) {
         if(item == "EIGEN")                                 return SVDLibrary::EIGEN;
@@ -943,11 +946,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_RANDOMIZE_MODEL")                  return xdmrg_task::INIT_RANDOMIZE_MODEL;
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")     return xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
         if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")   return xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
-        if(item == "INIT_RANDOMIZE_INTO_STATE_IN_WIN")      return xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN;
         if(item == "INIT_RANDOMIZE_FROM_CURRENT_STATE")     return xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE;
         if(item == "INIT_BOND_LIMITS")                      return xdmrg_task::INIT_BOND_LIMITS;
         if(item == "INIT_TRNC_LIMITS")                      return xdmrg_task::INIT_TRNC_LIMITS;
-        if(item == "INIT_ENERGY_LIMITS")                    return xdmrg_task::INIT_ENERGY_LIMITS;
+        if(item == "INIT_ENERGY_TARGET")                    return xdmrg_task::INIT_ENERGY_TARGET;
         if(item == "INIT_WRITE_MODEL")                      return xdmrg_task::INIT_WRITE_MODEL;
         if(item == "INIT_CLEAR_STATUS")                     return xdmrg_task::INIT_CLEAR_STATUS;
         if(item == "INIT_CLEAR_CONVERGENCE")                return xdmrg_task::INIT_CLEAR_CONVERGENCE;

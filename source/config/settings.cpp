@@ -22,6 +22,14 @@ long settings::get_bond_max(AlgorithmType algo_type) {
         default: return 64;
     }
 }
+OptRitz settings::get_ritz(AlgorithmType algo_type) {
+    switch(algo_type) {
+        case AlgorithmType::fDMRG: return settings::fdmrg::ritz;
+        case AlgorithmType::xDMRG: return settings::xdmrg::ritz;
+        default: throw except::logic_error("Ritz not defined for algorithm [{}]", enum2sv(algo_type));
+    }
+}
+
 size_t settings::print_freq(AlgorithmType algo_type) {
     switch(algo_type) {
         case AlgorithmType::iDMRG: return settings::idmrg::print_freq;
@@ -156,8 +164,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
     dmrg_config.load_parameter("strategy::max_resets"                         , strategy::max_resets);
     dmrg_config.load_parameter("strategy::max_stuck_iters"                    , strategy::max_stuck_iters);
-    dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturation_iters);
-    dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturation_iters);
+    dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturated_iters);
+    dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturated_iters);
     dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
     dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
     dmrg_config.load_parameter("strategy::multisite_opt_site_def"             , strategy::multisite_opt_site_def);
@@ -203,6 +211,7 @@ void settings::load(Loader &dmrg_config) {
 
     //Parameters controlling finite-DMRG
     dmrg_config.load_parameter("fdmrg::on"                      , fdmrg::on);
+    dmrg_config.load_parameter("fdmrg::ritz"                    , fdmrg::ritz);
     dmrg_config.load_parameter("fdmrg::max_iters"               , fdmrg::max_iters);
     dmrg_config.load_parameter("fdmrg::min_iters"               , fdmrg::min_iters);
     dmrg_config.load_parameter("fdmrg::bond_max"                , fdmrg::bond_max);
@@ -241,6 +250,7 @@ void settings::load(Loader &dmrg_config) {
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
     dmrg_config.load_parameter("xdmrg::ritz"                         , xdmrg::ritz);
+    dmrg_config.load_parameter("xdmrg::ritz_ted_target"              , xdmrg::energy_density_target);
     dmrg_config.load_parameter("xdmrg::max_iters"                    , xdmrg::max_iters);
     dmrg_config.load_parameter("xdmrg::min_iters"                    , xdmrg::min_iters);
     dmrg_config.load_parameter("xdmrg::warmup_iters"                 , xdmrg::warmup_iters);
@@ -248,8 +258,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::bond_init"                    , xdmrg::bond_init);
     dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
     dmrg_config.load_parameter("xdmrg::store_wavefn"                 , xdmrg::store_wavefn);
-    dmrg_config.load_parameter("xdmrg::energy_density_target"        , xdmrg::energy_density_target);
-    dmrg_config.load_parameter("xdmrg::energy_density_window"        , xdmrg::energy_density_window);
     dmrg_config.load_parameter("xdmrg::max_states"                   , xdmrg::max_states);
     dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
     dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);

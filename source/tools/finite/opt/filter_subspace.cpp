@@ -34,37 +34,28 @@ void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps
     if(subspace.size() < min_accept) throw std::runtime_error("Filtered too many eigvecs");
 }
 
-std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs, double energy_llim,
-                                                                                                     double energy_ulim) {
+std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs) {
     if(eigvecs.empty()) return std::nullopt;
     auto overlaps = get_overlaps(eigvecs);
     long idx      = 0;
-    for(const auto &eigvec : eigvecs) {
-        if(not eigvec.is_basis_vector) continue;
-        auto energy = eigvec.get_energy();
-        if(energy > energy_ulim) overlaps(idx) = 0.0;
-        if(energy < energy_llim) overlaps(idx) = 0.0;
-        idx++;
-    }
+
     // Now we have a list of overlaps where nonzero elements correspond to eigvecs inside the energy window
     // Get the index to the highest overlapping element
     double max_overlap_val = overlaps.maxCoeff(&idx);
     if(max_overlap_val == 0.0) {
-        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim, energy_ulim);
-        for(const auto &eigvec : eigvecs) tools::log->info("energy {}: {}", eigvec.get_eigs_idx(), eigvec.get_energy());
+        tools::log->warn("No overlapping eigenstates");
         return std::nullopt;
     }
     return idx;
 }
 
-std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> &eigvecs, double energy_llim,
-                                                                                                     double energy_ulim) {
+std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> &eigvecs) {
     if(eigvecs.empty()) return std::nullopt;
     auto   var = std::numeric_limits<double>::infinity();
     size_t idx = 0;
     for(const auto &[i, eigvec] : iter::enumerate(eigvecs)) {
         if(not eigvec.is_basis_vector) continue;
-        if(eigvec.get_variance() < var and eigvec.get_energy() <= energy_ulim and eigvec.get_energy() >= energy_llim) {
+        if(eigvec.get_variance() < var) {
             idx = i;
             var = eigvec.get_variance();
         }
@@ -73,22 +64,19 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_
     return idx;
 }
 
-std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs, size_t max_eigvecs,
-                                                                                                   double energy_llim, double energy_ulim) {
+std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs, size_t max_eigvecs) {
     if(eigvecs.empty()) return std::vector<size_t>();
     auto overlaps = get_overlaps(eigvecs);
     long idx      = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
-        if(eigvec.get_energy() > energy_ulim) overlaps(idx) = 0.0;
-        if(eigvec.get_energy() < energy_llim) overlaps(idx) = 0.0;
         idx++;
     }
     // Now we have a list of overlaps where nonzero elements correspond to eigvecs inside the energy window
     // Get the index to the highest overlapping element
     double max_overlap_val = overlaps.maxCoeff();
     if(max_overlap_val == 0.0) {
-        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim, energy_ulim);
+        tools::log->warn("No overlapping eigenstates");
         return std::vector<size_t>();
     }
 

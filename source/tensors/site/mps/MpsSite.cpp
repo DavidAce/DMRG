@@ -78,11 +78,11 @@ MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const std::optional<Eigen::Te
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-MpsSite::~MpsSite()                                   = default; // default dtor
-MpsSite::MpsSite(MpsSite &&other) noexcept            = default; // default move ctor
-MpsSite &MpsSite::operator=(MpsSite &&other) noexcept = default; // default move assign
-MpsSite::MpsSite(const MpsSite &other)                = default;
-MpsSite &MpsSite::operator=(const MpsSite &other)     = default;
+MpsSite::~MpsSite()                                    = default; // default dtor
+MpsSite:: MpsSite(MpsSite &&other) noexcept            = default; // default move ctor
+MpsSite  &MpsSite::operator=(MpsSite &&other) noexcept = default; // default move assign
+MpsSite:: MpsSite(const MpsSite &other)                = default;
+MpsSite  &MpsSite::operator=(const MpsSite &other)     = default;
 
 bool MpsSite::isCenter() const { return LC.has_value(); }
 
@@ -436,14 +436,14 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     if(adjoint) {
         M_bare_temp.device(*threads->dev) = get_M_bare()
-                                               .contract(mpo.conjugate(), tenx::idx({0}, {2}))
-                                               .shuffle(tenx::array5{4, 0, 2, 1, 3})
-                                               .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+                                                .contract(mpo.conjugate(), tenx::idx({0}, {2}))
+                                                .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                                .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     } else {
         M_bare_temp.device(*threads->dev) = get_M_bare()
-                                               .contract(mpo, tenx::idx({0}, {3}))
-                                               .shuffle(tenx::array5{4, 0, 2, 1, 3})
-                                               .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+                                                .contract(mpo, tenx::idx({0}, {3}))
+                                                .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                                .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     }
     if(isCenter()) {
         Eigen::Tensor<cplx, 1> LC_temp = tenx::broadcast(get_LC(), {mpoDimR});
@@ -527,10 +527,10 @@ std::optional<stash<Eigen::Tensor<cplx, 3>>> &MpsSite::get_V_stash() const { ret
 
 void MpsSite::drop_stash() const {
     if constexpr(settings::debug) {
-        if(U_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping U_stash", get_tag());
-        if(S_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping S_stash", get_tag());
-        if(C_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping C_stash", get_tag());
-        if(V_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping V_stash", get_tag());
+        if(U_stash) tools::log->trace("MpsSite({})::drop_stash: U_stash", get_tag());
+        if(S_stash) tools::log->trace("MpsSite({})::drop_stash: S_stash", get_tag());
+        if(C_stash) tools::log->trace("MpsSite({})::drop_stash: C_stash", get_tag());
+        if(V_stash) tools::log->trace("MpsSite({})::drop_stash: V_stash", get_tag());
     }
     U_stash = std::nullopt;
     S_stash = std::nullopt;
@@ -540,15 +540,15 @@ void MpsSite::drop_stash() const {
 
 void MpsSite::drop_stashed_errors() const {
     if constexpr(settings::debug) {
-        if(U_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from U_stash", get_tag());
-        if(S_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from S_stash", get_tag());
-        if(C_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from C_stash", get_tag());
-        if(V_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from V_stash", get_tag());
+        if(U_stash.has_value() and U_stash->error > 0) tools::log->trace("MpsSite({})::drop_stashed_errors: U_stash error: {:.3e}", get_tag(), U_stash->error);
+        if(S_stash.has_value() and S_stash->error > 0) tools::log->trace("MpsSite({})::drop_stashed_errors: S_stash error: {:.3e}", get_tag(), S_stash->error);
+        if(C_stash.has_value() and C_stash->error > 0) tools::log->trace("MpsSite({})::drop_stashed_errors: C_stash error: {:.3e}", get_tag(), C_stash->error);
+        if(V_stash.has_value() and V_stash->error > 0) tools::log->trace("MpsSite({})::drop_stashed_errors: V_stash error: {:.3e}", get_tag(), V_stash->error);
     }
-    if(U_stash) U_stash->error = -1.0;
-    if(S_stash) S_stash->error = -1.0;
-    if(C_stash) C_stash->error = -1.0;
-    if(V_stash) V_stash->error = -1.0;
+    if(U_stash and U_stash->error > 0) U_stash->error = -1.0;
+    if(S_stash and S_stash->error > 0) S_stash->error = -1.0;
+    if(C_stash and C_stash->error > 0) C_stash->error = -1.0;
+    if(V_stash and V_stash->error > 0) V_stash->error = -1.0;
 }
 
 void MpsSite::take_stash(const MpsSite &other) {
