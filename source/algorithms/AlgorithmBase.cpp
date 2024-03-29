@@ -9,14 +9,17 @@
 #include "tools/common/log.h"
 #include <complex>
 #include <h5pp/h5pp.h>
-AlgorithmBase::AlgorithmBase(AlgorithmType algo_type_) {
+AlgorithmBase::AlgorithmBase(OptRitz opt_ritz_, AlgorithmType algo_type_) {
+    status.opt_ritz  = opt_ritz_;
     status.algo_type = algo_type_;
     tools::log->set_error_handler([](const std::string &msg) { throw except::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(fmt::format("{}", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
     if(settings::test_unwind) throw std::runtime_error("Testing stack unwinding");
 }
-AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5file_, AlgorithmType algo_type_) : AlgorithmBase(algo_type_) { h5file = h5file_; }
+AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5file_, OptRitz opt_ritz_, AlgorithmType algo_type_) : AlgorithmBase(opt_ritz_, algo_type_) {
+    h5file = h5file_;
+}
 
 void AlgorithmBase::copy_from_tmp(StorageEvent storage_event, CopyPolicy copy_policy) {
     tools::common::h5::tmp::copy_from_tmp(*h5file, status.iter, status.step, storage_event, copy_policy);

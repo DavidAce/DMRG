@@ -198,7 +198,7 @@ namespace tools::finite::h5 {
     void save::subsystem_entanglement_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::dataset::subsystem_entanglement_entropies::policy)) return;
         if(not state.measurements.subsystem_entanglement_entropies)
-            state.measurements.subsystem_entanglement_entropies = tools::finite::measure::subsystem_entanglement_entropies(state);
+            state.measurements.subsystem_entanglement_entropies = tools::finite::measure::subsystem_entanglement_entropies_log2(state);
         auto t_hdf     = tid::tic_scope("subsystem_entanglement_entropies", tid::level::higher);
         auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "subsystem_entanglement_entropies");
         // Check if the current entry has already been appended
@@ -361,7 +361,6 @@ namespace tools::finite::h5 {
     void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, std::string_view prefix) {
         auto t_data    = tid::tic_scope("data");
         auto data_path = fmt::format("{}/{}", prefix, data_name);
-
         // Check if the current entry has already been saved
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, data_path);
         if(attrs == sinfo) return;
@@ -378,7 +377,7 @@ namespace tools::finite::h5 {
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
                              std::string_view prefix);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 2> &data, std::string_view data_name,
-                         std::string_view prefix);
+                             std::string_view prefix);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 1> &data, std::string_view data_name,
                              std::string_view prefix);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,
@@ -405,13 +404,13 @@ namespace tools::finite::h5 {
         tools::common::h5::tmp::copy_from_tmp(h5file, sinfo.iter, sinfo.step, sinfo.storage_event, copy_policy);
     }
 
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx,2> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 1> &data, std::string_view data_name,
-                         CopyPolicy copy_policy);
-    void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, CopyPolicy copy_policy) {
+                             CopyPolicy copy_policy);
+    void          save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, CopyPolicy copy_policy) {
         save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, copy_policy);
     }
 

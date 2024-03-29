@@ -12,7 +12,7 @@
 #include "tools/infinite/h5.h"
 #include "tools/infinite/measure.h"
 
-AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
+AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_,OptRitz opt_ritz_,  AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_),opt_ritz_, algo_type) {
     tools::log->trace("Constructing algorithm infinite");
     tensors.initialize(settings::model::model_type);
     tensors.state->set_algorithm(status.algo_type);
@@ -171,16 +171,9 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
 
-void AlgorithmInfinite::initialize_state(ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
+void AlgorithmInfinite::initialize_state([[maybe_unused]] ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
                                          std::optional<std::string> pattern) {
     tools::log->trace("Initializing state");
-    if(reason == ResetReason::SATURATED) {
-        if(status.num_resets >= settings::strategy::max_resets)
-            return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
-        else
-            status.num_resets++;
-    }
-
     if(not sector) sector = settings::strategy::initial_axis;
     if(not pattern) pattern = settings::strategy::initial_pattern;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;

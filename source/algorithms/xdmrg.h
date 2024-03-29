@@ -32,7 +32,6 @@ class xdmrg : public AlgorithmFinite {
     void     run_preprocessing() final;
     void     run_default_task_list() final;
     void     run_algorithm() final;
-    void     run_fes_analysis() final;
     void     update_state() final;
     void     resume() final;
     void     check_convergence() final;

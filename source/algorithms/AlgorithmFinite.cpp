@@ -19,13 +19,15 @@
 #include "tools/finite/ops.h"
 #include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
+#include <tools/finite/mps.h>
 
-AlgorithmFinite::AlgorithmFinite(AlgorithmType algo_type) : AlgorithmBase(algo_type) {
+AlgorithmFinite::AlgorithmFinite(OptRitz opt_ritz, AlgorithmType algo_type) : AlgorithmBase(opt_ritz, algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
 }
 
-AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
+AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz, AlgorithmType algo_type)
+    : AlgorithmBase(std::move(h5ppFile_), opt_ritz, algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
 }
@@ -89,6 +91,96 @@ void AlgorithmFinite::run()
     }
 }
 
+void AlgorithmFinite::run_rbds_analysis() {
+    if(settings::strategy::rbds_rate == 0) return;
+    last_optmode  = std::nullopt;
+    last_optspace = std::nullopt;
+    tools::log    = tools::Logger::setLogger(fmt::format("{}-rbds", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
+    tools::log->info("Starting {} reverse bond dimension scaling with rate bond rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
+                     settings::strategy::rbds_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
+    auto t_rbds         = tid::tic_scope("rbds");
+    auto tensors_backup = tensors;
+    auto status_backup  = status;
+    tensors.move_center_point_to_inward_edge();
+    tensors.activate_sites({tensors.get_position()});
+    tensors.rebuild_edges();
+    // Generate a list of bond dimension limits
+    auto bond_max    = std::min(settings::get_bond_max(status.algo_type), safe_cast<long>(std::pow(2.0, tensors.get_length<double>() / 2)));
+    auto bond_limits = std::vector<long>();
+
+    if(settings::strategy::rbds_rate < 1)
+        for(long b = bond_max; b > 0l; b = safe_cast<long>(settings::strategy::rbds_rate * safe_cast<double>(b))) bond_limits.emplace_back(b);
+    else {
+        for(long b = 1l; b <= bond_max; b = safe_cast<long>(settings::strategy::rbds_rate + safe_cast<double>(b))) bond_limits.emplace_back(b);
+        std::reverse(bond_limits.begin(), bond_limits.end()); // Needs to go from high to low
+    }
+
+    for(const auto &bond_lim : bond_limits) {
+        status.bond_lim = bond_lim;
+        if(bond_lim < tensors.state->find_largest_bond()) {
+            // Cut down the bond dimension with SVDs only
+            tools::finite::mps::normalize_state(*tensors.state, svd::config(bond_lim, status.trnc_min), NormPolicy::ALWAYS);
+            tensors.clear_cache();
+            tensors.clear_measurements();
+            tensors.rebuild_edges();
+
+            // Retain the max truncation error, otherwise it is lost in the next pass
+            // auto truncation_errors = tensors.state->get_truncation_errors();
+            // tensors.state->keep_max_truncation_errors(truncation_errors);
+        }
+        status.wall_time = tid::get_unscoped("t_tot").get_time();
+        status.algo_time = t_rbds->get_time();
+        write_to_file(StorageEvent::RBDS_STEP, CopyPolicy::OFF);
+        print_status();
+    }
+    // Reset our logger
+    tools::log = tools::Logger::getLogger(std::string(status.algo_type_sv()));
+    tensors    = tensors_backup;
+    status     = status_backup;
+}
+
+void AlgorithmFinite::run_rtes_analysis() {
+    if(settings::strategy::rtes_rate <= 1.0) return;
+    last_optmode  = std::nullopt;
+    last_optspace = std::nullopt;
+    tools::log = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
+    tools::log->info("Starting {} reverse truncation error scaling with growth rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
+                     settings::strategy::rtes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
+    auto t_rbds         = tid::tic_scope("rtes");
+    auto tensors_backup = tensors;
+    auto status_backup  = status;
+    tensors.move_center_point_to_inward_edge();
+    tensors.activate_sites({tensors.get_position()});
+    tensors.rebuild_edges();
+    // Generate a list of truncation error limits
+    auto trnc_min    = std::min(1e-1, settings::solver::svd_truncation_lim);
+    auto trnc_limits = std::vector<double>();
+    for(double t = trnc_min; t < 1e-1; t *= settings::strategy::rtes_rate) trnc_limits.emplace_back(t);
+
+    for(const auto &trnc_lim : trnc_limits) {
+        status.trnc_lim = trnc_lim;
+        if(trnc_lim > tensors.state->find_smallest_schmidt_value()) {
+            // Cut down the bond dimension with SVDs only
+            tools::finite::mps::normalize_state(*tensors.state, svd::config(status.bond_max, trnc_lim), NormPolicy::ALWAYS);
+            tensors.clear_cache();
+            tensors.clear_measurements();
+            tensors.rebuild_edges();
+            // Retain the max truncation error, otherwise it is lost in the next pass
+            // auto truncation_errors = tensors.state->get_truncation_errors();
+            // tensors.state->keep_max_truncation_errors(truncation_errors);
+        }
+        status.wall_time = tid::get_unscoped("t_tot").get_time();
+        status.algo_time = t_rbds->get_time();
+        write_to_file(StorageEvent::RTES_STEP, CopyPolicy::OFF);
+        print_status();
+    }
+
+    // Reset our logger
+    tools::log = tools::Logger::getLogger(std::string(status.algo_type_sv()));
+    tensors    = tensors_backup;
+    status     = status_backup;
+}
+
 void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
@@ -96,11 +188,10 @@ void AlgorithmFinite::run_postprocessing() {
         tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
         tensors.rebuild_edges();
     }
-    write_to_file(StorageEvent::BOND_UPDATE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
-    write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);  // To compare the finished state to a projected one
-    write_to_file(StorageEvent::FINISHED, CopyPolicy::FORCE);  // For final mps
+    write_to_file(StorageEvent::FINISHED, CopyPolicy::FORCE); // For final mps
     print_status_full();
-    run_fes_analysis();
+    run_rbds_analysis();
+    run_rtes_analysis();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
 }
 
@@ -326,8 +417,6 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     }
     // Write current results before updating bond dimension
     write_to_file(StorageEvent::BOND_UPDATE);
-    if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
-        initialize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
 
     // If we got to this point we will update the bond dimension by a factor
     auto rate = settings::strategy::bond_increase_rate;
@@ -354,7 +443,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 }
 
 void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event) {
-    // We reduce the bond dimension limit during FES whenever entanglement has stopped changing
+    // We reduce the bond dimension limit during RBDS whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
     if(when == UpdateWhen::NEVER) return;
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
@@ -495,12 +584,6 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
                                        std::optional<bool> use_eigenspinors, std::optional<std::string> pattern, std::optional<long> bond_lim,
                                        std::optional<double> trnc_lim) {
     auto t_rnd = tid::tic_scope("rnd_state", tid::level::higher);
-    if(reason == ResetReason::SATURATED) {
-        if(status.num_resets >= settings::strategy::max_resets)
-            return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
-        else
-            status.num_resets++; // Only increment if doing it for saturation reasons
-    }
     if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
     if(not axis) axis = settings::strategy::initial_axis;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;

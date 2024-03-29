@@ -22,7 +22,7 @@
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
 
-xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
+xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
     tensors.state->set_name(fmt::format("state_{}", excited_state_number));
 }
@@ -101,7 +101,8 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case xdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
-            case xdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
+            case xdmrg_task::POST_RBDS_ANALYSIS: run_rbds_analysis(); break;
+            case xdmrg_task::POST_RTES_ANALYSIS: run_rtes_analysis(); break;
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case xdmrg_task::TIMER_RESET: tid::reset("xDMRG"); break;
         }
@@ -114,9 +115,10 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
 }
 
 void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
-    switch(settings::xdmrg::ritz) {
-        case OptRitz::SR: throw std::logic_error("settings::xdmrg::ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
-        case OptRitz::LR: throw std::logic_error("settings::xdmrg::ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+    switch(status.opt_ritz) {
+        case OptRitz::NONE: throw std::logic_error("status.opt_ritz == OptRitz::NONE is invalid under xdmrg");
+        case OptRitz::SR: throw std::logic_error("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
+        case OptRitz::LR: throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
         case OptRitz::SM: {
             status.energy_tgt = 0.0; // When the Hamiltonian is traceless, the energy level nearest zero is closest to the infinite-temperature limit
             break;
@@ -166,8 +168,8 @@ void xdmrg::run_preprocessing() {
 
 void xdmrg::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name(fmt::format("state_{}", excited_state_number));
-    tools::log->info("Starting {} simulation of model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
-                     tensors.state->get_name());
+    tools::log->info("Starting {} simulation of model [{}] for state [{}] with ritz [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
+                     tensors.state->get_name(), enum2sv(status.opt_ritz));
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
 
@@ -200,51 +202,6 @@ void xdmrg::run_algorithm() {
     //    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
 }
 
-void xdmrg::run_fes_analysis() {
-    if(settings::strategy::fes_rate == 0) return;
-    tools::log = tools::Logger::setLogger(fmt::format("{}-fes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
-    tools::log->info("Starting {} finite entanglement scaling analysis with bond size step {} of model [{}] for state [{}]", status.algo_type_sv(),
-                     settings::strategy::fes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
-    auto t_fes = tid::tic_scope("fes");
-    if(not status.algorithm_has_finished) throw except::logic_error("Finite entanglement scaling analysis can only be done after a finished simulation");
-    clear_convergence_status();
-    status.fes_is_running = true;
-    status.bond_max       = settings::xdmrg::bond_max; // Set to highest
-    status.bond_lim       = settings::xdmrg::bond_max; // Set to highest
-    tensors.move_center_point_to_inward_edge();
-    tensors.activate_sites({tensors.get_position()});
-    tensors.rebuild_edges();
-    auto bond_max_dim = safe_cast<long>(std::pow(2.0, tensors.get_length<double>() / 2));
-    status.bond_lim   = std::min(bond_max_dim, status.bond_max);
-    while(true) {
-        tools::log->trace("Starting xDMRG FES step {}, iter {}, pos {}, dir {}, bond_lim {}, trnc_lim {:.2e}", status.step, status.iter, status.position,
-                          status.direction, status.bond_lim, status.trnc_lim);
-        update_state();
-        status.wall_time       = tid::get_unscoped("t_tot").get_time();
-        status.algo_time       = t_fes->get_time();
-        auto truncation_errors = tensors.state->get_truncation_errors();
-        print_status();
-        check_convergence();
-
-        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}, bond_lim {}, trnc_lim {:.2e}", status.step, status.iter, status.position,
-                          status.direction, status.bond_lim, status.trnc_lim);
-
-        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES_STEP);
-        // It's important not to perform the last move, so we break now: that last state would not get optimized
-        if(status.algo_stop != AlgorithmStop::NONE) break;
-
-        move_center_point();
-
-        // Retain the max truncation error, otherwise it is lost in the next pass
-        tensors.state->keep_max_truncation_errors(truncation_errors);
-    }
-    tools::log->info("Finished {} finite entanglement scaling of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(),
-                     status.algo_stop_sv());
-    // Reset our logger
-    tools::log            = tools::Logger::getLogger(fmt::format("{}", status.algo_type_sv()));
-    status.fes_is_running = false;
-}
-
 xdmrg::OptMeta xdmrg::get_opt_meta() {
     tools::log->trace("Configuring xDMRG optimization trial");
     OptMeta m1;
@@ -253,7 +210,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Set the target eigenvalue
-    m1.optRitz = settings::xdmrg::ritz;
+    m1.optRitz = status.opt_ritz;
 
     // Set the default svd limits
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
@@ -274,7 +231,6 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
                              settings::solver::eigs_tol_min,                             // From min
                              settings::solver::eigs_tol_max);                            // to max
     if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min; // Set to high precision when stuck
-    if(status.fes_is_running) m1.eigs_tol = settings::solver::eigs_tol_max;              // No need for high precision during FES.
 
     m1.optFunc   = OptFunc::VARIANCE;
     m1.optAlgo   = OptAlgo::DIRECT;
@@ -312,7 +268,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
 
-    if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
+    if(status.env_expansion_alpha > 0) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
         if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
     }
@@ -324,12 +280,11 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
 void xdmrg::update_state() {
     using namespace tools::finite;
     using namespace tools::finite::opt;
-    auto                                t_step   = tid::tic_scope("step");
-    auto                                opt_meta = get_opt_meta();
-    opt_mps                             opt_state;
-    std::optional<std::vector<MpsSite>> mps_original = std::nullopt;
-    variance_before_step                             = std::nullopt;
-
+    auto t_step          = tid::tic_scope("step");
+    auto opt_meta        = get_opt_meta();
+    variance_before_step = std::nullopt;
+    tools::log->debug("Starting {} iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.algo_type_sv(), status.iter, status.step, status.position,
+                      status.direction, enum2sv(settings::get_ritz(status.algo_type)), enum2sv(opt_meta.optType));
     tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
     // Try activating the sites asked for;
     tensors.activate_sites(opt_meta.chosen_sites);
@@ -345,9 +300,7 @@ void xdmrg::update_state() {
     // Use environment expansion if alpha_expansion is set
     // Note that this changes the mps and edges adjacent to "tensors.active_sites"
     if(opt_meta.alpha_expansion) {
-        auto pos_expanded = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
-        if(not mps_original) mps_original = tensors.state->get_mps_copy(pos_expanded);
-        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, opt_meta.svd_cfg);
+        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, svd::config(settings::fdmrg::bond_max, std::min(1e-12, status.trnc_min)));
     }
 
     // Announce the current configuration for optimization
@@ -357,7 +310,7 @@ void xdmrg::update_state() {
                       (opt_meta.alpha_expansion ? opt_meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
     // Run the optimization
     auto initial_state = opt::get_opt_initial_mps(tensors);
-    opt_state          = opt::find_excited_state(tensors, initial_state, status, opt_meta);
+    auto opt_state     = opt::find_excited_state(tensors, initial_state, status, opt_meta);
 
     // Determine the quality of the optimized state.
     opt_state.set_relchange(opt_state.get_variance() / variance_before_step.value());
@@ -405,16 +358,16 @@ void xdmrg::update_state() {
         if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
     }
 
-    // if constexpr(settings::debug) {
-    auto variance_before_svd = opt_state.get_variance();
-    auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-    tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
-    tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
-    tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
-    // }
+    if constexpr(settings::debug) {
+        auto variance_before_svd = opt_state.get_variance();
+        auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
+        tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
+        tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
+        tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
+    }
 
     // Update current energy density ε
-    if(settings::xdmrg::ritz == OptRitz::TE)
+    if(status.opt_ritz == OptRitz::TE)
         status.energy_dens = (tools::finite::measure::energy(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
 
     tools::log->trace("Updating variance record holder");
@@ -468,18 +421,14 @@ void xdmrg::check_convergence() {
         if(status.iter >= settings::xdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
         if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
-        if(status.num_resets > settings::strategy::max_resets) status.algo_stop = AlgorithmStop::MAX_RESET;
         if(status.entanglement_saturated_for > 0 and settings::xdmrg::finish_if_entanglm_saturated) status.algo_stop = AlgorithmStop::SATURATED;
         if(status.variance_mpo_saturated_for > 0 and settings::xdmrg::finish_if_variance_saturated) status.algo_stop = AlgorithmStop::SATURATED;
-        if(settings::strategy::randomize_early and excited_state_number == 0 and tensors.state->find_largest_bond() >= 32 and
-           tools::finite::measure::energy_variance(tensors) < 1e-4)
-            status.algo_stop = AlgorithmStop::RANDOMIZE;
     }
 }
 
 void xdmrg::find_energy_range() {
     // We only need to find an energy range if we are targeting a particular energy density window or target
-    if(settings::xdmrg::ritz != OptRitz::TE) return; // We only need the extremal for OptRitz::TED
+    if(status.opt_ritz != OptRitz::TE) return; // We only need the extremal for OptRitz::TED
 
     tools::log->trace("Finding energy range");
     auto t_init = tid::tic_scope("init");

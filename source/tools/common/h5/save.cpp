@@ -36,11 +36,8 @@ namespace tools::common::h5 {
         if(sinfo.storage_event == StorageEvent::PROJECTION) { return has_flag(policy, StoragePolicy::PROJ); }
         if(sinfo.storage_event == StorageEvent::BOND_UPDATE) { return has_flag(policy, StoragePolicy::BOND); }
         if(sinfo.storage_event == StorageEvent::TRNC_UPDATE) { return has_flag(policy, StoragePolicy::TRNC); }
-        if(sinfo.storage_event == StorageEvent::FES_STEP) {
-            return has_flag(policy, StoragePolicy::BOND) or
-                   has_flag(policy, StoragePolicy::TRNC) or
-                   has_flag(policy, StoragePolicy::ITER); }
-
+        if(sinfo.storage_event == StorageEvent::RBDS_STEP) { return has_flag(policy, StoragePolicy::BOND) or has_flag(policy, StoragePolicy::ITER); }
+        if(sinfo.storage_event == StorageEvent::RTES_STEP) { return has_flag(policy, StoragePolicy::TRNC) or has_flag(policy, StoragePolicy::ITER); }
         throw except::logic_error("Storage policy [{}] has not been implemented for event [{}]", enum2sv(policy), enum2sv(sinfo.storage_event));
     }
 
@@ -217,7 +214,14 @@ namespace tools::common::h5 {
     }
 
     hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
-        // Get the table index where we should write the current entry
+        // Get the table index where we should append the current entry
+        auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
+        auto dims = h5pp::hdf5::getDimensions(dset);
+
+        // Some types of events we should always append. These do not increase the iteration number.
+        if(sinfo.storage_event == StorageEvent::RBDS_STEP) return dims.front();
+        if(sinfo.storage_event == StorageEvent::RTES_STEP) return dims.front();
+
         bool replace = has_flag(sinfo.get_table_storage_policy(table_path), StoragePolicy::REPLACE);
         if(replace) {
             // Try to find the last occurrence of this event type, to replace it
@@ -234,8 +238,6 @@ namespace tools::common::h5 {
             // In this case we are saving everything, unless it is a duplicate
             if(sinfo.iter > attrs.iter) {
                 // The current iter is later than any of the entries in the table, so we just append
-                auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
-                auto dims = h5pp::hdf5::getDimensions(dset);
                 return dims.front();
             } else {
                 // The current iter may already have been written, so we should compare with existing

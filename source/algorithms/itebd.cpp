@@ -8,7 +8,7 @@
 #include "tools/common/log.h"
 #include "tools/infinite/opt.h"
 
-itebd::itebd(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::move(h5ppFile_), AlgorithmType::iTEBD) {
+itebd::itebd(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::move(h5ppFile_), OptRitz::NONE, AlgorithmType::iTEBD) {
     tools::log->trace("Constructing class_itebd");
 }
 

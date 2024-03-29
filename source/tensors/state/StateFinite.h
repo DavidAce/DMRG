@@ -85,20 +85,22 @@ class StateFinite {
     [[nodiscard]] long                          size_2site() const;
     [[nodiscard]] long                          size_nsite() const;
     [[nodiscard]] long                          find_largest_bond() const;
-    [[nodiscard]] bool                          position_is_the_middle() const;
-    [[nodiscard]] bool                          position_is_the_middle_any_direction() const;
-    [[nodiscard]] bool                          position_is_outward_edge_left(size_t nsite = 1) const;
-    [[nodiscard]] bool                          position_is_outward_edge_right(size_t nsite = 1) const;
-    [[nodiscard]] bool                          position_is_outward_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool                          position_is_inward_edge_left(size_t nsite = 1) const;
-    [[nodiscard]] bool                          position_is_inward_edge_right(size_t nsite = 1) const;
-    [[nodiscard]] bool                          position_is_inward_edge(size_t nsite = 1) const;
-    [[nodiscard]] bool                          position_is_at(long pos) const;
-    [[nodiscard]] bool                          position_is_at(long pos, int dir) const;
-    [[nodiscard]] bool                          position_is_at(long pos, int dir, bool isCenter) const;
-    [[nodiscard]] bool                          has_center_point() const;
-    [[nodiscard]] bool                          is_real() const;
-    [[nodiscard]] bool                          has_nan() const;
+    [[nodiscard]] double                        find_smallest_schmidt_value() const;
+
+    [[nodiscard]] bool position_is_the_middle() const;
+    [[nodiscard]] bool position_is_the_middle_any_direction() const;
+    [[nodiscard]] bool position_is_outward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_outward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_outward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_inward_edge_left(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_inward_edge_right(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_inward_edge(size_t nsite = 1) const;
+    [[nodiscard]] bool position_is_at(long pos) const;
+    [[nodiscard]] bool position_is_at(long pos, int dir) const;
+    [[nodiscard]] bool position_is_at(long pos, int dir, bool isCenter) const;
+    [[nodiscard]] bool has_center_point() const;
+    [[nodiscard]] bool is_real() const;
+    [[nodiscard]] bool has_nan() const;
 
     void assert_validity() const;
     // For individual sites

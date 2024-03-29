@@ -2,13 +2,17 @@
 
 void AlgorithmStatus::clear() {
     AlgorithmType algo_type_ = algo_type; // Retain the algorithm type
+    OptRitz       opt_ritz_  = opt_ritz;  // Retain the algorithm type
     *this                    = AlgorithmStatus();
+    opt_ritz                 = opt_ritz_;
     algo_type                = algo_type_;
 }
 void AlgorithmStatus::reset() {
     // Keeps some data for simulations that follow
     auto status = *this;
     clear();
+    opt_ritz           = status.opt_ritz;
+    algo_type          = status.algo_type;
     min_iters          = status.min_iters;
     bond_max           = status.bond_max;
     bond_init          = status.bond_init;
@@ -21,8 +25,8 @@ void AlgorithmStatus::reset() {
     energy_tgt         = status.energy_tgt;
     energy_dens        = status.energy_dens;
     energy_dens_target = status.energy_dens_target;
-    algo_type          = status.algo_type;
 }
+std::string_view AlgorithmStatus::opt_ritz_sv() const { return enum2sv(opt_ritz); }
 std::string_view AlgorithmStatus::algo_type_sv() const { return enum2sv(algo_type); }
 std::string_view AlgorithmStatus::algo_stop_sv() const { return enum2sv(algo_stop); }
 
@@ -34,7 +38,9 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->position                      == s.position and
         this->direction                     == s.direction and
         this->event                         == s.event and
-        this->num_resets                    == s.num_resets and
+        this->opt_ritz                      == s.opt_ritz and
+        this->algo_type                     == s.algo_type and
+        this->algo_stop                     == s.algo_stop and
         this->min_iters                     == s.min_iters and
         this->bond_max                      == s.bond_max and
         this->bond_init                     == s.bond_init and
@@ -57,8 +63,6 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->wall_time                     == s.wall_time and
         this->algo_time                     == s.algo_time and
         this->delta_t                       == s.delta_t and
-        this->algo_type                     == s.algo_type and
-        this->algo_stop                     == s.algo_stop and
         this->algorithm_has_finished        == s.algorithm_has_finished and
         this->algorithm_has_succeeded       == s.algorithm_has_succeeded and
         this->algorithm_has_to_stop         == s.algorithm_has_to_stop and
@@ -76,7 +80,6 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->bond_limit_has_reached_max    == s.bond_limit_has_reached_max and
         this->trnc_limit_has_reached_min    == s.trnc_limit_has_reached_min and
         this->spin_parity_has_converged     == s.spin_parity_has_converged and
-        this->time_step_has_converged       == s.time_step_has_converged and
-        this->fes_is_running                == s.fes_is_running;
+        this->time_step_has_converged       == s.time_step_has_converged;
     /* clang-format on */
 }

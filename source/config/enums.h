@@ -8,7 +8,7 @@
 #include <vector>
 
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
-enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
+enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, NONE };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
@@ -60,17 +60,18 @@ enum class LbitCircuitGateWeightKind : int {
 
 /*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
-    NONE        = 0,   /*!< No event */
-    INIT        = 1,   /*!< the initial state was defined */
-    MODEL       = 2,   /*!< the model was defined */
-    EMIN        = 4,   /*!< the ground state was found (e.g. before xDMRG) */
-    EMAX        = 8,   /*!< the highest energy eigenstate was found (e.g. before xDMRG) */
-    PROJECTION  = 16,  /*!< a projection to a spin parity sector was made */
-    BOND_UPDATE = 32,  /*!< the bond dimension limit was updated */
-    TRNC_UPDATE = 64,  /*!< the truncation error threshold for SVD was updated */
-    FES_STEP    = 128, /*!< a finite-entanglement scaling step was made */
-    ITERATION   = 256, /*!< an iteration finished */
-    FINISHED    = 512, /*!< a simulation has finished */
+    NONE        = 0,    /*!< No event */
+    INIT        = 1,    /*!< the initial state was defined */
+    MODEL       = 2,    /*!< the model was defined */
+    EMIN        = 4,    /*!< the ground state was found (e.g. before xDMRG) */
+    EMAX        = 8,    /*!< the highest energy eigenstate was found (e.g. before xDMRG) */
+    PROJECTION  = 16,   /*!< a projection to a spin parity sector was made */
+    BOND_UPDATE = 32,   /*!< the bond dimension limit was updated */
+    TRNC_UPDATE = 64,   /*!< the truncation error threshold for SVD was updated */
+    RBDS_STEP   = 128,  /*!< reverse bond dimension scaling step was made */
+    RTES_STEP   = 256,  /*!< reverse truncation error scaling step was made */
+    ITERATION   = 512,  /*!< an iteration finished */
+    FINISHED    = 1024, /*!< a simulation has finished */
 };
 
 /*! Determines in which cases we calculate and store to file
@@ -137,6 +138,7 @@ enum class OptSolver {
 
 /*! Choose the target energy eigenpair */
 enum class OptRitz {
+    NONE, /*!< No eigenpair is targeted (e.g. time evolution) */
     LR, /*!< Largest Real eigenvalue */
     SR, /*!< Smallest Real eigenvalue */
     SM, /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
@@ -200,7 +202,8 @@ enum class fdmrg_task {
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
     POST_PRINT_TIMERS,
-    POST_FES_ANALYSIS,
+    POST_RBDS_ANALYSIS,
+    POST_RTES_ANALYSIS,
     POST_DEFAULT,
     TIMER_RESET,
 };
@@ -227,7 +230,6 @@ enum class flbit_task {
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
     POST_PRINT_TIMERS,
-    POST_FES_ANALYSIS,
     POST_DEFAULT,
     TIMER_RESET,
 };
@@ -249,7 +251,8 @@ enum class xdmrg_task {
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
     POST_PRINT_TIMERS,
-    POST_FES_ANALYSIS,
+    POST_RBDS_ANALYSIS,
+    POST_RTES_ANALYSIS,
     POST_DEFAULT,
     TIMER_RESET,
 };
@@ -425,6 +428,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         default: return "MultisiteGrow::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
+        if(item == OptRitz::NONE)                                       return "NONE";
         if(item == OptRitz::SR)                                         return "SR";
         if(item == OptRitz::LR)                                         return "LR";
         if(item == OptRitz::SM)                                         return "SM";
@@ -486,8 +490,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == AlgorithmStop::SUCCESS)                              return "SUCCESS";
         if(item == AlgorithmStop::SATURATED)                            return "SATURATED";
         if(item == AlgorithmStop::MAX_ITERS)                            return "MAX_ITERS";
-        if(item == AlgorithmStop::MAX_RESET)                            return "MAX_RESET";
-        if(item == AlgorithmStop::RANDOMIZE)                            return "RANDOMIZE";
         if(item == AlgorithmStop::NONE)                                 return "NONE";
     }
     if constexpr(std::is_same_v<T, MeanType>) {
@@ -518,7 +520,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StorageEvent::PROJECTION)                            return "PROJECTION";
         if(item == StorageEvent::BOND_UPDATE)                           return "BOND_UPDATE";
         if(item == StorageEvent::TRNC_UPDATE)                           return "TRNC_UPDATE";
-        if(item == StorageEvent::FES_STEP)                              return "FES_STEP";
+        if(item == StorageEvent::RBDS_STEP)                             return "RBDS_STEP";
+        if(item == StorageEvent::RTES_STEP)                             return "RTES_STEP";
         if(item == StorageEvent::ITERATION)                             return "ITERATION";
         if(item == StorageEvent::FINISHED)                              return "FINISHED";
     }
@@ -602,7 +605,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == flbit_task::POST_WRITE_RESULT)                                   return "POST_WRITE_RESULT";
         if(item == flbit_task::POST_PRINT_RESULT)                                   return "POST_PRINT_RESULT";
         if(item == flbit_task::POST_PRINT_TIMERS)                                   return "POST_PRINT_TIMERS";
-        if(item == flbit_task::POST_FES_ANALYSIS)                                   return "POST_FES_ANALYSIS";
         if(item == flbit_task::POST_DEFAULT)                                        return "POST_DEFAULT";
         if(item == flbit_task::TIMER_RESET)                                         return "TIMER_RESET";
     }
@@ -623,7 +625,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == xdmrg_task::POST_WRITE_RESULT)                      return "POST_WRITE_RESULT";
         if(item == xdmrg_task::POST_PRINT_RESULT)                      return "POST_PRINT_RESULT";
         if(item == xdmrg_task::POST_PRINT_TIMERS)                      return "POST_PRINT_TIMERS";
-        if(item == xdmrg_task::POST_FES_ANALYSIS)                      return "POST_FES_ANALYSIS";
+        if(item == xdmrg_task::POST_RBDS_ANALYSIS)                     return "POST_RBDS_ANALYSIS";
+        if(item == xdmrg_task::POST_RTES_ANALYSIS)                     return "POST_RTES_ANALYSIS";
         if(item == xdmrg_task::POST_DEFAULT)                           return "POST_DEFAULT";
         if(item == xdmrg_task::TIMER_RESET)                            return "TIMER_RESET";
     }
@@ -754,6 +757,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ON")                                    return MultisiteGrow::ON;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
+        if(item == "NONE")                                  return OptRitz::NONE;
         if(item == "SR")                                    return OptRitz::SR;
         if(item == "LR")                                    return OptRitz::LR;
         if(item == "SM")                                    return OptRitz::SM;
@@ -816,8 +820,6 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "SUCCESS")                               return AlgorithmStop::SUCCESS;
         if(item == "SATURATED")                             return AlgorithmStop::SATURATED;
         if(item == "MAX_ITERS")                             return AlgorithmStop::MAX_ITERS;
-        if(item == "MAX_RESET")                             return AlgorithmStop::MAX_RESET;
-        if(item == "RANDOMIZE")                             return AlgorithmStop::RANDOMIZE;
         if(item == "NONE")                                  return AlgorithmStop::NONE;
     }
     if constexpr(std::is_same_v<T, MeanType>) {
@@ -849,7 +851,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "PROJECTION")                            return  StorageEvent::PROJECTION;
         if(item == "BOND_UPDATE")                           return  StorageEvent::BOND_UPDATE;
         if(item == "TRNC_UPDATE")                           return  StorageEvent::TRNC_UPDATE;
-        if(item == "FES_STEP")                              return  StorageEvent::FES_STEP;
+        if(item == "RBDS_STEP")                             return  StorageEvent::RBDS_STEP;
+        if(item == "RTES_STEP")                             return  StorageEvent::RTES_STEP;
         if(item == "ITERATION")                             return  StorageEvent::ITERATION;
         if(item == "FINISHED")                              return  StorageEvent::FINISHED;
     }
@@ -911,7 +914,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "POST_WRITE_RESULT")                     return fdmrg_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return fdmrg_task::POST_PRINT_RESULT;
         if(item == "POST_PRINT_TIMERS")                     return fdmrg_task::POST_PRINT_TIMERS;
-        if(item == "POST_FES_ANALYSIS")                     return fdmrg_task::POST_FES_ANALYSIS;
+        if(item == "POST_RBDS_ANALYSIS")                    return fdmrg_task::POST_RBDS_ANALYSIS;
+        if(item == "POST_RTES_ANALYSIS")                    return fdmrg_task::POST_RTES_ANALYSIS;
         if(item == "POST_DEFAULT")                          return fdmrg_task::POST_DEFAULT;
         if(item == "TIMER_RESET")                           return fdmrg_task::TIMER_RESET;
     }
@@ -938,7 +942,6 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "POST_WRITE_RESULT")                                 return flbit_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                                 return flbit_task::POST_PRINT_RESULT;
         if(item == "POST_PRINT_TIMERS")                                 return flbit_task::POST_PRINT_TIMERS;
-        if(item == "POST_FES_ANALYSIS")                                 return flbit_task::POST_FES_ANALYSIS;
         if(item == "POST_DEFAULT")                                      return flbit_task::POST_DEFAULT;
         if(item == "TIMER_RESET")                                       return flbit_task::TIMER_RESET;
     }
@@ -959,7 +962,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "POST_WRITE_RESULT")                     return xdmrg_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return xdmrg_task::POST_PRINT_RESULT;
         if(item == "POST_PRINT_TIMERS")                     return xdmrg_task::POST_PRINT_TIMERS;
-        if(item == "POST_FES_ANALYSIS")                     return xdmrg_task::POST_FES_ANALYSIS;
+        if(item == "POST_RBDS_ANALYSIS")                    return xdmrg_task::POST_RBDS_ANALYSIS;
+        if(item == "POST_RTES_ANALYSIS")                    return xdmrg_task::POST_RTES_ANALYSIS;
         if(item == "POST_DEFAULT")                          return xdmrg_task::POST_DEFAULT;
         if(item == "TIMER_RESET")                           return xdmrg_task::TIMER_RESET;
     }

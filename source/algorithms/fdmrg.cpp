@@ -13,12 +13,17 @@
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
+#include <math/cast.h>
+#include <tools/finite/multisite.h>
 
-fdmrg::fdmrg() : AlgorithmFinite(AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg (without a file)"); }
-fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg"); }
+fdmrg::fdmrg() : AlgorithmFinite(settings::xdmrg::ritz, AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg (without a file)"); }
+
+fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), settings::fdmrg::ritz, AlgorithmType::fDMRG) {
+    tools::log->trace("Constructing class_fdmrg");
+}
 
 std::string_view fdmrg::get_state_name() const {
-    if(ritz == OptRitz::SR)
+    if(status.opt_ritz == OptRitz::SR)
         return "state_emin";
     else
         return "state_emax";
@@ -81,19 +86,20 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
             case fdmrg_task::FIND_GROUND_STATE:
-                ritz = OptRitz::SR;
-                tensors.state->set_name("state_emin");
+                status.opt_ritz = OptRitz::SR;
+                tensors.state->set_name(get_state_name());
                 run_algorithm();
                 break;
             case fdmrg_task::FIND_HIGHEST_STATE:
-                ritz = OptRitz::LR;
-                tensors.state->set_name("state_emax");
+                status.opt_ritz = OptRitz::LR;
+                tensors.state->set_name(get_state_name());
                 run_algorithm();
                 break;
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case fdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
-            case fdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
+            case fdmrg_task::POST_RBDS_ANALYSIS: run_rbds_analysis(); break;
+            case fdmrg_task::POST_RTES_ANALYSIS: run_rtes_analysis(); break;
             case fdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case fdmrg_task::TIMER_RESET: tid::reset("fDMRG"); break;
         }
@@ -128,7 +134,6 @@ void fdmrg::run_preprocessing() {
     status.clear();
     if(tensors.state->get_name().empty()) tensors.state->set_name(get_state_name());
     initialize_model(); // First use of random!
-    tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
     init_truncation_error_limits();
     initialize_state(ResetReason::INIT, settings::strategy::initial_state);
@@ -164,57 +169,188 @@ void fdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
-    Eigen::Tensor<real, 1> vec    = tools::finite::measure::mps2tensor(*tensors.state).real();
+#pragma message "Save fdmrg wavevector properly"
+    Eigen::Tensor<real, 1> vec = tools::finite::measure::mps2tensor(*tensors.state).real();
     write_to_file(vec, "vec", StorageEvent::FINISHED);
 }
 
-void fdmrg::run_fes_analysis() {
-    if(settings::strategy::fes_rate == 0) return;
-    tools::log->warn("FES is not yet implemented for fdmrg");
+fdmrg::OptMeta fdmrg::get_opt_meta() {
+    tools::log->trace("Configuring fDMRG optimization trial");
+    OptMeta m1;
+    m1.label = "opt_meta1";
+
+    // The first decision is easy. Real or complex optimization
+    if(tensors.is_real()) m1.optType = OptType::REAL;
+    // Set the target eigenvalue
+    m1.optRitz = status.opt_ritz;
+
+    // Set the default svd limits
+    m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
+
+    // Set up a multiplier for number of iterations
+    size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
+
+    // Copy settings
+    m1.min_sites     = settings::strategy::multisite_opt_site_def;
+    m1.max_sites     = settings::strategy::multisite_opt_site_def;
+    m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
+    m1.eigs_ncv      = settings::solver::eigs_ncv;
+    m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
+                           ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
+                           : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
+
+    m1.eigs_tol = std::clamp(status.energy_variance_lowest,                              // Increase precision as variance decreases
+                             settings::solver::eigs_tol_min,                             // From min
+                             settings::solver::eigs_tol_max);                            // to max
+    if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min; // Set to high precision when stuck
+
+    m1.optFunc   = OptFunc::ENERGY;
+    m1.optAlgo   = OptAlgo::DIRECT;
+    m1.optSolver = OptSolver::EIGS;
+
+    if(status.iter < settings::fdmrg::warmup_iters) {
+        // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
+        m1.max_sites        = settings::strategy::multisite_opt_site_max;
+        m1.max_problem_size = settings::solver::eig_max_size; // Try to use full diagonalization instead
+        if(settings::fdmrg::bond_init > 0 and m1.svd_cfg->rank_max > settings::fdmrg::bond_init) {
+            tools::log->debug("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::fdmrg::bond_init);
+            m1.svd_cfg->rank_max = settings::fdmrg::bond_init;
+        }
+    } else {
+        using namespace settings::strategy;
+        m1.max_problem_size   = settings::precision::max_size_multisite;
+        size_t has_stuck_for  = status.algorithm_has_stuck_for;
+        size_t saturated_for  = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
+        double has_stuck_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(has_stuck_for) / safe_cast<double>(max_stuck_iters);
+        double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(max_saturated_iters);
+        switch(multisite_opt_when) {
+            case MultisiteWhen::NEVER: break;
+            case MultisiteWhen::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, has_stuck_frac)); break;
+            case MultisiteWhen::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, saturated_frac)); break;
+            case MultisiteWhen::ALWAYS: m1.max_sites = multisite_opt_site_max; break;
+        }
+    }
+    if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
+
+    // Set up the problem size here
+    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
+    m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
+    m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
+
+    // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
+    if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
+
+    if(status.env_expansion_alpha > 0) {
+        // If we are doing 1-site dmrg, then we better use subspace expansion
+        if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
+    }
+
+    m1.validate();
+    return m1;
 }
 
 void fdmrg::update_state() {
-    auto    t_step = tid::tic_scope("step");
-    OptMeta meta(ritz, OptFunc::ENERGY);
-    if(tensors.is_real()) meta.optType = OptType::REAL; // Can do everything in real mode if the model is real
-    std::optional<double> alpha_expansion = std::nullopt;
-    tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
-                      enum2sv(ritz), enum2sv(meta.optType));
-    tensors.activate_sites(settings::solver::eigs_max_size_shift_invert, settings::strategy::multisite_opt_site_def);
-    if(not tensors.active_sites.empty()) {
-        tensors.rebuild_edges();
-        if(status.env_expansion_alpha > 0) {
-            // If we are doing 1-site dmrg, then we better use subspace expansion
-            if(tensors.active_sites.size() == 1) alpha_expansion = status.env_expansion_alpha;
-            // Use subspace expansion if alpha_expansion was set
-            if(alpha_expansion) tensors.expand_environment(alpha_expansion.value(), EnvExpandMode::ENE, svd::config(status.bond_lim));
-        }
-        auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
-        auto result_mps  = tools::finite::opt::find_ground_state(tensors, initial_mps, status, meta);
-        if constexpr(settings::debug) tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", result_mps.get_variance(), result_mps.get_norm());
-        tensors.merge_multisite_mps(result_mps.get_tensor(), svd::config(status.bond_lim, status.trnc_lim));
-        tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
-        if constexpr(settings::debug)
-            tools::log->debug("Variance after svd: {:8.2e} | trunc: {}", tools::finite::measure::energy_variance(tensors),
-                              tools::finite::measure::truncation_errors_active(*tensors.state));
-        // Update record holder
-        if(not tensors.active_sites.empty()) {
-            auto var = tools::finite::measure::energy_variance(tensors);
-            tools::log->trace("Updating variance record holder: var {:8.2e} | record {:8.2e}", var, status.energy_variance_lowest);
-            if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
-        }
-        if constexpr(settings::debug) tensors.assert_validity();
+    auto t_step          = tid::tic_scope("step");
+    auto opt_meta        = get_opt_meta();
+    variance_before_step = std::nullopt;
+
+    tools::log->debug("Starting {} iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.algo_type_sv(), status.iter, status.step, status.position,
+                      status.direction, enum2sv(opt_meta.optRitz), enum2sv(opt_meta.optType));
+    // Try activating the sites asked for;
+    tensors.activate_sites(opt_meta.chosen_sites);
+    if(tensors.active_sites.empty()) {
+        tools::log->warn("Failed to activate sites");
+        return;
     }
+    tensors.rebuild_edges();
+
+    // Hold the variance before the optimization step for comparison
+    if(not variance_before_step) variance_before_step = tools::finite::measure::energy_variance(tensors); // Should just take value from cache
+
+    // Use environment expansion if alpha_expansion is set
+    // Note that this changes the mps and edges adjacent to "tensors.active_sites"
+    if(opt_meta.alpha_expansion) {
+        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::ENE, svd::config(settings::fdmrg::bond_max, std::min(1e-12, status.trnc_min)));
+        if(tensors.active_problem_size() > opt_meta.problem_size) {
+            // The problem size has grown after expansion. We need to reevaluate the choice of solver.
+            opt_meta.problem_size = tensors.active_problem_size();
+            opt_meta.problem_dims = tensors.active_problem_dims();
+            opt_meta.optSolver    = OptSolver::EIGS;
+            if(opt_meta.problem_size <= settings::solver::eig_max_size) opt_meta.optSolver = OptSolver::EIG;
+        }
+    }
+
+    auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
+    auto opt_state   = tools::finite::opt::find_ground_state(tensors, initial_mps, status, opt_meta);
+
+    // Determine the quality of the optimized state.
+    opt_state.set_relchange(opt_state.get_variance() / variance_before_step.value());
+    opt_state.set_bond_limit(opt_meta.svd_cfg->rank_max.value());
+    opt_state.set_trnc_limit(opt_meta.svd_cfg->truncation_limit.value());
+    /* clang-format off */
+    opt_meta.optExit = OptExit::SUCCESS;
+    if(opt_state.get_grad_max()       > 1.000                         ) opt_meta.optExit |= OptExit::FAIL_GRADIENT;
+    if(opt_state.get_rnorm()          > settings::solver::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
+    if(opt_state.get_eigs_nev()       == 0 and
+       opt_meta.optSolver              == OptSolver::EIGS             ) opt_meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
+    if(opt_state.get_overlap()        < 0.010                         ) opt_meta.optExit |= OptExit::FAIL_OVERLAP;
+    if(opt_state.get_relchange()      > 1.001                         ) opt_meta.optExit |= OptExit::FAIL_WORSENED;
+    else if(opt_state.get_relchange() > 0.999                         ) opt_meta.optExit |= OptExit::FAIL_NOCHANGE;
+
+    opt_state.set_optexit(opt_meta.optExit);
+
+    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver),
+                         flag2str(opt_meta.optExit), variance_before_step.value(), opt_state.get_variance(), opt_state.get_relchange() * 100);
+    if(opt_state.get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
+
+    if(tools::log->level() <= spdlog::level::debug) {
+        tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
+                          "alpha {:8.2e} | "
+                          "sites {} |"
+                          "{:20} | {} | time {:.2e} s",
+                          opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
+                          opt_state.get_alpha(), opt_state.get_sites(),
+                          fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
+                          opt_state.get_time());
+    }
+    last_optspace = opt_state.get_optsolver();
+    last_optmode  = opt_state.get_optfunc();
+    tensors.state->tag_active_sites_normalized(false);
+
+    // Do the truncation with SVD
+    // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merge
+    auto logPolicy = LogPolicy::QUIET;
+    if constexpr(settings::debug) logPolicy = LogPolicy::NORMAL;
+    tensors.merge_multisite_mps(opt_state.get_tensor(), opt_meta.svd_cfg, logPolicy);
+    tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
+    if constexpr(settings::debug) {
+        if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
+    }
+
+    if constexpr(settings::debug) {
+        auto variance_before_svd = opt_state.get_variance();
+        auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
+        tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
+        tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
+        tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
+    }
+
+    tools::log->trace("Updating variance record holder");
+    auto var = tools::finite::measure::energy_variance(tensors);
+    if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+    var_mpo_step.emplace_back(var);
+    if constexpr(settings::debug) tensors.assert_validity();
+
 }
 
 void fdmrg::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
-    auto t_con = tid::tic_scope("convergence");
+    auto t_con = tid::tic_scope("conv");
+
     update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_axis);
-
     if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturated_iters or
        (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
         status.algorithm_saturated_for++;
@@ -231,21 +367,25 @@ void fdmrg::check_convergence() {
     else
         status.algorithm_has_stuck_for = 0;
 
+    if(status.iter < settings::fdmrg::warmup_iters) {
+        status.algorithm_saturated_for = 0;
+        status.algorithm_has_stuck_for = 0;
+    }
+
     status.algorithm_has_succeeded = status.bond_limit_has_reached_max and status.algorithm_converged_for >= settings::strategy::min_converged_iters and
                                      status.algorithm_saturated_for >= settings::strategy::min_saturated_iters;
     status.algorithm_has_to_stop = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
     tools::log->info(
-        "Sweep report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded: {} | has to stop: {} | σ²H target {:8.2e}",
+        "Algorithm report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
         status.algorithm_converged_for, status.variance_mpo_converged_for, status.entanglement_converged_for, status.spin_parity_has_converged,
         status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for, status.algorithm_has_stuck_for,
-        status.algorithm_has_succeeded, status.algorithm_has_to_stop,
-        std::max({settings::precision::variance_convergence_threshold, status.energy_variance_prec_limit}));
+        status.algorithm_has_succeeded, status.algorithm_has_to_stop, status.energy_variance_prec_limit);
+
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
         if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
-        if(status.num_resets > settings::strategy::max_resets) status.algo_stop = AlgorithmStop::MAX_RESET;
     }
 }

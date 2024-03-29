@@ -35,10 +35,12 @@ include(cmake/cmake_dependency_provider/PKGInstall.cmake)
 pkg_install(arpack-ng)
 pkg_install(arpack++)
 pkg_install(primme)
+pkg_install(LBFGSpp)
 
 find_package(arpack-ng 3.8.0...3.9.0 REQUIRED MODULE BYPASS_PROVIDER)
 find_package(arpack++                REQUIRED MODULE BYPASS_PROVIDER)
 find_package(primme                  REQUIRED MODULE BYPASS_PROVIDER)
+find_package(lbfgspp   0.3.0         REQUIRED CONFIG BYPASS_PROVIDER)
 
 # Link all dependencies to dmrg-deps
 if(NOT TARGET dmrg-deps)
@@ -59,6 +61,7 @@ target_link_libraries(dmrg-deps INTERFACE
             arpack++::arpack++
             arpack-ng::arpack-ng
             primme::primme
+            lbfgspp
             # We link Backward::Backward on the dmrg-stacktrace object directly
             )
 

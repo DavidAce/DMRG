@@ -250,7 +250,7 @@ namespace tid {
         //        merge_thread_enries();
         std::vector<internal::ur_ref_t> tree;
         for(const auto &[key, u] : tid::internal::tid_db) {
-            fmt::print("tid_db: {}\n", key);
+            // fmt::print("tid_db: {}\n", key);
             if(key == prefix or prefix.empty()) {
                 auto t = get_tree(u, "", l);
                 tree.insert(tree.end(), t.begin(), t.end());

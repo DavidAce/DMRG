@@ -18,26 +18,27 @@ class AlgorithmBase {
     public:
     using cplx      = std::complex<double>;
     AlgorithmBase() = default;
-    AlgorithmBase(AlgorithmType algo_type_);
-    AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_);
+    AlgorithmBase(OptRitz opt_ritz_, AlgorithmType algo_type_);
+    AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz_, AlgorithmType algo_type_);
+
     std::shared_ptr<h5pp::File> h5file;
     AlgorithmStatus             status;
     static constexpr double     quietNaN = std::numeric_limits<double>::quiet_NaN();
 
     // Virtual Functions
-    virtual void run()                                                                                                                         = 0;
-    virtual void run_algorithm()                                                                                                               = 0;
-    virtual void run_preprocessing()                                                                                                           = 0;
-    virtual void run_postprocessing()                                                                                                          = 0;
-    virtual void update_state()                                                                                                                = 0;
-    virtual void check_convergence()                                                                                                           = 0;
-    virtual void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY)                = 0;
-    virtual void print_status()                                                                                                                = 0;
-    virtual void print_status_full()                                                                                                           = 0;
-    virtual void clear_convergence_status()                                                                                                    = 0;
-    virtual void update_variance_max_digits(std::optional<double> energy = std::nullopt)                                                       = 0;
-    virtual void update_bond_dimension_limit()                                                                                                 = 0;
-    virtual void update_truncation_error_limit()                                                                                               = 0;
+    virtual void run()                                                                                                         = 0;
+    virtual void run_algorithm()                                                                                               = 0;
+    virtual void run_preprocessing()                                                                                           = 0;
+    virtual void run_postprocessing()                                                                                          = 0;
+    virtual void update_state()                                                                                                = 0;
+    virtual void check_convergence()                                                                                           = 0;
+    virtual void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY) = 0;
+    virtual void print_status()                                                                                                = 0;
+    virtual void print_status_full()                                                                                           = 0;
+    virtual void clear_convergence_status()                                                                                    = 0;
+    virtual void update_variance_max_digits(std::optional<double> energy = std::nullopt)                                       = 0;
+    virtual void update_bond_dimension_limit()                                                                                 = 0;
+    virtual void update_truncation_error_limit()                                                                               = 0;
 
     // common functions
     void copy_from_tmp(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY);

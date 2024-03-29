@@ -9,7 +9,7 @@ class AlgorithmInfinite : public AlgorithmBase {
     public:
     // Inherit the constructor of class_algorithm_base
     using AlgorithmBase::AlgorithmBase;
-    explicit AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
+    explicit        AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz_, AlgorithmType algo_type);
     TensorsInfinite tensors;
 
     /* clang-format off */

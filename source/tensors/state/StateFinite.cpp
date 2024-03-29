@@ -146,6 +146,19 @@ long StateFinite::find_largest_bond() const {
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
 }
 
+double StateFinite::find_smallest_schmidt_value() const {
+    double schmidt_min = 1;
+    for(const auto &mps : mps_sites) {
+        const auto &L = mps->get_L();
+        schmidt_min   = std::min(schmidt_min, L.coeff(L.size() - 1).real());
+        if(mps->isCenter()) {
+            const auto &LC = mps->get_LC();
+            schmidt_min    = std::min(schmidt_min, LC.coeff(LC.size() - 1).real());
+        }
+    }
+    return schmidt_min;
+}
+
 int                           StateFinite::get_direction() const { return direction; }
 std::vector<std::string_view> StateFinite::get_labels() const {
     std::vector<std::string_view> labels;

@@ -39,7 +39,6 @@ class flbit : public AlgorithmFinite {
     void run_algorithm() final;
     void run_algorithm_parallel();
     void run_algorithm2();
-    void run_fes_analysis() final;
     void update_state() final;
     void check_convergence() final;
     void create_time_points();

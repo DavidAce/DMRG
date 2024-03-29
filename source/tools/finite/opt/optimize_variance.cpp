@@ -160,9 +160,9 @@ namespace tools::finite::opt {
         cfg.lib             = eig::Lib::PRIMME;
         cfg.ritz            = eig::Ritz::primme_smallest; // eig::Ritz::SA;
         cfg.compute_eigvecs = eig::Vecs::ON;
-        cfg.loglevel        = 1;
+        cfg.loglevel        = 2;
         // cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
-        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS; // eig::PrimmeMethod::PRIMME_JDQMR;
+        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)

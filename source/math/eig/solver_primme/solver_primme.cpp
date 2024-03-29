@@ -6,8 +6,8 @@
 #include "../sfinae.h"
 #include "../solver.h"
 #include "debug/exceptions.h"
-#include <primme/primme.h>
 #include "tid/tid.h"
+#include <primme/primme.h>
 
 inline primme_target stringToTarget(std::string_view ritzstring) {
     if(ritzstring == "LA") return primme_target::primme_largest;
@@ -126,19 +126,20 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format("iter {:>6} | mv {:>6} | size {} | f {:12.5e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s",
-                           primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
+        return fmt::format("iter {:>6} | mv {:>6} | size {} | f {:12.5e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s", primme->stats.numOuterIterations,
+                           primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
     auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
     auto       &result   = solver.result;
     auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
-    return fmt::format("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
-                                  "it/s | {:8.2e} mv/s | {}",
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff,
-                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
-                       static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
+    return fmt::format("iter {:>6} | mv {:>6} | size {} | λ {:12.5e}{} | λ½ {:.16f} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
+                       "it/s | {:8.2e} mv/s | {}",
+                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal,
+                       msg_diff, std::sqrt(std::abs(primme->stats.estimateMinEVal)), result.meta.last_res_norm, primme->stats.elapsedTime,
+                       primme->stats.numOuterIterations / primme->stats.elapsedTime, static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec,
+                       eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -252,9 +253,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     }
 
     /* Set problem parameters */
-    primme.n = matrix.rows();                                                    /* set problem dimension */
+    primme.n = matrix.rows();                                                  /* set problem dimension */
     if(config.maxNev) primme.numEvals = safe_cast<int>(config.maxNev.value()); /* Number of wanted eigenpairs */
-    if(config.tol) primme.eps = config.tol.value();                              /* ||r|| <= eps * ||matrix|| */
+    if(config.tol) primme.eps = config.tol.value();                            /* ||r|| <= eps * ||matrix|| */
     if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
     if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(safe_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
     if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();

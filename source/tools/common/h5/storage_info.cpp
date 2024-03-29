@@ -73,6 +73,8 @@ StoragePolicy StorageInfo::get_state_storage_policy() const {
 
 std::string StorageInfo::get_state_prefix() const {
     assert_well_defined();
+    if(storage_event == StorageEvent::RBDS_STEP) return  fmt::format("{}/{}/rbds", algo_name, state_name);
+    if(storage_event == StorageEvent::RTES_STEP) return  fmt::format("{}/{}/rtes", algo_name, state_name);
     return fmt::format("{}/{}", algo_name, state_name);
 }
 std::string StorageInfo::get_mps_prefix() const {
@@ -89,7 +91,8 @@ std::string StorageInfo::get_mps_prefix() const {
         case StorageEvent::PROJECTION: return fmt::format("{}/mps/proj", state_prefix);
         case StorageEvent::BOND_UPDATE: return fmt::format("{}/mps/bond_{}", state_prefix, bond_lim);
         case StorageEvent::TRNC_UPDATE: return fmt::format("{}/mps/trnc_{:.2e}", state_prefix, trnc_lim);
-        case StorageEvent::FES_STEP: return fmt::format("{}/mps/fes_{}", state_prefix, bond_lim);
+        case StorageEvent::RBDS_STEP: return fmt::format("{}/rbds/mps_{}", state_prefix, bond_lim);
+        case StorageEvent::RTES_STEP: return fmt::format("{}/rtes/mps_{:.2e}", state_prefix, trnc_lim);
         case StorageEvent::MODEL: throw except::logic_error("get_mps_prefix(): Invalid event: [MODEL]");
         case StorageEvent::NONE: throw except::logic_error("get_mps_prefix(): Invalid event: [NONE]");
         default: throw except::logic_error("Unhandled event: [{}]", enum2sv(storage_event));

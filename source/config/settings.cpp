@@ -159,10 +159,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::project_on_bond_update"             , strategy::project_on_bond_update);
     dmrg_config.load_parameter("strategy::project_initial_state"              , strategy::project_initial_state);
     dmrg_config.load_parameter("strategy::project_final_state"                , strategy::project_final_state);
-    dmrg_config.load_parameter("strategy::randomize_on_bond_update"           , strategy::randomize_on_bond_update);
-    dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
-    dmrg_config.load_parameter("strategy::max_resets"                         , strategy::max_resets);
     dmrg_config.load_parameter("strategy::max_stuck_iters"                    , strategy::max_stuck_iters);
     dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturated_iters);
     dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturated_iters);
@@ -178,7 +175,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
     dmrg_config.load_parameter("strategy::initial_pattern"                    , strategy::initial_pattern);
-    dmrg_config.load_parameter("strategy::fes_rate"                           , strategy::fes_rate);
+    dmrg_config.load_parameter("strategy::rbds_rate"                          , strategy::rbds_rate);
     dmrg_config.load_parameter("strategy::bond_increase_when"                 , strategy::bond_increase_when);
     dmrg_config.load_parameter("strategy::bond_increase_rate"                 , strategy::bond_increase_rate);
     dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);

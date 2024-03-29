@@ -16,8 +16,8 @@ class AlgorithmFinite : public AlgorithmBase {
     public:
     // Inherit the constructor of class_algorithm_base
     using AlgorithmBase::AlgorithmBase;
-    explicit      AlgorithmFinite(AlgorithmType algo_type);
-    explicit      AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
+    explicit      AlgorithmFinite(OptRitz opt_ritz_, AlgorithmType algo_type);
+    explicit      AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz_, AlgorithmType algo_type);
     TensorsFinite tensors; // State, model and edges
 
     size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
@@ -28,7 +28,6 @@ class AlgorithmFinite : public AlgorithmBase {
     std::optional<OptSolver> last_optspace  = std::nullopt;
 
     public:
-    virtual void run_fes_analysis()      = 0;
     virtual void resume()                = 0;
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
@@ -37,7 +36,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         try_moving_sites();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void set_energy_shift_mpo(); // We override this in xdmrg
-    void     rebuild_tensors();
+    void         rebuild_tensors();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
     void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
@@ -45,6 +44,8 @@ class AlgorithmFinite : public AlgorithmBase {
     void         update_expansion_factor_alpha();
     void         initialize_model();
     void         run() final;
+    void         run_rbds_analysis();
+    void         run_rtes_analysis();
     void         run_postprocessing() override;
     void         clear_convergence_status() override;
     void         initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,

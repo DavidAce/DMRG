@@ -168,11 +168,32 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
     return state.measurements.entanglement_entropies.value();
 }
 
-Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const StateFinite &state) {
+std::vector<double> tools::finite::measure::entanglement_entropies_log2(const StateFinite &state) {
+    auto                t_ent = tid::tic_scope("neumann_entropy", tid::level::highest);
+    std::vector<double> entanglement_entropies;
+    entanglement_entropies.reserve(state.get_length() + 1);
+    if(not state.has_center_point()) entanglement_entropies.emplace_back(0);
+    for(const auto &mps : state.mps_sites) {
+        auto                  &L  = mps->get_L();
+        Eigen::Tensor<cplx, 0> SE = -L.square().contract(L.square().log2().eval(), tenx::idx({0}, {0}));
+        entanglement_entropies.emplace_back(std::abs(SE(0)));
+        if(mps->isCenter()) {
+            auto &LC = mps->get_LC();
+            SE       = -LC.square().contract(LC.square().log2().eval(), tenx::idx({0}, {0}));
+            entanglement_entropies.emplace_back(std::abs(SE(0)));
+        }
+    }
+    if(entanglement_entropies.size() != state.get_length() + 1) throw except::logic_error("entanglement_entropies.size() should be length+1");
+    if(entanglement_entropies.front() != 0.0) throw except::logic_error("First entropy should be 0. Got: {:.16f}", entanglement_entropies.front());
+    if(entanglement_entropies.back() != 0.0) throw except::logic_error("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back());
+    return entanglement_entropies;
+}
+
+Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state) {
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
     auto            t_ent   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
     auto            len     = state.get_length<long>();
-    auto            bee     = measure::entanglement_entropies(state); // bipartite entanglement entropies
+    auto            bee     = measure::entanglement_entropies_log2(state); // bipartite entanglement entropies
     auto            solver  = eig::solver();
     Eigen::ArrayXXd see     = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
     bool            is_real = state.is_real();
@@ -183,7 +204,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
             // we can simply take the bipartite entanglement entropy
             bool is_left_edge  = off == 0;
             bool is_right_edge = off + ext == len;
-            tools::log->info("Calculating subsystem entanglement entropy: extent (l): {} | offset (n) {}", ext, off);
+            // tools::log->trace("Calculating subsystem entanglement entropy: extent (l): {} | offset (n) {}", ext, off);
             if(is_left_edge) {
                 auto idx          = safe_cast<size_t>(off + ext);
                 see(ext - 1, off) = bee[idx];
@@ -220,9 +241,9 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
                 tools::log->debug("evs > 1e-14: {}", (evs > 1e-14).count());
                 //                tools::log->debug("evs > 1e-16: {}", (evs > 1e-16).count());
                 for(const auto &e : evs) {
-                    if(e > 0) s += -e * std::log(e);
+                    // if(e > 0) s += -e * std::log(e);
                     // #pragma error "std::log2 -> std::log"
-                    // if(e > 0) s += -e * std::log2(e);
+                    if(e > 0) s += -e * std::log2(e);
                 }
                 see(ext - 1, off) = s; // -evs.cwiseProduct(evs.log()).sum();
                                        //                tools::log->info("evs({},{}) = {}", ext - 1, off, evs.size());
@@ -1274,7 +1295,7 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::kvornings_matrix(const StateFinit
     //    tools::log->info("rho+-: trace {:.16f}\n{}", rpm.trace(), linalg::matrix::to_string(rpm, 8));
     //    tools::log->info("rho-+: trace {:.16f}\n{}", rmp.trace(), linalg::matrix::to_string(rmp, 8));
     //    tools::log->info("rho--: trace {:.16f}\n{}", rmm.trace(), linalg::matrix::to_string(rmm, 8));
-    tools::log->info("R    : trace {:.16f}", R.trace());
+    tools::log->debug("R    : trace {:.16f}", R.trace());
     if(not R.isApprox(R.conjugate().transpose())) throw except::logic_error("R is not hermitian");
     if(std::abs(R.trace() - static_cast<double>(L)) > 1e-8) throw std::runtime_error("R.trace() != L");
     return tenx::TensorMap(R);
@@ -1286,7 +1307,7 @@ Eigen::Tensor<double, 1> tools::finite::measure::kvornings_marker(const StateFin
         auto solver = eig::solver();
         solver.eig<eig::Form::SYMM>(R.data(), R.dimension(0), eig::Vecs::OFF);
         state.measurements.kvornings_marker = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
-        tools::log->info("Kvornings marker: {::+9.4e}", tenx::span(state.measurements.kvornings_marker.value()));
+        tools::log->debug("Kvornings marker: {::+9.4e}", tenx::span(state.measurements.kvornings_marker.value()));
     }
     return state.measurements.kvornings_marker.value();
 }

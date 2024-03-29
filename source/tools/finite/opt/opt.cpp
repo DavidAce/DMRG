@@ -193,6 +193,7 @@ namespace tools::finite::opt::internal {
             auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
             if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(meta->optRitz) {
+                case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");
                 case OptRitz::SR: return comparator::energy(lhs, rhs);
                 case OptRitz::LR: return comparator::energy(rhs, lhs);
                 case OptRitz::SM: return comparator::energy_distance(lhs, rhs, target_energy);

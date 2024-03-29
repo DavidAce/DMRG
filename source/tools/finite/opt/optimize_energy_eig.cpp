@@ -23,6 +23,7 @@ namespace tools::finite::opt::internal {
         int         LR_il  = safe_cast<int>(matrix.dimension(0));
         int         LR_iu  = safe_cast<int>(matrix.dimension(0));
         switch(meta.optRitz) {
+            case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");
             case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
             case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;
             case OptRitz::SM:
@@ -47,7 +48,7 @@ namespace tools::finite::opt::internal {
 
         const auto problem_size = tensors.active_problem_size();
         if(problem_size > settings::solver::eig_max_size)
-            throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {}", problem_size);
+            throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {} > {}(max)", problem_size, settings::solver::eig_max_size);
 
         tools::log->trace("Full diagonalization of H");
         tools::log->debug("optimize_energy_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),

@@ -7,13 +7,13 @@
 #include "tools/common/log.h"
 #include "tools/infinite/opt.h"
 
-idmrg::idmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::move(h5ppFile_), AlgorithmType::iDMRG) {
+idmrg::idmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::move(h5ppFile_), OptRitz::SR, AlgorithmType::iDMRG) {
     tools::log->trace("Constructing class_idmrg");
     tensors.initialize(settings::model::model_type);
 }
 
 void idmrg::run_algorithm() {
-    if(ritz == OptRitz::SR)
+    if(status.opt_ritz == OptRitz::SR)
         tensors.state->set_name("state_emin");
     else
         tensors.state->set_name("state_emax");
@@ -40,11 +40,6 @@ void idmrg::run_algorithm() {
             status.algo_stop = AlgorithmStop::SATURATED;
             break;
         }
-        if(status.num_resets > settings::strategy::max_resets) {
-            status.algo_stop = AlgorithmStop::MAX_RESET;
-            break;
-        }
-
         if(status.iter >= settings::idmrg::max_iters) {
             status.algo_stop = AlgorithmStop::MAX_ITERS;
             break;
@@ -73,8 +68,8 @@ void idmrg::update_state() {
     /*!
      * \fn void single_DMRG_step()
      */
-    tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(ritz));
-    Eigen::Tensor<cplx, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, ritz);
+    tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(status.opt_ritz));
+    Eigen::Tensor<cplx, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, status.opt_ritz);
     tensors.merge_twosite_tensor(twosite_tensor, svd::config(status.bond_lim, status.trnc_lim));
 }
 

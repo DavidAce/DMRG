@@ -54,20 +54,21 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double spin_alignment                              (const StateFinite & state, std::string_view axis);
     [[nodiscard]] extern int    spin_sign                                   (const StateFinite & state, std::string_view axis);
     template<typename Scalar = cplx>
-    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                   (const std::vector<std::unique_ptr<MpsSite>> & mps_sites, std::string_view name);
-    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                   (const StateFinite & state);
-    [[nodiscard]] extern double entanglement_entropy_current                (const StateFinite & state);
-    [[nodiscard]] extern double entanglement_entropy_midchain               (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> entanglement_entropies         (const StateFinite & state);
-    [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies   (const StateFinite & state);
-    [[nodiscard]] extern double renyi_entropy_midchain                      (const StateFinite & state, double q);
-    [[nodiscard]] extern std::vector<double> renyi_entropies                (const StateFinite & state, double q);
-    [[nodiscard]] extern double number_entropy_current                      (const StateFinite & state);
-    [[nodiscard]] extern double number_entropy_midchain                     (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> number_entropies               (const StateFinite & state);
-    [[nodiscard]] extern std::array<double,3> spin_components               (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> truncation_errors              (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> truncation_errors_active       (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                      (const std::vector<std::unique_ptr<MpsSite>> & mps_sites, std::string_view name);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                      (const StateFinite & state);
+    [[nodiscard]] extern double entanglement_entropy_current                   (const StateFinite & state);
+    [[nodiscard]] extern double entanglement_entropy_midchain                  (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> entanglement_entropies            (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> entanglement_entropies_log2       (const StateFinite & state);
+    [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies_log2 (const StateFinite & state);
+    [[nodiscard]] extern double renyi_entropy_midchain                         (const StateFinite & state, double q);
+    [[nodiscard]] extern std::vector<double> renyi_entropies                   (const StateFinite & state, double q);
+    [[nodiscard]] extern double number_entropy_current                         (const StateFinite & state);
+    [[nodiscard]] extern double number_entropy_midchain                        (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> number_entropies                  (const StateFinite & state);
+    [[nodiscard]] extern std::array<double,3> spin_components                  (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> truncation_errors                 (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> truncation_errors_active          (const StateFinite & state);
 
     [[nodiscard]] double energy_minus_energy_shift               (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] double energy                                  (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);

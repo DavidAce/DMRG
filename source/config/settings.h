@@ -212,10 +212,7 @@ namespace settings {
         inline bool                project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_increase_when == true). */
         inline bool                project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
         inline bool                project_final_state         = false;                                  /*!< Project to target axis/parity sector before writing down the final state */
-        inline bool                randomize_on_bond_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing the bond dimension */
-        inline bool                randomize_early             = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool                use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
-        inline size_t              max_resets                  = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
         inline size_t              max_stuck_iters             = 5;                                      /*!< If stuck for this many iterations -> stop. */
         inline size_t              max_saturated_iters         = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
         inline size_t              min_saturated_iters         = 1;                                      /*!< Saturated at least this many iterations before stopping */
@@ -231,7 +228,8 @@ namespace settings {
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit           initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline std::string         initial_pattern             = {};                                     /*!< The actual random spin configuration used for the initial product state (for internal use) */
-        inline double              fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
+        inline double              rbds_rate                   = 0.5;                                    /*!< If rbds_rate > 0, runs reverse bond dimension scaling (rbds) after the main algorithm. Values [0,1] represent the shrink factor, while [1,infty] represents a shrink step */
+        inline double              rtes_rate                   = 1e1;                                    /*!< If rtes_rate > 1, runs reverse truncation error scaling (rtes) after the main algorithm. Values [1, infty] represent the growth factor for the truncation error limit */
         inline UpdateWhen          bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
         inline double              bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
         inline UpdateWhen          trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
@@ -337,6 +335,7 @@ namespace settings {
         inline auto      ritz                = OptRitz::SR;                        /*!< Select what part of the energy eigenspectrum to target (SR:smallest real / LR: largest real) */
         inline size_t    max_iters           = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t    min_iters           = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t    warmup_iters        = 2;                                  /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
         inline long      bond_max            = 128;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline long      bond_init           = 8;                                  /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t    print_freq          = 100;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */

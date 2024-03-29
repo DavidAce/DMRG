@@ -28,7 +28,8 @@ void h5_enum_storage_event::create() {
     H5Tenum_insert(h5_storage_event, "PROJECTION", (val = static_cast<int>(StorageEvent::PROJECTION), &val));
     H5Tenum_insert(h5_storage_event, "BOND_UPDATE", (val = static_cast<int>(StorageEvent::BOND_UPDATE), &val));
     H5Tenum_insert(h5_storage_event, "TRNC_UPDATE", (val = static_cast<int>(StorageEvent::TRNC_UPDATE), &val));
-    H5Tenum_insert(h5_storage_event, "FES_STEP", (val = static_cast<int>(StorageEvent::FES_STEP), &val));
+    H5Tenum_insert(h5_storage_event, "RBDS_STEP", (val = static_cast<int>(StorageEvent::RBDS_STEP), &val));
+    H5Tenum_insert(h5_storage_event, "RTES_STEP", (val = static_cast<int>(StorageEvent::RTES_STEP), &val));
     H5Tenum_insert(h5_storage_event, "ITERATION", (val = static_cast<int>(StorageEvent::ITERATION), &val));
     H5Tenum_insert(h5_storage_event, "FINISHED", (val = static_cast<int>(StorageEvent::FINISHED), &val));
 }
@@ -164,7 +165,6 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tenum_insert(h5_algo_stop, "SUCCESS", (val = 0, &val));
         H5Tenum_insert(h5_algo_stop, "SATURATED", (val = 1, &val));
         H5Tenum_insert(h5_algo_stop, "MAX_ITERS", (val = 2, &val));
-        H5Tenum_insert(h5_algo_stop, "MAX_RESET", (val = 3, &val));
         H5Tenum_insert(h5_algo_stop, "RANDOMIZE", (val = 4, &val));
         H5Tenum_insert(h5_algo_stop, "NONE", (val = 5, &val));
     }
@@ -175,7 +175,6 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "position",                    HOFFSET(table, position),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "direction",                   HOFFSET(table, direction),                  H5T_NATIVE_INT);
         H5Tinsert(h5_type, "event",                       HOFFSET(table, event),                      h5_enum_storage_event::get_h5t());
-        H5Tinsert(h5_type, "num_resets",                  HOFFSET(table, num_resets),                 H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
@@ -218,7 +217,6 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "trnc_limit_has_reached_min",  HOFFSET(table, trnc_limit_has_reached_min), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "fes_is_running",              HOFFSET(table, fes_is_running),             H5T_NATIVE_UINT8);
     /* clang-format on */
 }
 
