@@ -646,7 +646,7 @@ std::vector<T> get_site_idx(const std::vector<size_t> &sites, const std::vector<
     return idx;
 }
 
-void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR, std::vector<size_t> &sites, GateMove gm) {
+void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR, std::vector<size_t> &sites, GateMove gm, std::optional<svd::config> svd_cfg) {
     /* The swap operation takes two neighboring sites
      *
      * (1)chiL---[ mpsL ]---chiC(2)    chiC(1)---[ mpsR ]---(2)chiR
@@ -766,7 +766,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
 
     // This SVD shouldn't modify the current mps, so no truncation here (no svd config)
     //    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::QUIET);
-    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, std::nullopt, LogPolicy::QUIET);
+    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::QUIET);
 
 //    double lastS_new = 0;
 //    long   bondd_new = 0;

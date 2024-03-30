@@ -169,9 +169,12 @@ void fdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
-#pragma message "Save fdmrg wavevector properly"
-    Eigen::Tensor<real, 1> vec = tools::finite::measure::mps2tensor(*tensors.state).real();
-    write_to_file(vec, "vec", StorageEvent::FINISHED);
+    if(settings::fdmrg::store_wavefn and tensors.get_length<long>() <= 16) {
+        #pragma message "Save fdmrg wavevector properly"
+        Eigen::Tensor<real, 1> psi = tools::finite::measure::mps2tensor(*tensors.state).real();
+        write_to_file(psi, "psi", StorageEvent::FINISHED);
+    }
+
 }
 
 fdmrg::OptMeta fdmrg::get_opt_meta() {

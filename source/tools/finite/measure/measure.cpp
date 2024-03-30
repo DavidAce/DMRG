@@ -190,8 +190,9 @@ std::vector<double> tools::finite::measure::entanglement_entropies_log2(const St
 }
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state) {
+    if(state.get_length<long>() >= 24) return subsystem_entanglement_entropies_swap_log2(state, svd::config(2*state.find_largest_bond(), 1e-8));
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
-    auto            t_ent   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
+    auto            t_see   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
     auto            len     = state.get_length<long>();
     auto            bee     = measure::entanglement_entropies_log2(state); // bipartite entanglement entropies
     auto            solver  = eig::solver();
@@ -215,6 +216,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
                 auto sites = num::range<size_t>(off, off + ext);
                 auto evs   = Eigen::ArrayXd();
                 if(is_real) {
+#pragma message "Avoid density matrices: use cyclic permutation of sites (using swaps) to get any subsystem entropie directly from bipartite schmidt values"
                     auto rho = state.get_reduced_density_matrix<real>(sites);
                     tools::log->trace("eig rho_real: {} ...", rho.dimensions());
                     if(rho.dimension(0) <= 8192) {
@@ -247,12 +249,47 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
                 }
                 see(ext - 1, off) = s; // -evs.cwiseProduct(evs.log()).sum();
                                        //                tools::log->info("evs({},{}) = {}", ext - 1, off, evs.size());
-                tools::log->debug("ees({},{}) = {}", ext - 1, off, see(ext - 1, off));
+                // tools::log->debug("ees({},{}) = {}", ext - 1, off, see(ext - 1, off));
             }
             tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
         }
         state.clear_cache();
     }
+    // tools::log->info("subsystem entanglement entropies {:.3e} s: \n{}\n", t_see->get_last_interval(), linalg::matrix::to_string(see, 16));
+
+    state.measurements.subsystem_entanglement_entropies = see;
+    return state.measurements.subsystem_entanglement_entropies.value();
+}
+
+Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_log2(const StateFinite &state, const svd::config &svd_cfg) {
+    if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
+    auto            t_see   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
+    auto            len     = state.get_length<long>();
+    auto            solver  = eig::solver();
+    Eigen::ArrayXXd see     = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
+
+    auto state_swap = state;
+    auto length = state.get_length<size_t>();
+    auto sites      = num::range<size_t>(0, length);
+    for(long off = 0; off < len; ++off) {
+        if(off > 0) {
+            // Move the left-most site to one site beyond the last site
+            // Example with 6 sites
+            //      012345 --> 123450
+            //      123450 --> 234510
+            for(size_t i = 0; i < length - off; ++i) mps::swap_sites(state_swap, i, i + 1, sites, GateMove::OFF, svd_cfg);
+        }
+        auto bee = measure::entanglement_entropies_log2(state_swap); // bipartite entanglement entropies
+
+        for(long ext = 1; ext <= len / 2; ++ext) {
+            if(off + ext > len) continue;
+            auto idx          = safe_cast<size_t>(ext);
+            see(ext - 1, off) = bee[idx];
+        }
+        state.clear_cache();
+    }
+    // tools::log->info("subsystem entanglement entropies swap {:.3e} s: \n{}\n", t_see->get_last_interval(), linalg::matrix::to_string(see, 16));
+    tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
     state.measurements.subsystem_entanglement_entropies = see;
     return state.measurements.subsystem_entanglement_entropies.value();
 }

@@ -855,6 +855,24 @@ def get_batch_setup(projectname):
                     'seed_offset': [160500000],
                 },
             }
+        },
+        'fdmrg-see-test1': {
+            # Calculate subsystem entanglement entropies for  ground states
+            'projectname': 'fdmrg-see-test1',
+            'batch': {
+                'L16|g0.5|d-8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [160500000],
+                },
+                'L16|g0.5|d0.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [160510000],
+                },
+                'L16|g0.5|d8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [160520000],
+                },
+            }
         }
     }
 

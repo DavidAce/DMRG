@@ -19,6 +19,7 @@
 #include "tools/finite/ops.h"
 #include <complex>
 #include <h5pp/h5pp.h>
+#include <math/linalg/matrix.h>
 
 namespace tools::finite::h5 {
     using tools::common::h5::save::should_save;
