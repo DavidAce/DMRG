@@ -134,12 +134,12 @@ std::string getLogMessage(struct primme_params *primme) {
     auto       &result   = solver.result;
     auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
-    return fmt::format("iter {:>6} | mv {:>6} | size {} | λ {:12.5e}{} | λ½ {:.16f} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
-                       "it/s | {:8.2e} mv/s | {}",
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal,
-                       msg_diff, std::sqrt(std::abs(primme->stats.estimateMinEVal)), result.meta.last_res_norm, primme->stats.elapsedTime,
+    return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:12.5e}{} | λ½ {:.16f} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
+                       "it/s | {:8.2e} mv/s | {} | {}",
+                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff,
+                       std::sqrt(std::abs(primme->stats.estimateMinEVal)), result.meta.last_res_norm, primme->stats.elapsedTime,
                        primme->stats.numOuterIterations / primme->stats.elapsedTime, static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec,
-                       eig::MethodToString(solver.config.primme_method));
+                       eig::TypeToString(solver.config.type), eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,

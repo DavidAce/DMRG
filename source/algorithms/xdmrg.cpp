@@ -4,6 +4,7 @@
 #include "fdmrg.h"
 #include "general/iter.h"
 #include "io/fmt_custom.h"
+#include "math/eig.h"
 #include "math/num.h"
 #include "math/rnd.h"
 #include "qm/time.h"
@@ -21,10 +22,14 @@
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
+#include <math/linalg/matrix.h>
+#include <math/svd.h>
+#include <tensors/site/mpo/MpoSite.h>
+#include <tools/finite/mpo.h>
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
-    tensors.state->set_name(fmt::format("state_{}", excited_state_number));
+    tensors.state->set_name("state_emid");
 }
 
 void xdmrg::resume() {
@@ -47,13 +52,8 @@ void xdmrg::resume() {
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to infer it from the state prefix itself
-        auto name   = tools::common::h5::resume::extract_state_name(state_prefix);
-        auto number = tools::common::h5::resume::extract_state_number(state_prefix);
-        if(number) {
-            excited_state_number = number.value();
-            tensors.state->set_name(fmt::format("state_{}", excited_state_number));
-        } else if(not name.empty())
-            tensors.state->set_name(name);
+        auto name = tools::common::h5::resume::extract_state_name(state_prefix);
+        tensors.state->set_name(name);
 
         // Initialize a custom task list
         std::deque<xdmrg_task> task_list;
@@ -95,7 +95,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
 
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_EXCITED_STATE:
-                tensors.state->set_name(fmt::format("state_{}", excited_state_number));
+                tensors.state->set_name("state_emid");
                 run_algorithm();
                 break;
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
@@ -117,8 +117,18 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
 void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
     switch(status.opt_ritz) {
         case OptRitz::NONE: throw std::logic_error("status.opt_ritz == OptRitz::NONE is invalid under xdmrg");
-        case OptRitz::SR: throw std::logic_error("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
-        case OptRitz::LR: throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+        case OptRitz::SR: {
+            tools::log->warn("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
+            status.energy_tgt = 0.0;
+            break;
+            // throw std::logic_error("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
+        }
+        case OptRitz::LR: {
+            tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+            status.energy_tgt = 0.0;
+            break;
+            // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+        }
         case OptRitz::SM: {
             status.energy_tgt = 0.0; // When the Hamiltonian is traceless, the energy level nearest zero is closest to the infinite-temperature limit
             break;
@@ -155,7 +165,8 @@ void xdmrg::run_preprocessing() {
     status.clear();
     init_bond_dimension_limits();
     init_truncation_error_limits();
-    initialize_model();                                                     // First use of random!
+    initialize_model(); // First use of random!
+
     initialize_state(ResetReason::INIT, settings::strategy::initial_state); // Second use of random!
     find_energy_range();
     init_energy_target();
@@ -163,11 +174,51 @@ void xdmrg::run_preprocessing() {
     set_parity_shift_mpo_squared();
     rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
     write_to_file(StorageEvent::MODEL);
+
+    // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
+
+    if(tensors.get_length<long>() <= 6) {
+        // Print the spectrum if small
+        // tensors.clear_cache();
+        auto        L     = tensors.get_length<long>();
+        auto        sites = num::range<size_t>(0, L);
+        auto        ham1_ = tensors.model->get_multisite_ham(sites);
+        auto        ham1i = svd::solver::pseudo_inverse(ham1_);
+        eig::solver solver1_, solver1i;
+        solver1_.eig<eig::Form::SYMM>(ham1_.data(), ham1_.dimension(0));
+        solver1i.eig<eig::Form::SYMM>(ham1i.data(), ham1i.dimension(0));
+
+
+        auto evals1_ = eig::view::get_eigvals<real>(solver1_.result);
+        auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
+
+
+        // Try the iterative scheme
+        auto impos = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
+
+        auto imodel = *tensors.model;
+        for(auto &&[pos, impo] : iter::enumerate(imodel.MPO)) impo->set_mpo(impos[pos]);
+        auto ham3i = imodel.get_multisite_ham(sites);
+        // auto ham3i = svd::solver::pseudo_inverse(ham3i);
+        eig::solver solver3i;
+        solver3i.eig<eig::Form::SYMM>(ham3i.data(), ham3i.dimension(0));
+        auto evals3i = eig::view::get_eigvals<real>(solver3i.result);
+
+        fmt::print("{:^8} {:<20} {:<20} {:<20} {:<20}\n"," ", "H¹", "H⁻¹", "H⁻¹(iter)", "diff");
+        for(long idx = 0; idx < std::min(evals1i.size(), evals3i.size()); ++idx) {
+            fmt::print("idx {:2}: {:20.16f} {:20.16f} {:20.16f} {:.4e}\n", idx, evals1_[idx], evals1i[idx], evals3i[idx], std::abs(evals1i[idx] - evals3i[idx]));
+        }
+        fmt::print("\n");
+
+        // tools::log->info("Iterative inverse  H⁻¹");
+        // for(long idx = 0; idx < evals3i.size(); ++idx) { fmt::print("idx {:2}: {:20.16f}\n", idx, evals3i[idx]); }
+        exit(0);
+    }
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
 void xdmrg::run_algorithm() {
-    if(tensors.state->get_name().empty()) tensors.state->set_name(fmt::format("state_{}", excited_state_number));
+    if(tensors.state->get_name().empty()) tensors.state->set_name("state_emid");
     tools::log->info("Starting {} simulation of model [{}] for state [{}] with ritz [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name(), enum2sv(status.opt_ritz));
     auto t_run       = tid::tic_scope("run");
@@ -216,7 +267,8 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
     // Set up a multiplier for number of iterations
-    size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
+    size_t iter_stuck_multiplier = std::max(1ul, status.algorithm_has_stuck_for * settings::solver::eigs_stuck_multiplier);
+    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
 
     // Copy settings
     m1.min_sites     = settings::strategy::multisite_opt_site_def;
@@ -241,7 +293,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
         m1.max_sites        = settings::strategy::multisite_opt_site_max;
         m1.max_problem_size = settings::solver::eig_max_size; // Try to use full diagonalization instead
         if(settings::xdmrg::bond_init > 0 and m1.svd_cfg->rank_max > settings::xdmrg::bond_init) {
-            tools::log->info("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::xdmrg::bond_init);
+            tools::log->debug("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::xdmrg::bond_init);
             m1.svd_cfg->rank_max = settings::xdmrg::bond_init;
         }
     } else {
@@ -300,7 +352,7 @@ void xdmrg::update_state() {
     // Use environment expansion if alpha_expansion is set
     // Note that this changes the mps and edges adjacent to "tensors.active_sites"
     if(opt_meta.alpha_expansion) {
-        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, svd::config(settings::fdmrg::bond_max, std::min(1e-12, status.trnc_min)));
+        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
     }
 
     // Announce the current configuration for optimization

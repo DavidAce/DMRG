@@ -1,7 +1,7 @@
 #include "h5tb.h"
 #include "debug/exceptions.h"
-#include "math/float.h"
 #include "math/cast.h"
+#include "math/float.h"
 #include "tools/common/log.h"
 #include <hdf5.h>
 
@@ -29,6 +29,7 @@ template class h5tb_base<h5tb_ising_tf_rf>;
 template class h5tb_base<h5tb_ising_majorana>;
 template class h5tb_base<h5tb_ising_selfdual>;
 template class h5tb_base<h5tb_lbit>;
+template class h5tb_base<h5tb_xxz>;
 
 /*
  *
@@ -109,6 +110,36 @@ std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
 constexpr std::array<std::string_view, 6> h5tb_ising_majorana::get_parameter_names() noexcept {
     return {"g", "delta", "J_rand", "h_rand", "spin_dim", "distribution"};
 }
+
+/*
+ *
+ *
+ *  XXZ
+ *
+ *
+ */
+
+void h5tb_xxz::register_table_type() const {
+    if(h5_type.valid()) return;
+
+    h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
+    H5Tinsert(h5_type, "delta", HOFFSET(table, delta), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "h_rand", HOFFSET(table, h_rand), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
+}
+
+std::string h5tb_xxz::fmt_value(std::string_view p) const {
+    /* clang-format off */
+    if(p == "delta")            return fmt::format("{:<+7.4f}", param.delta);
+    if(p == "h_rand")           return fmt::format("{:<8.2e}" , param.h_rand);
+    if(p == "spin_dim")         return fmt::format("{:>8}"    , param.spin_dim);
+    if(p == "distribution")     return fmt::format("{:<12}"   , param.distribution);
+    /* clang-format on */
+    throw except::runtime_error("Unrecognized parameter: {}", p);
+}
+
+constexpr std::array<std::string_view, 6> h5tb_xxz::get_parameter_names() noexcept { return {"delta", "h_rand", "spin_dim", "distribution"}; }
 
 /*
  *

@@ -161,8 +161,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::project_final_state"                , strategy::project_final_state);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
     dmrg_config.load_parameter("strategy::max_stuck_iters"                    , strategy::max_stuck_iters);
-    dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturated_iters);
-    dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturated_iters);
+    dmrg_config.load_parameter("strategy::max_saturated_iters"                , strategy::max_saturated_iters);
+    dmrg_config.load_parameter("strategy::min_saturated_iters"                , strategy::min_saturated_iters);
     dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
     dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
     dmrg_config.load_parameter("strategy::multisite_opt_site_def"             , strategy::multisite_opt_site_def);

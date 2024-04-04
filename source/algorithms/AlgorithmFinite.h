@@ -20,8 +20,6 @@ class AlgorithmFinite : public AlgorithmBase {
     explicit      AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz_, AlgorithmType algo_type);
     TensorsFinite tensors; // State, model and edges
 
-    size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
-
     size_t                   projected_iter = 0; /*!< The last iteration when projection was tried */
     size_t                   expanded_iter  = 0; /*!< The last iteration when expansion was tried */
     std::optional<OptFunc>   last_optmode   = std::nullopt;

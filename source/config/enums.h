@@ -21,7 +21,7 @@ enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
 enum class CircuitOp { NONE, ADJ, TRN };
-enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
+enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit, xxz };
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
 
@@ -477,6 +477,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == ModelType::ising_sdual)                              return "ising_sdual";
         if(item == ModelType::ising_majorana)                           return "ising_majorana";
         if(item == ModelType::lbit)                                     return "lbit";
+        if(item == ModelType::xxz)                                      return "xxz";
     }
     if constexpr(std::is_same_v<T, EdgeStatus>) {
         if(item == EdgeStatus::STALE)                                   return "STALE";
@@ -807,6 +808,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ising_sdual")                           return ModelType::ising_sdual;
         if(item == "ising_majorana")                        return ModelType::ising_majorana;
         if(item == "lbit")                                  return ModelType::lbit;
+        if(item == "xxz")                                   return ModelType::xxz;
     }
     if constexpr(std::is_same_v<T, EdgeStatus>) {
         if(item == "STALE")                                 return EdgeStatus::STALE ;

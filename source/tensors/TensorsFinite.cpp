@@ -21,6 +21,9 @@
 #include "tools/finite/multisite.h"
 #include "tools/finite/ops.h"
 
+//
+#include "math/linalg.h"
+
 TensorsFinite::TensorsFinite() : state(std::make_unique<StateFinite>()), model(std::make_unique<ModelFinite>()), edges(std::make_unique<EdgesFinite>()) {
     tools::log->trace("Constructing TensorsFinite");
 }
@@ -166,6 +169,10 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
     tools::log->trace("TensorsFinite::get_effective_hamiltonian_squared(): contracting active sites {}", active_sites);
     const auto &mpo                        = model->get_multisite_mpo_squared();
     const auto &env                        = edges->get_multisite_env_var_blk();
+    // tools::log->info("get_effective_hamiltonian_squared: dims {} | edgeL {} | edgeR {}", mpo.dimensions(), env.L.dimensions(), env.R.dimensions());
+    // tools::log->info("get_effective_hamiltonian_squared: edgeL \n{}\n", linalg::tensor::to_string(env.L, 16));
+    // tools::log->info("get_effective_hamiltonian_squared: edgeR \n{}\n", linalg::tensor::to_string(env.R, 16));
+    // tools::log->info("get_effective_hamiltonian_squared: ham2  \n{}\n", linalg::tensor::to_string(mpo.real(), 16));
     cache.cached_sites_hamiltonian_squared = active_sites;
     if constexpr(std::is_same_v<Scalar, double>) {
         cache.effective_hamiltonian_squared_real = contract_mpo_env<double>(mpo.real(), env.L.real(), env.R.real());
@@ -205,9 +212,8 @@ void TensorsFinite::set_parity_shift_mpo_squared(std::string_view axis) {
     auto sign = qm::spin::half::get_sign(axis);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign == 0) {
-        tools::log->debug("set_parity_shift_mpo_squared: no sector sign given for the target axis: taking the closest sector");
+        tools::log->info("set_parity_shift_mpo_squared: no sector sign given for the target axis: taking the closest sector");
         sign = tools::finite::measure::spin_sign(*state, axis);
-        return;
     }
     auto parity_shift_new = std::make_pair(sign, axus);
     auto parity_shift_old = model->get_parity_shift_mpo_squared();
@@ -352,7 +358,7 @@ void TensorsFinite::compress_mpo_squared() {
             tools::log->trace("compress_mpo_squared: the model already has compressed mpo squared.");
             return; // They don't need to be compressed again. Rebbild before compressing them
         }
-        tools::log->trace("Compressing MPO²");
+        tools::log->info("Compressing MPO²");
         measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
         model->compress_mpo_squared();
     }

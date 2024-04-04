@@ -11,24 +11,9 @@ std::string tools::common::h5::resume::extract_state_name(std::string_view state
     std::string::size_type     start_pos = state_prefix.find(state_pattern);
     if(start_pos != std::string::npos) {
         std::string::size_type len = state_prefix.find('/', start_pos) - start_pos;
-        state_name                 = state_prefix.substr(start_pos, len); // E.g. "/xDMRG/state_0/results/..." would match state_0
+        state_name                 = state_prefix.substr(start_pos, len); // E.g. "/xDMRG/state_emid/results/..." would match state_emid
     }
     return state_name;
-}
-
-std::optional<size_t> tools::common::h5::resume::extract_state_number(std::string_view state_prefix) {
-    std::string state_name = extract_state_name(state_prefix);
-    std::string state_number;
-    for(const auto &c : state_name) {
-        if(std::isdigit(c)) state_number.push_back(c);
-    }
-    try {
-        size_t number = std::stoul(state_number);
-        return number;
-    } catch(const std::exception &err) {
-        tools::log->info("Could not convert {} to a number: {}", state_number, err.what());
-        return std::nullopt;
-    }
 }
 
 std::vector<std::string> tools::common::h5::resume::find_state_prefixes(const h5pp::File &h5file, AlgorithmType algo_type, std::string_view name) {

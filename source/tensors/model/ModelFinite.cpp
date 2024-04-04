@@ -689,10 +689,10 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
     long spin_dim = 1;
     for(const auto &pos : sites) { spin_dim *= get_mpo(pos).get_spin_dimension(); }
     auto dim2 = tenx::array2{spin_dim, spin_dim};
-    if(sites.size() < 4) {
+    if(sites.size() <= 4) {
         return get_multisite_mpo(sites, nbody, true, true).reshape(dim2);
     } else {
-        // When there are many sites, it's beneficial to split sites into two equal chunks and then merge them (because edgeL/edgeR makes them small)
+        // When there are many sites, it is better to split sites into two equal chunks and then merge them (because edgeL/edgeR makes them small)
         auto half   = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
         auto sitesL = std::vector<size_t>(sites.begin(), sites.begin() + half);
         auto sitesR = std::vector<size_t>(sites.begin() + half, sites.end());
@@ -700,50 +700,7 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
         auto mpoR   = get_multisite_mpo(sitesR, nbody, false, true);
         auto mpoLR  = tenx::gemm_mpo(mpoL, mpoR);
         return mpoLR.reshape(tenx::array2{spin_dim, spin_dim});
-        //        long spin_dimL = 1;
-        //        long spin_dimR = 1;
-        //        for(const auto &pos : sitesL) { spin_dimL *= get_mpo(pos).get_spin_dimension(); }
-        //        for(const auto &pos : sitesR) { spin_dimR *= get_mpo(pos).get_spin_dimension(); }
-        //        auto dimL = tenx::array2{spin_dimL * spin_dimL, get_mpo(sitesL.back()).MPO().dimension(1)};
-        //        auto dimR = tenx::array2{get_mpo(sitesR.front()).MPO().dimension(0), spin_dimR * spin_dimR};
-        //        auto shf6 = tenx::array6{0, 3, 1, 4, 2, 5};
-        //        // For dim6, recall that mpoL is shuffled, so these dimensions are not the usual ones.
-        //        auto dims_L_front = get_mpo(sitesL.front()).MPO().dimensions();
-        //        auto dims_R_back  = get_mpo(sitesR.back()).MPO().dimensions();
-        //        auto dim6         = tenx::array6{1, spin_dimL, spin_dimL, 1, spin_dimR, spin_dimR};
-
-        //
-        //        Eigen::Tensor<cplx, 2> mpoL =
-        //            get_multisite_mpo(sitesL, nbody, true, false).shuffle(tenx::array4{0, 2, 3, 1}).reshape(dimL); // Shuffle so we can use GEMM
-        //        Eigen::Tensor<cplx, 2> mpoR = get_multisite_mpo(sitesR, nbody, false, true).reshape(dimR);
-        //        bool isReal = tenx::isReal(mpoL) and tenx::isReal(mpoR);
-        //        if(isReal) {
-        //            // We get a speedup by contracting reals instead of complex
-        //            Eigen::Tensor<real, 2> mpoL_real = mpoL.real();
-        //            Eigen::Tensor<real, 2> mpoR_real = mpoR.real();
-        //            tools::log->info("get_multisite_ham(real): allocating for mpoL {} mpoR {} = {}", mpoL.dimensions(), mpoR.dimensions(), dim2);
-        //            Eigen::Tensor<real, 2> multisite_ham(dim2);
-        //            tools::log->info("get_multisite_ham(real): contracting");
-        //            tenx::gemm(multisite_ham, mpoL_real, mpoR_real);
-        //            tools::log->info("get_multisite_ham(real): finished");
-        //            return multisite_ham.reshape(dim6).shuffle(shf6).reshape(dim2).cast<cplx>();
     }
-    //    else {
-    //        tools::log->info("get_multisite_ham: allocating for mpoL {} mpoR {} = {}", mpoL.dimensions(), mpoR.dimensions(), dim2);
-    //        Eigen::Tensor<cplx, 2> multisite_ham(dim2);
-    //        tools::log->info("get_multisite_ham: contracting");
-    //        tenx::gemm(multisite_ham, mpoL, mpoR);
-    //        tools::log->info("get_multisite_ham: finished");
-    //        return multisite_ham.reshape(dim6).shuffle(shf6).reshape(dim2);
-    //    }
-
-    //            tools::log->info("get_multisite_ham: contracting", mpoL.dimensions(), mpoR.dimensions());
-    //        multisite_mpo.device(*threads->dev) = mpoL.contract(mpoR, tenx::idx({1}, {0})).reshape(dims);
-    //}
-    //    assert(multisite_mpo.dimension(0) == 1);
-    //    assert(multisite_mpo.dimension(1) == 1);
-    //    auto newdims = tenx::array2{multisite_mpo.dimension(2), multisite_mpo.dimension(3)};
-    //    return multisite_mpo.reshape(newdims);
 }
 
 Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
@@ -925,48 +882,23 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham_squared(const std::vector<
     if(sites == active_sites and cache.multisite_ham and not nbody) return cache.multisite_ham.value();
     tools::log->trace("ModelFinite::get_multisite_ham_squared(): contracting active sites {}", sites);
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
-    auto edgeL = get_mpo(sites.front()).get_MPO2_edge_left();
-    auto edgeR = get_mpo(sites.back()).get_MPO2_edge_right();
-    // TODO Fix the code below
-
-    //    if(sites == num::range<size_t>(0, get_length()) and not nbody) {
-    //        // We want the full hamiltonian. We save time by not including the mpo edges.
-    //        constexpr auto shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
-    //        constexpr auto contract_idx = tenx::idx({1}, {0});
-    //        auto           bulk_sites   = num::range<size_t>(1, get_length() - 1);
-    //        auto           mpo_front    = get_mpo(sites.front()).MPO2();
-    //        auto           dim_front    = mpo_front.dimensions();
-    //        auto           mpo_back     = get_mpo(sites.back()).MPO2();
-    //        auto           dim_back     = mpo_back.dimensions();
-    //        dim_front[0]                = edgeL.dimension(0) * edgeL.dimension(1);
-    //        dim_back[0]                 = edgeR.dimension(0) * edgeR.dimension(1);
-    //
-    //        Eigen::Tensor<cplx, 4> mpo_edgeL = edgeL.contract(mpo_front, tenx::idx({2}, {0})).reshape(mpo_front.dimensions());
-    //        Eigen::Tensor<cplx, 4> mpo_edgeR = edgeR.contract(mpo_back, tenx::idx({2}, {1})).shuffle(tenx::array5{2, 0, 1, 3,
-    //        4}).reshape(mpo_back.dimensions()); Eigen::Tensor<cplx, 4> mpo_temp; for(const auto &pos : bulk_sites) {
-    //            const auto  &mpo      = get_mpo(pos);
-    //            long         dim0     = mpo_edgeL.dimension(0);
-    //            long         dim1     = mpo.MPO2().dimension(1);
-    //            long         dim2     = mpo_edgeL.dimension(2) * mpo.MPO2().dimension(2);
-    //            long         dim3     = mpo_edgeL.dimension(3) * mpo.MPO2().dimension(3);
-    //            tenx::array4 new_dims = {dim0, dim1, dim2, dim3};
-    //            mpo_temp.resize(new_dims);
-    //            mpo_temp.device(tenx::omp::getDevice()) = mpo_edgeL.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-    //            mpo_edgeL                               = mpo_temp;
-    //        }
-    //        long         dim0     = mpo_edgeL.dimension(0);
-    //        long         dim1     = mpo_edgeR.dimension(1);
-    //        long         dim2     = mpo_edgeL.dimension(2) * mpo_edgeR.dimension(2);
-    //        long         dim3     = mpo_edgeL.dimension(3) * mpo_edgeR.dimension(3);
-    //        tenx::array4 new_dims = {dim0, dim1, dim2, dim3};
-    //        mpo_temp.resize(new_dims);
-    //        mpo_temp.device(tenx::omp::getDevice()) = mpo_edgeL.contract(mpo_edgeR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-    //        return mpo_temp;
-    //    }
+    auto edgeL                 = get_mpo(sites.front()).get_MPO2_edge_left();
+    auto edgeR                 = get_mpo(sites.back()).get_MPO2_edge_right();
     auto multisite_mpo_squared = get_multisite_mpo_squared(sites, nbody);
-    return multisite_mpo_squared.contract(edgeL, tenx::idx({0}, {0}))
-        .contract(edgeR, tenx::idx({0}, {0}))
-        .reshape(tenx::array2{multisite_mpo_squared.dimension(2), multisite_mpo_squared.dimension(3)});
+    auto rows                  = multisite_mpo_squared.dimension(2);
+    auto cols                  = multisite_mpo_squared.dimension(3);
+    // tools::log->info("multisite_ham_squared: dims {} | edgeL {} | edgeR {}", multisite_mpo_squared.dimensions(), edgeL.dimensions(), edgeR.dimensions());
+    // tools::log->info("multisite_mpo_squared: edgeL \n{}\n", linalg::tensor::to_string(edgeL, 16));
+    // tools::log->info("multisite_mpo_squared: edgeR \n{}\n", linalg::tensor::to_string(edgeR, 16));
+    // tools::log->info("multisite_mpo_squared: ham2  \n{}\n", linalg::tensor::to_string(multisite_mpo_squared.real(), 16));
+
+    // Eigen::Tensor<cplx, 2> ham2 = edgeL.reshape(tenx::array3{1, 1, 1})
+    //                                   .contract(multisite_mpo_squared, tenx::idx({2}, {0}))
+    //                                   .contract(edgeR.reshape(tenx::array3{1, 1, 1}), tenx::idx({2}, {2}))
+    //                                   .shuffle(tenx::array6{3, 1, 5, 2, 0, 4})
+    //                                   .reshape(tenx::array2{rows, cols});
+    // return ham2;
+    return edgeL.contract(multisite_mpo_squared, tenx::idx({0}, {0})).contract(edgeR, tenx::idx({0}, {0})).reshape(tenx::array2{rows, cols});
 }
 
 const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo_squared() const {

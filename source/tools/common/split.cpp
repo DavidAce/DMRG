@@ -111,7 +111,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto chiR = multisite_mps.dimension(2);
         if(chiL * chiR > 512 * 512 and tenx::isReal(multisite_mps)) {
             auto t_real = tid::tic_scope("isReal", tid::level::highest);
-            tools::log->info("Converting to real!");
+            tools::log->debug("split_mps: converting to real: chiL({}) * chiR({}) > 512 * 512", chiL, chiR);
             return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, svd_cfg);
         }
     }
@@ -181,7 +181,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
         } else if(dR == spin_dims.front()) {
             auto [U3, S1, V3] = svd.schmidt_multisite(multisite_mps, 1, d0, d1, d2, svd_cfg.value());
-            auto mps_site = MpsSite(V3, positions.front(), "B"); // Single site
+            auto mps_site     = MpsSite(V3, positions.front(), "B"); // Single site
             if(static_cast<long>(pos) == center_position + 1) {
                 mps_site.stash_C(S1, svd.get_truncation_error(), static_cast<size_t>(center_position)); // The site to the left is a center, S1 belongs to it
             } else {

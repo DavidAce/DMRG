@@ -17,6 +17,9 @@ namespace tools::finite::mpo {
     extern std::vector<Eigen::Tensor<cplx_t,4>> get_mpos_with_edges_t (const std::vector<Eigen::Tensor<cplx_t,4>> & mpos, const Eigen::Tensor<cplx_t,1> & Ledge, const Eigen::Tensor<cplx_t,1> & Redge);
     extern std::vector<Eigen::Tensor<cplx,4>> get_compressed_mpos (std::vector<Eigen::Tensor<cplx, 4>> mpos);
     extern std::vector<Eigen::Tensor<cplx,4>> get_compressed_mpos (const std::vector<Eigen::Tensor<cplx,4>> & mpos, const Eigen::Tensor<cplx,1> & Ledge, const Eigen::Tensor<cplx,1> & Redge);
+    extern std::vector<Eigen::Tensor<cplx,4>> get_inverted_mpos (const std::vector<Eigen::Tensor<cplx,4>> & mpos);
+    // extern std::vector<Eigen::Tensor<cplx,4>> get_inverted_mpos (std::vector<Eigen::Tensor<cplx, 4>> mpos);
+    // extern std::vector<Eigen::Tensor<cplx,4>> get_inverted_mpos (const std::vector<Eigen::Tensor<cplx,4>> & mpos, const Eigen::Tensor<cplx,1> & Ledge, const Eigen::Tensor<cplx,1> & Redge);
 }
 
 /* clang-format on */

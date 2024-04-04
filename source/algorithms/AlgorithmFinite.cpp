@@ -143,7 +143,7 @@ void AlgorithmFinite::run_rtes_analysis() {
     if(settings::strategy::rtes_rate <= 1.0) return;
     last_optmode  = std::nullopt;
     last_optspace = std::nullopt;
-    tools::log = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
+    tools::log    = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse truncation error scaling with growth rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::rtes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_rbds         = tid::tic_scope("rtes");
@@ -617,7 +617,6 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     status.direction = tensors.state->get_direction();
     status.algo_stop = AlgorithmStop::NONE;
     if(settings::strategy::bond_increase_when != UpdateWhen::NEVER) status.bond_lim = bond_lim.value();
-    if(reason == ResetReason::NEW_STATE) excited_state_number++;
     if(tensors.state->find_largest_bond() > bond_lim.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
         //        bond_lim.value());
@@ -671,65 +670,107 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         tools::log->info("Trying projection to {}{}", target_sector.value(), msg);
 
         auto sector_sign   = qm::spin::half::get_sign(target_sector.value());
+        auto energy_old    = tools::finite::measure::energy(tensors);
         auto variance_old  = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
+        auto svd_cfg       = svd::config(status.bond_lim, status.trnc_lim);
         if(sector_sign != 0) {
-            tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
+            tensors.project_to_nearest_axis(target_sector.value(), svd_cfg);
             tensors.rebuild_edges();
         } else {
-            // We have a choice here.
-            // If no sector sign has been given, and the spin component along the requested axis is near zero,
-            // then we may inadvertently project to a sector opposite to the target state.
-            // If that happened, we would get stuck in a local minima.
-            // One reasonable thing to do here is to compare the variance of both projections,
-            // and keep the one with the lowest variance.
+            // We have to make a choice if no sector sign has been given, and the spin component along the requested axis is << 1.
+            // The simplest thing is to compare the resuls of both projections, e.g. calculate P(+z)|psi> and P(-z)|psi>,
+            // and then keep either the one with the lowest variance, or the one with the smallest energy, depending on the selected ritz.
             // Of course, one problem is that if the spin component is already in one sector,
             // projecting to the other sector will zero the norm. So we can only make this
-            // decision if the |spin component| << 1. Maybe < 0.5 is enough?
+            // decision if the |spin spin_component_along_requested_axis| < 1, otherwise we loose all precision.
+            // We choose |spin_component_along_requested_axis| < 0.7 here, but this choice is arbitrary.
             auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_sector.value());
             tools::log->debug("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
-            if(std::abs(spin_component_along_requested_axis) < 0.5) {
+            if(std::abs(spin_component_along_requested_axis) < 0.7) {
                 // Here we deem the spin component undecided enough to make a safe projection to both sides for comparison
                 auto tensors_neg  = tensors;
                 auto tensors_pos  = tensors;
+                auto energy_neg   = std::numeric_limits<double>::quiet_NaN();
+                auto energy_pos   = std::numeric_limits<double>::quiet_NaN();
                 auto variance_neg = std::numeric_limits<double>::quiet_NaN();
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
-                    tensors_neg.project_to_nearest_axis(fmt::format("-{}", target_sector.value()), svd::config(status.bond_lim, status.trnc_lim));
+                    auto target_neg = fmt::format("-{}", target_sector.value());
+                    tensors_neg.project_to_nearest_axis(target_neg, svd_cfg);
+                    tensors_neg.rebuild_edges();
+                    energy_neg   = tools::finite::measure::energy(tensors_neg);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
+
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
-                    tensors_pos.project_to_nearest_axis(fmt::format("+{}", target_sector.value()), svd::config(status.bond_lim, status.trnc_lim));
+                    auto target_pos = fmt::format("+{}", target_sector.value());
+                    tensors_pos.project_to_nearest_axis(target_pos, svd_cfg);
+                    tensors_pos.rebuild_edges();
+                    energy_pos   = tools::finite::measure::energy(tensors_pos);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
-                tools::log->debug("Variance after projection to -{} = {:8.2e}", target_sector.value(), variance_neg);
-                tools::log->debug("Variance after projection to +{} = {:8.2e}", target_sector.value(), variance_pos);
+                tools::log->debug("Projection to -{}: Energy: {:.16f} | Variance {:.3e}", target_sector.value(), energy_neg, variance_neg);
+                tools::log->debug("Projection to +{}: Energy: {:.16f} | Variance {:.3e}", target_sector.value(), energy_pos, variance_pos);
                 if(std::isnan(variance_neg) and std::isnan(variance_pos))
                     tools::log->warn("Both -{0} and +{0} projections failed to yield a valid variance", target_sector.value());
 
-                if(not std::isnan(variance_neg) and variance_neg < variance_pos)
-                    tensors = tensors_neg;
-                else if(not std::isnan(variance_pos))
-                    tensors = tensors_pos;
+                switch(status.opt_ritz) {
+                    case OptRitz::SM: { // Take the smallest |energy|
+                        if(std::abs(energy_neg) < std::abs(energy_pos)) {
+                            tensors = tensors_neg;
+                        } else if(not std::isnan(energy_pos)) {
+                            tensors = tensors_pos;
+                        }
+                        break;
+                    }
+                    case OptRitz::SR: { // Take the smallest energy
+                        if(energy_neg < energy_pos) {
+                            tensors = tensors_neg;
+                        } else if(not std::isnan(energy_pos)) {
+                            tensors = tensors_pos;
+                        }
+                        break;
+                    }
+                    case OptRitz::LR: { // Take the largest energy
+                        if(energy_neg > energy_pos) {
+                            tensors = tensors_neg;
+                        } else if(not std::isnan(energy_pos)) {
+                            tensors = tensors_pos;
+                        }
+                        break;
+                    }
+                    case OptRitz::IS:
+                    case OptRitz::TE:
+                    case OptRitz::NONE: { // Take the smallest variance
+                        if(variance_neg < variance_pos) {
+                            tensors = tensors_neg;
+                        } else if(not std::isnan(variance_neg)) {
+                            tensors = tensors_pos;
+                        }
+                        break;
+                    }
+                }
+
             } else {
                 // Here the spin component is close to one sector. We just project to the nearest sector
                 // It may turn out that the spin component is almost exactly +-1 already, then no projection happens, but other
                 // routines may go through, such as sign selection on MPO² projection.
-
                 tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
             }
             tensors.rebuild_edges();
+            auto energy_new    = tools::finite::measure::energy(tensors);
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
             auto entropies_new = tools::finite::measure::entanglement_entropies(*tensors.state);
             if(variance_new != variance_old or entropies_new != entropies_old) {
-                tools::log->info("Projection result: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
-                                 fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+                tools::log->info("Projection result: energy {:.16f} -> {:.16f} variance {:.4e} -> {:.4e}  | spin components {:.16f} -> {:.16f}", energy_old,
+                                 energy_new, variance_old, variance_new, fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
                 if(tools::log->level() <= spdlog::level::debug)
                     for(const auto &[i, e] : iter::enumerate(entropies_old)) {
                         tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);

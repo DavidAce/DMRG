@@ -109,7 +109,7 @@ namespace svd {
                                                                                           const svd::config &settings);
 
         template<typename Scalar>
-        Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
+        static Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
 
         template<typename Derived>
         auto do_svd(const Eigen::DenseBase<Derived> &mat, const svd::config &svd_cfg = svd::config()) {
@@ -294,6 +294,14 @@ namespace svd {
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo,
                                                                                      const svd::config              &svd_cfg = svd::config());
+
+        template<typename Scalar>
+        std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> invert_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo,
+                                                                                     const svd::config              &svd_cfg = svd::config());
+        template<typename Scalar>
+        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> invert_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo,
+                                                                                     const svd::config              &svd_cfg = svd::config());
+
         template<typename Scalar>
         std::pair<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 4>> split_mpo_pair(const Eigen::Tensor<Scalar, 6> &mpo,
                                                                                      const svd::config              &svd_cfg = svd::config()) {

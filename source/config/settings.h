@@ -304,6 +304,14 @@ namespace settings {
             inline auto        u_wkind      = LbitCircuitGateWeightKind::EXPDECAY;     /*!< Weights w_i in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite fields in the Hamiltonian */
             inline auto        u_mkind      = LbitCircuitGateMatrixKind::MATRIX_V3;    /*!< MATRIX_(V1|V2|V3) controls the kind of Hermitian matrix used in the unitary circuit gates */
         }
+
+        /*! \namespace settings::model::xxz Settings for the XXZ model */
+        namespace xxz {
+            inline double       h_wdth        = 0;              /*!< Width of the distribution for on-site fields. If uniform: [-h_wdth, h_wdth] */
+            inline double       delta         = 0;              /*!< Delta is the transverse ZZ coupling */
+            inline long         spin_dim      = 2;              /*!< Spin dimension */
+            inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
+        }
     }
 
     /*! \namespace settings::idmrg Settings for the infinite DMRG algorithm */

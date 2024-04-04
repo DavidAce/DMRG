@@ -25,7 +25,7 @@ namespace eig {
         primme_closest_leq,
         primme_closest_abs,
         primme_largest_abs
-    };                                         // Choice of eigenvalue. LA is largest algebraic, and so on.
+    }; // Choice of eigenvalue. LA is largest algebraic, and so on.
     enum class Factorization { NONE, LDLT, LLT, LU };
     enum class Storage { DENSE, SPARSE, MPS }; // Eigen Dense or Sparse, or std::vector for container
     enum class Shinv { ON, OFF };
@@ -98,8 +98,16 @@ namespace eig {
             default: throw std::logic_error("No valid eig::Lib given");
         }
     }
-
     inline std::string_view LibToString(std::optional<Lib> lib) { return lib ? LibToString(lib.value()) : "Lib:NONE"; }
+
+    constexpr std::string_view TypeToString(Type type) {
+        switch(type) {
+            case Type::REAL: return "REAL";
+            case Type::CPLX: return "CPLX";
+            default: throw std::logic_error("Not a valid eig::Type");
+        }
+    }
+    constexpr std::string_view TypeToString(std::optional<Type> type) { return type ? TypeToString(type.value()) : "Type:UNKNOWN"; }
 
     inline PrimmeMethod stringToMethod(std::optional<std::string> methodstring) {
         if(not methodstring.has_value()) return PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS;

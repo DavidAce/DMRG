@@ -132,7 +132,7 @@ namespace tools::finite::opt {
             if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
             if(not solver.config.sigma) solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one to shift enough
         } else if(solver.config.lib == eig::Lib::PRIMME) {
-            if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
+            if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SM;
             if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->has_compressed_mpo_squared())
                 throw except::logic_error("optimize_variance_eigs with PRIMME with sigma requires non-compressed MPO²");
         }
@@ -151,18 +151,24 @@ namespace tools::finite::opt {
         eig::solver solver;
         auto       &cfg = solver.config;
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        cfg.tol             = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        cfg.maxIter         = 1000;
-        cfg.maxNev          = 1;
-        cfg.maxNcv          = 4;
-        cfg.compress        = false;
-        cfg.maxTime         = 2 * 60 * 60; // Two hours
-        cfg.lib             = eig::Lib::PRIMME;
-        cfg.ritz            = eig::Ritz::primme_smallest; // eig::Ritz::SA;
+        cfg.tol      = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        cfg.maxIter  = 1000;
+        cfg.maxNev   = 1;
+        cfg.maxNcv   = 4;
+        cfg.compress = false;
+        cfg.maxTime  = 2 * 60 * 60; // Two hours
+        cfg.lib      = eig::Lib::PRIMME;
+        switch(meta.optRitz) {
+            case OptRitz::SM: cfg.ritz = eig::Ritz::primme_smallest; break; // eig::Ritz::SA;
+            case OptRitz::SR: cfg.ritz = eig::Ritz::primme_smallest; break;
+            case OptRitz::LR: cfg.ritz = eig::Ritz::primme_largest; break;
+            default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
+        }
+
         cfg.compute_eigvecs = eig::Vecs::ON;
         cfg.loglevel        = 2;
-        // cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
         cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
+        // cfg.primme_method = eig::PrimmeMethod::PRIMME_JDQMR_ETol; // eig::PrimmeMethod::PRIMME_JDQMR;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)

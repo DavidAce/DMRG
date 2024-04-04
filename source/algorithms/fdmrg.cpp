@@ -273,7 +273,7 @@ void fdmrg::update_state() {
     // Use environment expansion if alpha_expansion is set
     // Note that this changes the mps and edges adjacent to "tensors.active_sites"
     if(opt_meta.alpha_expansion) {
-        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::ENE, svd::config(settings::fdmrg::bond_max, std::min(1e-12, status.trnc_min)));
+        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::ENE, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
         if(tensors.active_problem_size() > opt_meta.problem_size) {
             // The problem size has grown after expansion. We need to reevaluate the choice of solver.
             opt_meta.problem_size = tensors.active_problem_size();

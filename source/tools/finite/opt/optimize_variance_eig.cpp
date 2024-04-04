@@ -18,6 +18,20 @@ namespace tools::finite::opt::internal {
         auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
         solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, 1, 0.0, 1.0);
         extract_results(tensors, initial_mps, meta, solver, results, false);
+        // if(meta.chosen_sites.size() <= 4) {
+        //     // Print the whole spectrum
+        //     eig::solver solver1, solver2;
+        //     auto        H1 = tensors.get_effective_hamiltonian<Scalar>();
+        //     auto        H2 = tensors.get_effective_hamiltonian_squared<Scalar>();
+        //     solver1.eig<eig::Form::SYMM>(H1.data(), H1.dimension(0));
+        //     solver2.eig<eig::Form::SYMM>(H2.data(), H2.dimension(0));
+        //     auto evals1 = eig::view::get_eigvals<real>(solver1.result);
+        //     auto evals2 = eig::view::get_eigvals<real>(solver2.result);
+        //     for(long idx = 0; idx < std::min(evals1.size(), evals2.size()); ++idx) {
+        //         fmt::print("idx {:2}: H {:20.16f}  H² {:20.16f}\n",idx, evals1[idx], evals2[idx]);
+        //     }
+        //     fmt::print("\n");
+        // }
     }
 
     opt_mps optimize_variance_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {

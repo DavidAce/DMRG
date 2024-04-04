@@ -424,6 +424,15 @@ namespace num {
     [[nodiscard]] R prev_power_of_two(T val) {
         return static_cast<R>(std::pow<long>(2, safe_cast<long>(std::floor(std::log2(std::real(val - 1))))));
     }
+    template<typename R, typename T>
+    [[nodiscard]] R nearest_power_of_two(T val) {
+        auto next2 = next_power_of_two<R>(val);
+        auto prev2 = prev_power_of_two<R>(val);
+        if(std::abs(val - next2) < std::abs(val - prev2))
+            return next2;
+        else
+            return prev2;
+    }
 
     template<typename R, typename T>
     [[nodiscard]] inline R next_multiple(const T num, const T mult) {

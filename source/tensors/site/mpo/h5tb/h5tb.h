@@ -59,6 +59,20 @@ class h5tb_ising_majorana : public h5tb_base<h5tb_ising_majorana> {
     [[nodiscard]] static constexpr std::array<std::string_view, 6> get_parameter_names() noexcept;
 };
 
+class h5tb_xxz : public h5tb_base<h5tb_xxz> {
+    public:
+    struct table {
+        double           delta  = 0; /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing delta = 2lnW, W = J_wdth = 1/h_wdth */
+        double           h_rand = 0; /*!< Random on-site fields */
+        long             spin_dim = 2; /*!< Spin dimension */
+        h5pp::fstr_t<16> distribution; /*!< The random distribution of J_rand and h_rand. Choose between lognormal, normal or uniform */
+    };
+    table                                                          param;
+    void                                                           register_table_type() const;
+    [[nodiscard]] std::string                                      fmt_value(std::string_view p) const;
+    [[nodiscard]] static constexpr std::array<std::string_view, 6> get_parameter_names() noexcept;
+};
+
 class h5tb_ising_tf_rf : public h5tb_base<h5tb_ising_tf_rf> {
     public:
     struct table {

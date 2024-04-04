@@ -65,7 +65,6 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
         return pos_expanded;
     }
 
-
     // Define the left and right mps that will get modified
     state.clear_cache();
     auto  posL     = pos_expanded.front();
@@ -75,14 +74,14 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
     auto  dimL_old = mpsL.dimensions();
     auto  dimR_old = mpsR.dimensions();
 
-
     // Set up the SVD
     svd::solver svd(svd_cfg);
-    auto bond_lim = mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
-    if(not svd_cfg) svd_cfg = svd::config();
-    if(not svd_cfg->rank_max) svd_cfg->rank_max = bond_lim;
-    if(not svd_cfg->truncation_limit) svd_cfg->truncation_limit = settings::solver::svd_truncation_lim;
-    svd_cfg->rank_max = std::min(bond_lim, svd_cfg->rank_max.value());
+    auto        bond_lim = mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR());
+    // bond_lim             = std::clamp<long>(bond_lim, mpsL.get_chiR(), static_cast<long>(static_cast<double>(mpsL.get_chiR()) * 1.5));
+    // Bond dimension can't grow faster than x spin_dim. But we hold it back a little more than that
+    svd_cfg                   = svd_cfg.value_or(svd::config());
+    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::solver::svd_truncation_lim);
+    svd_cfg->rank_max         = std::min(bond_lim, svd_cfg->rank_max.value_or(bond_lim));
 
     if(state.get_direction() > 0) {
         // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
@@ -158,7 +157,7 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
             }
         }
         tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | ε {:.2e} |χlim {}", pos_expanded, alpha.value(), dimR_old[1],
-                          ML_PL.dimension(2), mpsR.get_chiL(),svd_cfg->truncation_limit, bond_lim);
+                          ML_PL.dimension(2), mpsR.get_chiL(), svd_cfg->truncation_limit, bond_lim);
     }
 
     if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
