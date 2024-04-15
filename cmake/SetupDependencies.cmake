@@ -18,6 +18,7 @@ find_package(gfortran                   REQUIRED OPTIONAL_COMPONENTS quadmath)
 find_package(Lapacke                    REQUIRED MODULE)
 find_package(pcg-cpp                    REQUIRED)
 find_package(Eigen3     3.4.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
+find_package(Ceres      2.2.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
 find_package(h5pp       1.11.0...1.11.2 REQUIRED)                                         # h5pp for writing to file binary in format
 find_package(fmt        10.1.0...10.1.2 REQUIRED)
 find_package(spdlog     1.11.0...1.12.0 REQUIRED)
@@ -36,11 +37,13 @@ pkg_install(arpack-ng)
 pkg_install(arpack++)
 pkg_install(primme)
 pkg_install(LBFGSpp)
+pkg_install(cppoptlib)
 
 find_package(arpack-ng 3.8.0...3.9.0 REQUIRED MODULE BYPASS_PROVIDER)
 find_package(arpack++                REQUIRED MODULE BYPASS_PROVIDER)
 find_package(primme                  REQUIRED MODULE BYPASS_PROVIDER)
 find_package(lbfgspp   0.3.0         REQUIRED CONFIG BYPASS_PROVIDER)
+find_package(cppoptlib               REQUIRED MODULE BYPASS_PROVIDER)
 
 # Link all dependencies to dmrg-deps
 if(NOT TARGET dmrg-deps)
@@ -55,6 +58,7 @@ target_link_libraries(dmrg-deps INTERFACE
             pcg-cpp::pcg-cpp
             h5pp::h5pp
             Eigen3::Eigen
+            Ceres::ceres
             fmt::fmt
             spdlog::spdlog
             lapacke::lapacke
@@ -62,6 +66,7 @@ target_link_libraries(dmrg-deps INTERFACE
             arpack-ng::arpack-ng
             primme::primme
             lbfgspp
+            cppoptlib::cppoptlib
             # We link Backward::Backward on the dmrg-stacktrace object directly
             )
 
