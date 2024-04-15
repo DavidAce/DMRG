@@ -190,7 +190,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies_log2(const St
 }
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state) {
-    if(state.get_length<long>() >= 24) return subsystem_entanglement_entropies_swap_log2(state, svd::config(2*state.find_largest_bond(), 1e-8));
+    if(state.get_length<long>() >= 12) return subsystem_entanglement_entropies_swap_log2(state, svd::config(4*state.find_largest_bond(), 1e-12));
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
     auto            t_see   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
     auto            len     = state.get_length<long>();
@@ -199,7 +199,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
     Eigen::ArrayXXd see     = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
     bool            is_real = state.is_real();
     for(long off = 0; off < len; ++off) {
-        for(long ext = 1; ext <= len / 2; ++ext) {
+        for(long ext = 1; ext <= len; ++ext) {
             if(off + ext > len) continue;
             // Check if the segment includes the edge, in which case
             // we can simply take the bipartite entanglement entropy
@@ -216,7 +216,6 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
                 auto sites = num::range<size_t>(off, off + ext);
                 auto evs   = Eigen::ArrayXd();
                 if(is_real) {
-#pragma message "Avoid density matrices: use cyclic permutation of sites (using swaps) to get any subsystem entropie directly from bipartite schmidt values"
                     auto rho = state.get_reduced_density_matrix<real>(sites);
                     tools::log->trace("eig rho_real: {} ...", rho.dimensions());
                     if(rho.dimension(0) <= 8192) {
@@ -281,12 +280,12 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
         }
         auto bee = measure::entanglement_entropies_log2(state_swap); // bipartite entanglement entropies
 
-        for(long ext = 1; ext <= len / 2; ++ext) {
+        for(long ext = 1; ext <= len; ++ext) {
             if(off + ext > len) continue;
             auto idx          = safe_cast<size_t>(ext);
             see(ext - 1, off) = bee[idx];
         }
-        state.clear_cache();
+        state.clear_cache(LogPolicy::QUIET);
     }
     // tools::log->info("subsystem entanglement entropies swap {:.3e} s: \n{}\n", t_see->get_last_interval(), linalg::matrix::to_string(see, 16));
     tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());

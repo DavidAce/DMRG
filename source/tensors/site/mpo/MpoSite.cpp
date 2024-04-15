@@ -224,17 +224,17 @@ bool MpoSite::has_compressed_mpo_squared() const {
      *           3
      */
     if(not has_mpo_squared()) return false;
-    const auto &mpo    = MPO();
+    auto        mpo    = get_mpo(energy_shift_mpo);
     const auto &mpo_sq = MPO2();
-    auto        d0     = mpo.dimension(0);
-    auto        d1     = mpo.dimension(1);
-    auto        d2     = parity_shift_sign_mpo2 == 0 ? 0 : 2;
+    auto        dp     = parity_shift_sign_mpo2 == 0 ? 0 : 2;
+    auto        d0     = mpo.dimension(0) * mpo.dimension(0) + dp;
+    auto        d1     = mpo.dimension(1) * mpo.dimension(1) + dp;
     if(get_position() == 0)
-        return mpo_sq.dimension(1) < d1 * d1 + d2;
+        return mpo_sq.dimension(1) < d1;
     else if(get_position() + 1 == settings::model::model_size)
-        return mpo_sq.dimension(0) < d0 * d0 + d2;
+        return mpo_sq.dimension(0) < d0;
     else
-        return mpo_sq.dimension(0) < d0 * d0 + d2 or mpo_sq.dimension(1) < d1 * d1 + d2;
+        return mpo_sq.dimension(0) < d0 or mpo_sq.dimension(1) < d1;
 }
 
 double MpoSite::get_energy_shift_mpo() const { return energy_shift_mpo; }
@@ -248,7 +248,6 @@ void   MpoSite::set_energy_shift_mpo(double site_energy) {
 
 template<typename T>
 Eigen::Tensor<T, 4> MpoSite::get_parity_shifted_mpo(const Eigen::Tensor<T, 4> &mpo_build) const {
-    if(parity_shift_ritz_mpo != OptRitz::SR and parity_shift_ritz_mpo != OptRitz::LR) return mpo_build;
     if(std::abs(parity_shift_sign_mpo) != 1) return mpo_build;
     if(parity_shift_axus_mpo.empty()) return mpo_build;
     // This redefines H --> H - r*Q(σ), where
@@ -315,10 +314,6 @@ void MpoSite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view axis
         tools::log->warn("MpoSite::set_parity_shift_mpo: wrong sign value [{}] | expected -1 or 1", sign);
         return;
     }
-    if(ritz != OptRitz::SR and ritz != OptRitz::LR) {
-        tools::log->warn("MpoSite::set_parity_shift_mpo: wrong ritz value [{}] | expected SR or LR", enum2sv(ritz));
-        return;
-    }
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign != parity_shift_sign_mpo or axus != parity_shift_axus_mpo) {
         tools::log->trace("MpoSite[{}]::set_parity_shift_mpo: {} {:+} {}", get_position(), enum2sv(ritz), sign, axus);
@@ -378,8 +373,8 @@ Eigen::Tensor<cplx, 4> MpoSite::get_parity_shifted_mpo_squared(const Eigen::Tens
     auto d1 = mpo_build.dimension(1);
     auto d2 = mpo_build.dimension(2);
     auto d3 = mpo_build.dimension(3);
-    auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo2);
     auto id = qm::spin::half::id;
+    auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo2);
 
     Eigen::Tensor<cplx, 4> mpo2_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
     mpo2_with_parity_shift_op.setZero();
@@ -444,16 +439,17 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
                 switch(parity_shift_ritz_mpo) {
                     case OptRitz::SR: r = -1.0; break;
                     case OptRitz::LR: r = +1.0; break;
+                    case OptRitz::SM: r = -1.0; break;
                     default: throw except::runtime_error("expected ritz SR or LR, got: {}", enum2sv(parity_shift_ritz_mpo));
                 }
                 q = parity_shift_sign_mpo;
             }
 
-            r *= 10; // Increase the shift by some large factor to make sure the target energy in that axis is actually extremal
+            double a = 1.5*energy_maximum_estimate; // Increase the shift by some large factor to make sure the target energy in that axis is actually extremal
 
             ledge(ldim - 3) = 1.0; // The bottom left corner
-            ledge(ldim - 2) = -r * 0.5;
-            ledge(ldim - 1) = -r * 0.5 * (-q);
+            ledge(ldim - 2) = -a * r * 0.5;
+            ledge(ldim - 1) = -a * r * 0.5 * (-q);
         }
     }
     return ledge;
@@ -487,7 +483,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_right(const Eigen::Tensor<Scalar,
              *        |0  0  0  σ|
              *  So the right edge picks out the column for h, as well as 1 and σ along the diagonal
              */
-            redge(0)        = 1; // The bottom left corner of the original non-parity-shifted mpo
+            redge(0)        = 1.0; // The bottom left corner of the original non-parity-shifted mpo
             redge(rdim - 2) = 1.0;
             redge(rdim - 1) = 1.0;
         }

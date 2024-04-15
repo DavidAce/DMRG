@@ -39,7 +39,7 @@ namespace settings {
         /*! Total number of threads, num_threads = OMP_NUM_THREADS + std::threads.
          * If num_threads == OMP_NUM_THREADS, disables std::threads for Eigen::Tensor are disabled  num_threads <= 0 will try to use as many as possible
          * */
-        inline unsigned int num_threads = 1;                                       /*!< Total number of threads, num_threads = OMP_NUM_THREADS + std::threads. If num_threads == OMP_NUM_THREADS, disables std::threads for Eigen::Tensor are disabled  num_threads <= 0 will try to use as many as possible */
+        inline unsigned int num_threads = 1;                                       /*!< Total number of c++11 threads, (mainly used by Eigen::Tensor)  */
         inline unsigned int max_threads = std::thread::hardware_concurrency();     /*!< Maximum number of threads supported on this runner node */
         inline unsigned int show_threads = false;                                  /*!< Show threading information and exit without running a simulation */
 
@@ -193,8 +193,8 @@ namespace settings {
     namespace solver {
         inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
         inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
+        inline double   eigs_tol_max                    = 1e-10 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline double   eigs_tol_max                    = 1e-8 ;                   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_ncv                        = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
         inline size_t   eigs_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */

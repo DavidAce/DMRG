@@ -18,7 +18,7 @@ add_source_target(dmrg-tools-finite-ops
 
 add_source_target(dmrg-tools-finite-mpo
         TARGET_SOURCES
-            mpo.cpp
+            mpo.cpp mpo_inv.cpp
         OBJECT_LINK_LIBRARIES
             dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES

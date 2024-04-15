@@ -303,14 +303,22 @@ namespace tools::finite::h5 {
         // Check if the current entry has already been saved
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, mps_prefix);
         if(attrs == sinfo) return;
+        auto mpsIsReal = state.is_real();
         tools::log->trace("Writing mps: {} | event {} | policy {}", mps_prefix, enum2sv(sinfo.storage_event), flag2str(sinfo.get_state_storage_policy()));
         for(const auto &mps : state.mps_sites) {
             auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
-            h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
-            // TODO: what happens if L is shorter than an existing L? Does it overwrite?
+            // Delete preexisting arrays. We can keep scalars since they are just overwritten
             h5file.deleteAttribute(dsetName, "L");
             h5file.deleteAttribute(dsetName, "LC");
             h5file.deleteAttribute(dsetName, "truncation_error_LC");
+
+            if(mpsIsReal) {
+                h5file.writeDataset(Eigen::Tensor<double, 3>(mps->get_M_bare().real()), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
+            } else {
+                h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
+            }
+
+            // TODO: what happens if L is shorter than an existing L? Does it overwrite?
             h5file.writeAttribute(Eigen::Tensor<double, 1>(mps->get_L().real()), dsetName, "L");
             h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
             h5file.writeAttribute(mps->get_M_bare().dimensions(), dsetName, "dimensions");
@@ -319,7 +327,7 @@ namespace tools::finite::h5 {
             h5file.writeAttribute(mps->get_unique_id(), dsetName, "unique_id");
             h5file.writeAttribute(mps->isCenter(), dsetName, "isCenter");
             if(mps->isCenter()) {
-                h5file.writeAttribute(mps->get_LC(), dsetName, "LC");
+                h5file.writeAttribute(Eigen::Tensor<double, 1>(mps->get_LC().real()), dsetName, "LC");
                 h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error_LC");
             }
         }

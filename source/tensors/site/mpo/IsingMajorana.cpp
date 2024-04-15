@@ -143,6 +143,11 @@ long IsingMajorana::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void IsingMajorana::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
     set_parameters(all_parameters[get_position()]);
+    double W_J              = delta_to_W_J(h5tb.param.delta);
+    double W_h              = delta_to_W_h(h5tb.param.delta);
+    double g                = h5tb.param.g;
+    double L                = all_parameters.size();
+    energy_maximum_estimate = W_J * (L - 1) + W_h * L + g * (L - 1) + g * (L - 2);
 }
 
 void IsingMajorana::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {

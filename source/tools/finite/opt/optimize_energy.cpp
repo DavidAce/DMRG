@@ -33,8 +33,6 @@ namespace tools::finite::opt {
     std::vector<opt_mps> eigs_energy_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta) {
         if(meta.optFunc != OptFunc::ENERGY)
             throw except::runtime_error("eigs_energy_executor: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::ENERGY), enum2sv(meta.optFunc));
-        if(meta.optRitz == OptRitz::SM and not tensors.model->has_energy_shifted_mpo())
-            throw std::runtime_error("eigs_energy_executor with ritz [SM] requires energy-shifted MPO");
 
         eig::Ritz ritz = eig::stringToRitz(enum2sv(meta.optRitz));
         tools::log->trace("Defining Hamiltonian matrix-vector product");
@@ -48,17 +46,18 @@ namespace tools::finite::opt {
         hamiltonian.factorization = eig::Factorization::NONE; // No LU factorization by default
 
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        solver.config.tol             = settings::solver::eigs_tol_min;
+        solver.config.tol             = meta.eigs_tol.value_or(settings::solver::eigs_tol_min);
         solver.config.compress        = settings::precision::use_compressed_mpo_on_the_fly;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC;
-        solver.config.maxIter         = 10000;
-        solver.config.maxTime         = 60 * 60;
-        solver.config.maxNev          = static_cast<eig::size_type>(1);
-        solver.config.maxNcv          = static_cast<eig::size_type>(4); // arpack needs ncv ~512 to handle all cases. Primme seems content with 4.
-        solver.config.primme_locking  = false;
-        solver.config.loglevel        = 2;
+        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS;
+        solver.config.maxIter         = meta.eigs_iter_max.value_or(settings::solver::eigs_iter_max);
+        solver.config.maxTime         = 2 * 60 * 60;
+        solver.config.maxNev          = meta.eigs_nev.value_or(1);
+        solver.config.maxNcv =
+            meta.eigs_ncv.value_or(solver.config.maxNev.value() * 2); // arpack needs ncv ~512 to handle all cases. Primme seems content with 4.
+        solver.config.primme_locking = true;
+        solver.config.loglevel       = 2;
 
         Eigen::Tensor<Scalar, 3> init;
         if constexpr(std::is_same_v<Scalar, double>) {
@@ -78,10 +77,7 @@ namespace tools::finite::opt {
                 hamiltonian.factorization       = eig::Factorization::LU;
                 solver.config.shift_invert      = eig::Shinv::ON;
                 solver.config.ritz              = eig::Ritz::primme_largest_abs;
-                solver.config.sigma             = cplx(initial_mps.get_eigval(), 0.0);
-                solver.config.maxIter           = 500;
-                solver.config.maxNev            = static_cast<eig::size_type>(1);
-                solver.config.maxNcv            = static_cast<eig::size_type>(4);
+                solver.config.sigma             = cplx(meta.eigv_target.value_or(0.0), 0.0);
                 solver.config.primme_projection = "primme_proj_default";
                 solver.config.primme_locking    = false;
             } else {
@@ -91,21 +87,14 @@ namespace tools::finite::opt {
                                       size, settings::solver::eigs_max_size_shift_invert);
                 // The problem size is too big. Just find the eigenstate closest to zero
                 // Remember: since the Hamiltonian is expected to be shifted, the target energy is near zero.
-                hamiltonian.factorization           = eig::Factorization::NONE;
-                solver.config.maxIter               = 100000;
-                solver.config.maxNev                = static_cast<eig::size_type>(1);
-                solver.config.maxNcv                = static_cast<eig::size_type>(4);
-                solver.config.primme_projection     = "primme_proj_default";
-                solver.config.primme_locking        = false;
-                solver.config.primme_target_shifts  = {initial_mps.get_eigval()};
-                solver.config.ritz                  = eig::Ritz::primme_closest_abs;
-                solver.config.primme_preconditioner = preconditioner<Scalar>;
+                hamiltonian.factorization          = eig::Factorization::NONE;
+                solver.config.ritz                 = eig::Ritz::primme_closest_abs;
+                solver.config.primme_projection    = "primme_proj_default";
+                solver.config.primme_target_shifts = {meta.eigv_target.value_or(0.0)};
+                // solver.config.primme_preconditioner = preconditioner<Scalar>;
             }
         }
 
-        if(meta.eigs_tol) solver.config.tol = meta.eigs_tol.value();
-        if(meta.eigs_ncv) solver.config.maxNcv = meta.eigs_ncv.value();
-        if(meta.eigs_iter_max) solver.config.maxIter = meta.eigs_iter_max.value();
         solver.eigs(hamiltonian);
 
         std::vector<opt_mps> results;
@@ -128,8 +117,8 @@ namespace tools::finite::opt {
             return initial_mps; // The solver failed
         }
 
-        auto      comparator = [&meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
-            auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
+        auto comparator = [&meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
+            auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
             if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(meta.optRitz) {
                 case OptRitz::SR: return lhs.get_energy() < rhs.get_energy();

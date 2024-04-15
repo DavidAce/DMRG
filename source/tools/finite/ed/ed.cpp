@@ -31,9 +31,8 @@ namespace tools::finite::ed {
         auto t_tgt = tid::tic_scope("tgt_mps");
 
         tools::finite::opt::opt_mps target_mps("target_mps", tensors_ed.state->get_multisite_mps(), sites,
-                                               //                        tools::finite::measure::energy(tensors_ed) - energy_shift, // Eigval
-                                               tools::finite::measure::energy_minus_energy_shift(tensors_ed), // Eigval
                                                tools::finite::measure::energy_shift(tensors_ed),              // Energy shift for full system
+                                               tools::finite::measure::energy_minus_energy_shift(tensors_ed), // Eigval
                                                tools::finite::measure::energy_variance(tensors_ed),
                                                1.0, // Overlap
                                                tensors_ed.get_length());
@@ -48,14 +47,12 @@ namespace tools::finite::ed {
         std::vector<tools::finite::opt::opt_mps> results;
         auto                                     t_ext = tid::tic_scope("extract");
 
-        tools::finite::opt::internal::extract_results(tensors_ed, target_mps, meta, solver, results, true, 1.5);
+        tools::finite::opt::internal::extract_results(tensors_ed, target_mps, meta, solver, results, true);
         t_ext.toc();
         for(const auto &[num, mps] : iter::enumerate(results)) { tools::finite::opt::reports::eigs_add_entry(mps); }
         tools::finite::opt::reports::print_eigs_report();
 
-        auto comparator = [](const tools::finite::opt::opt_mps &lhs, const tools::finite::opt::opt_mps &rhs) {
-            return lhs.get_overlap() > rhs.get_overlap();
-        };
+        auto comparator = [](const tools::finite::opt::opt_mps &lhs, const tools::finite::opt::opt_mps &rhs) { return lhs.get_overlap() > rhs.get_overlap(); };
         if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
 
         auto  spin_dims     = std::vector<long>(tensors_ed.get_length<size_t>(), 2l);

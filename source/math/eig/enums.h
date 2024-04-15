@@ -90,6 +90,17 @@ namespace eig {
             default: throw std::logic_error("No valid eig::Ritz given");
         }
     }
+
+    inline std::string_view FactorizationToString(Factorization fact) {
+        switch(fact) {
+            case Factorization::NONE: return "NONE";
+            case Factorization::LDLT: return "LDLT";
+            case Factorization::LLT: return "LLT";
+            case Factorization::LU: return "LU";
+            default: throw std::logic_error("No valid eig::Factorization given");
+        }
+    }
+
     inline std::string_view RitzToString(std::optional<Ritz> ritz) { return ritz ? RitzToString(ritz.value()) : "Ritz:NONE"; }
     inline std::string_view LibToString(Lib lib) {
         switch(lib) {

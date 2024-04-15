@@ -32,7 +32,10 @@ namespace tools::finite::opt {
         std::vector<size_t>        chosen_sites     = {};
         std::string                label;
         std::optional<bool>        compress_otf  = std::nullopt; // Compress on the fly
+        std::optional<double>      subspace_tol  = std::nullopt;
+        std::optional<double>      eigv_target   = std::nullopt; // AKA shift
         std::optional<double>      eigs_tol      = std::nullopt;
+        std::optional<int>         eigs_nev      = std::nullopt;
         std::optional<int>         eigs_ncv      = std::nullopt;
         std::optional<int>         eigs_iter_max = std::nullopt;
         std::optional<svd::config> svd_cfg       = std::nullopt;

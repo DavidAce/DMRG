@@ -2,6 +2,7 @@
 // -- (textra first)
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
+#include "general/iter.h"
 #include "math/cast.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_dense.h"
@@ -18,7 +19,6 @@
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
-
 //
 #include <Eigen/QR>
 #include <primme/primme.h>
@@ -44,31 +44,72 @@ std::vector<int> subspace::generate_nev_list(int rows) {
 }
 
 template<typename Scalar>
-std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta) {
+std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, const OptMeta &meta) {
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
-    tools::log->trace("Finding subspace");
-    auto t_find     = tid::tic_scope("find");
+    tools::log->trace("find_subspace ...");
+    auto t_find = tid::tic_scope("find");
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
+    // Determine the eigval target (shift)
+    double eigval_target = 0;
+    if(meta.eigv_target.has_value()) {
+        eigval_target = meta.eigv_target.value();
+    } else {
+        switch(meta.optFunc) {
+            case OptFunc::OVERLAP:
+            case OptFunc::ENERGY: {
+                // We are trying
+                break;
+            }
+            case OptFunc::VARIANCE: {
+                // We are trying to find a subspace close to the current energy, on which to optimize the variance.
+                switch(meta.optRitz) {
+                    case OptRitz::NONE: throw std::logic_error("find_subspace: invalid OptRitz::NONE");
+                    case OptRitz::SR: [[fallthrough]];
+                    case OptRitz::LR: {
+                        if(model.has_energy_shifted_mpo()) {
+                            eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors); // E-Eshf Should be close to 0
+                        } else {
+                            eigval_target = tools::finite::measure::energy(tensors);
+                        }
+                        break;
+                    }
+                    // Subspace of energy eigenpairs close to eigval == 0.
+                    // Note that mpos may have an in-built energy shift already.
+                    case OptRitz::IS: [[fallthrough]];
+                    case OptRitz::TE: {
+                        if(model.has_energy_shifted_mpo()) {
+                            eigval_target = 0.0; // E-Eshf Should be close to 0
+                        } else {
+                            eigval_target = tools::finite::measure::energy(tensors);
+                        }
+                        break;
+                    }
+                    case OptRitz::SM: {
+                        eigval_target = 0.0;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     // If the mps is small enough you can afford full diag.
     if(tensors.state->active_problem_size() <= settings::solver::eig_max_size) {
-        std::tie(eigvecs, eigvals) = find_subspace_full<Scalar>(tensors);
+        std::tie(eigvecs, eigvals) = find_subspace_lapack<Scalar>(tensors);
     } else {
-        double eigval_target;
-        double energy_target = tools::finite::measure::energy(tensors);
-        if(model.has_energy_shifted_mpo()) {
-            eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors);
-            tools::log->trace("Energy shift  = {:.16f}", model.get_energy_shift_mpo());
-            tools::log->trace("Energy target = {:.16f}", energy_target);
-            tools::log->trace("Eigval target = {:.16f}", eigval_target);
-            tools::log->trace("Eigval target + Energy shift = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target, model.get_energy_shift_mpo(), energy_target);
-        } else {
-            eigval_target = energy_target;
-        }
-        std::tie(eigvecs, eigvals) = find_subspace_primme<Scalar>(tensors, eigval_target, target_subspace_error, meta);
+        // {
+        // auto [eigvecs_test, eigvals_test] = find_subspace_lapack<Scalar>(tensors);
+        // fmt::print("primme eigvals\n");
+        // for(auto &&[idx, eigv] : iter::enumerate(eigvals_test)) { fmt::print("idx {:3} | {:.16f}\n", idx, eigv); }
+        // }
+        std::tie(eigvecs, eigvals) = find_subspace_primme<Scalar>(tensors, eigval_target, meta);
+
+        // fmt::print("primme eigvals\n");
+        // for(auto &&[idx, eigv] : iter::enumerate(eigvals)) { fmt::print("idx {:3} | {:.16f}\n", idx, eigv); }
     }
     /* clang-format off */
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
@@ -95,7 +136,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     for(long idx = 0; idx < eigvals.size(); idx++) {
         // Important to normalize the eigenvectors that we get from the solver: they are not always well normalized when we get them!
         auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), multisite_mps.dimensions());
-        subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_shift, std::nullopt, overlaps(idx),
+        subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, energy_shift, eigvals(idx), std::nullopt, overlaps(idx),
                               tensors.get_length());
         subspace.back().is_basis_vector = true;
         subspace.back().set_time(eigvec_time);
@@ -111,13 +152,12 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     return subspace;
 }
 
-template std::vector<opt_mps> subspace::find_subspace<cplx>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
+template std::vector<opt_mps> subspace::find_subspace<cplx>(const TensorsFinite &tensors, const OptMeta &meta);
 
-template std::vector<opt_mps> subspace::find_subspace<real>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
+template std::vector<opt_mps> subspace::find_subspace<real>(const TensorsFinite &tensors, const OptMeta &meta);
 
 template<typename Scalar>
-std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
-                                                                          const OptMeta &meta) {
+std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const TensorsFinite &tensors, double energy_target, const OptMeta &meta) {
     tools::log->trace("Finding subspace -- partial");
     auto  t_iter = tid::tic_scope("part");
     auto &t_lu   = tid::get("lu_decomp");
@@ -180,8 +220,8 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
         if(max_overlap > 1.0 + 1e-6) throw except::runtime_error("max_overlap larger than one: {:.16f}", max_overlap);
         if(sq_sum_overlap > 1.0 + 1e-6) throw except::runtime_error("eps larger than one: {:.16f}", sq_sum_overlap);
         if(min_overlap < 0.0) throw except::runtime_error("min_overlap smaller than zero: {:.16f}", min_overlap);
-        if(subspace_error < target_subspace_error) {
-            reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, target_subspace_error);
+        if(subspace_error < meta.subspace_tol.value_or(1e-10)) {
+            reason = fmt::format("subspace error is low enough: {:.3e} < tolerance {:.3e}", subspace_error, meta.subspace_tol.value_or(1e-10));
             break;
         }
         if(meta.optFunc == OptFunc::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
@@ -194,9 +234,9 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
 }
 
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part<cplx>(const TensorsFinite &tensors, double energy_target,
-                                                                                         double target_subspace_error, const OptMeta &meta);
+                                                                                         const OptMeta &meta);
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part<real>(const TensorsFinite &tensors, double energy_target,
-                                                                                         double target_subspace_error, const OptMeta &meta);
+                                                                                         const OptMeta &meta);
 
 template<typename Scalar>
 void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
@@ -209,16 +249,16 @@ void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme
 }
 
 template<typename Scalar>
-std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(const TensorsFinite &tensors, double eigval_target, double target_subspace_error,
-                                                                            const OptMeta &meta) {
-    tools::log->trace("Finding subspace -- partial");
+std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(const TensorsFinite &tensors, double eigval_shift, const OptMeta &meta) {
+    tools::log->trace("find_subspace_primme: ritz {} | target eigval {:.16f} | subspace tolerance {:.3e}", enum2sv(meta.optRitz), eigval_shift,
+                      meta.subspace_tol.value_or(1e-10));
     auto t_iter = tid::tic_scope("part");
 
     // Initial mps and a vector map
-    const auto                        &initial_mps = tensors.state->get_multisite_mps();
-    Eigen::Map<const Eigen::VectorXcd> initial_vec(initial_mps.data(), initial_mps.size());
+    const auto &initial_mps = tensors.state->get_multisite_mps();
+    const auto  initial_vec = Eigen::Map<const Eigen::VectorXcd>(initial_mps.data(), initial_mps.size());
 
-    // Mutable initial mps vector used for initial guess in arpack
+    // Mutable initial mps vector used for initial guess
     Eigen::Tensor<Scalar, 3> init;
     if constexpr(std::is_same_v<Scalar, real>) init = tensors.state->get_multisite_mps().real();
     if constexpr(std::is_same_v<Scalar, cplx>) init = tensors.state->get_multisite_mps();
@@ -229,25 +269,26 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
 
     // Create a reusable config for multiple nev trials
+    // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
     eig::settings config;
     config.lib                  = eig::Lib::PRIMME;
-    config.tol                  = 1e-10;
-    config.maxNcv               = settings::solver::eigs_ncv;
+    config.tol                  = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
+    config.maxNev               = meta.eigs_nev;
+    config.maxNcv               = meta.eigs_ncv;
     config.shift_invert         = eig::Shinv::OFF;
-    config.maxIter              = settings::solver::eigs_iter_max;
+    config.maxIter              = meta.eigs_iter_max;
     config.ritz                 = eig::Ritz::primme_closest_abs;
-    config.primme_target_shifts = {eigval_target};
-    //    config.sigma           = energy_target;
+    config.primme_target_shifts = {eigval_shift};
+    // config.primme_projection    = "primme_proj_refined"; // TODO: What is this?
     config.compute_eigvecs = eig::Vecs::ON;
-    config.initial_guess.push_back({init.data(), 0});
-    config.primme_locking = 1;
-    config.loglevel       = 2;
+    config.primme_locking  = 1;
+    config.loglevel        = 2;
     if(initial_mps.size() <= settings::solver::eigs_max_size_shift_invert) {
         hamiltonian.set_readyCompress(tensors.model->has_compressed_mpo_squared());
         hamiltonian.factorization   = eig::Factorization::LU;
         config.shift_invert         = eig::Shinv::ON;
         config.ritz                 = eig::Ritz::primme_largest_abs;
-        config.sigma                = cplx(eigval_target, 0.0);
+        config.sigma                = cplx(eigval_shift, 0.0);
         config.primme_projection    = "primme_proj_default";
         config.primme_locking       = false;
         config.primme_target_shifts = {};
@@ -262,13 +303,21 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
         eig::solver solver;
         solver.config        = config;
         solver.config.maxNev = nev;
+        solver.config.maxNcv = std::max(16, std::max(meta.eigs_ncv.value_or(nev * 2), nev * 2));
 
         // Set the new initial guess if we are doing one more round
-        if(eigvecs.cols() != 0) {
-            solver.config.initial_guess.clear();
-            for(long n = 0; n < eigvecs.cols(); n++) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
+        if(eigvecs.size() == 0) {
+            solver.config.initial_guess.push_back({init.data(), 0});
+            config.primme_target_shifts = {eigval_shift};
+        } else {
+            for(long n = 0; n < eigvecs.cols(); ++n) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
+            // if(solver.config.shift_invert == eig::Shinv::OFF) {
+            //     config.primme_target_shifts.clear();
+            //     for(long n = 0; n < eigvals.size(); ++n) { config.primme_target_shifts.push_back({eigvals[n]}); }
+            // }
         }
-        tools::log->trace("Running eigensolver | nev {} | ncv {}", solver.config.maxNev.value(), solver.config.maxNcv.value());
+        tools::log->trace("Running eigensolver | nev {} | ncv {} | factorization {} | initial guesses {}", solver.config.maxNev.value(),
+                          solver.config.maxNcv.value(), eig::FactorizationToString(hamiltonian.factorization), solver.config.initial_guess.size());
         solver.eigs(hamiltonian);
         eigvals = eig::view::get_eigvals<real>(solver.result, false);
         eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, false);
@@ -288,8 +337,8 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
         tools::log->debug("Found {} eigenpairs | nev {} converged {} | subspace error {:.3e}", eigvals.size(), nev, solver.result.meta.nev_converged,
                           subspace_error);
 
-        if(subspace_error < target_subspace_error) {
-            reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, target_subspace_error);
+        if(subspace_error < meta.subspace_tol.value_or(1e-10)) {
+            reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, meta.subspace_tol.value_or(1e-10));
             break;
         }
         if(meta.optFunc == OptFunc::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
@@ -299,18 +348,19 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     }
     tools::log->debug("Finished iterative eigensolver -- reason: {}", reason);
     if(config.shift_invert == eig::Shinv::ON)
-        for(auto &e : eigvals) e = 1.0 / e + eigval_target;
+        for(auto &e : eigvals) e = 1.0 / e + eigval_shift;
+
     return {eigvecs, eigvals};
 }
 
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme<cplx>(const TensorsFinite &tensors, double eigval_target,
-                                                                                           double target_subspace_error, const OptMeta &meta);
+                                                                                           const OptMeta &meta);
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme<real>(const TensorsFinite &tensors, double eigval_target,
-                                                                                           double target_subspace_error, const OptMeta &meta);
+                                                                                           const OptMeta &meta);
 
 template<typename Scalar>
-std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const TensorsFinite &tensors) {
-    tools::log->trace("Finding subspace -- full diag");
+std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_lapack(const TensorsFinite &tensors) {
+    tools::log->trace("find_subspace_lapack");
     auto t_full = tid::tic_scope("full");
     // Generate the Hamiltonian matrix
     auto effective_hamiltonian = tensors.get_effective_hamiltonian<Scalar>();
@@ -340,8 +390,8 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const 
     return {eigvecs, eigvals};
 }
 
-template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full<cplx>(const TensorsFinite &tensors);
-template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full<real>(const TensorsFinite &tensors);
+template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_lapack<cplx>(const TensorsFinite &tensors);
+template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_lapack<real>(const TensorsFinite &tensors);
 
 template<typename T>
 MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &model, const EdgesFinite &edges, const std::vector<opt_mps> &eigvecs) {
@@ -355,7 +405,7 @@ MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &m
     const auto &env2 = edges.get_multisite_env_var_blk();
     const auto &mpo2 = model.get_multisite_mpo_squared();
 
-    tools::log->trace("Contracting subspace hamiltonian squared new");
+    tools::log->trace("Generating H² in a subspace of {} eigenvectors of H", eigvecs.size());
     long dim0   = mpo2.dimension(2);
     long dim1   = env2.L.dimension(0);
     long dim2   = env2.R.dimension(0);

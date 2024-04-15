@@ -64,7 +64,7 @@ StoragePolicy StorageInfo::get_state_storage_policy() const {
     if(state_name == "state_emax") return settings::storage::mps::state_emax::policy;
     if(state_name == "state_real") return settings::storage::mps::state_real::policy;
     if(state_name == "state_lbit") return settings::storage::mps::state_lbit::policy;
-    if(state_name == "state_eff")  return settings::storage::mps::state_lbit::policy; // Reuse lbit
+    if(state_name == "state_eff") return settings::storage::mps::state_lbit::policy; // Reuse lbit
 
     // xDMRG states are numbered like "state_#". We should therefore get the policy simply based on the algorithm
     if(algo_type == AlgorithmType::xDMRG) return settings::storage::mps::state_emid::policy;
@@ -73,18 +73,25 @@ StoragePolicy StorageInfo::get_state_storage_policy() const {
 
 std::string StorageInfo::get_state_prefix() const {
     assert_well_defined();
-    if(storage_event == StorageEvent::RBDS_STEP) return  fmt::format("{}/{}/rbds", algo_name, state_name);
-    if(storage_event == StorageEvent::RTES_STEP) return  fmt::format("{}/{}/rtes", algo_name, state_name);
+    if(storage_event == StorageEvent::RBDS_STEP) return fmt::format("{}/{}/rbds", algo_name, state_name);
+    if(storage_event == StorageEvent::RTES_STEP) return fmt::format("{}/{}/rtes", algo_name, state_name);
     return fmt::format("{}/{}", algo_name, state_name);
 }
 std::string StorageInfo::get_mps_prefix() const {
     assert_well_defined();
     std::string tag;
-    auto        state_prefix = get_state_prefix();
+    auto        state_prefix   = get_state_prefix();
+    auto        storage_policy = get_state_storage_policy();
     switch(storage_event) {
         case StorageEvent::ITERATION: {
             // TODO check storage level. If replace, just set "iter_last"
-            return fmt::format("{}/mps/iter_{}", state_prefix, iter);
+            if(has_flag(storage_policy, StoragePolicy::REPLACE) and has_flag(storage_policy, StoragePolicy::FINISH)) {
+                return fmt::format("{}/mps", state_prefix, iter); // Just update the one at the final position
+            } else if(has_flag(storage_policy, StoragePolicy::REPLACE)) {
+                return fmt::format("{}/mps/iter_last", state_prefix, iter);
+            } else {
+                return fmt::format("{}/mps/iter_{}", state_prefix, iter);
+            }
         }
         case StorageEvent::INIT: return fmt::format("{}/mps/init", state_prefix);
         case StorageEvent::FINISHED: return fmt::format("{}/mps", state_prefix);
@@ -114,7 +121,6 @@ StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_n
       algorithm_has_succeeded(status.algorithm_has_succeeded) {
     assert_well_defined();
 }
-
 
 StorageAttrs::StorageAttrs(const StorageInfo &sinfo) {
     iter          = sinfo.iter;

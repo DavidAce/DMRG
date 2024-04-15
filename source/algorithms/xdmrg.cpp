@@ -48,12 +48,21 @@ void xdmrg::resume() {
         tools::log->info("Resuming state [{}]", state_prefix);
         try {
             tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
-        } catch(const except::load_error &le) { continue; }
+        } catch(const except::load_error &le) {
+            tools::log->error("{}", le.what());
+            continue;
+        }
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to infer it from the state prefix itself
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);
         tensors.state->set_name(name);
+
+        // Apply shifts and ompress the model
+        set_energy_shift_mpo();
+        set_parity_shift_mpo();
+        set_parity_shift_mpo_squared();
+        rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
 
         // Initialize a custom task list
         std::deque<xdmrg_task> task_list;
@@ -171,44 +180,50 @@ void xdmrg::run_preprocessing() {
     find_energy_range();
     init_energy_target();
     set_energy_shift_mpo();
+    set_parity_shift_mpo();
     set_parity_shift_mpo_squared();
     rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
     write_to_file(StorageEvent::MODEL);
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
 
-    if(tensors.get_length<long>() <= 6) {
+    if(tensors.get_length<long>() <= 4) {
         // Print the spectrum if small
         // tensors.clear_cache();
-        auto        L     = tensors.get_length<long>();
-        auto        sites = num::range<size_t>(0, L);
-        auto        ham1_ = tensors.model->get_multisite_ham(sites);
-        auto        ham1i = svd::solver::pseudo_inverse(ham1_);
+        auto        svd_solver = svd::solver();
+        auto        L          = tensors.get_length<long>();
+        auto        sites      = num::range<size_t>(0, L);
+        auto        ham1_      = tensors.model->get_multisite_ham(sites);
+        auto        ham1i      = svd_solver.pseudo_inverse(ham1_);
         eig::solver solver1_, solver1i;
         solver1_.eig<eig::Form::SYMM>(ham1_.data(), ham1_.dimension(0));
         solver1i.eig<eig::Form::SYMM>(ham1i.data(), ham1i.dimension(0));
 
-
         auto evals1_ = eig::view::get_eigvals<real>(solver1_.result);
         auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
-
-
-        // Try the iterative scheme
-        auto impos = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
-
-        auto imodel = *tensors.model;
-        for(auto &&[pos, impo] : iter::enumerate(imodel.MPO)) impo->set_mpo(impos[pos]);
-        auto ham3i = imodel.get_multisite_ham(sites);
-        // auto ham3i = svd::solver::pseudo_inverse(ham3i);
-        eig::solver solver3i;
-        solver3i.eig<eig::Form::SYMM>(ham3i.data(), ham3i.dimension(0));
-        auto evals3i = eig::view::get_eigvals<real>(solver3i.result);
-
-        fmt::print("{:^8} {:<20} {:<20} {:<20} {:<20}\n"," ", "H¹", "H⁻¹", "H⁻¹(iter)", "diff");
-        for(long idx = 0; idx < std::min(evals1i.size(), evals3i.size()); ++idx) {
-            fmt::print("idx {:2}: {:20.16f} {:20.16f} {:20.16f} {:.4e}\n", idx, evals1_[idx], evals1i[idx], evals3i[idx], std::abs(evals1i[idx] - evals3i[idx]));
+        fmt::print("{:^8} {:<20} {:<20}\n", " ", "H¹", "H⁻¹");
+        for(long idx = 0; idx < std::min(evals1_.size(), evals1i.size()); ++idx) {
+            fmt::print("idx {:2}: {:20.16f} {:20.16f}\n", idx, evals1_[idx], evals1i[idx]);
         }
         fmt::print("\n");
+        // Try the iterative scheme
+        // auto impos = tools::finite::mpo::get_inverted_mpos(tensors.model->get_compressed_mpos_squared(MposWithEdges::ON));
+        // auto impos = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
+
+        // auto imodel = *tensors.model;
+        // for(auto &&[pos, impo] : iter::enumerate(imodel.MPO)) impo->set_mpo(impos[pos]);
+        // auto ham3i = imodel.get_multisite_ham(sites);
+        // // auto ham3i = svd::solver::pseudo_inverse(ham3i);
+        // eig::solver solver3i;
+        // solver3i.eig<eig::Form::SYMM>(ham3i.data(), ham3i.dimension(0));
+        // auto evals3i = eig::view::get_eigvals<real>(solver3i.result);
+
+        // fmt::print("{:^8} {:<20} {:<20} {:<20} {:<20}\n", " ", "H¹", "H⁻¹", "H⁻¹(iter)", "diff");
+        // for(long idx = 0; idx < std::min(evals1i.size(), evals3i.size()); ++idx) {
+        //     fmt::print("idx {:2}: {:20.16f} {:20.16f} {:20.16f} {:.4e}\n", idx, evals1_[idx], evals1i[idx], evals3i[idx],
+        //                std::abs(evals1i[idx] - evals3i[idx]));
+        // }
+        // fmt::print("\n");
 
         // tools::log->info("Iterative inverse  H⁻¹");
         // for(long idx = 0; idx < evals3i.size(); ++idx) { fmt::print("idx {:2}: {:20.16f}\n", idx, evals3i[idx]); }
@@ -267,13 +282,16 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
     // Set up a multiplier for number of iterations
-    size_t iter_stuck_multiplier = std::max(1ul, status.algorithm_has_stuck_for * settings::solver::eigs_stuck_multiplier);
+    size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::solver::eigs_stuck_multiplier, status.algorithm_has_stuck_for)));
     // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
 
     // Copy settings
     m1.min_sites     = settings::strategy::multisite_opt_site_def;
     m1.max_sites     = settings::strategy::multisite_opt_site_def;
+    m1.subspace_tol  = settings::precision::target_subspace_error;
     m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
+    m1.eigs_nev      = 1;
+    m1.eigv_target   = 0.0; // We always target 0 when OptFunc::VARIANCE
     m1.eigs_ncv      = settings::solver::eigs_ncv;
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
                            ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
@@ -319,6 +337,13 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
+
+    if(status.energy_variance_lowest < 1e-7 and status.algorithm_has_stuck_for > 0) {
+        m1.optFunc   = OptFunc::VARIANCE;
+        m1.optAlgo   = OptAlgo::DIRECTX2;
+        m1.optSolver = OptSolver::EIGS;
+        m1.optRitz   = OptRitz::SM;
+    }
 
     if(status.env_expansion_alpha > 0) {
         // If we are doing 1-site dmrg, then we better use subspace expansion

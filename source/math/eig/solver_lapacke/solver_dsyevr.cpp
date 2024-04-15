@@ -69,8 +69,8 @@ int eig::solver::dsyevr(real *matrix /*!< gets destroyed */, size_type L, char r
         eig::log->trace("Found {} eigenvalues", m_found);
         eigvals.resize(static_cast<size_t>(m_found));
         eigvecs.resize(static_cast<size_t>(ldz * m_found));
-        result.meta.eigvecsR_found = true;
-        result.meta.eigvals_found  = true;
+        result.meta.eigvecsR_found = m_found > 0;
+        result.meta.eigvals_found  = m_found > 0;
         result.meta.rows           = L;
         result.meta.cols           = m_found;
         result.meta.nev            = m_found;

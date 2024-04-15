@@ -79,7 +79,7 @@ namespace settings {
  *
  */
 opt_mps tools::finite::opt::internal::optimize_variance_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                             [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
+                                                                 [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
     tools::log->trace("Optimizing subspace");
     auto t_sub = tid::tic_scope("subspace");
     initial_mps.validate_initial_mps();
@@ -97,11 +97,31 @@ opt_mps tools::finite::opt::internal::optimize_variance_subspace(const TensorsFi
 
     std::vector<opt_mps> subspace;
     switch(meta.optType) {
-        case OptType::CPLX: subspace = internal::subspace::find_subspace<cplx>(tensors, settings::precision::target_subspace_error, meta); break;
-        case OptType::REAL: subspace = internal::subspace::find_subspace<real>(tensors, settings::precision::target_subspace_error, meta); break;
+        case OptType::CPLX: subspace = internal::subspace::find_subspace<cplx>(tensors, meta); break;
+        case OptType::REAL: subspace = internal::subspace::find_subspace<real>(tensors, meta); break;
     }
 
     tools::log->trace("Subspace found with {} eigenvectors", subspace.size());
+
+    if(subspace.size() == 1) {
+        auto &sub_mps      = subspace.front();
+        auto  measurements = MeasurementsTensorsFinite();
+        auto  sub_energy   = tools::finite::measure::energy(subspace.front().get_tensor(), *tensors.model, *tensors.edges, meta.svd_cfg, &measurements);
+        auto  sub_variance = tools::finite::measure::energy_variance(subspace.front().get_tensor(), *tensors.model, *tensors.edges, meta.svd_cfg, &measurements);
+        subspace.front().set_energy(sub_energy);
+        subspace.front().set_variance(sub_variance);
+        if(meta.optRitz == OptRitz::SM) {
+            if(std::abs(sub_mps.get_energy()) < std::abs(initial_mps.get_energy())) {
+                sub_mps.validate_result();
+                return subspace.front();
+            } else {
+                // Use as initial guess
+                meta.optRitz = OptRitz::SM;
+                sub_mps.validate_initial_mps();
+                return optimize_variance_eigs(tensors, sub_mps, status, meta);
+            }
+        }
+    }
 
     /*
      * Filter the eigenvectors

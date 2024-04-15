@@ -309,8 +309,11 @@ void ModelFinite::set_energy_shift_mpo(double energy_shift) {
 void ModelFinite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view axis) {
     if(not qm::spin::half::is_valid_axis(axis)) return;
     auto axus = qm::spin::half::get_axis_unsigned(axis);
-    if(get_parity_shift_mpo() == std::make_tuple(ritz, sign, axus)) return;
-    tools::log->info("Setting MPO parity shift: {} {}", enum2sv(ritz), axis);
+    if(get_parity_shift_mpo() == std::make_tuple(ritz, sign, axus)) {
+        tools::log->debug("set_parity_shift_mpo: not needed -- parity shift is already [{} {} {}]", enum2sv(ritz), sign, axus);
+        return;
+    }
+    tools::log->info("Setting MPO parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
     for(const auto &mpo : MPO) mpo->set_parity_shift_mpo(ritz, sign, axis);
     clear_cache();
 }

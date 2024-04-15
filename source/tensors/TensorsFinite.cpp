@@ -198,12 +198,15 @@ void TensorsFinite::set_parity_shift_mpo(OptRitz ritz, std::string_view axis) {
     auto sign = qm::spin::half::get_sign(axis);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign == 0) {
-        tools::log->debug("set_parity_shift_mpo: no sector sign given for the target axis");
-        return;
+        tools::log->info("set_parity_shift_mpo: no sector sign given for the target axis: taking the closest sector");
+        sign = tools::finite::measure::spin_sign(*state, axis);
     }
     auto parity_shift_new = std::make_tuple(ritz, sign, axus);
     auto parity_shift_old = model->get_parity_shift_mpo();
-    if(parity_shift_new == parity_shift_old) return;
+    if(parity_shift_new == parity_shift_old) {
+        tools::log->debug("set_parity_shift_mpo: not needed -- parity shift is already [{} {} {}]", enum2sv(ritz), sign, axus);
+        return;
+    }
     model->set_parity_shift_mpo(ritz, sign, axus); // will ignore the sign on the axis string if present
 }
 
@@ -355,8 +358,9 @@ void TensorsFinite::rebuild_mpo_squared() {
 void TensorsFinite::compress_mpo_squared() {
     if(settings::precision::use_compressed_mpo_squared_all) {
         if(model->has_compressed_mpo_squared()) {
+            // throw std::runtime_error("compress_mpo_squared: the model already has compressed mpo squared.");
             tools::log->trace("compress_mpo_squared: the model already has compressed mpo squared.");
-            return; // They don't need to be compressed again. Rebbild before compressing them
+            return; // They don't need to be compressed again. Rebuild before compressing them
         }
         tools::log->info("Compressing MPO²");
         measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain

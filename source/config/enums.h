@@ -125,7 +125,8 @@ enum class OptFunc {
  * a one or more lattice sites.
  */
 enum class OptAlgo {
-    DIRECT,   /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
+    DIRECT,   /*!< Apply the eigensolver directly on H|psi> (fdmrg) or (H-E)^2|psi> (xdmrg) */
+    DIRECTX2, /*!< For xdmrg with ritz SM: try H|psi> first, then H²|psi>. May resolve level spacing issues */
     SUBSPACE, /*!< Find a state |psi> = λ_0|psi_0> + λ_1|psi_1>... by finding the ground state of of (H-E)^2_ij = <psi_i|(H-E)^2|psi_j> , where psi_i,psi_j are
                  eigenstates of H which span the current state */
     SHIFTINV, /*!< Find a mid-spectrum eigenstate of H using shift-invert (only compatible with OptFunc::ENERGY).  */
@@ -139,11 +140,11 @@ enum class OptSolver {
 /*! Choose the target energy eigenpair */
 enum class OptRitz {
     NONE, /*!< No eigenpair is targeted (e.g. time evolution) */
-    LR, /*!< Largest Real eigenvalue */
-    SR, /*!< Smallest Real eigenvalue */
-    SM, /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
-    IS, /*!< Initial State energy. MPO² Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
-    TE  /*!< Target Energy density in normalized units [0,1]. MPO² Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
+    LR,   /*!< Largest Real eigenvalue */
+    SR,   /*!< Smallest Real eigenvalue */
+    SM,   /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
+    IS,   /*!< Initial State energy. MPO² Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
+    TE    /*!< Target Energy density in normalized units [0,1]. MPO² Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
 };
 
 enum class OptWhen : int {
@@ -652,6 +653,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     }
     if constexpr(std::is_same_v<T,OptAlgo>){
         if(item == OptAlgo::DIRECT)                                    return "DIRECT";
+        if(item == OptAlgo::DIRECTX2)                                  return "DIRECTX2";
         if(item == OptAlgo::SUBSPACE)                                  return "SUBSPACE";
         if(item == OptAlgo::SHIFTINV)                                  return "SHIFTINV";
         if(item == OptAlgo::MPSEIGS)                                   return "MPSEIGS";
@@ -990,6 +992,7 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T,OptAlgo>){
         if(item == "DIRECT")                                return OptAlgo::DIRECT;
+        if(item == "DIRECTX2")                              return OptAlgo::DIRECTX2;
         if(item == "SUBSPACE")                              return OptAlgo::SUBSPACE;
         if(item == "SHIFTINV")                              return OptAlgo::SHIFTINV;
         if(item == "MPSEIGS")                               return OptAlgo::MPSEIGS;

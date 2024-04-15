@@ -1,18 +1,42 @@
-#include "mpo.h"
+//
+#include <complex>
+#ifndef lapack_complex_float
+    #define lapack_complex_float std::complex<float>
+#endif
+#ifndef lapack_complex_double
+    #define lapack_complex_double std::complex<double>
+#endif
+
+// complex must be included before lapacke!
+#if defined(MKL_AVAILABLE)
+    #include <mkl_lapacke.h>
+#elif defined(OPENBLAS_AVAILABLE)
+    #include <openblas/lapacke.h>
+#elif defined(FLEXIBLAS_AVAILABLE)
+    #include <flexiblas/lapacke.h>
+#else
+    #include <lapacke.h>
+#endif
+
+//
+
 #include "config/debug.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/float.h"
 #include "math/svd.h"
+#include "mpo.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tid/tid.h"
 
 //
+// #include <Eigen/Cholesky>
+#include "general/sfinae.h"
+#include "math/linalg/tensor.h"
+#include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>
 #include <Eigen/QR>
-#include <Eigen/Cholesky>
-#include <general/sfinae.h>
 
 std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 4>> tools::finite::mpo::swap_mpo(const Eigen::Tensor<cplx, 4> &mpoL, const Eigen::Tensor<cplx, 4> &mpoR) {
     /* The swap operation takes two neighboring sites
@@ -178,13 +202,14 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(std:
     // Setup SVD
     // Here we need a lot of precision:
     //  - Use very low svd threshold
-    //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
+    //  - Force the use of JacobiSVD
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
     // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
     // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
-    auto svd_cfg    = svd::config();
-    svd_cfg.svd_lib = svd::lib::lapacke;
-    svd_cfg.svd_rtn = svd::rtn::gejsv;
+    auto svd_cfg             = svd::config();
+    svd_cfg.svd_lib          = svd::lib::lapacke;
+    svd_cfg.svd_rtn          = svd::rtn::gejsv;
+    svd_cfg.truncation_limit = std::numeric_limits<double>::epsilon();
 
     svd::solver svd(svd_cfg);
 
@@ -241,208 +266,3 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(cons
     return get_compressed_mpos(get_mpos_with_edges(mpos, Ledge, Redge));
 }
 
-template<typename Scalar>
-std::vector<Eigen::Tensor<Scalar, 4>> get_inverted_mpos_initial_guess(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, long extra_dims = 0) {
-    auto impos = mpos;
-    for(auto &&[idx, impo] : iter::enumerate(impos)) {
-        auto dims = impo.dimensions();
-        if(idx == 0)
-            dims[1] += extra_dims;
-        else if(idx + 1 == impos.size())
-            dims[0] += extra_dims;
-        else {
-            dims[0] += extra_dims;
-            dims[1] += extra_dims;
-        }
-        impo.resize(dims);
-        impo.setRandom();
-    }
-    return impos;
-}
-
-template<typename Scalar>
-Eigen::Tensor<Scalar, 2> get_M(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const std::vector<Eigen::Tensor<Scalar, 4>> &impos, size_t pos) {
-    assert(mpos.size() == impos.size());
-    assert(mpos.front().dimension(0) == 1);
-    assert(mpos.back().dimension(1) == 1);
-    assert(impos.front().dimension(0) == 1);
-    assert(impos.back().dimension(1) == 1);
-
-    Eigen::Tensor<Scalar, 4> LE(1, 1, 1, 1), RE(1, 1, 1, 1); // Left and right environments
-    Eigen::Tensor<Scalar, 4> LE_temp, RE_temp;
-
-    LE.setConstant(1.0);
-    RE.setConstant(1.0);
-    auto &threads = tenx::threads::get();
-    for(size_t idx = 0; idx < pos; ++idx) {
-        const auto              &mpo         = mpos[idx];
-        const auto              &impo        = impos[idx];
-        Eigen::Tensor<Scalar, 4> mpo_dagger  = mpo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        Eigen::Tensor<Scalar, 4> impo_dagger = impo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        LE_temp.resize(impo_dagger.dimension(1), mpo_dagger.dimension(1), mpo.dimension(1), impo.dimension(1));
-        LE_temp.device(*threads->dev) = LE.contract(impo_dagger, tenx::idx({0}, {0}))
-                                           .contract(mpo_dagger, tenx::idx({0, 5}, {0, 2}))
-                                           .contract(mpo, tenx::idx({0, 5}, {0, 2}))
-                                           .contract(impo, tenx::idx({0, 5, 2}, {0, 2, 3}));
-        LE = std::move(LE_temp);
-    }
-    for(size_t idx = mpos.size() - 1; idx > pos; --idx) {
-        const auto              &mpo         = mpos[idx];
-        const auto              &impo        = impos[idx];
-        Eigen::Tensor<Scalar, 4> mpo_dagger  = mpo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        Eigen::Tensor<Scalar, 4> impo_dagger = impo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        RE_temp.resize(impo_dagger.dimension(0), mpo_dagger.dimension(0), mpo.dimension(0), impo.dimension(0));
-        RE_temp.device(*threads->dev) = RE.contract(impo_dagger, tenx::idx({0}, {1}))
-                                           .contract(mpo_dagger, tenx::idx({0, 5}, {1, 2}))
-                                           .contract(mpo, tenx::idx({0, 5}, {1, 2}))
-                                           .contract(impo, tenx::idx({0, 5, 2}, {1, 2, 3}));
-        RE = std::move(RE_temp);
-    }
-
-    const auto              &mpo         = mpos[pos];
-    const auto              &impo        = impos[pos];
-    Eigen::Tensor<Scalar, 4> mpo_dagger  = mpo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-    Eigen::Tensor<Scalar, 4> impo_dagger = impo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-    Eigen::Tensor<Scalar, 2> identity    = tenx::TensorIdentity<Scalar>(impo.dimension(3)); // To set up  2 dummy legs with an identity outer product
-
-    auto rows = LE.dimension(0) * RE.dimension(0) * impo_dagger.dimension(2) * impo_dagger.dimension(3); // Should be the product of impo_dagger dims
-    auto cols = LE.dimension(3) * RE.dimension(3) * mpo.dimension(2) * mpo.dimension(3);                 // Should be the product of mpo dims
-    Eigen::Tensor<Scalar, 2> M(rows, cols);
-    M.device(*threads->dev) = LE.contract(mpo_dagger, tenx::idx({1}, {0}))
-                                 .contract(mpo, tenx::idx({1, 5}, {0, 2}))
-                                 .contract(RE, tenx::idx({2, 4}, {1, 2}))
-                                 .contract(identity, tenx::idx()) // Add two dummy legs
-                                 .shuffle(tenx::array8{0, 4, 6, 2, 1, 5, 3, 7})
-                                 .reshape(tenx::array2{rows, cols});
-    return M;
-}
-template<typename Scalar>
-Eigen::Tensor<Scalar, 1> get_N(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const std::vector<Eigen::Tensor<Scalar, 4>> &impos, size_t pos) {
-    assert(mpos.size() == impos.size());
-    assert(mpos.front().dimension(0) == 1);
-    assert(mpos.back().dimension(1) == 1);
-    assert(impos.front().dimension(0) == 1);
-    assert(impos.back().dimension(1) == 1);
-
-    Eigen::Tensor<Scalar, 2> LE(1, 1), RE(1, 1); // Left and right environments
-    Eigen::Tensor<Scalar, 2> LE_temp, RE_temp;
-
-    LE.setConstant(1.0);
-    RE.setConstant(1.0);
-    auto &threads = tenx::threads::get();
-
-    for(size_t idx = 0; idx < pos; ++idx) {
-        Eigen::Tensor<Scalar, 4> mpo_dagger  = mpos[idx].conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        Eigen::Tensor<Scalar, 4> impo_dagger = impos[idx].conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        LE_temp.resize(impo_dagger.dimension(1), mpo_dagger.dimension(1));
-        LE_temp.device(*threads->dev) = LE.contract(impo_dagger, tenx::idx({0}, {0})).contract(mpo_dagger, tenx::idx({0, 3, 2}, {0, 2, 3}));
-        LE                           = std::move(LE_temp);
-    }
-    for(size_t idx = mpos.size() - 1; idx > pos; --idx) {
-        Eigen::Tensor<Scalar, 4> mpo_dagger  = mpos[idx].conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        Eigen::Tensor<Scalar, 4> impo_dagger = impos[idx].conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-        RE_temp.resize(impo_dagger.dimension(0), mpo_dagger.dimension(0));
-        RE_temp.device(*threads->dev) = RE.contract(impo_dagger, tenx::idx({0}, {1})).contract(mpo_dagger, tenx::idx({0, 3, 2}, {1, 2, 3}));
-        RE                           = std::move(RE_temp);
-    }
-
-    const auto              &mpo         = mpos[pos];
-    const auto              &impo        = impos[pos];
-    Eigen::Tensor<Scalar, 4> mpo_dagger  = mpo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-    Eigen::Tensor<Scalar, 4> impo_dagger = impo.conjugate().shuffle(tenx::array4{0, 1, 3, 2});
-
-    auto                     rows = LE.dimension(0) * RE.dimension(0) * mpo_dagger.dimension(2) * mpo_dagger.dimension(3);
-    Eigen::Tensor<Scalar, 1> N(rows);
-    N.device(*threads->dev) =
-        LE.contract(mpo_dagger, tenx::idx({1}, {0})).contract(RE, tenx::idx({1}, {1})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(tenx::array1{rows});
-    return N;
-}
-template<typename Scalar>
-Eigen::Tensor<Scalar, 1> get_B(const std::vector<Eigen::Tensor<Scalar, 4>> &impos, size_t pos) {
-    // Linearize it without shuffling
-    return impos[pos].reshape(tenx::array1{impos[pos].size()}).template cast<Scalar>();
-}
-
-template<typename Scalar>
-void set_B(const Eigen::Tensor<Scalar, 1> &B, std::vector<Eigen::Tensor<Scalar, 4>> &impos, size_t pos) {
-    // Assume that B can be interpreted with the correct shape
-    impos[pos] = B.reshape(impos[pos].dimensions());
-}
-template<typename Scalar>
-std::vector<Eigen::Tensor<cplx, 4>> get_inverted_mpos_internal(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos) {
-    using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    auto   impos     = get_inverted_mpos_initial_guess(mpos, 12);
-    auto   lu        = Eigen::LLT<MatrixType>();
-    double error     = 1;
-    for(size_t iter = 0; iter < 500; ++iter) {
-        // Left to right sweep
-        for(size_t pos = 0; pos < mpos.size(); ++pos) {
-            auto M = get_M(mpos, impos, pos);
-            auto N = get_N(mpos, impos, pos);
-            auto B = get_B(impos, pos);
-
-            auto M_map = Eigen::Map<MatrixType>(M.data(), M.dimension(0), M.dimension(1));
-            auto N_map = Eigen::Map<VectorType>(N.data(), N.size());
-            auto B_map = Eigen::Map<VectorType>(B.data(), B.size());
-
-            lu.compute(M_map);
-            B_map = lu.solve(N_map);
-            set_B(B, impos, pos);
-            Scalar BMB = B_map.adjoint() * M_map * B_map;
-            Scalar BN  = B_map.dot(N_map);
-            Scalar NB  = N_map.dot(B_map);
-            error      = std::abs(BMB - BN - NB + std::pow(2, mpos.size()));
-            fmt::print("error L2R: {:.3e} | dims {} | {}\n", error, N.dimensions(), sfinae::type_name<Scalar>());
-            if(error < 1e-14) break;
-        }
-        if(error < 1e-14) break;
-        // Right to left sweep
-        for(size_t pos = mpos.size() - 1; pos < mpos.size(); --pos) {
-            auto M = get_M(mpos, impos, pos);
-            auto N = get_N(mpos, impos, pos);
-            auto B = get_B(impos, pos);
-
-            auto M_map = Eigen::Map<MatrixType>(M.data(), M.dimension(0), M.dimension(1));
-            auto N_map = Eigen::Map<VectorType>(N.data(), N.size());
-            auto B_map = Eigen::Map<VectorType>(B.data(), B.size());
-
-            lu.compute(M_map);
-            B_map = lu.solve(N_map);
-            set_B(B, impos, pos);
-            Scalar BMB = B_map.adjoint() * M_map * B_map;
-            Scalar BN  = B_map.dot(N_map);
-            Scalar NB  = N_map.dot(B_map);
-            error      = std::abs(BMB - BN - NB + std::pow(2, mpos.size()));
-            fmt::print("error R2L: {:.3e} | dims {} | {}\n", error, N.dimensions(), sfinae::type_name<Scalar>());
-            if(error < 1e-14) break;
-        }
-        if(error < 1e-14) break;
-    }
-    if constexpr(std::is_same_v<Scalar, cplx>)
-        return impos;
-    else {
-        std::vector<Eigen::Tensor<cplx, 4>> impos_cplx;
-        impos_cplx.reserve(impos.size());
-        for(const auto &impo : impos) impos_cplx.emplace_back(impo.template cast<cplx>());
-        return impos_cplx;
-    }
-}
-
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_inverted_mpos(const std::vector<Eigen::Tensor<cplx, 4>> &mpos) {
-    bool isComplex = false;
-    for(const auto &mpo : mpos) {
-        if(!tenx::isReal(mpo)) {
-            isComplex = true;
-            break;
-        }
-    }
-    if(isComplex) {
-        return get_inverted_mpos_internal<cplx>(mpos);
-    } else {
-        std::vector<Eigen::Tensor<real, 4>> mpos_real;
-        mpos_real.reserve(mpos.size());
-        for(const auto &mpo : mpos) mpos_real.emplace_back(mpo.real());
-        return get_inverted_mpos_internal<real>(mpos_real);
-    }
-}

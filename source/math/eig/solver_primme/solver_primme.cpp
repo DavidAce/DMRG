@@ -7,6 +7,7 @@
 #include "../solver.h"
 #include "debug/exceptions.h"
 #include "tid/tid.h"
+#include <math/tenx.h>
 #include <primme/primme.h>
 
 inline primme_target stringToTarget(std::string_view ritzstring) {
@@ -130,14 +131,29 @@ std::string getLogMessage(struct primme_params *primme) {
                            primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
-    auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
-    auto       &result   = solver.result;
-    auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
-    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
-    return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:12.5e}{} | λ½ {:.16f} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
+    auto &solver     = *static_cast<eig::solver *>(primme->monitor);
+    auto &result     = solver.result;
+    auto &eigvals    = result.get_eigvals<eig::Form::SYMM>();
+    auto  get_eigval = [&](long idx) -> double {
+        auto eigvmap = Eigen::Map<const Eigen::VectorXd>(eigvals.data(), eigvals.size());
+        if(solver.config.shift_invert == eig::Shinv::ON) {
+            return 1.0 / (eigvmap[idx]) + std::real(solver.config.sigma.value_or(0.0));
+        } else {
+            switch(primme->target) {
+                case primme_target::primme_closest_abs: [[fallthrough]];
+                case primme_target::primme_closest_geq: [[fallthrough]];
+                case primme_target::primme_closest_leq: return eigvmap[idx];
+                case primme_target::primme_smallest: return primme->stats.estimateMinEVal;
+                case primme_target::primme_largest: return primme->stats.estimateMaxEVal;
+                case primme_target::primme_largest_abs: return std::max(std::abs(primme->stats.estimateMaxEVal), std::abs(primme->stats.estimateMaxEVal));
+            }
+        }
+    };
+    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | λ1-λ0 {:12.5e}", std::abs(get_eigval(0) - get_eigval(1))) : "";
+    return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:12.5e}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
                        "it/s | {:8.2e} mv/s | {} | {}",
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff,
-                       std::sqrt(std::abs(primme->stats.estimateMinEVal)), result.meta.last_res_norm, primme->stats.elapsedTime,
+                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, get_eigval(0), msg_diff,
+                       std::max(primme->stats.maxConvTol, solver.result.meta.last_res_norm), primme->stats.elapsedTime,
                        primme->stats.numOuterIterations / primme->stats.elapsedTime, static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec,
                        eig::TypeToString(solver.config.type), eig::MethodToString(solver.config.primme_method));
 }
@@ -257,11 +273,11 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.maxNev) primme.numEvals = safe_cast<int>(config.maxNev.value()); /* Number of wanted eigenpairs */
     if(config.tol) primme.eps = config.tol.value();                            /* ||r|| <= eps * ||matrix|| */
     if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
-    if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(safe_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
-    if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();
-    if(config.maxIter) primme.maxMatvecs = config.maxIter.value();
     if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
-    if(config.primme_locking) primme.locking = config.primme_locking.value();
+    primme.maxBasisSize       = std::clamp<int>(safe_cast<int>(config.maxNcv.value_or(primme.numEvals + 1)), primme.numEvals + 1, primme.n);
+    primme.maxOuterIterations = config.maxIter.value_or(primme.maxOuterIterations);
+    primme.maxMatvecs         = config.maxIter.value_or(primme.maxMatvecs);
+    primme.locking            = config.primme_locking.value_or(primme.locking);
     // Shifts
     switch(primme.target) {
         case primme_target::primme_largest:
@@ -309,7 +325,8 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
                                              //    primme.maxBlockSize = omp_get_max_threads();
     //    primme.orth = primme_orth_explicit_I;
     //    if(primme.maxBlockSize == 1) primme.restartingParams.maxPrevRetain = 1;
-    primme.maxBasisSize = std::max(primme.maxBasisSize, 1 + primme.minRestartSize + primme.restartingParams.maxPrevRetain);
+    primme.maxBasisSize   = std::max(primme.maxBasisSize, 1 + primme.minRestartSize + primme.restartingParams.maxPrevRetain);
+    primme.minRestartSize = std::max(primme.numEvals, primme.maxBasisSize / 2);
     eig::log->debug("numEvals {} | maxMatvecs {} | eps {:.2e} | minRestartSize {} | maxPrevRetain {} | maxBasisSize {} | maxBlockSize {}", primme.numEvals,
                     primme.maxMatvecs, primme.eps, primme.minRestartSize, primme.restartingParams.maxPrevRetain, primme.maxBasisSize, primme.maxBlockSize);
     // Allocate space
@@ -327,7 +344,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
                 auto source = static_cast<Scalar *>(ig.ptr);
                 auto target = eigvecs.data() + static_cast<size_t>(ig.idx * primme.n);
                 std::copy_n(source, primme.n, target);
-                primme.initSize = std::max(primme.initSize, safe_cast<int>(ig.idx) + 1);
+                primme.initSize = safe_cast<int>(ig.idx) + 1;
             }
         }
     }

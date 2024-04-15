@@ -46,7 +46,7 @@ namespace svd {
 
     class solver {
         private:
-        std::shared_ptr<spdlog::logger> log = nullptr;
+        std::shared_ptr<spdlog::logger>      log              = nullptr;
         mutable double                       truncation_error = 0; // Stores the last truncation error
         mutable long                         rank             = 0; // Stores the last rank
         inline static long long              count            = 0; // Count the number of svd invocations for this execution
@@ -108,8 +108,22 @@ namespace svd {
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>> do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
                                                                                           const svd::config &settings);
 
+        template<typename Derived>
+        Eigen::Matrix<typename Derived::Scalar, Eigen::Dynamic, Eigen::Dynamic> pseudo_inverse(const Eigen::EigenBase<Derived> &matrix,
+                                                                                               const svd::config               &svd_cfg = svd::config()) {
+            assert(matrix.derived().rows() > 0);
+            assert(matrix.derived().cols() > 0);
+            // Eigen::Map<const MatrixType<Scalar>> mat(tensor.data(), tensor.dimension(0), tensor.dimension(1));
+            // return tenx::TensorCast(mat.completeOrthogonalDecomposition().pseudoInverse());
+
+            auto [U, S, VT] = do_svd_ptr(matrix.derived().data(), matrix.derived().rows(), matrix.derived().cols(), svd_cfg);
+            return VT.adjoint() * S.cwiseInverse().asDiagonal() * U.adjoint();
+        }
+
         template<typename Scalar>
-        static Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
+        Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor, const svd::config &svd_cfg = svd::config()) {
+            return tenx::TensorMap(pseudo_inverse(tenx::MatrixMap(tensor), svd_cfg));
+        }
 
         template<typename Derived>
         auto do_svd(const Eigen::DenseBase<Derived> &mat, const svd::config &svd_cfg = svd::config()) {
@@ -297,10 +311,10 @@ namespace svd {
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> invert_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo,
-                                                                                     const svd::config              &svd_cfg = svd::config());
+                                                                                      const svd::config              &svd_cfg = svd::config());
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> invert_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo,
-                                                                                     const svd::config              &svd_cfg = svd::config());
+                                                                                      const svd::config              &svd_cfg = svd::config());
 
         template<typename Scalar>
         std::pair<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 4>> split_mpo_pair(const Eigen::Tensor<Scalar, 6> &mpo,

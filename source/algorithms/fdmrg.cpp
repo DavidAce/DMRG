@@ -191,12 +191,15 @@ fdmrg::OptMeta fdmrg::get_opt_meta() {
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
     // Set up a multiplier for number of iterations
-    size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
+    size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::solver::eigs_stuck_multiplier, status.algorithm_has_stuck_for)));
+    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
 
     // Copy settings
     m1.min_sites     = settings::strategy::multisite_opt_site_def;
     m1.max_sites     = settings::strategy::multisite_opt_site_def;
+    m1.subspace_tol  = settings::precision::target_subspace_error;
     m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
+    m1.eigs_nev      = 1;
     m1.eigs_ncv      = settings::solver::eigs_ncv;
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
                            ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged

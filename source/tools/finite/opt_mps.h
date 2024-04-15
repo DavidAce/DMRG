@@ -10,41 +10,42 @@ namespace tools::finite::opt {
     class opt_mps {
         private:
         // All of these values are supposed to be for the full system size
-        std::optional<std::string>            name        = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 3>> tensor      = std::nullopt;
-        std::optional<std::vector<size_t>>    sites       = std::nullopt;
-        std::optional<double>                 eigval      = std::nullopt;
-        std::optional<double>                 eshift      = std::nullopt;
-        std::optional<double>                 energy      = std::nullopt;
-        std::optional<double>                 variance    = std::nullopt;
-        std::optional<double>                 rnorm       = std::nullopt;
-        std::optional<double>                 overlap     = std::nullopt;
-        std::optional<double>                 alpha       = std::nullopt;
-        std::optional<double>                 norm        = std::nullopt;
-        std::optional<size_t>                 length      = std::nullopt;
-        std::optional<size_t>                 iter        = std::nullopt;
-        std::optional<size_t>                 num_op      = std::nullopt; // Number of inverse-matrix-vector products
-        std::optional<size_t>                 num_mv      = std::nullopt; // Number of matrix-vector products
-        std::optional<size_t>                 num_pc      = std::nullopt; // Number of preconditioner calls
-        std::optional<double>                 time        = std::nullopt;
-        std::optional<double>                 delta_f     = std::nullopt;
-        std::optional<double>                 grad_tol    = std::nullopt;
-        std::optional<double>                 grad_max    = std::nullopt;
-        std::optional<double>                 relchange   = std::nullopt;
-        std::optional<long>                   eigs_idx    = std::nullopt;
-        std::optional<long>                   eigs_nev    = std::nullopt;
-        std::optional<long>                   eigs_ncv    = std::nullopt;
-        std::optional<double>                 eigs_tol    = std::nullopt;
-        std::optional<double>                 eigs_eigval = std::nullopt;
-        std::optional<std::string>            eigs_ritz   = std::nullopt;
-        std::optional<cplx>                   eigs_shift  = std::nullopt;
-        std::optional<OptFunc>                optFunc     = std::nullopt;
-        std::optional<OptAlgo>                optAlgo     = std::nullopt;
-        std::optional<OptSolver>              optSolver   = std::nullopt;
-        std::optional<OptRitz>                optRitz     = std::nullopt;
-        std::optional<OptExit>                optExit     = std::nullopt;
-        std::optional<long>                   bond_lim    = std::nullopt;
-        std::optional<double>                 trnc_lim    = std::nullopt;
+        std::optional<std::string>            name             = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 3>> tensor           = std::nullopt;
+        std::optional<std::vector<size_t>>    sites            = std::nullopt;
+        std::optional<double>                 eshift           = std::nullopt; /*!< current energy shift in the energy MPOs: (H-eshift)  */
+        std::optional<double>                 eshift_eigval    = std::nullopt; /*!< eigenvalue of (H-eshift)  */
+        std::optional<double>                 eshift_eigval_sq = std::nullopt; /*!< eigenvalue of (H-eshift)²  */
+        std::optional<double>                 energy           = std::nullopt; /*!< Energy: eigenvalue of H: (E - eshift) + eshift   */
+        std::optional<double>                 variance         = std::nullopt; /*!< Variance: H²-E² = <(H-eshift)²> - <H-eshift>² */
+        std::optional<double>                 rnorm            = std::nullopt;
+        std::optional<double>                 overlap          = std::nullopt;
+        std::optional<double>                 alpha            = std::nullopt;
+        std::optional<double>                 norm             = std::nullopt;
+        std::optional<size_t>                 length           = std::nullopt;
+        std::optional<size_t>                 iter             = std::nullopt;
+        std::optional<size_t>                 num_op           = std::nullopt; // Number of inverse-matrix-vector products
+        std::optional<size_t>                 num_mv           = std::nullopt; // Number of matrix-vector products
+        std::optional<size_t>                 num_pc           = std::nullopt; // Number of preconditioner calls
+        std::optional<double>                 time             = std::nullopt;
+        std::optional<double>                 delta_f          = std::nullopt;
+        std::optional<double>                 grad_tol         = std::nullopt;
+        std::optional<double>                 grad_max         = std::nullopt;
+        std::optional<double>                 relchange        = std::nullopt;
+        std::optional<long>                   eigs_idx         = std::nullopt;
+        std::optional<long>                   eigs_nev         = std::nullopt;
+        std::optional<long>                   eigs_ncv         = std::nullopt;
+        std::optional<double>                 eigs_tol         = std::nullopt;
+        std::optional<double>                 eigs_eigval      = std::nullopt;
+        std::optional<std::string>            eigs_ritz        = std::nullopt;
+        std::optional<cplx>                   eigs_shift       = std::nullopt;
+        std::optional<OptFunc>                optFunc          = std::nullopt;
+        std::optional<OptAlgo>                optAlgo          = std::nullopt;
+        std::optional<OptSolver>              optSolver        = std::nullopt;
+        std::optional<OptRitz>                optRitz          = std::nullopt;
+        std::optional<OptExit>                optExit          = std::nullopt;
+        std::optional<long>                   bond_lim         = std::nullopt;
+        std::optional<double>                 trnc_lim         = std::nullopt;
 
         public:
         bool                 is_basis_vector = false;
@@ -52,7 +53,7 @@ namespace tools::finite::opt {
 
         opt_mps() = default;
         // Constructor used for candidates
-        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_shift_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_eigval_, double eshift_,
                 std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for results
         opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
@@ -75,7 +76,7 @@ namespace tools::finite::opt {
         [[nodiscard]] double                     get_energy() const;
         [[nodiscard]] double                     get_energy_shift() const;
         [[nodiscard]] double                     get_energy_per_site() const;
-        [[nodiscard]] double                     get_eigval() const;
+        [[nodiscard]] double                     get_eshift_eigval() const;
         [[nodiscard]] double                     get_variance() const;
         [[nodiscard]] double                     get_rnorm() const;
         [[nodiscard]] double                     get_overlap() const;
@@ -111,7 +112,7 @@ namespace tools::finite::opt {
         void set_tensor(const Eigen::Tensor<cplx, 3> &tensor_);
         void set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<long, 3> &dims);
         void set_sites(const std::vector<size_t> &sites_);
-        void set_eigval(double eigval_);
+        void set_eshift_eigval(double eshift_eigval_);
         void set_energy_shift(double energy_shift_);
         void set_energy(double energy_);
         void set_energy_per_site(double energy_per_site_);

@@ -251,22 +251,6 @@ template void svd::solver::print_vector<real>(const real *vec_ptr, long size, st
 
 template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, std::string_view tag, long dec) const;
 
-template<typename Scalar>
-Eigen::Tensor<Scalar, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor) {
-    auto t_psinv = tid::tic_token("psinv");
-    if(tensor.dimension(0) <= 0) { throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)"); }
-    if(tensor.dimension(1) <= 0) { throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)"); }
-    Eigen::Map<const MatrixType<Scalar>> mat(tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    return tenx::TensorCast(mat.completeOrthogonalDecomposition().pseudoInverse());
-}
-
-//! \relates svd::class_SVD
-//! \brief force instantiation of pseudo_inverse for type 'double'
-template Eigen::Tensor<double, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<double, 2> &tensor);
-
-//! \relates svd::class_SVD
-//! \brief force instantiation of pseudo_inverse for type 'std::complex<double>'
-template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<cplx, 2> &tensor);
 
 // template<typename Scalar>
 std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
@@ -293,7 +277,6 @@ std::pair<long, double> svd::solver::get_rank_from_truncation_error(const Vector
     }
     return {rank_, truncation_errors[rank_]};
 }
-
 
 template<typename Scalar>
 auto dropfilter(svd::MatrixType<Scalar> &U, svd::VectorType<Scalar> &S, svd::MatrixType<Scalar> &V, double threshold, double min_log_drop_size) {
@@ -367,8 +350,8 @@ std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> svd::solver::spli
         S /= avgS;
         U *= avgS;
     }
-    rank = dropfilter(U,S,V, svd_cfg.truncation_limit.value_or(1e-12), 8);
-    V = S.asDiagonal() * V; // Rescaled singular values
+    // rank = dropfilter(U, S, V, svd_cfg.truncation_limit.value_or(1e-16), 8);
+    V    = S.asDiagonal() * V; // Rescaled singular values
 
     /* clang-format off */
     return std::make_tuple(
@@ -435,8 +418,8 @@ std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::spli
         S /= avgS;
         V *= avgS;
     }
-    rank = dropfilter(U,S,V, svd_cfg.truncation_limit.value_or(1e-12), 8);
-    U = U * S.asDiagonal();
+    // rank = dropfilter(U, S, V, svd_cfg.truncation_limit.value_or(1e-16), 8);
+    U    = U * S.asDiagonal();
 
     /* clang-format off */
     return std::make_tuple(
@@ -449,4 +432,3 @@ std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::spli
 template std::tuple<Eigen::Tensor<real, 2>, Eigen::Tensor<real, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<real, 4> &mpo, const svd::config &svd_cfg);
 
 template std::tuple<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<cplx, 4> &mpo, const svd::config &svd_cfg);
-

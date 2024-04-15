@@ -1,8 +1,13 @@
 #include "settings.h"
 #include "debug/exceptions.h"
+#include <primme/primme.h>
 #include <string>
 
 void eig::settings::clear() { *this = settings(); }
+
+// eig::settings::~settings() {
+    // if(primme) { primme_free(&primme.value()); }
+// }
 
 std::string eig::settings::get_ritz_string() const {
     if(ritz) { return std::string(RitzToString(ritz.value())); }

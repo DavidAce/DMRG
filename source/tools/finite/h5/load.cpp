@@ -61,27 +61,33 @@ namespace tools::finite::h5 {
 
             state.mps_sites.clear();
             state.set_algorithm(algo_type);
-            for(size_t pos = 0; pos < model_size; ++pos) {
+            for(long pos = 0; pos < model_size; ++pos) {
                 auto dset_M_name = fmt::format("{}/M_{}", info.pfx, pos);
                 auto position    = h5file.readAttribute<long>(dset_M_name, "position");
-                auto M           = h5file.readDataset<Eigen::Tensor<cplx, 3>>(dset_M_name);
-                auto L           = h5file.readAttribute<Eigen::Tensor<double, 1>>(dset_M_name, "L");
-                auto error       = h5file.readAttribute<double>(dset_M_name, "truncation_error");
-                auto label       = h5file.readAttribute<std::string>(dset_M_name, "label");
-                auto isCenter    = h5file.readAttribute<bool>(dset_M_name, "isCenter");
-                state.mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, position, error, label));
+                assert(position == pos);
+                auto typeInfo = h5file.getTypeInfoDataset(dset_M_name);
+
+                if(typeInfo.cppTypeIndex.has_value() and typeInfo.cppTypeIndex.value() == typeid(double)) {
+                    auto M     = h5file.readDataset<Eigen::Tensor<double, 3>>(dset_M_name);
+                    auto L     = h5file.readAttribute<Eigen::Tensor<double, 1>>(dset_M_name, "L");
+                    auto error = h5file.readAttribute<double>(dset_M_name, "truncation_error");
+                    auto label = h5file.readAttribute<std::string>(dset_M_name, "label");
+                    state.mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, position, error, label));
+                } else {
+                    auto M     = h5file.readDataset<Eigen::Tensor<cplx, 3>>(dset_M_name);
+                    auto L     = h5file.readAttribute<Eigen::Tensor<double, 1>>(dset_M_name, "L");
+                    auto error = h5file.readAttribute<double>(dset_M_name, "truncation_error");
+                    auto label = h5file.readAttribute<std::string>(dset_M_name, "label");
+                    state.mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, position, error, label));
+                }
+
+                auto isCenter = h5file.readAttribute<bool>(dset_M_name, "isCenter");
                 if(isCenter) {
                     auto LC       = h5file.readAttribute<Eigen::Tensor<double, 1>>(dset_M_name, "LC");
                     auto error_LC = h5file.readAttribute<double>(dset_M_name, "truncation_error_LC");
                     state.mps_sites.back()->set_LC(LC, error_LC);
                 }
                 tools::log->trace("Loaded mps: {}({})", state.mps_sites.back()->get_label(), state.mps_sites.back()->get_position());
-                // Sanity checks
-                if(num::cmp_equal(pos, position) and not state.mps_sites.back()->isCenter())
-                    throw except::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
-                if(num::cmp_not_equal(pos, position) and state.mps_sites.back()->isCenter())
-                    throw except::logic_error("A site not at current position claims to be a state center");
-                //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
             }
             state.set_positions();
         } catch(const std::exception &ex) { throw except::load_error("load state error: {}", ex.what()); }

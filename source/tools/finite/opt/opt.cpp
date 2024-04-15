@@ -17,11 +17,12 @@
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
     auto    t_init = tid::tic_scope("initial_mps", tid::level::higher);
     opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
-                        tools::finite::measure::energy_minus_energy_shift(tensors), // Eigval
                         tools::finite::measure::energy_shift(tensors),              // Shifted energy for full system
+                        tools::finite::measure::energy_minus_energy_shift(tensors), // Eigval
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap to initial state (self) is obviously 1
                         tensors.get_length());
+    initial_mps.validate_initial_mps();
     return initial_mps;
 }
 
@@ -48,13 +49,31 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
         case OptFunc::ENERGY: result = internal::optimize_energy_eigs(tensors, initial_mps, status, meta); break;
         case OptFunc::VARIANCE: {
             switch(meta.optAlgo) {
-                case OptAlgo::SUBSPACE: result = internal::optimize_variance_subspace(tensors, initial_mps, status, meta); break;
-                case OptAlgo::DIRECT:
-                    switch(meta.optSolver) {
-                        case OptSolver::EIG: result = internal::optimize_variance_eig(tensors, initial_mps, status, meta); break;
-                        case OptSolver::EIGS: result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta); break;
+                case OptAlgo::DIRECT: result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta); break;
+                case OptAlgo::DIRECTX2: {
+                    auto metax2     = meta;
+                    metax2.optFunc  = OptFunc::ENERGY;
+                    metax2.eigs_nev = 1;
+                    metax2.eigs_ncv = std::clamp(32l, 1l, initial_mps.get_tensor().size() / 4);
+                    result          = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
+                    tools::finite::opt::reports::print_eigs_report();
+                    if(meta.optRitz == OptRitz::SM) {
+                        // We accept this result if
+                        // - The energy is within 2 sigma of the current energy
+                        // - The variance is lower
+                        // Otherwise we call optimize_variance_eigs on the result
+                        auto sigma    = std::sqrt(initial_mps.get_variance());
+                        bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
+                        bool varislow = result.get_variance() <= initial_mps.get_variance();
+                        if(not in2sigma or not varislow) {
+                            // The result is not good enough. But we could use it as initial guess
+                            meta.optFunc = OptFunc::VARIANCE;
+                            result       = internal::optimize_variance_eigs(tensors, result, status, meta);
+                        }
                     }
                     break;
+                }
+                case OptAlgo::SUBSPACE: result = internal::optimize_variance_subspace(tensors, initial_mps, status, meta); break;
                 case OptAlgo::SHIFTINV: throw except::runtime_error("OptFunc::VARIANCE is not compatible with OptAlgo::SHIFTINV");
                 case OptAlgo::MPSEIGS: throw except::runtime_error("OptAlgo::MPSEIGS has not been implemented yet");
                 default: throw except::logic_error("Unrecognized OptAlgo::{}", static_cast<std::underlying_type_t<OptAlgo>>(meta.optAlgo));
@@ -190,19 +209,36 @@ namespace tools::finite::opt::internal {
         if(meta->optFunc == OptFunc::VARIANCE) {
             return comparator::eigval_and_overlap(lhs, rhs);
         } else {
-            auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
+            auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
             if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(meta->optRitz) {
                 case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");
                 case OptRitz::SR: return comparator::energy(lhs, rhs);
                 case OptRitz::LR: return comparator::energy(rhs, lhs);
-                case OptRitz::SM: return comparator::energy_distance(lhs, rhs, target_energy);
+                case OptRitz::SM: return comparator::energy_distance(lhs, rhs, 0.0);
                 case OptRitz::IS: return comparator::energy_distance(lhs, rhs, target_energy);
                 case OptRitz::TE: return comparator::energy_distance(lhs, rhs, target_energy);
             }
         }
         return comparator::eigval(lhs, rhs);
     }
-}
 
-namespace tools::finite::opt::internal {}
+    EigIdxComparator::EigIdxComparator(OptRitz ritz_, double shift_, double *data_, long size_) : ritz(ritz_), shift(shift_), eigvals(data_, size_) {}
+    bool              EigIdxComparator::operator()(long lidx, long ridx) {
+        auto lhs = eigvals[lidx];
+        auto rhs = eigvals[ridx];
+        switch(ritz) {
+            case OptRitz::NONE: throw std::logic_error("EigvalComparator: Invalid OptRitz::NONE");
+            case OptRitz::SR: return lhs < rhs;
+            case OptRitz::LR: return rhs < lhs;
+            case OptRitz::SM: return std::abs(lhs) < std::abs(rhs);
+            case OptRitz::IS:
+            case OptRitz::TE: {
+                auto diff_lhs = std::abs(lhs - shift);
+                auto diff_rhs = std::abs(rhs - shift);
+                return diff_lhs < diff_rhs;
+            }
+            default: throw std::logic_error("EigvalComparator: Invalid OptRitz");
+        }
+    }
+}

@@ -52,7 +52,7 @@ std::any XXZ::get_parameter(const std::string_view name) const {
 
 /*! Builds the MPO hamiltonian as a rank 4 tensor.
  *
- * H = Σ σx{i}*σx{i+1} σy{i}*σy{i+1} + Δσz{i}*σz{i+1} + h{i}σz{i}
+ * H = Σ σx{i}*σx{i+1} + σy{i}*σy{i+1} + Δσz{i}*σz{i+1} + h{i}σz{i}
  *
  * or equivalently,
  *
@@ -139,6 +139,10 @@ long XXZ::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void XXZ::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
     set_parameters(all_parameters[get_position()]);
+    double delta            = h5tb.param.delta;
+    double h                = settings::model::xxz::h_wdth;
+    double L                = all_parameters.size();
+    energy_maximum_estimate = (2 + delta) * (L - 1) + h * L;
 }
 
 void XXZ::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {

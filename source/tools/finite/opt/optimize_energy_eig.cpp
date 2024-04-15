@@ -4,6 +4,7 @@
 #include "math/cast.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_mpo.h"
+#include "math/num.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
@@ -34,17 +35,27 @@ namespace tools::finite::opt::internal {
                 auto vl     = eigval - 2 * eigvar;
                 auto vu     = eigval + 2 * eigvar;
                 solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
-                break;
+
+                // Filter the results
+                if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
+                    tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
+                    auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+                    auto indices = num::range<long>(0l, eigvals.size());
+                    auto eigComp = EigIdxComparator(meta.optRitz, eigval, eigvals.data(), eigvals.size());
+                    std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
+                    indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
+                    extract_results(tensors, initial_mps, meta, solver, results, false, indices);
+                }
+                return;
             }
         }
+
         extract_results(tensors, initial_mps, meta, solver, results, false);
     }
 
     opt_mps optimize_energy_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
         if(meta.optFunc != OptFunc::ENERGY)
             throw except::logic_error("optimize_energy_eig: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::ENERGY), enum2sv(meta.optFunc));
-        if(meta.optRitz == OptRitz::SM and not tensors.model->has_energy_shifted_mpo())
-            throw std::logic_error("optimize_energy_eig: Ritz [SM] requires energy-shifted MPO ");
 
         const auto problem_size = tensors.active_problem_size();
         if(problem_size > settings::solver::eig_max_size)
@@ -65,6 +76,7 @@ namespace tools::finite::opt::internal {
             return initial_mps; // The solver failed
         }
         // Smallest energy wins (because they are shifted!)
+        tools::log->debug("Sorting eigenpairs | initial energy {}", initial_mps.get_energy());
         if(results.size() >= 2) std::sort(results.begin(), results.end(), Comparator(meta, initial_mps.get_energy()));
         for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
         return results.front();

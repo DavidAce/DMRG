@@ -54,8 +54,9 @@ namespace eig {
         std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner = std::nullopt;
         std::optional<void (*)(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr)> primme_convTestFun =
             std::nullopt;
-
+        // std::optional<primme_params> primme;
         void clear();
+        // ~settings();
         // Sanity checks
         void                      checkRitz();
         [[nodiscard]] std::string get_ritz_string() const;

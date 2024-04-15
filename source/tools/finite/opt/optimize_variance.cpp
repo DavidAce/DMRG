@@ -136,7 +136,7 @@ namespace tools::finite::opt {
             if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->has_compressed_mpo_squared())
                 throw except::logic_error("optimize_variance_eigs with PRIMME with sigma requires non-compressed MPO²");
         }
-        tools::log->debug("Finding excited state of operator [(H-E)²{}]{}{} | {} {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
+        tools::log->debug("Finding an eigenstate of [H²{}]{}{} | {} ritz {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
                           solver.config.sigma ? "-σ" : "", solver.config.shift_invert == eig::Shinv::ON ? "⁻¹" : "",
                           solver.config.sigma ? fmt::format(" | σ = {:.16f}", solver.config.sigma->real()) : "", eig::LibToString(solver.config.lib),
                           eig::RitzToString(solver.config.ritz), solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(),
@@ -151,23 +151,28 @@ namespace tools::finite::opt {
         eig::solver solver;
         auto       &cfg = solver.config;
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        cfg.tol      = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        cfg.maxIter  = 1000;
-        cfg.maxNev   = 1;
-        cfg.maxNcv   = 4;
-        cfg.compress = false;
+        cfg.tol      = meta.eigs_tol.value_or(1e-12); // 1e-12 is good. This Sets "eps" in primme, see link above.
+        cfg.maxIter  = meta.eigs_iter_max.value_or(1000);
+        cfg.maxNev   = meta.eigs_nev.value_or(1);
+        cfg.maxNcv   = meta.eigs_ncv.value_or(4);
+        cfg.compress = meta.compress_otf.value_or(false);
         cfg.maxTime  = 2 * 60 * 60; // Two hours
         cfg.lib      = eig::Lib::PRIMME;
         switch(meta.optRitz) {
-            case OptRitz::SM: cfg.ritz = eig::Ritz::primme_smallest; break; // eig::Ritz::SA;
             case OptRitz::SR: cfg.ritz = eig::Ritz::primme_smallest; break;
             case OptRitz::LR: cfg.ritz = eig::Ritz::primme_largest; break;
+            case OptRitz::SM: {
+                cfg.ritz                 = eig::Ritz::SA; // H² is positive semi-definite!
+                // cfg.primme_target_shifts = {meta.eigv_target.value_or(0.0)};
+                break;
+            }
+
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
 
         cfg.compute_eigvecs = eig::Vecs::ON;
         cfg.loglevel        = 2;
-        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
+        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS; // eig::PrimmeMethod::PRIMME_JDQMR;
         // cfg.primme_method = eig::PrimmeMethod::PRIMME_JDQMR_ETol; // eig::PrimmeMethod::PRIMME_JDQMR;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
@@ -177,10 +182,7 @@ namespace tools::finite::opt {
         //        configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
 
         // Overrides from default
-        if(meta.compress_otf) cfg.compress = meta.compress_otf;
-        if(meta.eigs_tol) cfg.tol = meta.eigs_tol;
-        if(meta.eigs_ncv) cfg.maxNcv = meta.eigs_ncv;
-        if(meta.eigs_iter_max) cfg.maxIter = meta.eigs_iter_max;
+
 
         const auto &model               = *tensors.model;
         const auto &edges               = *tensors.edges;
@@ -203,9 +205,12 @@ namespace tools::finite::opt {
 
     opt_mps internal::optimize_variance_eigs(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
                                              OptMeta &meta) {
+        if(meta.optSolver == OptSolver::EIG) return optimize_variance_eig(tensors, initial_mps, status, meta);
+
         using namespace internal;
         using namespace settings::precision;
-        initial_mps.validate_basis_vector();
+        // initial_mps.validate_basis_vector();
+        initial_mps.validate_initial_mps();
         // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eigs requires energy-shifted MPO²");
         reports::eigs_add_entry(initial_mps, spdlog::level::debug);
 

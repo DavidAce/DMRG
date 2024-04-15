@@ -22,19 +22,19 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id;
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
-    std::optional<size_t> position;                             /*!< Position on a finite chain */
-    double                energy_shift_mpo       = 0;           /*!< Energy shift for this mpo (to make energy-shifted MPO views) */
-    OptRitz               parity_shift_ritz_mpo  = OptRitz::SR; /*!< Shift direction depending on ritz (SR:-1, LR:+1) */
-    int                   parity_shift_sign_mpo  = 0;           /*!< Sign of parity sector to shift for the MPO*/
-    std::string           parity_shift_axus_mpo  = {};          /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
-    int                   parity_shift_sign_mpo2 = 0;           /*!< Sign of parity sector to shift for the MPO²*/
-    std::string           parity_shift_axus_mpo2 = {};          /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO² */
-
-    std::array<long, 4>                   extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
-    std::array<long, 2>                   extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */
+    std::optional<size_t>                 position;                             /*!< Position on a finite chain */
+    double                                energy_shift_mpo       = 0;           /*!< Energy shift for this mpo (to make energy-shifted MPO views) */
+    OptRitz                               parity_shift_ritz_mpo  = OptRitz::SR; /*!< Shift direction depending on ritz (SR:-1, LR:+1) */
+    int                                   parity_shift_sign_mpo  = 0;           /*!< Sign of parity sector to shift for the MPO*/
+    std::string                           parity_shift_axus_mpo  = {};          /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
+    int                                   parity_shift_sign_mpo2 = 0;           /*!< Sign of parity sector to shift for the MPO²*/
+    std::string                           parity_shift_axus_mpo2 = {};          /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO² */
+    std::array<long, 4>                   extent4{};                            /*!< Extent of pauli matrices in a rank-4 tensor */
+    std::array<long, 2>                   extent2{};                            /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<cplx, 4>                mpo_internal;
     Eigen::Tensor<cplx_t, 4>              mpo_internal_t;
     std::optional<Eigen::Tensor<cplx, 4>> mpo_squared = std::nullopt;
+    double                                energy_maximum_estimate = 100.0;
 
     virtual Eigen::Tensor<cplx, 4>   get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                              std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
