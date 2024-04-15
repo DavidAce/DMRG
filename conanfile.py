@@ -44,6 +44,10 @@ class DMRGConan(ConanFile):
     def config_options(self):
         self.options["hdf5"].with_zlib = self.options.with_zlib
         self.options["h5pp"].with_quadmath = self.options.with_quadmath
+        self.options["ceres-solver"].use_glog = True
+        self.options["ceres-solver"].use_CXX11_threads = True
+        self.options["ceres-solver"].use_eigen_sparse = False
+
         # Use backtrace because this doesn't invoke any further dependencies that break easily on CI.
         # We take care of linking with system libdw instead, if needed.
         self.options["backward-cpp"].stack_walking = "backtrace"
@@ -58,10 +62,12 @@ class DMRGConan(ConanFile):
         self.requires("fmt/[>=10.2.0 <11]")
         self.requires("spdlog/[>=1.13.0 <1.14]")
         self.requires("eigen/3.4.0")
+        self.requires("ceres-solver/2.2.0")
         self.requires("cli11/2.3.2")
         self.requires("backward-cpp/1.6")
         self.requires("pcg-cpp/cci.20220409")
         self.requires("tomlplusplus/3.4.0")
+
 
 
     def validate(self):
