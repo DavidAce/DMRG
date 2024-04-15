@@ -163,6 +163,8 @@ void fdmrg::run_algorithm() {
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
+        set_energy_shift_mpo(); // Shift the energy in the mpos to get rid of critical cancellation (shifts by the current energy)
+        rebuild_tensors();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();

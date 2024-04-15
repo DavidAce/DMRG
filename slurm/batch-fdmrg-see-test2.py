@@ -24,7 +24,7 @@ config_ranges = {
     "solver::svd_switchsize_bdc": ['16'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
     "model::model_type": ['ising_majorana'],
-    "model::model_size": ['16'],
+    "model::model_size": ['16', '17'],
     "model::ising_majorana::g": ['0.50'],
     "model::ising_majorana::delta": ['-8.00', '0.00', '8.00'],
     "fdmrg::ritz": ['SR'],

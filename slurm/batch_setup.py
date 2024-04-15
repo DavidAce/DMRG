@@ -890,6 +890,18 @@ def get_batch_setup(projectname):
                     'seed_extent': [1000],
                     'seed_offset': [160520000],
                 },
+                'L17|g0.5|d-8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [170500000],
+                },
+                'L17|g0.5|d0.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [170510000],
+                },
+                'L17|g0.5|d8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [170520000],
+                },
             }
         }
     }
