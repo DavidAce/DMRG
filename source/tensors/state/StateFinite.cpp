@@ -270,6 +270,15 @@ void StateFinite::assert_validity() const {
     }
 }
 
+const Eigen::Tensor<cplx, 1> &StateFinite::get_bond(long posL, long posR) const {
+    if(posL + 1 != posR) throw except::runtime_error("Expected posL+1 == posR, got: posL {}, posR {}", posL, posR);
+    auto pos = get_position<long>();
+    if(pos < posL) return get_mps_site(posL).get_L(); // B.B
+    if(pos > posL) return get_mps_site(posR).get_L(); // A.A or A.AC
+    return get_mps_site(posL).get_LC(); // AC.B
+
+}
+
 const Eigen::Tensor<cplx, 1> &StateFinite::get_midchain_bond() const {
     auto pos = get_position<long>();
     auto cnt = (get_length<long>() - 1) / 2;

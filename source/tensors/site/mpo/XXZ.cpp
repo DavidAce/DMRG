@@ -141,7 +141,7 @@ void XXZ::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     set_parameters(all_parameters[get_position()]);
     double delta            = h5tb.param.delta;
     double h                = settings::model::xxz::h_wdth;
-    double L                = all_parameters.size();
+    double L                = safe_cast<double>(all_parameters.size());
     energy_maximum_estimate = (2 + delta) * (L - 1) + h * L;
 }
 

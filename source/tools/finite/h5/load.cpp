@@ -61,7 +61,7 @@ namespace tools::finite::h5 {
 
             state.mps_sites.clear();
             state.set_algorithm(algo_type);
-            for(long pos = 0; pos < model_size; ++pos) {
+            for(long pos = 0; pos < safe_cast<long>(model_size); ++pos) {
                 auto dset_M_name = fmt::format("{}/M_{}", info.pfx, pos);
                 auto position    = h5file.readAttribute<long>(dset_M_name, "position");
                 assert(position == pos);

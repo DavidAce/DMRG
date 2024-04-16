@@ -86,6 +86,12 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
     return state.measurements.bond_mid.value();
 }
 
+std::pair<long, long> tools::finite::measure::bond_dimensions(const StateFinite &state, long pos) {
+    auto t_bond = tid::tic_scope("bond_dimensions", tid::level::highest);
+    assert(pos < state.get_length<long>());
+    return {state.mps_sites[pos]->get_chiL(), state.mps_sites[pos]->get_chiR()};
+}
+
 std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &state) {
     if(state.measurements.bond_dimensions) return state.measurements.bond_dimensions.value();
     auto              t_bond = tid::tic_scope("bond_dimensions", tid::level::highest);
@@ -190,7 +196,11 @@ std::vector<double> tools::finite::measure::entanglement_entropies_log2(const St
 }
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state) {
-    if(state.get_length<long>() >= 12) return subsystem_entanglement_entropies_swap_log2(state, svd::config(4*state.find_largest_bond(), 1e-12));
+    if(state.get_length<long>() >= 12) {
+        auto bond_lim = settings::storage::dataset::subsystem_entanglement_entropies::bond_lim;
+        auto trnc_lim = settings::storage::dataset::subsystem_entanglement_entropies::trnc_lim;
+        return subsystem_entanglement_entropies_swap_log2(state, svd::config(bond_lim, trnc_lim)); // trnc lim 1e-6 is 12 digits correct on SE
+    }
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
     auto            t_see   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
     auto            len     = state.get_length<long>();
@@ -262,21 +272,46 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_log2(const StateFinite &state, const svd::config &svd_cfg) {
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
-    auto            t_see   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
-    auto            len     = state.get_length<long>();
-    auto            solver  = eig::solver();
-    Eigen::ArrayXXd see     = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
+    auto            t_see  = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
+    auto            len    = state.get_length<long>();
+    auto            solver = eig::solver();
+    Eigen::ArrayXXd see    = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
 
     auto state_swap = state;
-    auto length = state.get_length<size_t>();
-    auto sites      = num::range<size_t>(0, length);
+    auto length = state_swap.get_length<size_t>();
+    auto sites  = num::range<size_t>(0, length);
+
     for(long off = 0; off < len; ++off) {
+        if(state_swap.get_position<long>() != 0) {
+            tools::log->info("subsystem_entanglement_entropies_swap_log2: Moving state position to 0");
+            svd::config svd_cfg_move(settings::get_bond_max(state.get_algorithm()), settings::solver::svd_truncation_lim);
+            finite::mps::move_center_point_to_pos_dir(state_swap, 0, 1, svd_cfg_move);
+        }
+        tools::log->info("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
         if(off > 0) {
             // Move the left-most site to one site beyond the last site
             // Example with 6 sites
             //      012345 --> 123450
             //      123450 --> 234510
-            for(size_t i = 0; i < length - off; ++i) mps::swap_sites(state_swap, i, i + 1, sites, GateMove::OFF, svd_cfg);
+            for(size_t i = 0; i < length - off; ++i) {
+                // auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
+                // auto trnc_old                 = measure::truncation_errors(state_swap);
+                // auto sval_old                 = state_swap.get_bond(i, i + 1);
+                mps::swap_sites(state_swap, i, i + 1, sites, GateMove::OFF, svd_cfg);
+                // auto [bond_new_L, bond_new_R] = measure::bond_dimensions(state_swap, i);
+                // auto trnc_new                 = measure::truncation_errors(state_swap);
+                // auto sval_new                 = state_swap.get_bond(i, i + 1);
+
+                // tools::log->info("swap off {:2} | pos {} |  {} <-> {} | bond {:3} -> {:3} | trnc {:.3e} -> {:.3e} | sites {::2}",
+                                 // off,state_swap.get_position<long>(), i, i + 1, bond_old_R, bond_new_R, trnc_old.at(i + 1), trnc_new.at(i + 1), sites);
+                // if(bond_new_R != sval_new.size())
+                    // throw except::logic_error("bond dimension mismatch: bond_new_R {} != sval_new.size() {}", bond_new_R, sval_new.size());
+                // for(long sidx = 0; sidx < std::max(sval_old.size(), sval_new.size()); ++sidx) {
+                //     auto sold = sidx < sval_old.size() ? sval_old.coeff(sidx).real() : 0.0;
+                //     auto snew = sidx < sval_new.size() ? sval_new.coeff(sidx).real() : 0.0;
+                //     tools::log->info("idx {:>4}: {:>10.5e} --> {:>10.5e}", sidx, sold, snew);
+                // }
+            }
         }
         auto bee = measure::entanglement_entropies_log2(state_swap); // bipartite entanglement entropies
 

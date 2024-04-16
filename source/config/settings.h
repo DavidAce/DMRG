@@ -157,6 +157,8 @@ namespace settings {
         /*! Entanglement entropy of all contiguous subsystems up to length L/2 + 1 */
             inline StoragePolicy policy = StoragePolicy::FINISH;
             inline unsigned long chunksize = 10;
+            inline long bond_lim = 2048l; /*!< Bond dimension limit during swap operations  */
+            inline auto trnc_lim = 1e-8;  /*!< Truncation error limit during swap operations  */
         }
         namespace dataset::number_probabilities{
         /*! Probability of measuring n particles to the left of site i, for all n and i */
@@ -198,8 +200,8 @@ namespace settings {
         inline size_t   eigs_ncv                        = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
         inline size_t   eigs_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
-        inline double   svd_truncation_lim              = 1e-16 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
-        inline double   svd_truncation_init             = 1e-3  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
+        inline double   svd_truncation_lim              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
+        inline double   svd_truncation_init             = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
     }

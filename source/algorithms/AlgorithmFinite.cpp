@@ -155,7 +155,7 @@ void AlgorithmFinite::run_rtes_analysis() {
     // Generate a list of truncation error limits
     auto trnc_min    = std::min(1e-1, settings::solver::svd_truncation_lim);
     auto trnc_limits = std::vector<double>();
-    for(double t = trnc_min; t < 1e-1; t *= settings::strategy::rtes_rate) trnc_limits.emplace_back(t);
+    for(double t = trnc_min; t < 1e-1 + 1e-8; t *= settings::strategy::rtes_rate) trnc_limits.emplace_back(t);
 
     for(const auto &trnc_lim : trnc_limits) {
         status.trnc_lim = trnc_lim;

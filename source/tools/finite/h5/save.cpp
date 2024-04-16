@@ -215,15 +215,12 @@ namespace tools::finite::h5 {
             h5file.writeAttribute("extent-1,offset,iter", dset_path, "index");
             h5file.writeAttribute("Entanglement entropies for subsystems", dset_path, "description");
         }
-        // Do not append if the iteration number is smaller than the dataset iter dimension
-        auto num_entries = h5file.getDatasetDimensions(dset_path).back();
-        if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
-            tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
-                              flag2str(sinfo.get_dataset_storage_policy(dset_path)));
-            h5file.appendToDataset(state.measurements.subsystem_entanglement_entropies.value(), dset_path, 2);
-            tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
-        }
+        tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                          flag2str(sinfo.get_dataset_storage_policy(dset_path)));
+        h5file.appendToDataset(state.measurements.subsystem_entanglement_entropies.value(), dset_path, 2);
+        tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
     }
+
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::dataset::number_probabilities::policy)) return;
         if(state.get_algorithm() != AlgorithmType::fLBIT) {
@@ -248,14 +245,14 @@ namespace tools::finite::h5 {
             h5file.writeAttribute("n_count, site, time", dset_path, "index");
             h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", dset_path, "description");
         }
+        tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                          flag2str(sinfo.get_dataset_storage_policy(dset_path)));
+        h5file.appendToDataset(state.measurements.number_probabilities.value(), dset_path, 2);
+        tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
         // Do not append if the iteration number is smaller than the dataset iter dimension
-        auto num_entries = h5file.getDatasetDimensions(dset_path).back();
-        if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
-            tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
-                              flag2str(sinfo.get_dataset_storage_policy(dset_path)));
-            h5file.appendToDataset(state.measurements.number_probabilities.value(), dset_path, 2);
-            tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
-        }
+        // auto num_entries = h5file.getDatasetDimensions(dset_path).back();
+        // if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
+        // }
     }
 
     void save::renyi_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {

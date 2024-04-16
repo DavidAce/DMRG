@@ -112,6 +112,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::dataset::lbit_analysis::policy"                        , storage::dataset::lbit_analysis::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::policy"     , storage::dataset::subsystem_entanglement_entropies::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::chunksize"  , storage::dataset::subsystem_entanglement_entropies::chunksize);
+    dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::bond_lim"   , storage::dataset::subsystem_entanglement_entropies::bond_lim);
+    dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::trnc_lim"   , storage::dataset::subsystem_entanglement_entropies::trnc_lim);
     dmrg_config.load_parameter("storage::dataset::number_probabilities::policy"                 , storage::dataset::number_probabilities::policy);
     dmrg_config.load_parameter("storage::dataset::number_probabilities::chunksize"              , storage::dataset::number_probabilities::chunksize);
     dmrg_config.load_parameter("storage::dataset::expectation_values_spin_xyz::policy"          , storage::dataset::expectation_values_spin_xyz::policy);

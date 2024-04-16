@@ -146,7 +146,7 @@ void IsingMajorana::set_averages(std::vector<TableMap> all_parameters, bool infi
     double W_J              = delta_to_W_J(h5tb.param.delta);
     double W_h              = delta_to_W_h(h5tb.param.delta);
     double g                = h5tb.param.g;
-    double L                = all_parameters.size();
+    double L                = safe_cast<double>(all_parameters.size());
     energy_maximum_estimate = W_J * (L - 1) + W_h * L + g * (L - 1) + g * (L - 2);
 }
 

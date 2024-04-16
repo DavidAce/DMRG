@@ -66,6 +66,7 @@ class StateFinite {
     void                        set_algorithm(const AlgorithmType &algo_type);
     [[nodiscard]] AlgorithmType get_algorithm() const;
 
+    const Eigen::Tensor<cplx, 1> &get_bond(long posL, long posR) const;
     const Eigen::Tensor<cplx, 1> &get_midchain_bond() const;
     const Eigen::Tensor<cplx, 1> &current_bond() const;
 

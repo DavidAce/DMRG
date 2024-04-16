@@ -903,6 +903,60 @@ def get_batch_setup(projectname):
                     'seed_offset': [170520000],
                 },
             }
+        },
+        'fdmrg-see-test3': {
+            # Calculate subsystem entanglement entropies for  ground states
+            'projectname': 'fdmrg-see-test3',
+            'batch': {
+                'L25|g0.5|d-8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [251000000],
+                },
+                'L25|g0.5|d0.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [252000000],
+                },
+                'L25|g0.5|d8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [253000000],
+                },
+            }
+        },
+        'fdmrg-see-test4': {
+            # Calculate subsystem entanglement entropies for  ground states
+            'projectname': 'fdmrg-see-test4',
+            'batch': {
+                'L25|g0.5|d-8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [251000000],
+                },
+                'L25|g0.5|d0.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [252000000],
+                },
+                'L25|g0.5|d8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [253000000],
+                },
+            }
+        },
+        'fdmrg-see-test5': {
+            # Calculate subsystem entanglement entropies for  ground states
+            'projectname': 'fdmrg-see-test5',
+            'batch': {
+                'L31|g0.5|d-8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [311000000],
+                },
+                'L31|g0.5|d0.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [312000000],
+                },
+                'L31|g0.5|d8.00': {
+                    'seed_extent': [1000],
+                    'seed_offset': [313000000],
+                },
+            }
         }
     }
 
