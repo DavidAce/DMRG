@@ -42,7 +42,7 @@ namespace eig::view {
             if(not result.eigvecs_are_real()) throw except::runtime_error("Can't view real eigenvectors: solution has complex eigenvectors");
         auto &eigvecs = result.get_eigvecs<Scalar>(side);
         if(eigvecs.empty()) throw except::runtime_error("The requested eigenvectors are empty. Did you request the correct type?");
-        if(result.meta.rows * result.meta.cols != static_cast<eig::size_type>(eigvecs.size())) throw std::logic_error("Size mismatch in results");
+        if(result.meta.rows * result.meta.cols != safe_cast<eig::size_type>(eigvecs.size())) throw std::logic_error("Size mismatch in results");
         auto rows = result.meta.rows;
         auto cols = converged_only ? result.meta.nev_converged : result.meta.cols;
         return Eigen::Map<MatrixType<Scalar>>(eigvecs.data(), rows, cols);

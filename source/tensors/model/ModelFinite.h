@@ -12,7 +12,6 @@
 class MpoSite;
 class TensorsFinite;
 class ModelLocal;
-enum class MposWithEdges { OFF, ON };
 
 class ModelFinite {
     private:

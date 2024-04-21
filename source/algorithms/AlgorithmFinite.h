@@ -1,8 +1,10 @@
 #pragma once
 
 #include "algorithms/AlgorithmBase.h"
+#include "math/svd/config.h"
 #include "measure/MeasurementsStateFinite.h"
 #include "tensors/TensorsFinite.h"
+
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;
@@ -32,6 +34,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         set_parity_shift_mpo();
     void         set_parity_shift_mpo_squared();
     void         try_moving_sites();
+    void         expand_environment(std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void set_energy_shift_mpo(); // We override this in xdmrg
     void         rebuild_tensors();
@@ -64,6 +67,7 @@ class AlgorithmFinite : public AlgorithmBase {
 
     struct log_entry {
         AlgorithmStatus     status;
+        double              energy;
         double              variance;
         std::vector<double> entropies;
                             log_entry(const AlgorithmStatus &s, const TensorsFinite &t);
@@ -71,4 +75,9 @@ class AlgorithmFinite : public AlgorithmBase {
 
     std::vector<log_entry> algorithm_history;
     std::vector<double>    var_mpo_step; // History of energy variances (from mpo) at each step
+    double                 ene_latest = 0.0;
+    double                 var_latest = 0.0;
+    double                 ene_delta = 0.0;
+    double                 var_delta = 0.0;
+    double                 var_relchange = 0.0;
 };

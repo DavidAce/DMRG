@@ -209,15 +209,12 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     // This only works if the MPO is not compressed already.
     if(readyShift) return;
     if(sigma == shift) return;
-    if(readyCompress) {
-        if(factorization == eig::Factorization::NONE)
-            throw std::runtime_error("Cannot shift the matrix with Factorization::NONE: mpo is already compressed!");
-        else {
+
             eig::log->trace("Setting shift = {:.16f} + i{:.16f}", std::real(shift), std::imag(shift));
             sigma = shift; // We can shift the diagonal of the full matrix instead
             return;
-        }
-    }
+
+
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size
@@ -246,41 +243,12 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
 }
 
 template<typename T>
-void MatVecMPO<T>::compress() {
-    if(readyCompress) return;
-    svd::config svd_cfg;
-    svd_cfg.svd_lib = svd::lib::lapacke;
-    svd_cfg.svd_rtn = svd::rtn::gejsv;
-    svd::solver svd(svd_cfg);
-    auto        old_dims = mpo.dimensions();
-    {
-        // Compress left to right
-        Eigen::Tensor<T, 2> V;
-        std::tie(mpo, V) = svd.split_mpo_l2r(mpo);
-        envR             = Eigen::Tensor<T, 3>(envR.contract(V, tenx::idx({2}, {1}))); // Contract V into the right environment
-    }
-    {
-        // Compress right to left
-        Eigen::Tensor<T, 2> U;
-        std::tie(U, mpo) = svd.split_mpo_r2l(mpo);
-        envL             = Eigen::Tensor<T, 3>(envL.contract(U, tenx::idx({2}, {0}))); // Contract U_r2l into the left environment
-    }
-    readyCompress = true;
-    eig::log->debug("Compressed MPO dimensions {} -> {}", old_dims, mpo.dimensions());
-}
-
-template<typename T>
 void MatVecMPO<T>::set_mode(const eig::Form form_) {
     form = form_;
 }
 template<typename T>
 void MatVecMPO<T>::set_side(const eig::Side side_) {
     side = side_;
-}
-
-template<typename T>
-void MatVecMPO<T>::set_readyCompress(bool compressed) {
-    readyCompress = compressed;
 }
 
 template<typename T>
@@ -371,10 +339,6 @@ bool MatVecMPO<T>::isReadyFactorOp() const {
 template<typename T>
 bool MatVecMPO<T>::isReadyShift() const {
     return readyShift;
-}
-template<typename T>
-bool MatVecMPO<T>::isReadyCompress() const {
-    return readyCompress;
 }
 
 // Explicit instantiations

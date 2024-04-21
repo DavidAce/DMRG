@@ -31,16 +31,17 @@ int eig::solver::dgeev(real *matrix, size_type L) {
     std::vector<double> eigvecsL_tmp(safe_cast<size_t>(L * L));
 
     int    info = 0;
+    int    Lint = safe_cast<int>(L);
     double lwork_query;
     char   jobz = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
 
-    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, safe_cast<int>(L), matrix, safe_cast<int>(L), eigvals_real.data(), eigvals_imag.data(),
-                              eigvecsL_tmp.data(), safe_cast<int>(L), eigvecsR_tmp.data(), safe_cast<int>(L), &lwork_query, -1);
+    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, Lint, matrix, safe_cast<int>(L), eigvals_real.data(), eigvals_imag.data(), eigvecsL_tmp.data(),
+                              Lint, eigvecsR_tmp.data(), safe_cast<int>(L), &lwork_query, -1);
     int                 lwork = (int) std::real(2.0 * lwork_query); // Make it twice as big for performance.
     std::vector<double> work(safe_cast<size_t>(lwork));
     auto                t_prep = std::chrono::high_resolution_clock::now();
-    info         = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, safe_cast<int>(L), matrix, safe_cast<int>(L), eigvals_real.data(), eigvals_imag.data(),
-                                      eigvecsL_tmp.data(), safe_cast<int>(L), eigvecsR_tmp.data(), safe_cast<int>(L), work.data(), lwork);
+    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, Lint, matrix, safe_cast<int>(L), eigvals_real.data(), eigvals_imag.data(), eigvecsL_tmp.data(),
+                              Lint, eigvecsR_tmp.data(), safe_cast<int>(L), work.data(), lwork);
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         result.meta.eigvecsR_found = true;
@@ -48,8 +49,8 @@ int eig::solver::dgeev(real *matrix, size_type L) {
         result.meta.eigvals_found  = true;
         result.meta.rows           = L;
         result.meta.cols           = L;
-        result.meta.nev            = L;
-        result.meta.nev_converged  = L;
+        result.meta.nev            = Lint;
+        result.meta.nev_converged  = Lint;
         result.meta.n              = L;
         result.meta.form           = Form::NSYM;
         result.meta.type           = Type::REAL;

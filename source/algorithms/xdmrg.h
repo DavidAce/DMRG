@@ -18,7 +18,6 @@ class xdmrg : public AlgorithmFinite {
 
     private:
     double                energy_window_growth_factor = 1.0;
-    std::optional<double> variance_before_step        = std::nullopt;
 
     [[nodiscard]] OptMeta get_opt_meta();
 

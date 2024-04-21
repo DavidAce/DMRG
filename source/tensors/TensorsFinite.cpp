@@ -74,7 +74,7 @@ void TensorsFinite::initialize_model() {
     model->randomize();
     rebuild_mpo();
     rebuild_mpo_squared();
-    if(settings::precision::use_compressed_mpo_squared_all) compress_mpo_squared();
+    compress_mpo_squared();
 }
 
 void TensorsFinite::initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors,
@@ -167,8 +167,8 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
         if(cache.effective_hamiltonian_squared_cplx and active_sites == cache.cached_sites_hamiltonian) return cache.effective_hamiltonian_squared_cplx.value();
     }
     tools::log->trace("TensorsFinite::get_effective_hamiltonian_squared(): contracting active sites {}", active_sites);
-    const auto &mpo                        = model->get_multisite_mpo_squared();
-    const auto &env                        = edges->get_multisite_env_var_blk();
+    const auto &mpo = model->get_multisite_mpo_squared();
+    const auto &env = edges->get_multisite_env_var_blk();
     // tools::log->info("get_effective_hamiltonian_squared: dims {} | edgeL {} | edgeR {}", mpo.dimensions(), env.L.dimensions(), env.R.dimensions());
     // tools::log->info("get_effective_hamiltonian_squared: edgeL \n{}\n", linalg::tensor::to_string(env.L, 16));
     // tools::log->info("get_effective_hamiltonian_squared: edgeR \n{}\n", linalg::tensor::to_string(env.R, 16));
@@ -356,16 +356,17 @@ void TensorsFinite::rebuild_mpo_squared() {
 }
 
 void TensorsFinite::compress_mpo_squared() {
-    if(settings::precision::use_compressed_mpo_squared_all) {
-        if(model->has_compressed_mpo_squared()) {
-            // throw std::runtime_error("compress_mpo_squared: the model already has compressed mpo squared.");
-            tools::log->trace("compress_mpo_squared: the model already has compressed mpo squared.");
-            return; // They don't need to be compressed again. Rebuild before compressing them
-        }
-        tools::log->info("Compressing MPO²");
-        measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
-        model->compress_mpo_squared();
+    if(settings::precision::use_compressed_mpo_squared == MpoCompress::NONE) return;
+
+    if(model->has_compressed_mpo_squared()) {
+        // throw std::runtime_error("compress_mpo_squared: the model already has compressed mpo squared.");
+        tools::log->trace("compress_mpo_squared: the model already has compressed mpo squared.");
+        return; // They don't need to be compressed again. Rebuild before compressing them
     }
+    tools::log->info("Compressing MPO²");
+    measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
+    model->compress_mpo_squared();
+
     if constexpr(settings::debug) model->assert_validity();
 }
 
@@ -510,11 +511,11 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
 }
 
 std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, EnvExpandMode envExpandMode, std::optional<svd::config> svd_cfg) {
-    if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
+    // if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
     auto t_exp = tid::tic_scope("exp_env");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-    auto pos_expanded = tools::finite::env::expand_environment(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
-    if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
+    auto pos_expanded = tools::finite::env::expand_environment_forward(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
+    if(not pos_expanded.empty()) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
     if constexpr(settings::debug) assert_validity();
     return pos_expanded;
 }

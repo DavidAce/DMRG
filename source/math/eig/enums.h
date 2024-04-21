@@ -121,7 +121,7 @@ namespace eig {
     constexpr std::string_view TypeToString(std::optional<Type> type) { return type ? TypeToString(type.value()) : "Type:UNKNOWN"; }
 
     inline PrimmeMethod stringToMethod(std::optional<std::string> methodstring) {
-        if(not methodstring.has_value()) return PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS;
+        if(not methodstring.has_value()) return PrimmeMethod::PRIMME_DYNAMIC;
         if(methodstring.value() == "PRIMME_DEFAULT_METHOD") return PrimmeMethod::PRIMME_DEFAULT_METHOD;
         if(methodstring.value() == "PRIMME_DYNAMIC") return PrimmeMethod::PRIMME_DYNAMIC;
         if(methodstring.value() == "PRIMME_DEFAULT_MIN_TIME") return PrimmeMethod::PRIMME_DEFAULT_MIN_TIME;

@@ -278,20 +278,19 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     config.shift_invert         = eig::Shinv::OFF;
     config.maxIter              = meta.eigs_iter_max;
     config.ritz                 = eig::Ritz::primme_closest_abs;
-    config.primme_target_shifts = {eigval_shift};
+    config.primme_targetShifts = {eigval_shift};
     // config.primme_projection    = "primme_proj_refined"; // TODO: What is this?
     config.compute_eigvecs = eig::Vecs::ON;
     config.primme_locking  = 1;
     config.loglevel        = 2;
     if(initial_mps.size() <= settings::solver::eigs_max_size_shift_invert) {
-        hamiltonian.set_readyCompress(tensors.model->has_compressed_mpo_squared());
         hamiltonian.factorization   = eig::Factorization::LU;
         config.shift_invert         = eig::Shinv::ON;
         config.ritz                 = eig::Ritz::primme_largest_abs;
         config.sigma                = cplx(eigval_shift, 0.0);
         config.primme_projection    = "primme_proj_default";
         config.primme_locking       = false;
-        config.primme_target_shifts = {};
+        config.primme_targetShifts = {};
     }
 
     std::string reason = "exhausted";
@@ -308,7 +307,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
         // Set the new initial guess if we are doing one more round
         if(eigvecs.size() == 0) {
             solver.config.initial_guess.push_back({init.data(), 0});
-            config.primme_target_shifts = {eigval_shift};
+            config.primme_targetShifts = {eigval_shift};
         } else {
             for(long n = 0; n < eigvecs.cols(); ++n) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
             // if(solver.config.shift_invert == eig::Shinv::OFF) {

@@ -14,11 +14,11 @@ namespace eig {
         // Solver library
         std::optional<Lib> lib = std::nullopt;
         // Precision
-        std::optional<double>    tol     = std::nullopt;
-        std::optional<double>    maxTime = std::nullopt;
-        std::optional<int>       maxIter = std::nullopt;
-        std::optional<size_type> maxNev  = std::nullopt;
-        std::optional<size_type> maxNcv  = std::nullopt;
+        std::optional<double> tol     = std::nullopt;
+        std::optional<double> maxTime = std::nullopt;
+        std::optional<int>    maxIter = std::nullopt;
+        std::optional<int>    maxNev  = std::nullopt;
+        std::optional<int>    maxNcv  = std::nullopt;
 
         // Solver properties
         std::optional<Form>    form            = std::nullopt;
@@ -30,7 +30,6 @@ namespace eig {
         std::optional<Shinv>   shift_invert    = std::nullopt; // To find interior solutions. https://docs.scipy.org/doc/scipy/reference/tutorial/arpack.html
         std::optional<Vecs>    compute_eigvecs = std::nullopt;
         std::optional<Dephase> remove_phase    = std::nullopt;
-        std::optional<bool>    compress        = std::nullopt;
 
         struct init_t {
             void *ptr = nullptr; // Points to the initial guess for an eigenvector
@@ -44,13 +43,14 @@ namespace eig {
         std::optional<long>   logIter  = std::nullopt;
 
         // Primme settings
-        std::optional<PrimmeMethod> primme_method               = std::nullopt;
-        std::optional<std::string>  primme_projection           = std::nullopt;
-        std::optional<int>          primme_locking              = std::nullopt;
-        std::optional<int>          primme_max_inner_iterations = std::nullopt; // Strongly recommend -1 or a fixed number like 100 here.
-        std::vector<double>         primme_target_shifts        = {};
-        void                       *primme_effective_ham        = nullptr;
-        void                       *primme_effective_ham_sq     = nullptr;
+        std::optional<PrimmeMethod> primme_method             = std::nullopt;
+        std::optional<std::string>  primme_projection         = std::nullopt;
+        std::optional<int>          primme_locking            = std::nullopt;
+        std::optional<int>          primme_minRestartSize     = std::nullopt;
+        std::optional<int>          primme_maxBlockSize       = std::nullopt;
+        std::vector<double>         primme_targetShifts       = {};
+        void                       *primme_effective_ham      = nullptr;
+        void                       *primme_effective_ham_sq   = nullptr;
         std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner = std::nullopt;
         std::optional<void (*)(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr)> primme_convTestFun =
             std::nullopt;

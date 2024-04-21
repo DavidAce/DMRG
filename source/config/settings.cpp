@@ -188,15 +188,15 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("solver::eigs_tol_min"                         , solver::eigs_tol_min);
     dmrg_config.load_parameter("solver::eigs_tol_max"                         , solver::eigs_tol_max);
     dmrg_config.load_parameter("solver::eigs_ncv"                             , solver::eigs_ncv);
-    dmrg_config.load_parameter("solver::eigs_stuck_multiplier"                , solver::eigs_stuck_multiplier);
+    dmrg_config.load_parameter("solver::eigs_iter_multiplier"                , solver::eigs_iter_multiplier);
     dmrg_config.load_parameter("solver::eigs_max_size_shift_invert"           , solver::eigs_max_size_shift_invert);
     dmrg_config.load_parameter("solver::svd_truncation_lim"                   , solver::svd_truncation_lim);
     dmrg_config.load_parameter("solver::svd_truncation_init"                  , solver::svd_truncation_init);
     dmrg_config.load_parameter("solver::svd_switchsize_bdc"                   , solver::svd_switchsize_bdc);
     dmrg_config.load_parameter("solver::svd_save_fail"                        , solver::svd_save_fail);
 
-    dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
-    dmrg_config.load_parameter("precision::use_compressed_mpo_on_the_fly"     , precision::use_compressed_mpo_on_the_fly);
+    dmrg_config.load_parameter("precision::use_compressed_mpo"                , precision::use_compressed_mpo);
+    dmrg_config.load_parameter("precision::use_compressed_mpo_squared"        , precision::use_compressed_mpo_squared);
     dmrg_config.load_parameter("precision::use_energy_shifted_mpo"            , precision::use_energy_shifted_mpo);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo"            , precision::use_parity_shifted_mpo);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo_squared"    , precision::use_parity_shifted_mpo_squared);

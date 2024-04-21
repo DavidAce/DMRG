@@ -34,6 +34,7 @@ int eig::solver::zgeev(cplx *matrix, size_type L) {
     // For some reason the recommended lwork from netlib doesn't work. It's better to ask lapack with a query.
     int               lrwork = safe_cast<int>(2 * L);
     int               info   = 0;
+    int               Lint   = safe_cast<int>(L);
     cplx              lwork_query;
     std::vector<real> rwork(safe_cast<size_t>(lrwork));
     auto              matrix_ptr      = reinterpret_cast<lapack_complex_double *>(const_cast<cplx *>(matrix));
@@ -44,12 +45,12 @@ int eig::solver::zgeev(cplx *matrix, size_type L) {
     char              jobz            = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
 
     info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR, jobz, jobz, safe_cast<int>(L), matrix_ptr, safe_cast<int>(L), eigvals_ptr, eigvecsL_ptr, safe_cast<int>(L),
-                              eigvecsR_ptr, safe_cast<int>(L), lwork_query_ptr, -1, rwork.data());
+                              eigvecsR_ptr, Lint, lwork_query_ptr, -1, rwork.data());
     int                                lwork = (int) std::real(2.0 * lwork_query); // Make it twice as big for performance.
     std::vector<lapack_complex_double> work((unsigned long) lwork);
     auto                               t_prep = std::chrono::high_resolution_clock::now();
     info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR, jobz, jobz, safe_cast<int>(L), matrix_ptr, safe_cast<int>(L), eigvals_ptr, eigvecsL_ptr, safe_cast<int>(L),
-                              eigvecsR_ptr, safe_cast<int>(L), work.data(), lwork, rwork.data());
+                              eigvecsR_ptr, Lint, work.data(), lwork, rwork.data());
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         result.meta.eigvecsR_found = true;
@@ -57,8 +58,8 @@ int eig::solver::zgeev(cplx *matrix, size_type L) {
         result.meta.eigvals_found  = true;
         result.meta.rows           = L;
         result.meta.cols           = L;
-        result.meta.nev            = L;
-        result.meta.nev_converged  = L;
+        result.meta.nev            = Lint;
+        result.meta.nev_converged  = Lint;
         result.meta.n              = L;
         result.meta.form           = Form::NSYM;
         result.meta.type           = Type::CPLX;

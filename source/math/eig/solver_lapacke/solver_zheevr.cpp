@@ -14,6 +14,7 @@
 #else
     #include <lapacke.h>
 #endif
+#include "../enums.h"
 #include "../log.h"
 #include "../solver.h"
 #include "debug/exceptions.h"
@@ -72,23 +73,20 @@ int eig::solver::zheevr(cplx *matrix /*!< gets destroyed */, size_type L, char r
                                                      ldz, isuppz.data(), lwork_query, lwork, rwork_query, lrwork, iwork_query, liwork);
 
     auto t_total = std::chrono::high_resolution_clock::now();
-    if(info == 0) {
-        eig::log->trace("Found {} eigenvalues", m_found);
-        eigvals.resize(static_cast<size_t>(m_found));
-        eigvecs.resize(static_cast<size_t>(m_found) * static_cast<size_t>(ldz));
-        result.meta.eigvecsR_found = true;
-        result.meta.eigvals_found  = true;
-        result.meta.rows           = L;
-        result.meta.cols           = m_found;
-        result.meta.nev            = m_found;
-        result.meta.nev_converged  = m_found;
-        result.meta.n              = L;
-        result.meta.form           = Form::SYMM;
-        result.meta.type           = Type::CPLX;
-        result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
-        result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
-    } else {
-        throw std::runtime_error("LAPACK zheevr failed with error: " + std::to_string(info));
-    }
+    if(info != 0) throw std::runtime_error("LAPACK zheevr failed with error: " + std::to_string(info));
+    eig::log->trace("Found {} eigenvalues", m_found);
+    eigvals.resize(static_cast<size_t>(m_found));
+    eigvecs.resize(static_cast<size_t>(m_found) * static_cast<size_t>(ldz));
+    result.meta.eigvecsR_found = true;
+    result.meta.eigvals_found  = true;
+    result.meta.rows           = L;
+    result.meta.cols           = m_found;
+    result.meta.nev            = m_found;
+    result.meta.nev_converged  = m_found;
+    result.meta.n              = L;
+    result.meta.form           = Form::SYMM;
+    result.meta.type           = Type::CPLX;
+    result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
+    result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
     return info;
 }

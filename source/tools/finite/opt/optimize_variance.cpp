@@ -100,7 +100,6 @@ namespace tools::finite::opt {
         solver.config.maxNcv          = 16;
         solver.config.compute_eigvecs = eig::Vecs::OFF;
         solver.config.sigma           = std::nullopt;
-        solver.config.compress        = settings::precision::use_compressed_mpo_on_the_fly;
         solver.config.ritz            = eig::Ritz::LM;
         solver.setLogLevel(2);
         solver.eigs(hamiltonian_squared);
@@ -149,31 +148,34 @@ namespace tools::finite::opt {
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
-        auto       &cfg = solver.config;
-        // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        cfg.tol      = meta.eigs_tol.value_or(1e-12); // 1e-12 is good. This Sets "eps" in primme, see link above.
-        cfg.maxIter  = meta.eigs_iter_max.value_or(1000);
-        cfg.maxNev   = meta.eigs_nev.value_or(1);
-        cfg.maxNcv   = meta.eigs_ncv.value_or(4);
-        cfg.compress = meta.compress_otf.value_or(false);
-        cfg.maxTime  = 2 * 60 * 60; // Two hours
-        cfg.lib      = eig::Lib::PRIMME;
+        auto       &cfg           = solver.config;
+        cfg.loglevel              = 2;
+        cfg.compute_eigvecs       = eig::Vecs::ON;
+        cfg.tol                   = meta.eigs_tol.value_or(settings::solver::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
+        cfg.maxIter               = meta.eigs_iter_max.value_or(settings::solver::eigs_iter_max);
+        cfg.maxNev                = meta.eigs_nev.value_or(1);
+        cfg.maxNcv                = meta.eigs_ncv.value_or(settings::solver::eigs_ncv);
+        cfg.maxTime               = 2 * 60 * 60; // Two hours
+        cfg.primme_minRestartSize = meta.primme_minRestartSize;
+        cfg.primme_maxBlockSize   = meta.primme_maxBlockSize;
+        cfg.lib                   = eig::Lib::PRIMME;
+        cfg.primme_method         = eig::stringToMethod(meta.primme_method);
+        cfg.tag += meta.label;
         switch(meta.optRitz) {
             case OptRitz::SR: cfg.ritz = eig::Ritz::primme_smallest; break;
             case OptRitz::LR: cfg.ritz = eig::Ritz::primme_largest; break;
             case OptRitz::SM: {
-                cfg.ritz                 = eig::Ritz::SA; // H² is positive semi-definite!
-                // cfg.primme_target_shifts = {meta.eigv_target.value_or(0.0)};
+                cfg.ritz              = eig::Ritz::SA; // H² is positive semi-definite!
+                cfg.primme_projection = meta.primme_projection.value_or("primme_proj_refined");
+                if(cfg.primme_projection.value() != "primme_proj_default") {
+                    cfg.ritz                = eig::Ritz::primme_closest_abs;
+                    cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
+                }
                 break;
             }
 
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
-
-        cfg.compute_eigvecs = eig::Vecs::ON;
-        cfg.loglevel        = 2;
-        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS; // eig::PrimmeMethod::PRIMME_JDQMR;
-        // cfg.primme_method = eig::PrimmeMethod::PRIMME_JDQMR_ETol; // eig::PrimmeMethod::PRIMME_JDQMR;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
@@ -182,7 +184,6 @@ namespace tools::finite::opt {
         //        configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
 
         // Overrides from default
-
 
         const auto &model               = *tensors.model;
         const auto &edges               = *tensors.edges;
@@ -193,10 +194,9 @@ namespace tools::finite::opt {
             if(initial_mps.get_tensor().size() <= settings::solver::eigs_max_size_shift_invert) {
                 cfg.shift_invert                  = eig::Shinv::ON;
                 cfg.sigma                         = cplx(0.0, 0.0);
-                cfg.primme_target_shifts          = {};
+                cfg.primme_targetShifts           = {};
                 cfg.ritz                          = eig::Ritz::primme_largest_abs;
                 hamiltonian_squared.factorization = eig::Factorization::LLT;
-                hamiltonian_squared.set_readyCompress(tensors.model->has_compressed_mpo_squared());
             }
         }
 

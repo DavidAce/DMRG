@@ -21,38 +21,158 @@ namespace settings {
     static constexpr bool debug_expansion = false;
 }
 
-std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                           EnvExpandMode envExpandMode, std::optional<svd::config> svd_cfg) {
-    // Follows the environment expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+/*!
+    Follows the environment (aka subspace) expansion technique as explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+    Note that in this convention we expand/enrich the trailing bond during a DMRG sweep.
+    Going left-to-right with active site == i, we update:
 
-    // Going left-to-right with active site == i,  we would update:
-    //      A(i-1) --> [A(i-1), P(i-1)],
-    //      AC(i)  --> [AC(i) , 0 ]^T  <--- This one loses normalization, but it doesn't matter because it will get optimized
-    // where
-    //      P(i-1) = alpha * envL(i) * mps(i) * mpo(i) (dimensions d, chi(i-1), chi(i)*m(i))
+        AC(i)   --> SVD( [AC(i)  , PL(i)] ) = U*S*V, to update AC(i) = U, LC = S and V is contracted onto B(i+1) below
+        B(i+1)  --> V * [B(i+1) , 0   ]^T  : This site loses right-normalization when we contract V from the SVD above.
 
-    // Going right-to-left with active site == i,  we would update:
-    //      AC(i)   --> [AC(i), 0 ]     <--- This one loses normalization, but it doesn't matter because it will get optimized
-    //      B(i+1)  --> [B(i+1), P(i+1)]^T,
-    // where
-    //      P(i) = alpha * envR(i) * mps(i) * mpo(i) (dimensions d, chi(i-1)*m(i), chi(i))
-    //
-    // Note that in this convention we expand the "trailing" bond during a DMRG sweep. Doing it the other way would
-    // force us to insert a non-normalized mps into the environment ahead.
-    // The rule is to optimize the site which loses normalization during the expansion.
+    where PL(i) = alpha * ENVL(i) * AC(i) * MPO(i) (dimensions d, AC.dimension(2), AC.dimension(0)*MPO(i).dimension(1))
+    Then, immediately after calling this function, we should move the current center site i --> i+1
 
+    Similarly, going right-to-left with active site == i, we update:
+
+         AC(i)   --> SVD( [AC(i) , PR(i) ]^T ) = U*S*V, to update AC(i)=S*V, and U is contracted onto A(i-1) below
+         A(i-1)  -->      [A(i-1), 0    ] * U  : This one loses left-normalization when we contract U from the SVD above.
+
+    where PR(i) = alpha * ENVR(i) * AC(i) * MPO(i) (dimensions d, AC.dimension(1), AC.dimension(2) * MPO(i).dimension(0))
+    Then, immediately after calling this function, we should move the current center site i --> i-1
+*/
+std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                    std::optional<double> alpha, EnvExpandMode envExpandMode,
+                                                                    std::optional<svd::config> svd_cfg) {
+    auto                pos = state.get_position<size_t>();
+    std::vector<size_t> pos_expanded;
+    if(state.get_direction() > 0 and pos == std::clamp<size_t>(pos, 0, state.get_length<size_t>() - 2)) pos_expanded = {pos, pos + 1};
+    if(state.get_direction() < 0 and pos == std::clamp<size_t>(pos, 1, state.get_length<size_t>() - 1)) pos_expanded = {pos - 1, pos};
+    if(not alpha or pos_expanded.empty()) {
+        // When alpha == std::nullopt this turns into a position query
+        // Just return the positions that would get modified if alpha had been defined.
+        return pos_expanded;
+    }
+
+    // Define the left and right mps that will get modified
+    state.clear_cache();
+    auto  posL     = pos_expanded.front();
+    auto  posR     = pos_expanded.back();
+    auto &mpsL     = state.get_mps_site(posL);
+    auto &mpsR     = state.get_mps_site(posR);
+    auto  dimL_old = mpsL.dimensions();
+    auto  dimR_old = mpsR.dimensions();
+
+    // Set up the SVD
+    auto bond_lim = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
+    svd_cfg       = svd_cfg.value_or(svd::config());
+    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::solver::svd_truncation_lim);
+    svd_cfg->rank_max         = std::min(bond_lim, svd_cfg->rank_max.value_or(bond_lim));
+    svd::solver svd(svd_cfg);
+
+    if(state.get_direction() > 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
+        //      * mpsL is "AC(i)" and is the active site that will get moved into envL later
+        //      * mpsR is "B(i+1)" and will become the active site after moving center position
+        auto                  &mpoL = model.get_mpo(posL);
+        Eigen::Tensor<cplx, 3> PL;
+        switch(envExpandMode) {
+            case EnvExpandMode::ENE: PL = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha.value()); break;
+            case EnvExpandMode::VAR: PL = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha.value()); break;
+        }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M().concatenate(PL, 2); // mpsL is going to be optimized, enriched with PL
+        Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M().concatenate(P0, 1); // mpsR is going into the environment, padded with zeros
+
+        auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg.value());
+        mpsL.set_M(U);
+        mpsL.set_LC(S, -1.0); // Set a negative truncation error to ignore it.
+        mpsL.stash_V(V, posR);
+        mpsR.set_M(MR_P0);
+        mpsR.take_stash(mpsL); // right normalization of mpsR is lost here -- but we will move right soon, thereby left-normalizing it into an AC
+        tools::log->debug("Environment expansion backward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          enum2sv(envExpandMode), alpha.value(), svd_cfg->truncation_limit.value_or(std::numeric_limits<double>::quiet_NaN()), bond_lim,
+                          dimL_old[2], ML_PL.dimension(2), mpsL.get_chiR());
+    }
+    if(state.get_direction() < 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
+        //      * mpsL is "A(i-1)" and will become the active site after moving center position
+        //      * mpsR is "AC(i)" and is the active site that will get moved into envR later
+        auto                  &mpoR = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> PR;
+        switch(envExpandMode) {
+            case EnvExpandMode::ENE: PR = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha.value()); break;
+            case EnvExpandMode::VAR: PR = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha.value()); break;
+        }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+        Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // [ A   0 ]
+        Eigen::Tensor<cplx, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1); // [ AC  P ]^T including LC
+        auto [U, S, V]               = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg.value());
+        // We have right-normalized the a bare AC = L * A (not including * LC)
+        // Therefore the resulting the new truncated AC should include the singular values as well, that is: AC = L * A --> S * V
+        auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
+        mpsR.set_M(SV); // This AC*LC becomes right-normalized! Note that L*A*LC is still a valid normalized "multisite_mps"
+        mpsR.set_L(S);  // We keep track of L in an A type tensor, even though it is included in A already
+        mpsR.stash_U(U, posL);
+        mpsL.set_M(ML_P0);
+        mpsL.take_stash(mpsR);
+        tools::log->debug("Environment expansion backward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          enum2sv(envExpandMode), alpha.value(), svd_cfg->truncation_limit.value_or(std::numeric_limits<double>::quiet_NaN()), bond_lim,
+                          dimL_old[2], MR_PR.dimension(1), mpsL.get_chiR());
+    }
+
+    if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
+    if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
+    // if constexpr(settings::debug or settings::debug_expansion) mpsL.assert_normalized();
+    // if constexpr(settings::debug or settings::debug_expansion) mpsR.assert_normalized();
+    env::rebuild_edges(state, model, edges);
+    return pos_expanded;
+}
+
+/*!
+    This is a modified (aka subspace) expansion technique, compared to the one explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+    In this convention we expand/enrich the forward bond during a DMRG sweep, i.e. the bond one step ahead in the sweep direction.
+
+    Going left-to-right with active site == i, we update:
+
+        AC(i), LC(i) -->      [AC(i)     ,  0 ]  * U, S(i)      : AC(i) is bare, without LC(i) (which is used below). Loses left-normalization due to U.
+        LC*B(i+1)    --> SVD( [LC*B(i+1) , PR(i+1) ]^T ) = U*S*V: update B(i+1) = V, LC(i) = S and U is contracted onto AC(i) above
+
+    where PR(i+1) = alpha * ENVR(i+1) * B(i+1) * MPO(i+1) (dimensions d(i-1), B(i+1).dimension(1), B(i+1).dimension(2) * MPO(i+1).dimension(0))
+    Then, immediately after calling this function, we should optimize the current site AC(i) with a DMRG step.
+
+    Similarly, going right-to-left with active site == i, we update:
+
+         A(i-1)*L(i)  --> SVD( [A(i-1)*L(i), PL(i-1)] ) = U*S*V : update A(i-1) = U, L(i) = S and S*V is contracted onto AC(i) below.
+         L(i), AC(i)  -->  V*[AC(i) ,  0      ]^T               : AC(i) is bare, without LC(i). Loses left-normalization due to V.
+
+    where PL(i-1) = alpha * ENVL(i-1) * A(i-1) * MPO(i-1) (dimensions d(i-1), A(i-1).dimension(2), A(i-1).dimension(0)*MPO(i-1).dimension(1))
+    Then, immediately after calling this function, we should optimize the current site AC(i) with a DMRG step.
+
+    The main differences of this modified expansion are:
+    - The trailing environment is not modified,
+    - after optimization we insert a "good quality" site into the trailing environment
+    - The SVD can be done with very high precision and bond dimension: the real truncation happens after the optimization step instead.
+    - In principle we could even skip the SVD here, or set a larger-than-physically-permitted bond limit, to give the optimizer a very rich environment.
+
+*/
+
+std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                   std::optional<double> alpha, EnvExpandMode envExpandMode,
+                                                                   std::optional<svd::config> svd_cfg) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
-        throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
+        throw except::runtime_error("expand_environment_forward: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
+                                    edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-        throw except::runtime_error("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites,
-                                    edges.active_sites);
+        throw except::runtime_error("expand_environment_forward: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                    model.active_sites, edges.active_sites);
     if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
     if(state.active_sites.size() != 1) {
-        tools::log->warn("expand_environment_var: expected active_sites.size() == 1. Got: {}", state.active_sites);
+        tools::log->warn("expand_environment_forward: expected active_sites.size() == 1. Got: {}", state.active_sites);
         return {};
     }
     if(state.active_sites.front() != state.get_position()) {
-        tools::log->warn("expand_environment_var: expected active_sites.front() == current position. Got: {} != {}", state.active_sites, state.get_position());
+        tools::log->warn("expand_environment_forward: expected active_sites.front() == current position. Got: {} != {}", state.active_sites,
+                         state.get_position());
         return {};
     }
     auto                pos = state.active_sites.front();
@@ -75,20 +195,20 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
     auto  dimR_old = mpsR.dimensions();
 
     // Set up the SVD
-    svd::solver svd(svd_cfg);
-    auto        bond_lim = mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR());
-    // bond_lim             = std::clamp<long>(bond_lim, mpsL.get_chiR(), static_cast<long>(static_cast<double>(mpsL.get_chiR()) * 1.5));
-    // Bond dimension can't grow faster than x spin_dim. But we hold it back a little more than that
+    // Bond dimension can't grow faster than x spin_dim, but we can generate a highly enriched environment here for optimization,
+    // and let the proper truncation happen after optimization instead.
+    auto bond_lim             = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
     svd_cfg                   = svd_cfg.value_or(svd::config());
     svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::solver::svd_truncation_lim);
     svd_cfg->rank_max         = std::min(bond_lim, svd_cfg->rank_max.value_or(bond_lim));
+    svd::solver svd(svd_cfg);
 
     if(state.get_direction() > 0) {
         // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
-        //      * mpsL is an "AC" and is the active site
-        //      * mpsR is an "B"  and belongs in envR later in the optimization step
+        //      * mpsL is "AC(i)"  and is the active site
+        //      * mpsR is "B(i+1)" and belongs in envR later in the optimization step
         auto &mpoR = model.get_mpo(posR);
-        mpsR.set_M(state.get_multisite_mps({posR})); // mpsR absorbs the C bond so that the SVD makes sense later
+        mpsR.set_M(state.get_multisite_mps({posR})); // mpsR absorbs the LC(i) bond from the left so that the SVD makes sense later
         Eigen::Tensor<cplx, 3> PR;
         switch(envExpandMode) {
             case EnvExpandMode::ENE: PR = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha.value()); break;
@@ -118,15 +238,15 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
             }
         }
 
-        tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | ε {:.2e} | χlim {}", pos_expanded, alpha.value(), dimL_old[2],
-                          MR_PR.dimension(1), mpsL.get_chiR(), svd_cfg->truncation_limit, bond_lim);
+        tools::log->debug("Environment expansion forward pos {} | alpha {:.2e} | χ {} -> {} -> {} | svd_ε {:.2e} | χlim {}", pos_expanded, alpha.value(),
+                          dimL_old[2], ML_P0.dimension(2), mpsL.get_chiR(), svd_cfg->truncation_limit, svd_cfg->rank_max);
     }
     if(state.get_direction() < 0) {
-        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
-        //      * mpsL is an "A" and belongs in envL later in the optimization step
-        //      * mpsR is an "AC" and is the active site
+        // The expanded bond sits between mpsL and mpsR. When direction is right-to-left:
+        //      * mpsL is "A(i-1)" and belongs in envL later in the optimization step
+        //      * mpsR is "AC(i)" and is the active site
         auto &mpoL = model.get_mpo(posL);
-        mpsL.set_M(state.get_multisite_mps({posL})); // mpsL absorbs the C bond so that the SVD makes sense later
+        mpsL.set_M(state.get_multisite_mps({posL})); // mpsL absorbs the L(i) bond from the right so that the SVD makes sense later
         Eigen::Tensor<cplx, 3> PL;
         switch(envExpandMode) {
             case EnvExpandMode::ENE: PL = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha.value()); break;
@@ -147,7 +267,7 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
         {
             // Make mpsR normalized. This is strictly optional, but we do it so that normalization checks can succeed
             cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
-            Eigen::Tensor<cplx, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
+            Eigen::Tensor<cplx, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
             mpsR.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
                 auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
@@ -156,14 +276,15 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
                                   std::abs(norm_new));
             }
         }
-        tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | ε {:.2e} |χlim {}", pos_expanded, alpha.value(), dimR_old[1],
-                          ML_PL.dimension(2), mpsR.get_chiL(), svd_cfg->truncation_limit, bond_lim);
+        tools::log->debug("Environment expansion forward pos {} | alpha {:.2e} | χ {} -> {} -> {} | ε {:.2e} | χlim {}", pos_expanded, alpha.value(),
+                          dimR_old[1], MR_P0.dimension(1), mpsR.get_chiL(), svd_cfg->truncation_limit, svd_cfg->rank_max);
     }
 
     if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
     if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
     if constexpr(settings::debug or settings::debug_expansion) mpsL.assert_normalized();
     if constexpr(settings::debug or settings::debug_expansion) mpsR.assert_normalized();
+    state.clear_cache();
     env::rebuild_edges(state, model, edges);
     return pos_expanded;
 }

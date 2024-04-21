@@ -739,7 +739,7 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
     }
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
-    tools::log->trace("Var H = H² - E² = {:.16f} - {:.16f} = {:.16f}", std::real(H2), E2, var);
+    tools::log->info("Var H = H² - E² = {:.16f} - {:.16f} = {:.16f}", std::real(H2), E2, var);
     if(measurements != nullptr) measurements->energy_variance = var;
     return var;
 }

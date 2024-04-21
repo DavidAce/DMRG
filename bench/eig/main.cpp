@@ -71,11 +71,10 @@ std::string solve(const eig::settings &config, const h5pp::File &h5file, std::st
     s.setLogLevel(1);
     s.eigs(ham2);
     auto rnorm       = *std::max_element(s.result.meta.residual_norms.begin(), s.result.meta.residual_norms.end());
-    auto maxInnerStr = fmt::format("{:>4}", s.config.primme_max_inner_iterations ? std::to_string(s.config.primme_max_inner_iterations.value()) : "auto");
     auto msg         = fmt::format(
-        FMT_STRING("Result: method {:<32} | {:^10} | nev {:>3} | ncv {:>3} | maxInner {:>4} | tol {:8.2e} | iter {:>5} | op {:>5} | mv {:>7} | Found {:<5} | "
+        FMT_STRING("Result: method {:<32} | {:^10} | nev {:>3} | ncv {:>3} | tol {:8.2e} | iter {:>5} | op {:>5} | mv {:>7} | Found {:<5} | "
                                    "rnorm {:8.2e} | var {:>12.6e} | time {:>10.3f} s | t/op {:>10.3f} ms | t/mv {:>10.3f} ms | dims {}"),
-        eig::MethodToString(config.primme_method.value()), group, s.config.maxNev.value(), s.config.maxNcv.value(), maxInnerStr, s.config.tol.value(),
+        eig::MethodToString(config.primme_method.value()), group, s.config.maxNev.value(), s.config.maxNcv.value(), s.config.tol.value(),
         s.result.meta.iter, s.result.meta.num_op, s.result.meta.num_mv, s.result.meta.eigvecsR_found, rnorm, s.result.get_eigvals()[0],
         s.result.meta.time_total, s.result.meta.time_total * 1000.0 / static_cast<double>(s.result.meta.num_op),
         s.result.meta.time_total * 1000.0 / static_cast<double>(s.result.meta.num_mv), dims);
@@ -137,13 +136,11 @@ int main() {
     configs[0].maxIter                     = 10;    // TODO: Should be thousands
     configs[0].maxNev                      = 1;
     configs[0].maxNcv                      = 4;
-    configs[0].compress                    = false;
     configs[0].maxTime                     = 2 * 60 * 60; // Two hours
     configs[0].lib                         = eig::Lib::PRIMME;
     configs[0].ritz                        = eig::Ritz::SA;
     configs[0].compute_eigvecs             = eig::Vecs::ON;
     configs[0].loglevel                    = 2;
-    configs[0].primme_max_inner_iterations = 0;
     configs[0].primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
 
     //    configs[0].primme_preconditioner = simps_preconditioner<MatVecMPO<double>>;

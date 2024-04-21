@@ -80,7 +80,7 @@ inline primme_preset_method stringToMethod(std::optional<std::string> methodstri
 }
 
 inline primme_preset_method MethodAdapter(std::optional<eig::PrimmeMethod> method) {
-    if(not method.has_value()) return primme_preset_method::PRIMME_DEFAULT_MIN_MATVECS;
+    if(not method.has_value()) return primme_preset_method::PRIMME_DYNAMIC;
     if(method.value() == eig::PrimmeMethod::PRIMME_DEFAULT_METHOD) return primme_preset_method::PRIMME_DEFAULT_METHOD;
     if(method.value() == eig::PrimmeMethod::PRIMME_DYNAMIC) return primme_preset_method::PRIMME_DYNAMIC;
     if(method.value() == eig::PrimmeMethod::PRIMME_DEFAULT_MIN_TIME) return primme_preset_method::PRIMME_DEFAULT_MIN_TIME;
@@ -97,7 +97,7 @@ inline primme_preset_method MethodAdapter(std::optional<eig::PrimmeMethod> metho
     if(method.value() == eig::PrimmeMethod::PRIMME_STEEPEST_DESCENT) return primme_preset_method::PRIMME_STEEPEST_DESCENT;
     if(method.value() == eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis) return primme_preset_method::PRIMME_LOBPCG_OrthoBasis;
     if(method.value() == eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window) return primme_preset_method::PRIMME_LOBPCG_OrthoBasis_Window;
-    return primme_preset_method::PRIMME_DEFAULT_MIN_MATVECS;
+    return primme_preset_method::PRIMME_DYNAMIC;
 }
 
 inline primme_projection stringToProj(std::optional<std::string> projstring) {
@@ -107,6 +107,15 @@ inline primme_projection stringToProj(std::optional<std::string> projstring) {
     if(projstring.value() == "primme_proj_refined") return primme_projection::primme_proj_refined;
     if(projstring.value() == "primme_proj_default") return primme_projection::primme_proj_default;
     throw except::runtime_error("Wrong projection string: " + projstring.value());
+}
+inline std::string_view projToString(primme_projection proj) {
+    switch(proj) {
+        case primme_projection::primme_proj_RR: return "primme_proj_RR";
+        case primme_projection::primme_proj_harmonic: return "primme_proj_harmonic";
+        case primme_projection::primme_proj_refined: return "primme_proj_refined";
+        case primme_projection::primme_proj_default: return "primme_proj_default";
+        default: return "primme_proj_UNKNOWN";
+    }
 }
 
 template<typename MatrixProductType>
@@ -146,6 +155,7 @@ std::string getLogMessage(struct primme_params *primme) {
                 case primme_target::primme_smallest: return primme->stats.estimateMinEVal;
                 case primme_target::primme_largest: return primme->stats.estimateMaxEVal;
                 case primme_target::primme_largest_abs: return std::max(std::abs(primme->stats.estimateMaxEVal), std::abs(primme->stats.estimateMaxEVal));
+                default: return primme->stats.estimateMinEVal;
             }
         }
     };
@@ -235,10 +245,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         throw std::runtime_error("Tried to apply shift on an incompatible matrix");
     }
 
-    if constexpr(MatrixProductType::can_compress) {
-        if(config.compress and config.compress.value()) matrix.compress();
-    }
-
     primme_params primme;
 
     /* Set default values in PRIMME configuration struct */
@@ -269,15 +275,20 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     }
 
     /* Set problem parameters */
-    primme.n = matrix.rows();                                                  /* set problem dimension */
-    if(config.maxNev) primme.numEvals = safe_cast<int>(config.maxNev.value()); /* Number of wanted eigenpairs */
-    if(config.tol) primme.eps = config.tol.value();                            /* ||r|| <= eps * ||matrix|| */
-    if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
-    if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
-    primme.maxBasisSize       = std::clamp<int>(safe_cast<int>(config.maxNcv.value_or(primme.numEvals + 1)), primme.numEvals + 1, primme.n);
-    primme.maxOuterIterations = config.maxIter.value_or(primme.maxOuterIterations);
-    primme.maxMatvecs         = config.maxIter.value_or(primme.maxMatvecs);
-    primme.locking            = config.primme_locking.value_or(primme.locking);
+    // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
+    primme.n                           = matrix.rows();              /*!< set problem dimension */
+    primme.numEvals                    = config.maxNev.value_or(1);  /*!<  Number of desired eigenpairs */
+    primme.eps                         = config.tol.value_or(1e-12); /*!< 1e-12 is good. This Sets "eps" in primme, see link above. */
+    primme.target                      = RitzToTarget(config.ritz.value_or(Ritz::primme_smallest));
+    primme.projectionParams.projection = stringToProj(config.primme_projection.value_or("primme_proj_default"));
+    primme.maxOuterIterations          = config.maxIter.value_or(primme.maxOuterIterations);
+    primme.maxMatvecs                  = config.maxIter.value_or(primme.maxMatvecs);
+    primme.maxBlockSize                = config.primme_maxBlockSize.value_or(1);
+    primme.maxBasisSize                = getBasisSize(primme.n, primme.numEvals, config.maxNcv);
+    primme.minRestartSize              = config.primme_minRestartSize.value_or(primme.maxBasisSize / 2);
+    // Make sure the basis is bigger than minRestartSize + maxPrevRetain, where the latter will be set to max(2,maxBlockSize) in primme_set_method
+    primme.maxBasisSize = std::clamp(primme.maxBasisSize, primme.minRestartSize + std::max(2, primme.maxBlockSize+1), primme.n);
+
     // Shifts
     switch(primme.target) {
         case primme_target::primme_largest:
@@ -287,24 +298,24 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         }
         case primme_target::primme_largest_abs: {
             // According to the manual, this is required when the target is primme_largest_abs
-            config.primme_target_shifts = {0.0};
-            primme.numTargetShifts      = 1;
-            primme.targetShifts         = config.primme_target_shifts.data();
+            config.primme_targetShifts = {0.0};
+            primme.numTargetShifts     = 1;
+            primme.targetShifts        = config.primme_targetShifts.data();
             break;
         }
         case primme_target::primme_closest_geq:
         case primme_target::primme_closest_leq:
         case primme_target::primme_closest_abs: {
-            if(not config.primme_target_shifts.empty()) {
-                eig::log->debug("Setting target shifts: {:.8f}", fmt::join(config.primme_target_shifts, ", "));
-                primme.numTargetShifts = safe_cast<int>(config.primme_target_shifts.size());
-                primme.targetShifts    = config.primme_target_shifts.data();
+            if(not config.primme_targetShifts.empty()) {
+                eig::log->debug("Setting target shifts: {:.8f}", fmt::join(config.primme_targetShifts, ", "));
+                primme.numTargetShifts = safe_cast<int>(config.primme_targetShifts.size());
+                primme.targetShifts    = config.primme_targetShifts.data();
             } else if(config.sigma and not matrix.isReadyShift()) {
                 // We handle shifts by applying them directly on the matrix if possible. Else here:
                 eig::log->debug("Setting target shift: {:.8f}", std::real(config.sigma.value()));
-                config.primme_target_shifts = {std::real(config.sigma.value())};
-                primme.numTargetShifts      = safe_cast<int>(config.primme_target_shifts.size());
-                primme.targetShifts         = config.primme_target_shifts.data();
+                config.primme_targetShifts = {std::real(config.sigma.value())};
+                primme.numTargetShifts     = safe_cast<int>(config.primme_targetShifts.size());
+                primme.targetShifts        = config.primme_targetShifts.data();
             } else
                 throw std::runtime_error("primme_target:primme_closest_???: no target shift given");
 
@@ -318,17 +329,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
      * set another method, such as PRIMME_LOBPCG_OrthoBasis_Window, directly */
     primme_set_method(MethodAdapter(config.primme_method), &primme);
 
-    // Override some parameters
-    if(config.primme_max_inner_iterations) primme.correctionParams.maxInnerIterations = config.primme_max_inner_iterations.value();
-    //    primme.restartingParams.maxPrevRetain = 2;
-    primme.minRestartSize = primme.numEvals; // As few as possible for gd+k
-                                             //    primme.maxBlockSize = omp_get_max_threads();
-    //    primme.orth = primme_orth_explicit_I;
-    //    if(primme.maxBlockSize == 1) primme.restartingParams.maxPrevRetain = 1;
-    primme.maxBasisSize   = std::max(primme.maxBasisSize, 1 + primme.minRestartSize + primme.restartingParams.maxPrevRetain);
-    primme.minRestartSize = std::max(primme.numEvals, primme.maxBasisSize / 2);
-    eig::log->debug("numEvals {} | maxMatvecs {} | eps {:.2e} | minRestartSize {} | maxPrevRetain {} | maxBasisSize {} | maxBlockSize {}", primme.numEvals,
-                    primme.maxMatvecs, primme.eps, primme.minRestartSize, primme.restartingParams.maxPrevRetain, primme.maxBasisSize, primme.maxBlockSize);
+    eig::log->debug("numEvals {} | maxMatvecs {} | eps {:.2e} | maxBasisSize {} | minRestartSize {} | maxBlockSize {} | maxPrevRetain {} | {}", primme.numEvals,
+                    primme.maxMatvecs, primme.eps, primme.maxBasisSize, primme.minRestartSize, primme.maxBlockSize, primme.restartingParams.maxPrevRetain,
+                    projToString(primme.projectionParams.projection));
     // Allocate space
     auto &eigvals = result.get_eigvals<eig::Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Scalar, eig::Form::SYMM>();
@@ -374,18 +377,23 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
 
     if(info == 0) {
         switch(primme.dynamicMethodSwitch) {
-            case -1: eig::log->debug("Recommended method for next run: DEFAULT_MIN_MATVECS\n"); break;
-            case -2: eig::log->debug("Recommended method for next run: DEFAULT_MIN_TIME\n"); break;
-            case -3: eig::log->debug("Recommended method for next run: DYNAMIC (close call)\n"); break;
+            case -1: eig::log->debug("Recommended method for next run: DEFAULT_MIN_MATVECS"); break;
+            case -2: eig::log->debug("Recommended method for next run: DEFAULT_MIN_TIME"); break;
+            case -3: eig::log->debug("Recommended method for next run: DYNAMIC (close call)"); break;
+            default: break;
         }
     } else {
         switch(info) {
             case -1: eig::log->error("PRIMME_UNEXPECTED_FAILURE (exit {}): set printLevel > 0 to see the call stack", info); break;
             case -2: eig::log->error("PRIMME_MALLOC_FAILURE (exit {}): eith<er CPU or GPU", info); break;
-            case -3: eig::log->debug("PRIMME_MAIN_ITER_FAILURE (exit {}): {}", info, getLogMessage(&primme)); break;
+            case -3: eig::log->debug("{}", getLogMessage(&primme)); break;
             case -4: eig::log->error("PRIMME_ARGUMENT_IS_NULL (exit {})", info); break;
             case -5: eig::log->error("PRIMME_INVALID_ARG n < 0 or nLocal < 0 or nLocal > n (exit {})", info); break;
             case -6: eig::log->error("PRIMME_INVALID_ARG numProcs < 1 (exit {})", info); break;
+            case -25:
+                eig::log->error("PRIMME_INVALID_ARG  maxPrevRetain({}) + minRestartSize({}) >= maxBasisSize({}), and n({}) > maxBasisSize({}) (exit {})",
+                                primme.restartingParams.maxPrevRetain, primme.minRestartSize, primme.maxBasisSize, primme.n, primme.maxBasisSize, info);
+                break;
             case -40: eig::log->error("PRIMME_LAPACK_FAILURE (exit {})", info); break;
             case -41: eig::log->error("PRIMME_USER_FAILURE (exit {})", info); break;
             case -42: eig::log->error("PRIMME_ORTHO_CONST_FAILURE (exit {})", info); break;

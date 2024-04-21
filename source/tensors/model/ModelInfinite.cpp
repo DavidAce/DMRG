@@ -61,7 +61,7 @@ void ModelInfinite::reset_mpo_squared() {
 }
 
 void ModelInfinite::rebuild_mpo_squared() {
-    if(settings::precision::use_compressed_mpo_squared_all) {
+    if(settings::precision::use_compressed_mpo_squared  != MpoCompress::NONE) {
         tools::log->trace("Compressing MPO²");
         throw std::runtime_error("Compressing the squared MPO² is currently unsupported on infinite systems.\n"
                                  "Set settings::precision::use_compressed_mpo_squared_all = false");

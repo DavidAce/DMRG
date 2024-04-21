@@ -29,7 +29,7 @@ namespace tools::infinite::opt {
         MatVecMPO<cplx> matrix(env.L, env.R, mpo);
         eig::solver     solver;
         solver.config.maxNev  = 1;
-        solver.config.maxNcv  = safe_cast<eig::size_type>(settings::solver::eigs_ncv);
+        solver.config.maxNcv  = settings::solver::eigs_ncv;
         solver.config.tol     = settings::solver::eigs_tol_min;
         solver.config.maxIter = 10000;
         solver.eigs(matrix, -1, -1, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);

@@ -188,7 +188,7 @@ void eig::solver_arpack<MatrixType>::eigs_comp_rc() {
 
 template<typename MatrixType>
 template<typename Derived>
-void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_type nev) {
+void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, int nev) {
     using ShiftType = decltype(solver.GetShift());
 
     // Start by preparing the matrix for solving. Apply shifts, do inversion/factorization and then compress
@@ -210,10 +210,6 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
             }
         } else if(config.sigma) {
             throw std::runtime_error("Tried to apply shift on an incompatible matrix");
-        }
-
-        if constexpr(MatrixType::can_compress) {
-            if(config.compress and config.compress.value()) matrix.compress();
         }
     }
     {
@@ -247,7 +243,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.num_op        = matrix.num_op;
     result.meta.iter          = solver.GetIter();
     result.meta.n             = solver.GetN();
-    result.meta.nev           = std::min(nev, static_cast<eig::size_type>(solver.GetNev()));
+    result.meta.nev           = std::min(nev, solver.GetNev());
     result.meta.nev_converged = solver.ConvergedEigenvalues();
     result.meta.ncv           = solver.GetNcv();
     result.meta.rows          = solver.GetN();
@@ -309,10 +305,6 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
             }
         } else if(config.sigma) {
             throw std::runtime_error("Tried to apply shift on an incompatible matrix");
-        }
-
-        if constexpr(MatrixType::can_compress) {
-            if(config.compress and config.compress.value()) matrix.compress();
         }
     }
 

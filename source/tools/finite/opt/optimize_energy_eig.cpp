@@ -61,9 +61,12 @@ namespace tools::finite::opt::internal {
         if(problem_size > settings::solver::eig_max_size)
             throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {} > {}(max)", problem_size, settings::solver::eig_max_size);
 
-        tools::log->trace("Full diagonalization of H");
         tools::log->debug("optimize_energy_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),
                           enum2sv(meta.optAlgo));
+
+        initial_mps.validate_initial_mps();
+        // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eigs requires energy-shifted MPO²");
+        reports::eigs_add_entry(initial_mps, spdlog::level::debug);
 
         auto                 t_gs = tid::tic_scope("eig-ene", tid::level::higher);
         std::vector<opt_mps> results;

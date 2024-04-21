@@ -195,11 +195,11 @@ namespace settings {
     namespace solver {
         inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
         inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
+        inline size_t   eigs_iter_multiplier           = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
         inline double   eigs_tol_max                    = 1e-10 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline size_t   eigs_ncv                        = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
+        inline int      eigs_ncv                        = 0     ;                  /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
         inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
-        inline size_t   eigs_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
         inline double   svd_truncation_lim              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
         inline double   svd_truncation_init             = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
@@ -219,7 +219,7 @@ namespace settings {
         inline size_t              max_saturated_iters         = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
         inline size_t              min_saturated_iters         = 1;                                      /*!< Saturated at least this many iterations before stopping */
         inline size_t              min_converged_iters         = 1;                                      /*!< Converged at least this many iterations before success */
-        inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment expansion */
+        inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
         inline size_t              multisite_opt_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t              multisite_opt_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove       multisite_opt_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multisite optimization step, choose between {ONE, MID, MAX} */
@@ -241,18 +241,18 @@ namespace settings {
 
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
-        inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
-        inline bool     use_compressed_mpo_on_the_fly   = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
-        inline bool     use_energy_shifted_mpo          = false ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
-        inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
-        inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
-        inline double   variance_saturation_sensitivity = 1e-1  ;                  /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
-        inline double   entropy_saturation_sensitivity  = 1e-3  ;                  /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
-        inline double   target_subspace_error           = 1e-10 ;                  /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
-        inline size_t   max_subspace_size               = 256   ;                  /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
-        inline long     max_size_multisite              = 131072;                  /*!< Maximum problem size for multisite dmrg. If the linear size is larger than this, the algorithm prefers 1-site dmrg. */
-        inline double   max_norm_error                  = 1e-10 ;                  /*!< Maximum norm deviation from unity during integrity checks */
+        inline auto     use_compressed_mpo              = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
+        inline auto     use_compressed_mpo_squared      = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
+        inline bool     use_energy_shifted_mpo          = false ;           /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
+        inline bool     use_parity_shifted_mpo          = true  ;           /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
+        inline bool     use_parity_shifted_mpo_squared  = true  ;           /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
+        inline double   variance_convergence_threshold  = 1e-12 ;           /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
+        inline double   variance_saturation_sensitivity = 1e-1  ;           /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double   entropy_saturation_sensitivity  = 1e-3  ;           /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double   target_subspace_error           = 1e-10 ;           /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
+        inline size_t   max_subspace_size               = 256   ;           /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
+        inline long     max_size_multisite              = 131072;           /*!< Maximum problem size for multisite dmrg. If the linear size is larger than this, the algorithm prefers 1-site dmrg. */
+        inline double   max_norm_error                  = 1e-10 ;           /*!< Maximum norm deviation from unity during integrity checks */
     }
 
 

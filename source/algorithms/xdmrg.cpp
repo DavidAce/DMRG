@@ -58,10 +58,10 @@ void xdmrg::resume() {
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);
         tensors.state->set_name(name);
 
-        // Apply shifts and ompress the model
-        set_energy_shift_mpo();
+        // Apply shifts and compress the model
         set_parity_shift_mpo();
         set_parity_shift_mpo_squared();
+        set_energy_shift_mpo();
         rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
 
         // Initialize a custom task list
@@ -179,9 +179,9 @@ void xdmrg::run_preprocessing() {
     initialize_state(ResetReason::INIT, settings::strategy::initial_state); // Second use of random!
     find_energy_range();
     init_energy_target();
-    set_energy_shift_mpo();
     set_parity_shift_mpo();
     set_parity_shift_mpo_squared();
+    set_energy_shift_mpo();
     rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
     write_to_file(StorageEvent::MODEL);
 
@@ -281,26 +281,29 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     // Set the default svd limits
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
-    // Set up a multiplier for number of iterations
-    size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::solver::eigs_stuck_multiplier, status.algorithm_has_stuck_for)));
-    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
+    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_iter_multiplier : 1;
 
     // Copy settings
-    m1.min_sites     = settings::strategy::multisite_opt_site_def;
-    m1.max_sites     = settings::strategy::multisite_opt_site_def;
-    m1.subspace_tol  = settings::precision::target_subspace_error;
-    m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
-    m1.eigs_nev      = 1;
-    m1.eigv_target   = 0.0; // We always target 0 when OptFunc::VARIANCE
-    m1.eigs_ncv      = settings::solver::eigs_ncv;
-    m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
-                           ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
-                           : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
+    m1.min_sites         = settings::strategy::multisite_opt_site_def;
+    m1.max_sites         = settings::strategy::multisite_opt_site_def;
+    m1.subspace_tol      = settings::precision::target_subspace_error;
+    m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
+    m1.eigs_nev          = 1;
+    m1.eigv_target       = 0.0;                        // We always target 0 when OptFunc::VARIANCE
+    m1.eigs_ncv          = settings::solver::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
 
-    m1.eigs_tol = std::clamp(status.energy_variance_lowest,                              // Increase precision as variance decreases
-                             settings::solver::eigs_tol_min,                             // From min
-                             settings::solver::eigs_tol_max);                            // to max
-    if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min; // Set to high precision when stuck
+    // Set up a multiplier for number of iterations
+    double iter_stuck_multiplier = std::max(1.0, safe_cast<double>(std::pow(settings::solver::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
+    double iter_max_converged    = std::min(10000.0, safe_cast<double>(settings::solver::eigs_iter_max));      // Run less when converged
+    double iter_max_has_stuck    = safe_cast<double>(settings::solver::eigs_iter_max) * iter_stuck_multiplier; // Run more when stuck
+    using iter_max_type          = decltype(m1.eigs_iter_max)::value_type;
+    m1.eigs_iter_max             = status.algorithm_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
+                                       ? safe_cast<iter_max_type>(std::min<double>(iter_max_converged, std::numeric_limits<iter_max_type>::max()))
+                                       : safe_cast<iter_max_type>(std::min<double>(iter_max_has_stuck, std::numeric_limits<iter_max_type>::max()));
+
+    // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
+    m1.eigs_tol = std::min(status.energy_variance_lowest, settings::solver::eigs_tol_max);
+    if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min;
 
     m1.optFunc   = OptFunc::VARIANCE;
     m1.optAlgo   = OptAlgo::DIRECT;
@@ -337,18 +340,21 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
+    //
+    // auto var_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
+    // bool var_stuck2 = var_latest < 1e-8 and status.algorithm_has_stuck_for > 2;
+    // bool var_toolow = status.variance_mpo_converged_for > 0 or var_latest < var_thresh;
+    // if(var_stuck2 and not var_toolow) {
+    //     m1.optFunc   = OptFunc::VARIANCE;
+    //     m1.optAlgo   = OptAlgo::DIRECTX2;
+    //     m1.optSolver = OptSolver::EIGS;
+    //     m1.optRitz   = OptRitz::SM;
+    // }
 
-    if(status.energy_variance_lowest < 1e-7 and status.algorithm_has_stuck_for > 0) {
-        m1.optFunc   = OptFunc::VARIANCE;
-        m1.optAlgo   = OptAlgo::DIRECTX2;
-        m1.optSolver = OptSolver::EIGS;
-        m1.optRitz   = OptRitz::SM;
-    }
-
-    if(status.env_expansion_alpha > 0) {
-        // If we are doing 1-site dmrg, then we better use subspace expansion
-        if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
-    }
+    // if(status.env_expansion_alpha > 0) {
+    //     // If we are doing 1-site dmrg, then we better use subspace expansion
+    //     if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
+    // }
 
     m1.validate();
     return m1;
@@ -357,9 +363,8 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
 void xdmrg::update_state() {
     using namespace tools::finite;
     using namespace tools::finite::opt;
-    auto t_step          = tid::tic_scope("step");
-    auto opt_meta        = get_opt_meta();
-    variance_before_step = std::nullopt;
+    auto t_step   = tid::tic_scope("step");
+    auto opt_meta = get_opt_meta();
     tools::log->debug("Starting {} iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.algo_type_sv(), status.iter, status.step, status.position,
                       status.direction, enum2sv(settings::get_ritz(status.algo_type)), enum2sv(opt_meta.optType));
     tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
@@ -371,26 +376,20 @@ void xdmrg::update_state() {
     }
     tensors.rebuild_edges();
 
-    // Hold the variance before the optimization step for comparison
-    if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
+    tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
 
-    // Use environment expansion if alpha_expansion is set
-    // Note that this changes the mps and edges adjacent to "tensors.active_sites"
-    if(opt_meta.alpha_expansion) {
-        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::VAR, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
+    if(tensors.active_sites.size() == 1) {
+        // Use environment expansion if alpha_expansion is set
+        expand_environment(status.env_expansion_alpha, svd::config(status.bond_lim, std::min(1e-15, status.trnc_min)));
+        // tensors.expand_environment(status.env_expansion_alpha, EnvExpandMode::VAR, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
     }
 
-    // Announce the current configuration for optimization
-    tools::log->debug("Updating state: {} | mode {} | space {} | type {} | ritz {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", opt_meta.label,
-                      enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver), enum2sv(opt_meta.optType), enum2sv(opt_meta.optRitz), opt_meta.chosen_sites,
-                      tensors.state->active_dimensions(), tensors.state->active_problem_size(), opt_meta.svd_cfg->truncation_limit,
-                      (opt_meta.alpha_expansion ? opt_meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
     // Run the optimization
     auto initial_state = opt::get_opt_initial_mps(tensors);
     auto opt_state     = opt::find_excited_state(tensors, initial_state, status, opt_meta);
 
     // Determine the quality of the optimized state.
-    opt_state.set_relchange(opt_state.get_variance() / variance_before_step.value());
+    opt_state.set_relchange(opt_state.get_variance() / var_latest);
     opt_state.set_bond_limit(opt_meta.svd_cfg->rank_max.value());
     opt_state.set_trnc_limit(opt_meta.svd_cfg->truncation_limit.value());
     /* clang-format off */
@@ -407,18 +406,16 @@ void xdmrg::update_state() {
     /* clang-format on */
 
     tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver),
-                      flag2str(opt_meta.optExit), variance_before_step.value(), opt_state.get_variance(), opt_state.get_relchange() * 100);
-    if(opt_state.get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
+                      flag2str(opt_meta.optExit), var_latest, opt_state.get_variance(), opt_state.get_relchange() * 100);
+    if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
-                          "alpha {:8.2e} | "
                           "sites {} |"
                           "{:20} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
-                          opt_state.get_alpha(), opt_state.get_sites(),
-                          fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
-                          opt_state.get_time());
+                          opt_state.get_sites(), fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())),
+                          flag2str(opt_state.get_optexit()), opt_state.get_time());
     }
 
     last_optspace = opt_state.get_optsolver();
@@ -435,21 +432,27 @@ void xdmrg::update_state() {
         if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
     }
 
-    if constexpr(settings::debug) {
-        auto variance_before_svd = opt_state.get_variance();
-        auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-        tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
-        tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
-        tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
-    }
+    // if constexpr(settings::debug) {
+    auto variance_before_svd = opt_state.get_variance();
+    auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
+    tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
+    tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
+    tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
+    // }
 
     // Update current energy density ε
     if(status.opt_ritz == OptRitz::TE)
         status.energy_dens = (tools::finite::measure::energy(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
 
     tools::log->trace("Updating variance record holder");
+    auto ene = tools::finite::measure::energy(tensors);
     auto var = tools::finite::measure::energy_variance(tensors);
     if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+    var_delta     = var - var_latest;
+    ene_delta     = ene - ene_latest;
+    var_relchange = (var - var_latest) / var;
+    var_latest    = var;
+    ene_latest    = ene;
     var_mpo_step.emplace_back(var);
     if constexpr(settings::debug) tensors.assert_validity();
 }

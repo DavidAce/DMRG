@@ -57,7 +57,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
         }
 
         Eigen::Tensor<cplx, 1> LC(1);
-        LC.setConstant(1); // Store the LC bond in a temporary. It will become a regular "L" bond later
+        LC.setConstant({1.0,0.0}); // Store the LC bond in a temporary. It will become a regular "L" bond later
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
         if(state.get_direction() == 1) {

@@ -61,8 +61,8 @@ int eig::solver::dsyevd(real *matrix, size_type L) {
         result.meta.eigvals_found  = true;
         result.meta.rows           = L;
         result.meta.cols           = L;
-        result.meta.nev            = L;
-        result.meta.nev_converged  = L;
+        result.meta.nev            = n;
+        result.meta.nev_converged  = n;
         result.meta.n              = L;
         result.meta.form           = Form::SYMM;
         result.meta.type           = Type::REAL;

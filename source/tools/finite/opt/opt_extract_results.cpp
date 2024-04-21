@@ -30,7 +30,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 auto &mps           = results.back();
                 mps.is_basis_vector = true;
                 if constexpr(settings::debug) tools::log->trace("Extracting result: idx {} | eigval {:.16f}", idx, eigvals(idx));
-                mps.set_name(fmt::format("eigenvector {} [{:>8}]",idx,  solver.config.tag));
+                mps.set_name(fmt::format("eigenvector {} [{:^8}]",idx,  solver.config.tag));
                 mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_sites(initial_mps.get_sites());
                 mps.set_energy_shift(initial_mps.get_energy_shift()); // Will set energy if also given the eigval
@@ -115,7 +115,7 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 results.emplace_back(opt_mps());
                 auto &mps           = results.back();
                 mps.is_basis_vector = false;
-                mps.set_name(fmt::format("{:<8}eigenvector {}", solver.config.tag, idx));
+                mps.set_name(fmt::format("eigenvector {} [{:^8}]",idx,  solver.config.tag));
                 // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_tensor(subspace::get_vector_in_fullspace(subspace_mps, eigvecs.col(idx).normalized()), dims_mps);
                 mps.set_sites(initial_mps.get_sites());

@@ -51,6 +51,12 @@ void fdmrg::resume() {
         // The simplest is to inferr it from the state prefix itself
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);
 
+        // Apply shifts and compress the model
+        set_parity_shift_mpo();
+        set_parity_shift_mpo_squared();
+        set_energy_shift_mpo();
+        rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
+
         // Initialize a custom task list
         std::deque<fdmrg_task> task_list;
 
@@ -137,9 +143,10 @@ void fdmrg::run_preprocessing() {
     init_bond_dimension_limits();
     init_truncation_error_limits();
     initialize_state(ResetReason::INIT, settings::strategy::initial_state);
-    set_parity_shift_mpo(); // This shifts the energy of the opposite spin parity sector, to resolve degeneracy/spectral pairing
+    set_parity_shift_mpo();
+    set_parity_shift_mpo_squared();
     set_energy_shift_mpo();
-    rebuild_tensors();
+    rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -165,6 +172,7 @@ void fdmrg::run_algorithm() {
         try_projection();
         set_energy_shift_mpo(); // Shift the energy in the mpos to get rid of critical cancellation (shifts by the current energy)
         rebuild_tensors();
+        expand_environment();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -172,11 +180,10 @@ void fdmrg::run_algorithm() {
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
     if(settings::fdmrg::store_wavefn and tensors.get_length<long>() <= 16) {
-        #pragma message "Save fdmrg wavevector properly"
+#pragma message "Save fdmrg wavevector properly"
         Eigen::Tensor<real, 1> psi = tools::finite::measure::mps2tensor(*tensors.state).real();
         write_to_file(psi, "psi", StorageEvent::FINISHED);
     }
-
 }
 
 fdmrg::OptMeta fdmrg::get_opt_meta() {
@@ -193,14 +200,13 @@ fdmrg::OptMeta fdmrg::get_opt_meta() {
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
     // Set up a multiplier for number of iterations
-    size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::solver::eigs_stuck_multiplier, status.algorithm_has_stuck_for)));
-    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
+    size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::solver::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
+    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_iter_multiplier : 1;
 
     // Copy settings
     m1.min_sites     = settings::strategy::multisite_opt_site_def;
     m1.max_sites     = settings::strategy::multisite_opt_site_def;
     m1.subspace_tol  = settings::precision::target_subspace_error;
-    m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
     m1.eigs_nev      = 1;
     m1.eigs_ncv      = settings::solver::eigs_ncv;
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
@@ -248,10 +254,10 @@ fdmrg::OptMeta fdmrg::get_opt_meta() {
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
 
-    if(status.env_expansion_alpha > 0) {
-        // If we are doing 1-site dmrg, then we better use subspace expansion
-        if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
-    }
+    // if(status.env_expansion_alpha > 0) {
+    //     // If we are doing 1-site dmrg, then we better use subspace expansion
+    //     if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
+    // }
 
     m1.validate();
     return m1;
@@ -277,16 +283,16 @@ void fdmrg::update_state() {
 
     // Use environment expansion if alpha_expansion is set
     // Note that this changes the mps and edges adjacent to "tensors.active_sites"
-    if(opt_meta.alpha_expansion) {
-        tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::ENE, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
-        if(tensors.active_problem_size() > opt_meta.problem_size) {
-            // The problem size has grown after expansion. We need to reevaluate the choice of solver.
-            opt_meta.problem_size = tensors.active_problem_size();
-            opt_meta.problem_dims = tensors.active_problem_dims();
-            opt_meta.optSolver    = OptSolver::EIGS;
-            if(opt_meta.problem_size <= settings::solver::eig_max_size) opt_meta.optSolver = OptSolver::EIG;
-        }
-    }
+    // if(opt_meta.alpha_expansion) {
+    //     tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::ENE, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
+    //     if(tensors.active_problem_size() > opt_meta.problem_size) {
+    //         // The problem size has grown after expansion. We need to reevaluate the choice of solver.
+    //         opt_meta.problem_size = tensors.active_problem_size();
+    //         opt_meta.problem_dims = tensors.active_problem_dims();
+    //         opt_meta.optSolver    = OptSolver::EIGS;
+    //         if(opt_meta.problem_size <= settings::solver::eig_max_size) opt_meta.optSolver = OptSolver::EIG;
+    //     }
+    // }
 
     auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
     auto opt_state   = tools::finite::opt::find_ground_state(tensors, initial_mps, status, opt_meta);
@@ -309,15 +315,14 @@ void fdmrg::update_state() {
 
     tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver),
                          flag2str(opt_meta.optExit), variance_before_step.value(), opt_state.get_variance(), opt_state.get_relchange() * 100);
-    if(opt_state.get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
+    if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
-                          "alpha {:8.2e} | "
                           "sites {} |"
                           "{:20} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
-                          opt_state.get_alpha(), opt_state.get_sites(),
+                          opt_state.get_sites(),
                           fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
                           opt_state.get_time());
     }

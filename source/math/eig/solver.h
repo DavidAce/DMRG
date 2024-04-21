@@ -10,17 +10,18 @@ namespace spdlog {
 struct primme_params;
 
 namespace eig {
+    int getBasisSize(long L, int nev, std::optional<int> basisSize);
 
     class solver {
         public:
         eig::settings                   config;
         eig::solution                   result;
         std::shared_ptr<spdlog::logger> log;
-        solver();
-        solver(const eig::settings &config);
-        void setLogLevel(size_t loglevel);
+                                        solver();
+                                        solver(const eig::settings &config);
+        void                            setLogLevel(size_t loglevel);
         template<typename Scalar>
-        void subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size_type nev);
+        void subtract_phase(std::vector<Scalar> &eigvecs, size_type L, int nev);
 
         // Functions for full diagonalization of explicit matrix
         int dsyevd(real *matrix, size_type L);
@@ -42,7 +43,7 @@ namespace eig {
 
         // Functions for few eigensolutions
         template<typename Scalar>
-        void eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz = Ritz::LM, Form form = Form::SYMM, Type type = Type::REAL, Side side = Side::R,
+        void eigs_init(size_type L, int nev, int ncv, Ritz ritz = Ritz::LM, Form form = Form::SYMM, Type type = Type::REAL, Side side = Side::R,
                        std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Storage storage = Storage::DENSE, Vecs compute_eigvecs_ = Vecs::OFF,
                        Dephase remove_phase_ = Dephase::OFF, Scalar *residual = nullptr, Lib lib = Lib::ARPACK);
 
@@ -50,12 +51,12 @@ namespace eig {
         void set_default_config(const MatrixProductType &matrix);
 
         template<typename Scalar, Storage storage = Storage::DENSE>
-        void eigs(const Scalar *matrix, size_type L, size_type nev, size_type ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
+        void eigs(const Scalar *matrix, size_type L, int nev, int ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
                   std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   Scalar *residual = nullptr);
 
         template<typename MatrixProductType>
-        void eigs(MatrixProductType &matrix, size_type nev, size_type ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
+        void eigs(MatrixProductType &matrix, int nev, int ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
                   std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   typename MatrixProductType::Scalar *residual = nullptr);
 

@@ -27,22 +27,26 @@ namespace tools::finite::opt {
         size_t                     min_sites        = 1;
         long                       max_problem_size = 0;
         long                       problem_size     = 0;
-        std::optional<double>      alpha_expansion  = std::nullopt;
+        // std::optional<double>      alpha_expansion  = std::nullopt;
         std::array<long, 3>        problem_dims     = {};
         std::vector<size_t>        chosen_sites     = {};
         std::string                label;
-        std::optional<bool>        compress_otf  = std::nullopt; // Compress on the fly
-        std::optional<double>      subspace_tol  = std::nullopt;
-        std::optional<double>      eigv_target   = std::nullopt; // AKA shift
-        std::optional<double>      eigs_tol      = std::nullopt;
-        std::optional<int>         eigs_nev      = std::nullopt;
-        std::optional<int>         eigs_ncv      = std::nullopt;
-        std::optional<int>         eigs_iter_max = std::nullopt;
-        std::optional<svd::config> svd_cfg       = std::nullopt;
+        std::optional<double>      subspace_tol          = std::nullopt;
+        std::optional<double>      eigv_target           = std::nullopt; // AKA shift
+        std::optional<double>      eigs_tol              = std::nullopt;
+        std::optional<int>         eigs_nev              = std::nullopt;
+        std::optional<int>         eigs_ncv              = std::nullopt;
+        std::optional<int>         eigs_iter_max         = std::nullopt;
+        std::optional<svd::config> svd_cfg               = std::nullopt;
+        std::optional<std::string> primme_method         = std::nullopt;
+        std::optional<std::string> primme_projection     = std::nullopt; /*!< Choose primme_proj_<default|RR|harmonic|refined> */
+        std::optional<int>         primme_minRestartSize = std::nullopt;
+        std::optional<int>         primme_maxBlockSize   = std::nullopt;
 
                            OptMeta();
         explicit           OptMeta(OptRitz ritz, OptFunc mode);
         [[nodiscard]] bool should_proceed(OptExit previous_exit) const;
         void               validate() const;
+        std::string        string() const;
     };
 }

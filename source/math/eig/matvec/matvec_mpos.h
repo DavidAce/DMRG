@@ -28,7 +28,6 @@ class MatVecMPOS {
 
     constexpr static bool               can_shift_invert = false;
     constexpr static bool               can_shift        = false;
-    constexpr static bool               can_compress     = false;
     constexpr static eig::Storage       storage          = eig::Storage::MPS;
     constexpr static eig::Factorization factorization    = eig::Factorization::NONE;
 
@@ -44,7 +43,6 @@ class MatVecMPOS {
     // Shift stuff
     std::complex<double>  sigma         = cplx(0.0, 0.0); // The shift
     bool                  readyShift    = false;          // Flag to make sure the shift has occurred
-    bool                  readyCompress = false;          // Flag to check if compression has occurred
     constexpr static bool readyFactorOp = false;          // Flag to check if factorization has occurred
 
     public:
@@ -65,8 +63,6 @@ class MatVecMPOS {
                 std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
-    void compress(); //  Compresses the MPO virtual bond so that x_out <-- A*x_in can happen faster
-
     // Various utility functions
     long num_mv = 0;
     long num_op = 0;
@@ -75,7 +71,6 @@ class MatVecMPOS {
     void set_shift(std::complex<double> shift);
     void set_mode(eig::Form form_);
     void set_side(eig::Side side_);
-    void set_readyCompress(bool compressed);
 
     [[nodiscard]] T                                       get_shift() const;
     [[nodiscard]] eig::Form                               get_form() const;
@@ -93,7 +88,6 @@ class MatVecMPOS {
     [[nodiscard]] MatrixType                              get_matrix() const;
 
     [[nodiscard]] bool isReadyShift() const;
-    [[nodiscard]] bool isReadyCompress() const;
     [[nodiscard]] bool isReadyFactorOp() const;
 
     // Timers

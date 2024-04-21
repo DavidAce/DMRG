@@ -263,35 +263,37 @@ std::vector<Eigen::Tensor<cplx_t, 4>> ModelFinite::get_all_mpo_tensors_t(MposWit
 }
 
 std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos(MposWithEdges withEdges) {
-    tools::log->trace("Compressing MPO: {} sites | with edges {}", MPO.size(), static_cast<std::underlying_type_t<MposWithEdges>>(withEdges));
+    auto mpoComp = settings::precision::use_compressed_mpo;
+    tools::log->trace("Compressing MPO: {} sites | with edges {} | compression {}", MPO.size(), enum2sv(withEdges), enum2sv(mpoComp));
     // Collect all the mpo (doesn't matter if they are already compressed)
     std::vector<Eigen::Tensor<cplx, 4>> mpos;
     mpos.reserve(MPO.size());
     for(const auto &mpo : MPO) mpos.emplace_back(mpo->MPO());
     switch(withEdges) {
-        case MposWithEdges::OFF: return tools::finite::mpo::get_compressed_mpos(mpos);
+        case MposWithEdges::OFF: return tools::finite::mpo::get_compressed_mpos(mpos, mpoComp);
         case MposWithEdges::ON: {
             auto ledge = MPO.front()->get_MPO_edge_left();
             auto redge = MPO.back()->get_MPO_edge_right();
-            return tools::finite::mpo::get_compressed_mpos(mpos, ledge, redge);
+            return tools::finite::mpo::get_compressed_mpos(mpos, ledge, redge, mpoComp);
         }
         default: throw except::runtime_error("Unrecognized enum value <CompressWithEdges>: {}", static_cast<std::underlying_type_t<MposWithEdges>>(withEdges));
     }
 }
 
 std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared(MposWithEdges withEdges) {
-    tools::log->trace("Compressing MPO²: {} sites | with edges {}", MPO.size(), static_cast<std::underlying_type_t<MposWithEdges>>(withEdges));
+    auto mpoComp = settings::precision::use_compressed_mpo_squared;
+    tools::log->trace("Compressing MPO²: {} sites | with edges {} | compression type {}", MPO.size(), enum2sv(withEdges), enum2sv(mpoComp));
     if(not has_mpo_squared()) build_mpo_squared(); // Make sure they exist.
     // Collect all the mpo² (doesn't matter if they are already compressed)
     std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
     mpos_sq.reserve(MPO.size());
     for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->MPO2());
     switch(withEdges) {
-        case MposWithEdges::OFF: return tools::finite::mpo::get_compressed_mpos(mpos_sq); break;
+        case MposWithEdges::OFF: return tools::finite::mpo::get_compressed_mpos(mpos_sq, mpoComp); break;
         case MposWithEdges::ON: {
             auto ledge = MPO.front()->get_MPO2_edge_left();
             auto redge = MPO.back()->get_MPO2_edge_right();
-            return tools::finite::mpo::get_compressed_mpos(mpos_sq, ledge, redge);
+            return tools::finite::mpo::get_compressed_mpos(mpos_sq, ledge, redge, mpoComp);
             break;
         }
         default: throw except::runtime_error("Unrecognized enum value <CompressWithEdges>: {}", static_cast<std::underlying_type_t<MposWithEdges>>(withEdges));

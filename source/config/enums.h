@@ -7,8 +7,15 @@
 #include <type_traits>
 #include <vector>
 
-enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, NONE };
+enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
+enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit, xxz };
+enum class MpoCompress {
+    NONE, /*!< Do not compress */
+    SVD,  /*!< Use SVD on each mpo */
+    DPL   /*!< Deparallelization: removes parallel columns/rows from each mpo */
+};
+enum class MposWithEdges { OFF, ON };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
@@ -21,7 +28,6 @@ enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
 enum class CircuitOp { NONE, ADJ, TRN };
-enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit, xxz };
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
 
@@ -361,8 +367,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     /* clang-format off */
     static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
     static_assert(enum_sfinae::is_any_v<T,
-        AlgorithmType,
         AlgorithmStop,
+        AlgorithmType,
+        MpoCompress,
+        MposWithEdges,
         MeanType,
         MultisiteMove,
         MultisiteWhen,
@@ -381,6 +389,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         StoragePolicy,
         CopyPolicy,
         ResetReason,
+        EnvExpandMode,
         NormPolicy,
         FileCollisionPolicy,
         FileResumePolicy,
@@ -409,6 +418,17 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case AlgorithmType::iTEBD:                                      return "iTEBD";
         case AlgorithmType::ANY:                                        return "ANY";
         default: return "AlgorithmType::UNDEFINED";
+    }
+    if constexpr(std::is_same_v<T, MpoCompress>) switch(item) {
+        case MpoCompress::NONE:                                  return "NONE";
+        case MpoCompress::SVD:                                   return "SVD";
+        case MpoCompress::DPL:                                   return "DPL";
+        default: return "MpoCompress::UNDEFINED";
+    }
+    if constexpr(std::is_same_v<T, MposWithEdges>) switch(item) {
+        case MposWithEdges::OFF:                                  return "OFF";
+        case MposWithEdges::ON:                                   return "ON";
+        default: return "MposWithEdges::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) switch(item){
         case MultisiteMove::ONE :                                       return "ONE";
@@ -504,6 +524,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == ResetReason::SATURATED)                              return "SATURATED";
         if(item == ResetReason::NEW_STATE)                              return "NEW_STATE";
         if(item == ResetReason::BOND_UPDATE)                            return "BOND_UPDATE";
+    }
+    if constexpr(std::is_same_v<T, EnvExpandMode>) {
+        if(item == EnvExpandMode::ENE)                                  return "ENE";
+        if(item == EnvExpandMode::VAR)                                  return "VAR";
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == NormPolicy::ALWAYS)                                  return "ALWAYS";
@@ -695,8 +719,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
 template<typename T>
 constexpr auto sv2enum(std::string_view item) {
     static_assert(enum_sfinae::is_any_v<T,
-        AlgorithmType,
         AlgorithmStop,
+        AlgorithmType,
+        MpoCompress,
+        MposWithEdges,
         MeanType,
         MultisiteMove,
         MultisiteWhen,
@@ -715,6 +741,7 @@ constexpr auto sv2enum(std::string_view item) {
         StoragePolicy,
         CopyPolicy,
         ResetReason,
+        EnvExpandMode,
         NormPolicy,
         FileCollisionPolicy,
         FileResumePolicy,
@@ -742,7 +769,15 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "xDMRG")                                 return AlgorithmType::xDMRG;
         if(item == "iTEBD")                                 return AlgorithmType::iTEBD;
         if(item == "ANY")                                   return AlgorithmType::ANY;
-        return "AlgorithmType::UNDEFINED";
+    }
+    if constexpr(std::is_same_v<T, MpoCompress>){
+        if(item == "NONE")                                  return  MpoCompress::NONE;
+        if(item == "SVD")                                   return  MpoCompress::SVD;
+        if(item == "DPL")                                   return  MpoCompress::DPL;
+    }
+    if constexpr(std::is_same_v<T, MposWithEdges>){
+        if(item == "OFF")                                   return MposWithEdges::OFF;
+        if(item == "ON")                                    return MposWithEdges::ON;
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) {
         if(item == "ONE")                                   return MultisiteMove::ONE;
@@ -838,6 +873,11 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "NEW_STATE")                             return ResetReason::NEW_STATE;
         if(item == "BOND_UPDATE")                           return ResetReason::BOND_UPDATE;
     }
+    if constexpr(std::is_same_v<T, EnvExpandMode>) {
+        if(item == "ENE")                                   return EnvExpandMode::ENE;
+        if(item == "VAR")                                   return EnvExpandMode::VAR;
+    }
+
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS")                                return NormPolicy::ALWAYS;
         if(item == "IFNEEDED")                              return NormPolicy::IFNEEDED;

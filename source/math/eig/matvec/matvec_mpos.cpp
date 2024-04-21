@@ -54,15 +54,6 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     long spin_dim = 1;
     for(const auto &mpo : mpos) spin_dim *= mpo.dimension(2);
 
-    readyCompress = false;
-    if constexpr(std::is_same_v<EnvType, EnvVar>) {
-        for(const auto &mpo : mpos_) {
-            if(mpo.get().has_compressed_mpo_squared()) {
-                readyCompress = true;
-                break;
-            }
-        }
-    }
 
     shape_mps  = {spin_dim, envL.dimension(0), envR.dimension(0)};
     size_mps   = spin_dim * envL.dimension(0) * envR.dimension(0);
@@ -134,6 +125,7 @@ void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    // #pragma omp parallel for for schedule(static, 8)
     for(int i = 0; i < *blockSize; i++) {
         T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
         T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
@@ -173,7 +165,6 @@ void MatVecMPOS<T>::set_shift(std::complex<double> shift) {
     // This only works if the MPO is not compressed already.
     if(readyShift) return;
     if(sigma == shift) return;
-    if(readyCompress) { throw std::runtime_error("Cannot shift the matrix with Factorization::NONE: mpo is already compressed!"); }
     auto shift_per_mpo = shift / static_cast<double>(mpos.size());
     auto sigma_per_mpo = sigma / static_cast<double>(mpos.size());
     for(size_t idx = 0; idx < mpos.size(); ++idx) {
@@ -206,23 +197,12 @@ void MatVecMPOS<T>::set_shift(std::complex<double> shift) {
 }
 
 template<typename T>
-void MatVecMPOS<T>::compress() {
-    if(readyCompress) return;
-    throw std::runtime_error("template<typename T> void MatVecMPOS<T>::compress(): Not implemented");
-}
-
-template<typename T>
 void MatVecMPOS<T>::set_mode(const eig::Form form_) {
     form = form_;
 }
 template<typename T>
 void MatVecMPOS<T>::set_side(const eig::Side side_) {
     side = side_;
-}
-
-template<typename T>
-void MatVecMPOS<T>::set_readyCompress(bool compressed) {
-    readyCompress = compressed;
 }
 
 template<typename T>
@@ -305,10 +285,6 @@ bool MatVecMPOS<T>::isReadyFactorOp() const {
 template<typename T>
 bool MatVecMPOS<T>::isReadyShift() const {
     return readyShift;
-}
-template<typename T>
-bool MatVecMPOS<T>::isReadyCompress() const {
-    return readyCompress;
 }
 
 // Explicit instantiations

@@ -12,6 +12,7 @@
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
+#include "math/tenx/threads.h"
 #include <string>
 
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
@@ -49,23 +50,57 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
         case OptFunc::ENERGY: result = internal::optimize_energy_eigs(tensors, initial_mps, status, meta); break;
         case OptFunc::VARIANCE: {
             switch(meta.optAlgo) {
-                case OptAlgo::DIRECT: result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta); break;
+                case OptAlgo::DIRECT: {
+                    result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta);
+                    tools::finite::opt::reports::print_eigs_report();
+
+                    // {
+                    //     auto meta1                  = meta;
+                    //     meta1.label                 = "GD(?,?)+k";
+                    //     meta1.primme_maxBlockSize   = tenx::threads::getNumThreads();
+                    //     auto result1                = internal::optimize_variance_eigs(tensors, initial_mps, status, meta1);
+                    //     tools::finite::opt::reports::print_eigs_report();
+                    // }
+                    //
+                    // {
+                    //     auto meta2                  = meta;
+                    //     meta2.label                 = "GD(8,16)+1";
+                    //     meta2.eigs_ncv              = 16;
+                    //     meta2.primme_minRestartSize = 8;
+                    //     meta2.primme_maxBlockSize   = 1;
+                    //     auto result2                = internal::optimize_variance_eigs(tensors, initial_mps, status, meta2);
+                    //     tools::finite::opt::reports::print_eigs_report();
+                    // }
+                    //
+                    // {
+                    //     auto meta3                  = meta;
+                    //     meta3.label                 = "GD(16,32)+1";
+                    //     meta3.eigs_ncv              = 32;
+                    //     meta3.primme_minRestartSize = 16;
+                    //     meta3.primme_maxBlockSize   = 1;
+                    //     auto result3                = internal::optimize_variance_eigs(tensors, initial_mps, status, meta3);
+                    //     tools::finite::opt::reports::print_eigs_report();
+                    // }
+
+                    break;
+                }
                 case OptAlgo::DIRECTX2: {
-                    auto metax2     = meta;
-                    metax2.optFunc  = OptFunc::ENERGY;
-                    metax2.eigs_nev = 1;
-                    metax2.eigs_ncv = std::clamp(32l, 1l, initial_mps.get_tensor().size() / 4);
-                    result          = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
+                    auto metax2          = meta;
+                    metax2.optFunc       = OptFunc::ENERGY;
+                    metax2.eigs_iter_max = meta.eigs_iter_max.value_or(10000)/10;
+                    result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
                     if(meta.optRitz == OptRitz::SM) {
-                        // We accept this result if
-                        // - The energy is within 2 sigma of the current energy
+                        // We accept this result if the residual norm is small, and either
+                        // - The energy is smaller in absolute
                         // - The variance is lower
                         // Otherwise we call optimize_variance_eigs on the result
-                        auto sigma    = std::sqrt(initial_mps.get_variance());
-                        bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
-                        bool varislow = result.get_variance() <= initial_mps.get_variance();
-                        if(not in2sigma or not varislow) {
+                        // auto sigma    = std::sqrt(initial_mps.get_variance());
+                        // bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
+                        bool eneislarger = std::abs(result.get_energy()) > std::abs(initial_mps.get_energy());
+                        bool varislarger = result.get_variance() > initial_mps.get_variance();
+                        bool resnormfail = result.get_rnorm() >= 1e-10;
+                        if(resnormfail or (eneislarger and varislarger)) {
                             // The result is not good enough. But we could use it as initial guess
                             meta.optFunc = OptFunc::VARIANCE;
                             result       = internal::optimize_variance_eigs(tensors, result, status, meta);

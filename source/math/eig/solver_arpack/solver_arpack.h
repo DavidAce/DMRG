@@ -27,7 +27,7 @@ namespace eig {
 
         void eigs();
         template<typename Derived>
-        void find_solution(Derived &solver, eig::size_type nev);
+        void find_solution(Derived &solver, int nev);
         template<typename Derived>
         void find_solution_rc(Derived &solver);
         template<typename Derived>

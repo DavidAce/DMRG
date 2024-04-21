@@ -195,7 +195,48 @@ void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
 }
 
+void AlgorithmFinite::expand_environment(std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
+    if(settings::strategy::max_env_expansion_alpha <= 0) return;
+    // Set a good initial value to start with
+    if(status.env_expansion_alpha <= 0) status.env_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
+    alpha = alpha.value_or(status.env_expansion_alpha);
+    if(alpha.value() <= 0) return;
+
+    // Update alpha
+    // double old_expansion_alpha = status.env_expansion_alpha;
+    // double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
+    // double factor_dn           = std::pow(1e-2, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
+    //
+    bool var_has_improved = var_relchange < -0.01;
+    // bool var_has_converged = status.variance_mpo_converged_for > 0 or var_latest <= settings::precision::variance_convergence_threshold;
+    //
+    // if(var_has_improved or var_has_converged)
+    //     status.env_expansion_alpha *= factor_dn;
+    // else
+    //     status.env_expansion_alpha *= factor_up;
+    //
+    // double alpha_upper_limit = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
+    // double alpha_lower_limit = std::min(1e-3 * status.energy_variance_lowest, alpha_upper_limit);
+    //
+    // status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
+
+    auto var_before_exp = tools::finite::measure::energy_variance(tensors);
+
+    svd_cfg         = svd_cfg.value_or(svd::config(status.bond_lim, status.trnc_lim));
+    auto expandMode = tensors.state->get_algorithm() == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    tensors.expand_environment(alpha, expandMode, svd_cfg);
+    auto var_after_exp = tools::finite::measure::energy_variance(tensors);
+
+    auto var_relchange_expansion = (var_after_exp - var_before_exp) / var_after_exp;
+
+    tools::log->debug("Expanded environment: alpha {:8.2e} | var improved {} | relchange: optimization {:.5e} env.expansion {:.5e} ({:.16f} --> {:.16f})",
+                      status.env_expansion_alpha, var_has_improved, var_relchange, var_relchange_expansion, var_before_exp, var_after_exp);
+}
+
 void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
+    auto var_before_move = 0.0;
+    if(tensors.state->get_position<long>() >= 0) { var_before_move = tools::finite::measure::energy_variance(tensors); }
+    auto old_pos = status.position;
     if(not num_moves.has_value()) {
         if(tensors.active_sites.empty())
             num_moves = 1;
@@ -238,7 +279,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
-            status.step += tensors.move_center_point();
+            status.step += tensors.move_center_point(svd::config(status.bond_lim, status.trnc_lim)); // Shouldn't truncate.
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge, so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
@@ -253,6 +294,12 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
     }
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
+    if(status.position >= 0) {
+        tensors.rebuild_edges();
+        tensors.activate_sites({tensors.get_position<size_t>()});
+        auto var_after_move = tools::finite::measure::energy_variance(tensors);
+        tools::log->debug("Moved center position {} -> {} | var {:.2e} -> {:.2e}", old_pos, status.position, var_before_move, var_after_move);
+    }
 }
 
 void AlgorithmFinite::set_energy_shift_mpo() {
@@ -287,7 +334,7 @@ void AlgorithmFinite::try_moving_sites() {
     auto multisite_opt_site_def_backup         = settings::strategy::multisite_opt_site_def;
     settings::solver::eigs_iter_max            = 100;
     settings::solver::eigs_tol_min             = std::min(1e-14, settings::solver::eigs_tol_min);
-    settings::solver::eigs_ncv                 = std::max(35ul, settings::solver::eigs_ncv);
+    settings::solver::eigs_ncv                 = std::max(35, settings::solver::eigs_ncv);
     settings::strategy::multisite_opt_when     = MultisiteWhen::ALWAYS;
     settings::strategy::multisite_opt_site_max = 2;
     settings::strategy::multisite_opt_site_def = 2;
@@ -543,33 +590,38 @@ void AlgorithmFinite::update_truncation_error_limit() {
 }
 
 void AlgorithmFinite::update_expansion_factor_alpha() {
-    if(settings::strategy::max_env_expansion_alpha > 0) {
-        // Set a good initial value to start with
-        if(status.env_expansion_alpha == 0) status.env_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
+    if(settings::strategy::max_env_expansion_alpha <= 0) return;
+    // if(not tensors.position_is_inward_edge()) return; // Update once per sweep
+    // Set a good initial value in the first iteration
+    if(status.env_expansion_alpha == 0) status.env_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
 
-        // Update alpha
-        double old_expansion_alpha = status.env_expansion_alpha;
-        double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
-        double factor_dn           = std::pow(1e-3, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
+    // Update alpha
+    double old_expansion_alpha = status.env_expansion_alpha;
+    double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
+    double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
 
-        bool   var_has_improved  = status.energy_variance_lowest / status.env_expansion_variance < 0.9;
-        bool   var_has_converged = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold;
-        double alpha_upper_limit = settings::strategy::max_env_expansion_alpha;
-        double alpha_lower_limit = std::min(alpha_upper_limit, status.energy_variance_lowest);
+    // double factor_up = 1e+1;
+    // double factor_dn = 1e-2;
 
-        if(status.algorithm_has_stuck_for == 0 or var_has_improved or var_has_converged)
-            status.env_expansion_alpha *= factor_dn;
-        else
-            status.env_expansion_alpha *= factor_up;
+    bool   var_has_improved  = status.energy_variance_lowest / status.env_expansion_variance < 0.9;
+    bool   var_has_converged = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold;
+    auto   energy_variance_current = tools::finite::measure::energy_variance(tensors);
+    double alpha_upper_limit       = std::min(1e+1 * energy_variance_current, settings::strategy::max_env_expansion_alpha);
+    double alpha_lower_limit       = std::min(1e-3 * status.energy_variance_lowest, alpha_upper_limit);
 
-        status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
-        if(status.env_expansion_alpha < old_expansion_alpha) {
-            status.env_expansion_step     = status.step;
-            status.env_expansion_variance = status.energy_variance_lowest;
-            tools::log->trace("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
-        } else if(status.env_expansion_alpha > old_expansion_alpha) {
-            tools::log->trace("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
-        }
+    if( //  status.algorithm_has_stuck_for == 0 or
+        var_has_improved or var_has_converged)
+        status.env_expansion_alpha *= factor_dn;
+    else
+        status.env_expansion_alpha *= factor_up;
+
+    status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
+    if(status.env_expansion_alpha < old_expansion_alpha) {
+        status.env_expansion_step     = status.step;
+        status.env_expansion_variance = status.energy_variance_lowest;
+        tools::log->trace("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
+    } else if(status.env_expansion_alpha > old_expansion_alpha) {
+        tools::log->trace("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
     }
 }
 

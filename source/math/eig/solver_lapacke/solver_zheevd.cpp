@@ -32,7 +32,7 @@ int eig::solver::zheev(cplx *matrix, size_type L) {
     int  n             = safe_cast<int>(L);
     char jobz          = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     auto t_prep        = std::chrono::high_resolution_clock::now();
-    cplx work_query[1] = {0};
+    cplx work_query[1] = {};
     int  lrwork        = std::max(1, 3 * n - 2);
     auto rwork         = std::vector<real>(static_cast<size_t>(lrwork));
 
@@ -57,8 +57,8 @@ int eig::solver::zheev(cplx *matrix, size_type L) {
     result.meta.eigvals_found  = true;
     result.meta.rows           = L;
     result.meta.cols           = L;
-    result.meta.nev            = L;
-    result.meta.nev_converged  = L;
+    result.meta.nev            = n;
+    result.meta.nev_converged  = n;
     result.meta.n              = L;
     result.meta.form           = Form::SYMM;
     result.meta.type           = Type::CPLX;
@@ -78,9 +78,9 @@ int eig::solver::zheevd(cplx *matrix, size_type L) {
     int  n              = safe_cast<int>(L);
     char jobz           = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     auto t_prep         = std::chrono::high_resolution_clock::now();
-    cplx work_query[1]  = {0};
-    real rwork_query[1] = {0};
-    int  iwork_query[1] = {0};
+    cplx work_query[1]  = {};
+    real rwork_query[1] = {};
+    int  iwork_query[1] = {};
     int  info = LAPACKE_zheevd_work(LAPACK_COL_MAJOR, jobz, 'U', n, reinterpret_cast<lapack_complex_double *>(matrix), n, eigvals.data(), work_query, -1,
                                     rwork_query, -1, iwork_query, -1);
     if(info != 0) throw std::runtime_error("LAPACK zheevd query failed with error: " + std::to_string(info));
@@ -107,8 +107,8 @@ int eig::solver::zheevd(cplx *matrix, size_type L) {
     result.meta.eigvals_found  = true;
     result.meta.rows           = L;
     result.meta.cols           = L;
-    result.meta.nev            = L;
-    result.meta.nev_converged  = L;
+    result.meta.nev            = n;
+    result.meta.nev_converged  = n;
     result.meta.n              = L;
     result.meta.form           = Form::SYMM;
     result.meta.type           = Type::CPLX;

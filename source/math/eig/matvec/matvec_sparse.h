@@ -17,7 +17,6 @@ class MatVecSparse {
     using Scalar                                   = Scalar_;
     constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
-    constexpr static bool         can_compress     = false;
     constexpr static eig::Storage storage          = eig::Storage::SPARSE;
 
     private:

@@ -47,17 +47,15 @@ namespace tools::finite::opt {
 
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
         solver.config.tol             = meta.eigs_tol.value_or(settings::solver::eigs_tol_min);
-        solver.config.compress        = settings::precision::use_compressed_mpo_on_the_fly;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS;
+        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC;
         solver.config.maxIter         = meta.eigs_iter_max.value_or(settings::solver::eigs_iter_max);
         solver.config.maxTime         = 2 * 60 * 60;
         solver.config.maxNev          = meta.eigs_nev.value_or(1);
-        solver.config.maxNcv =
-            meta.eigs_ncv.value_or(solver.config.maxNev.value() * 2); // arpack needs ncv ~512 to handle all cases. Primme seems content with 4.
-        solver.config.primme_locking = true;
-        solver.config.loglevel       = 2;
+        solver.config.maxNcv          = meta.eigs_ncv.value_or(settings::solver::eigs_ncv); // arpack needs ncv ~512. Primme seems happy with 4-32.
+        solver.config.primme_locking  = true;
+        solver.config.loglevel        = 2;
 
         Eigen::Tensor<Scalar, 3> init;
         if constexpr(std::is_same_v<Scalar, double>) {
@@ -87,10 +85,10 @@ namespace tools::finite::opt {
                                       size, settings::solver::eigs_max_size_shift_invert);
                 // The problem size is too big. Just find the eigenstate closest to zero
                 // Remember: since the Hamiltonian is expected to be shifted, the target energy is near zero.
-                hamiltonian.factorization          = eig::Factorization::NONE;
-                solver.config.ritz                 = eig::Ritz::primme_closest_abs;
-                solver.config.primme_projection    = "primme_proj_default";
-                solver.config.primme_target_shifts = {meta.eigv_target.value_or(0.0)};
+                hamiltonian.factorization         = eig::Factorization::NONE;
+                solver.config.ritz                = eig::Ritz::primme_closest_abs;
+                solver.config.primme_projection   = "primme_proj_refined";
+                solver.config.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
                 // solver.config.primme_preconditioner = preconditioner<Scalar>;
             }
         }
@@ -106,6 +104,12 @@ namespace tools::finite::opt {
         if(meta.optSolver == OptSolver::EIG) return optimize_energy_eig(tensors, initial_mps, status, meta);
         tools::log->debug("optimize_energy_eigs: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),
                           enum2sv(meta.optAlgo));
+
+
+        initial_mps.validate_initial_mps();
+        // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eigs requires energy-shifted MPO²");
+        reports::eigs_add_entry(initial_mps, spdlog::level::debug);
+
         auto                 t_eigs = tid::tic_scope("eigs-ene", tid::higher);
         std::vector<opt_mps> results;
         if(meta.optType == OptType::REAL) results = eigs_energy_executor<real>(tensors, initial_mps, meta);

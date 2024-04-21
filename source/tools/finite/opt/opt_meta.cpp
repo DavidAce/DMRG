@@ -1,6 +1,7 @@
 #include "../opt_meta.h"
-#include "debug/exceptions.h"
 #include "config/enums.h"
+#include "debug/exceptions.h"
+#include <fmt/ranges.h>
 
 namespace tools::finite::opt {
     OptMeta::OptMeta()
@@ -25,9 +26,27 @@ namespace tools::finite::opt {
         }
     }
     void OptMeta::validate() const {
-//        if(optFunc == OptFunc::OVERLAP and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [OVERLAP] and solver [BFGS] are incompatible");
-//        if(optFunc == OptFunc::SUBSPACE and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver [BFGS] are incompatible");
-//        if(optFunc == OptFunc::ENERGY and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver [BFGS] are incompatible");
+        //        if(optFunc == OptFunc::OVERLAP and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [OVERLAP] and solver [BFGS] are
+        //        incompatible"); if(optFunc == OptFunc::SUBSPACE and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver
+        //        [BFGS] are incompatible"); if(optFunc == OptFunc::ENERGY and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and
+        //        solver [BFGS] are incompatible");
+    }
+
+    std::string OptMeta::string() const {
+        std::string res;
+        res += label;
+        res += fmt::format(" | site {}", chosen_sites);
+        res += fmt::format(" | dims {} = {}", problem_dims, problem_size);
+        res += fmt::format(" | cost {}", enum2sv(optFunc));
+        res += fmt::format(" | solv {}", enum2sv(optSolver));
+        res += fmt::format(" | type {}", enum2sv(optType));
+        res += fmt::format(" | ritz {}", enum2sv(optRitz));
+        if(eigv_target) res += fmt::format(" (tgt: {:.3e})", eigv_target.value());
+        if(eigs_nev) res += fmt::format(" | nev {}", eigs_nev.value());
+        if(eigs_ncv) res += fmt::format(" | ncv {}", eigs_ncv.value());
+        // res += fmt::format(" | env.exp. α {:.3e}", alpha_expansion ? alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN());
+        if(svd_cfg) res += fmt::format(" | svd_ε {:.2e}", svd_cfg->truncation_limit.value_or(std::numeric_limits<double>::quiet_NaN()));
+        return res;
     }
 
 }
