@@ -135,9 +135,9 @@ namespace tools::finite::measure {
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,4> &mpo);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Matrix2cd &op);
     [[nodiscard]] extern cplx                     correlation            (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2, long pos1, long pos2);
-    [[nodiscard]] extern Eigen::Tensor<cplx, 2> correlation_matrix       (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
-    [[nodiscard]] extern Eigen::Tensor<cplx, 2> kvornings_matrix         (const StateFinite & state);
-    [[nodiscard]] extern Eigen::Tensor<double, 1> kvornings_marker       (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<cplx, 2>   correlation_matrix     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
+    [[nodiscard]] extern Eigen::Tensor<cplx, 2>   opdm                   (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<double, 1> opdm_spectrum          (const StateFinite & state);
     [[nodiscard]] extern std::array<Eigen::Tensor<double, 1>, 3>
                                                   expectation_values_xyz (const StateFinite & state);
     [[nodiscard]] extern std::array<double, 3>    expectation_value_xyz  (const StateFinite & state);

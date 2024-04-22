@@ -97,6 +97,8 @@ enum class StoragePolicy : int {
     FINISH  = 512,  /*!< Store when the simulation has finished (regardless of failure or success) */
     ALWAYS  = 1024, /*!< Store every chance you get */
     REPLACE = 2048, /*!< Keep only the last event (i.e. replace previous events when possible) */
+    RBDS    = 4096, /*!< Store rbds steps */
+    RTES    = 8192, /*!< Store rtes steps */
     allow_bitops
 };
 
@@ -356,6 +358,8 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, StoragePolicy::FINISH)) v.emplace_back("FINISH");
         if(has_flag(item, StoragePolicy::ALWAYS)) v.emplace_back("ALWAYS");
         if(has_flag(item, StoragePolicy::REPLACE)) v.emplace_back("REPLACE");
+        if(has_flag(item, StoragePolicy::RBDS)) v.emplace_back("RBDS");
+        if(has_flag(item, StoragePolicy::RTES)) v.emplace_back("RTES");
         if(v.empty()) return "NONE";
     }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
@@ -564,6 +568,9 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StoragePolicy::SUCCESS)                              return "SUCCESS";
         if(item == StoragePolicy::FINISH)                               return "FINISH";
         if(item == StoragePolicy::ALWAYS)                               return "ALWAYS";
+        if(item == StoragePolicy::REPLACE)                              return "REPLACE";
+        if(item == StoragePolicy::RBDS)                                 return "RBDS";
+        if(item == StoragePolicy::RTES)                                 return "RTES";
         return "BITFLAG";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
@@ -914,6 +921,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("FINI") != std::string_view::npos) policy |= StoragePolicy::FINISH;
         if(item.find("ALWA") != std::string_view::npos) policy |= StoragePolicy::ALWAYS;
         if(item.find("REPL") != std::string_view::npos) policy |= StoragePolicy::REPLACE;
+        if(item.find("RBDS") != std::string_view::npos) policy |= StoragePolicy::RBDS;
+        if(item.find("RTES") != std::string_view::npos) policy |= StoragePolicy::RTES;
         return policy;
     }
     if constexpr(std::is_same_v<T, StateInit>) {

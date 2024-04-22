@@ -1289,7 +1289,7 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::correlation_matrix(const StateFin
     return C;
 }
 
-Eigen::Tensor<cplx, 2> tools::finite::measure::kvornings_matrix(const StateFinite &state) {
+Eigen::Tensor<cplx, 2> tools::finite::measure::opdm(const StateFinite &state) {
     /* We create a matrix of the form
      *
      *
@@ -1372,15 +1372,16 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::kvornings_matrix(const StateFinit
     return tenx::TensorMap(R);
 }
 
-Eigen::Tensor<double, 1> tools::finite::measure::kvornings_marker(const StateFinite &state) {
-    if(not state.measurements.kvornings_marker) {
-        auto R      = kvornings_matrix(state);
+Eigen::Tensor<double, 1> tools::finite::measure::opdm_spectrum(const StateFinite &state) {
+    if(not state.measurements.opdm) state.measurements.opdm = opdm(state);
+    if(not state.measurements.opdm_spectrum) {
+        auto &opdm      = state.measurements.opdm.value();
         auto solver = eig::solver();
-        solver.eig<eig::Form::SYMM>(R.data(), R.dimension(0), eig::Vecs::OFF);
-        state.measurements.kvornings_marker = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
-        tools::log->debug("Kvornings marker: {::+9.4e}", tenx::span(state.measurements.kvornings_marker.value()));
+        solver.eig<eig::Form::SYMM>(opdm.data(), opdm.dimension(0), eig::Vecs::OFF);
+        state.measurements.opdm_spectrum = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
+        tools::log->debug("OPDM spectrum: {::+9.4e}", tenx::span(state.measurements.opdm_spectrum.value()));
     }
-    return state.measurements.kvornings_marker.value();
+    return state.measurements.opdm_spectrum.value();
 }
 
 double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<cplx, 2> &correlation_matrix) {

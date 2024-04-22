@@ -33,7 +33,7 @@ StoragePolicy StorageInfo::get_table_storage_policy(std::string_view table_path)
     if(table_path.find("bond_dimensions")             != std::string_view::npos) return bond_dimensions::policy;
     if(table_path.find("number_entropies")            != std::string_view::npos) return number_entropies::policy;
     if(table_path.find("renyi_entropies")             != std::string_view::npos) return renyi_entropies::policy;
-    if(table_path.find("kvornings_marker")            != std::string_view::npos) return kvornings_marker::policy;
+    if(table_path.find("opdm_spectrum")               != std::string_view::npos) return opdm_spectrum::policy;
     if(table_path.find("expectation_values_s")        != std::string_view::npos) return expectation_values_spin_xyz::policy;
     if(table_path.find("random_unitary_circuit")      != std::string_view::npos) return random_unitary_circuit::policy;
     throw except::logic_error("Could not match storage policy for table: [{}]", table_path);
@@ -48,6 +48,7 @@ StoragePolicy StorageInfo::get_dataset_storage_policy(std::string_view dset_path
     if(dset_path.find("number_probabilities")             != std::string_view::npos) return number_probabilities::policy;
     if(dset_path.find("expectation_values_spin")          != std::string_view::npos) return expectation_values_spin_xyz::policy;
     if(dset_path.find("correlation_matrix_s")             != std::string_view::npos) return correlation_matrix_spin_xyz::policy;
+    if(dset_path.find("opdm")                             != std::string_view::npos) return opdm::policy;
     throw except::logic_error("Could not match storage policy for dataset: [{}]", dset_path);
     /* clang-format on */
 }

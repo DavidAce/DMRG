@@ -125,10 +125,35 @@ namespace tools::finite::h5 {
         }
     }
 
-    void save::kvornings_marker(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(not should_save(sinfo, settings::storage::table::kvornings_marker::policy)) return;
-        auto kvornings_marker = tools::finite::measure::kvornings_marker(state);
-        save::data_as_table(h5file, sinfo, kvornings_marker, "kvornings_marker", "Kvornings marker", "eigval");
+    void save::opdm(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::dataset::opdm::policy)) return;
+        auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "opdm");
+
+        // Check if the current entry has already been appended
+        auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
+        if(attrs == sinfo) return;
+        tools::log->trace("Appending to dataset: {}", dset_path);
+        auto opdm = tools::finite::measure::opdm(state);
+        if(not attrs.link_exists) {
+            auto                 rows = safe_cast<hsize_t>(state.measurements.opdm->dimension(0));
+            auto                 cols = safe_cast<hsize_t>(state.measurements.opdm->dimension(1));
+            std::vector<hsize_t> dims = {rows, cols, 0};
+            std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::opdm::chunksize};
+            using opdm_type           = decltype(opdm)::Scalar;
+            h5file.createDataset(dset_path, h5pp::type::getH5Type<opdm_type>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
+            h5file.writeAttribute("extent-1,offset,iter", dset_path, "index");
+            h5file.writeAttribute("One-particle density matrix", dset_path, "description");
+        }
+        tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                          flag2str(sinfo.get_dataset_storage_policy(dset_path)));
+        h5file.appendToDataset(state.measurements.opdm.value(), dset_path, 2);
+        tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
+    }
+
+    void save::opdm_spectrum(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::table::opdm_spectrum::policy)) return;
+        auto opdm_spectrum = tools::finite::measure::opdm_spectrum(state);
+        save::data_as_table(h5file, sinfo, opdm_spectrum, "opdm_spectrum", "One-particle Density Matrix spectrum", "eigval");
     }
 
     template<typename T>
@@ -450,7 +475,8 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::number_probabilities(h5file, sinfo, state);
         tools::finite::h5::save::expectations(h5file, sinfo, state);
         tools::finite::h5::save::correlations(h5file, sinfo, state);
-        tools::finite::h5::save::kvornings_marker(h5file, sinfo, state);
+        tools::finite::h5::save::opdm(h5file, sinfo, state);
+        tools::finite::h5::save::opdm_spectrum(h5file, sinfo, state);
 
         // The file can now be closed
         h5file.setKeepFileClosed();

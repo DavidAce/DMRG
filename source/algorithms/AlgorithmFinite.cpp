@@ -730,6 +730,11 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         if(sector_sign != 0) {
             tensors.project_to_nearest_axis(target_sector.value(), svd_cfg);
             tensors.rebuild_edges();
+            auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
+            if(spincomp_new != spincomp_old) {
+                if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
+                write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);
+            }
         } else {
             // We have to make a choice if no sector sign has been given, and the spin component along the requested axis is << 1.
             // The simplest thing is to compare the resuls of both projections, e.g. calculate P(+z)|psi> and P(-z)|psi>,
@@ -820,17 +825,17 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
             auto entropies_new = tools::finite::measure::entanglement_entropies(*tensors.state);
-            if(variance_new != variance_old or entropies_new != entropies_old) {
+            if(spincomp_new != spincomp_old) {
                 tools::log->info("Projection result: energy {:.16f} -> {:.16f} variance {:.4e} -> {:.4e}  | spin components {:.16f} -> {:.16f}", energy_old,
                                  energy_new, variance_old, variance_new, fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
                 if(tools::log->level() <= spdlog::level::debug)
                     for(const auto &[i, e] : iter::enumerate(entropies_old)) {
                         tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
                     }
+                if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
+                write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);
             }
         }
-        if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
-        write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);
     }
 }
 
@@ -1127,14 +1132,14 @@ void AlgorithmFinite::print_status_full() {
     if(status.algo_type == AlgorithmType::xDMRG) {
         auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(*tensors.state);
         auto structure_factor_xyz   = tools::finite::measure::structure_factor_xyz(*tensors.state);
-        auto kvornings_marker       = tools::finite::measure::kvornings_marker(*tensors.state);
+        auto opdm_spectrum          = tools::finite::measure::opdm_spectrum(*tensors.state);
         tools::log->info("Expectation values ⟨σx⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[0]));
         tools::log->info("Expectation values ⟨σy⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[1]));
         tools::log->info("Expectation values ⟨σz⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[2]));
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", structure_factor_xyz[0]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", structure_factor_xyz[1]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", structure_factor_xyz[2]);
-        tools::log->info("Kvornings marker ⟨σ+..σz..σ-⟩      = {:.8f}", fmt::join(tenx::span(kvornings_marker), ", "));
+        tools::log->info("OPDM spectrum ⟨σ+..σz..σ-⟩         = {:.8f}", fmt::join(tenx::span(opdm_spectrum), ", "));
     }
 
     tools::log->info("Truncation Error limit             = {:8.2e}", status.trnc_lim);

@@ -68,7 +68,8 @@ namespace tools::finite::h5 {
         extern void number_entropies                (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void expectations                    (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void structure_factors               (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
-        extern void kvornings_marker                (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
+        extern void opdm                            (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
+        extern void opdm_spectrum                   (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void number_probabilities            (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
 
         [[nodiscard]] extern StorageInfo get_storage_info(const StateFinite & state, const AlgorithmStatus &status);

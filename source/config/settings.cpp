@@ -106,9 +106,11 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::table::bond_dimensions::policy"                        , storage::table::bond_dimensions::policy);
     dmrg_config.load_parameter("storage::table::number_entropies::policy"                       , storage::table::number_entropies::policy);
     dmrg_config.load_parameter("storage::table::renyi_entropies::policy"                        , storage::table::renyi_entropies::policy);
-    dmrg_config.load_parameter("storage::table::kvornings_marker::policy"                       , storage::table::kvornings_marker::policy);
+    dmrg_config.load_parameter("storage::table::opdm_spectrum::policy"                          , storage::table::opdm_spectrum::policy);
     dmrg_config.load_parameter("storage::table::expectation_values_spin_xyz::policy"            , storage::table::expectation_values_spin_xyz::policy);
     dmrg_config.load_parameter("storage::table::random_unitary_circuit::policy"                 , storage::table::random_unitary_circuit::policy);
+    dmrg_config.load_parameter("storage::dataset::opdm::policy"                                 , storage::dataset::opdm::policy);
+    dmrg_config.load_parameter("storage::dataset::opdm::chunksize"                              , storage::dataset::opdm::chunksize);
     dmrg_config.load_parameter("storage::dataset::lbit_analysis::policy"                        , storage::dataset::lbit_analysis::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::policy"     , storage::dataset::subsystem_entanglement_entropies::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::chunksize"  , storage::dataset::subsystem_entanglement_entropies::chunksize);

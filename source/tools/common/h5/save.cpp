@@ -36,8 +36,8 @@ namespace tools::common::h5 {
         if(sinfo.storage_event == StorageEvent::PROJECTION) { return has_flag(policy, StoragePolicy::PROJ); }
         if(sinfo.storage_event == StorageEvent::BOND_UPDATE) { return has_flag(policy, StoragePolicy::BOND); }
         if(sinfo.storage_event == StorageEvent::TRNC_UPDATE) { return has_flag(policy, StoragePolicy::TRNC); }
-        if(sinfo.storage_event == StorageEvent::RBDS_STEP) { return has_flag(policy, StoragePolicy::BOND) or has_flag(policy, StoragePolicy::ITER); }
-        if(sinfo.storage_event == StorageEvent::RTES_STEP) { return has_flag(policy, StoragePolicy::TRNC) or has_flag(policy, StoragePolicy::ITER); }
+        if(sinfo.storage_event == StorageEvent::RBDS_STEP) { return has_flag(policy, StoragePolicy::BOND) or has_flag(policy, StoragePolicy::RBDS); }
+        if(sinfo.storage_event == StorageEvent::RTES_STEP) { return has_flag(policy, StoragePolicy::TRNC) or has_flag(policy, StoragePolicy::RTES); }
         throw except::logic_error("Storage policy [{}] has not been implemented for event [{}]", enum2sv(policy), enum2sv(sinfo.storage_event));
     }
 

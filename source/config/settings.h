@@ -141,7 +141,7 @@ namespace settings {
         namespace table::renyi_entropies{
             inline StoragePolicy policy = StoragePolicy::ITER;
         }
-        namespace table::kvornings_marker{
+        namespace table::opdm_spectrum{
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
         namespace table::expectation_values_spin_xyz{
@@ -159,6 +159,11 @@ namespace settings {
             inline unsigned long chunksize = 10;
             inline long bond_lim = 2048l; /*!< Bond dimension limit during swap operations  */
             inline auto trnc_lim = 1e-8;  /*!< Truncation error limit during swap operations  */
+        }
+        namespace dataset::opdm{
+            /*! One-particle density matrix */
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+            inline unsigned long chunksize = 10;
         }
         namespace dataset::number_probabilities{
         /*! Probability of measuring n particles to the left of site i, for all n and i */

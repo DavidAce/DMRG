@@ -76,7 +76,7 @@ namespace tools::finite::ed {
 
         auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(state_ed);
         auto structure_factor_xyz   = tools::finite::measure::structure_factor_xyz(state_ed);
-        auto kvornings_marker       = tools::finite::measure::kvornings_marker(state_ed);
+        auto opdm_spectrum          = tools::finite::measure::opdm_spectrum(state_ed);
 
         tools::log->info("Expectation values ⟨σx⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[0]));
         tools::log->info("Expectation values ⟨σy⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[1]));
@@ -84,7 +84,7 @@ namespace tools::finite::ed {
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", structure_factor_xyz[0]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", structure_factor_xyz[1]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", structure_factor_xyz[2]);
-        tools::log->info("Kvornings marker                   = {::+9.6f}", tenx::span(kvornings_marker));
+        tools::log->info("OPDM spectrum                      = {::+9.6f}", tenx::span(opdm_spectrum));
         tools::log->info("Truncation Errors ε                = {::8.2e}", state_ed.get_truncation_errors());
 
         return state_ed;
