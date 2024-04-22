@@ -26,16 +26,16 @@ namespace settings {
     Note that in this convention we expand/enrich the trailing bond during a DMRG sweep.
     Going left-to-right with active site == i, we update:
 
-        AC(i)   --> SVD( [AC(i)  , PL(i)] ) = U*S*V, to update AC(i) = U, LC = S and V is contracted onto B(i+1) below
-        B(i+1)  --> V * [B(i+1) , 0   ]^T  : This site loses right-normalization when we contract V from the SVD above.
+        - AC(i)   --> SVD( [AC(i)  , PL(i)] ) = U*S*V, to update AC(i) = U, LC = S and V is contracted onto B(i+1) below
+        - B(i+1)  --> V * [B(i+1) , 0   ]^T  : This site loses right-normalization when we contract V from the SVD above.
 
     where PL(i) = alpha * ENVL(i) * AC(i) * MPO(i) (dimensions d, AC.dimension(2), AC.dimension(0)*MPO(i).dimension(1))
     Then, immediately after calling this function, we should move the current center site i --> i+1
 
     Similarly, going right-to-left with active site == i, we update:
 
-         AC(i)   --> SVD( [AC(i) , PR(i) ]^T ) = U*S*V, to update AC(i)=S*V, and U is contracted onto A(i-1) below
-         A(i-1)  -->      [A(i-1), 0    ] * U  : This one loses left-normalization when we contract U from the SVD above.
+        - AC(i)   --> SVD( [AC(i) , PR(i) ]^T ) = U*S*V, to update AC(i)=S*V, and U is contracted onto A(i-1) below
+        - A(i-1)  -->      [A(i-1), 0    ] * U  : This one loses left-normalization when we contract U from the SVD above.
 
     where PR(i) = alpha * ENVR(i) * AC(i) * MPO(i) (dimensions d, AC.dimension(1), AC.dimension(2) * MPO(i).dimension(0))
     Then, immediately after calling this function, we should move the current center site i --> i-1
@@ -134,25 +134,36 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
 
     Going left-to-right with active site == i, we update:
 
-        AC(i), LC(i) -->      [AC(i)     ,  0 ]  * U, S(i)      : AC(i) is bare, without LC(i) (which is used below). Loses left-normalization due to U.
-        LC*B(i+1)    --> SVD( [LC*B(i+1) , PR(i+1) ]^T ) = U*S*V: update B(i+1) = V, LC(i) = S and U is contracted onto AC(i) above
+        - AC(i), LC(i) -->      [AC(i)     ,  0 ]  * U, S(i)      : AC(i) is bare, without LC(i) (which is used below). Loses left-normalization due to U.
+        - LC*B(i+1)    --> SVD( [LC*B(i+1) , PR(i+1) ]^T ) = U*S*V: update B(i+1) = V, LC(i) = S and U is contracted onto AC(i) above
 
     where PR(i+1) = alpha * ENVR(i+1) * B(i+1) * MPO(i+1) (dimensions d(i-1), B(i+1).dimension(1), B(i+1).dimension(2) * MPO(i+1).dimension(0))
     Then, immediately after calling this function, we should optimize the current site AC(i) with a DMRG step.
 
     Similarly, going right-to-left with active site == i, we update:
 
-         A(i-1)*L(i)  --> SVD( [A(i-1)*L(i), PL(i-1)] ) = U*S*V : update A(i-1) = U, L(i) = S and S*V is contracted onto AC(i) below.
-         L(i), AC(i)  -->  V*[AC(i) ,  0      ]^T               : AC(i) is bare, without LC(i). Loses left-normalization due to V.
+         - A(i-1)*L(i)  --> SVD( [A(i-1)*L(i), PL(i-1)] ) = U*S*V : update A(i-1) = U, L(i) = S and S*V is contracted onto AC(i) below.
+         - L(i), AC(i)  -->  V*[AC(i) ,  0      ]^T               : AC(i) is bare, without LC(i). Loses left-normalization due to V.
 
     where PL(i-1) = alpha * ENVL(i-1) * A(i-1) * MPO(i-1) (dimensions d(i-1), A(i-1).dimension(2), A(i-1).dimension(0)*MPO(i-1).dimension(1))
     Then, immediately after calling this function, we should optimize the current site AC(i) with a DMRG step.
 
-    The main differences of this modified expansion are:
-    - The trailing environment is not modified,
-    - after optimization we insert a "good quality" site into the trailing environment
-    - The SVD can be done with very high precision and bond dimension: the real truncation happens after the optimization step instead.
-    - In principle we could even skip the SVD here, or set a larger-than-physically-permitted bond limit, to give the optimizer a very rich environment.
+
+    Thus, one step of the DMRG algorithm proceeds as
+
+    1. expand between sites i, i+1
+    2. optimize $\Psi^{i} = A_C^{i} \Lambda_C^{i}$.
+    3. split $\Psi^{i} \stackrel{\text{SVD}}{\rightarrow}A_C^{i}  \Lambda_C^{i} V^\dagger B^{i+1}$ normally and update the MPS on sites $i,i+1$.
+    4. move: $A_C^i \Lambda_C^i \rightarrow A^i$ and $\Lambda_C^i B^{i+1} \rightarrow \Lambda^i A_C^{i+1} \Lambda_C^{i+1}$, and repeat from step 1.
+    5. update $\alpha$: decrease by $0.01/L$ if **if the variance decreased** in the last step, else increase by $10/L$, bounded by $\alpha \in [\alpha_{\min}, \alpha_{\max}]$, where:
+
+      - $\alpha_{\min} = \text{Var}(H) \cdot 10^{-3}$,
+      - $\alpha_{\max}= \min{(10^{-4}, \text{Var}(H))}$.
+
+    The main differences compared with the original:
+    - The SVD in the expansion can be done with high precision and bond dimension: the real truncation happens after the optimization in step 3.
+    - Therefore, the optimization step sees a much richer environment, which speeds up convergence.
+    - Backwards expansion pushes a non-optimal/degraded site-tensor into the trailing environment. Forward expansion optimizes it first.
 
 */
 

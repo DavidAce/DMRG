@@ -313,6 +313,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_sites        = settings::strategy::multisite_opt_site_max;
         m1.max_problem_size = settings::solver::eig_max_size; // Try to use full diagonalization instead
+        // m1.max_problem_size = settings::precision::max_size_multisite;
         if(settings::xdmrg::bond_init > 0 and m1.svd_cfg->rank_max > settings::xdmrg::bond_init) {
             tools::log->debug("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::xdmrg::bond_init);
             m1.svd_cfg->rank_max = settings::xdmrg::bond_init;
