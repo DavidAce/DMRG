@@ -283,11 +283,11 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
 
     for(long off = 0; off < len; ++off) {
         if(state_swap.get_position<long>() != 0) {
-            tools::log->info("subsystem_entanglement_entropies_swap_log2: Moving state position to 0");
+            tools::log->debug("subsystem_entanglement_entropies_swap_log2: Moving state position to 0");
             svd::config svd_cfg_move(settings::get_bond_max(state.get_algorithm()), settings::solver::svd_truncation_lim);
             finite::mps::move_center_point_to_pos_dir(state_swap, 0, 1, svd_cfg_move);
         }
-        tools::log->info("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
+        // tools::log->info("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
         if(off > 0) {
             // Move the left-most site to one site beyond the last site
             // Example with 6 sites
@@ -323,7 +323,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
         state.clear_cache(LogPolicy::QUIET);
     }
     // tools::log->info("subsystem entanglement entropies swap {:.3e} s: \n{}\n", t_see->get_last_interval(), linalg::matrix::to_string(see, 16));
-    tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
+    // tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
     state.measurements.subsystem_entanglement_entropies = see;
     return state.measurements.subsystem_entanglement_entropies.value();
 }
