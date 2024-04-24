@@ -57,13 +57,13 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, const
     if(meta.eigv_target.has_value()) {
         eigval_target = meta.eigv_target.value();
     } else {
-        switch(meta.optFunc) {
-            case OptFunc::OVERLAP:
-            case OptFunc::ENERGY: {
+        switch(meta.optCost) {
+            case OptCost::OVERLAP:
+            case OptCost::ENERGY: {
                 // We are trying
                 break;
             }
-            case OptFunc::VARIANCE: {
+            case OptCost::VARIANCE: {
                 // We are trying to find a subspace close to the current energy, on which to optimize the variance.
                 switch(meta.optRitz) {
                     case OptRitz::NONE: throw std::logic_error("find_subspace: invalid OptRitz::NONE");
@@ -145,8 +145,9 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, const
         subspace.back().set_eigs_idx(idx);
         subspace.back().set_eigs_eigval(eigvals(idx));
         subspace.back().set_eigs_ritz(enum2sv(meta.optRitz));
-        subspace.back().set_optfunc(meta.optFunc);
+        subspace.back().set_optcost(meta.optCost);
         subspace.back().set_optsolver(meta.optSolver);
+        subspace.back().set_optalgo(meta.optAlgo);
         subspace.back().validate_basis_vector();
     }
     return subspace;
@@ -224,7 +225,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
             reason = fmt::format("subspace error is low enough: {:.3e} < tolerance {:.3e}", subspace_error, meta.subspace_tol.value_or(1e-10));
             break;
         }
-        if(meta.optFunc == OptFunc::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
+        if(meta.optCost == OptCost::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
             reason = fmt::format("Overlap is sufficient:  {:.16f} >= threshold {:.16f}", max_overlap, 1.0 / std::sqrt(2.0));
             break;
         }
@@ -340,7 +341,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
             reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, meta.subspace_tol.value_or(1e-10));
             break;
         }
-        if(meta.optFunc == OptFunc::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
+        if(meta.optCost == OptCost::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
             reason = fmt::format("Overlap is sufficient:  {:.16f} >= threshold {:.16f}", max_overlap, 1.0 / std::sqrt(2.0));
             break;
         }

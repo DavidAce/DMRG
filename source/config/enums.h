@@ -78,6 +78,7 @@ enum class StorageEvent : int {
     RTES_STEP   = 256,  /*!< reverse truncation error scaling step was made */
     ITERATION   = 512,  /*!< an iteration finished */
     FINISHED    = 1024, /*!< a simulation has finished */
+    allow_bitops
 };
 
 /*! Determines in which cases we calculate and store to file
@@ -106,6 +107,13 @@ enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
+enum class ResumePolicy {
+    IF_MAX_ITERS,
+    IF_SATURATED,
+    IF_UNSUCCESSFUL,
+    IF_SUCCESSFUL,
+    ALWAYS,
+};
 enum class FileCollisionPolicy {
     RESUME, /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
     BACKUP, /*!< Backup the existing file by appending .bak, then start with a new file. */
@@ -113,11 +121,12 @@ enum class FileCollisionPolicy {
     REVIVE, /*!< Try RESUME, but do REPLACE on error instead of throwing */
     REPLACE /*!< Just erase/truncate the existing file and start from the beginning. */
 };
+
 enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
-enum class OptFunc {
+enum class OptCost {
     /*! Choose the objective function for the optimization.
      * Below, H and |psi> are the effective Hamiltonian and state corresponding to
      * a one or more lattice sites.
@@ -137,7 +146,7 @@ enum class OptAlgo {
     DIRECTX2, /*!< For xdmrg with ritz SM: try H|psi> first, then H²|psi>. May resolve level spacing issues */
     SUBSPACE, /*!< Find a state |psi> = λ_0|psi_0> + λ_1|psi_1>... by finding the ground state of of (H-E)^2_ij = <psi_i|(H-E)^2|psi_j> , where psi_i,psi_j are
                  eigenstates of H which span the current state */
-    SHIFTINV, /*!< Find a mid-spectrum eigenstate of H using shift-invert (only compatible with OptFunc::ENERGY).  */
+    SHIFTINV, /*!< Find a mid-spectrum eigenstate of H using shift-invert (only compatible with OptCost::ENERGY).  */
     MPSEIGS   /*!< Apply all MPO's onto all MPS (all L sites) in the matrix-vector product of a matrix-free eigenvalue solver  */
 };            //
 enum class OptSolver {
@@ -266,24 +275,25 @@ enum class xdmrg_task {
     TIMER_RESET,
 };
 
-template<typename T, typename = std::void_t<>>
-struct enum_is_bitflag : std::false_type {};
 template<typename T>
-struct enum_is_bitflag<T, std::void_t<decltype(T::allow_bitops)>> : public std::true_type {};
-template<typename T>
-constexpr bool enum_is_bitflag_v = enum_is_bitflag<T>();
+concept enum_is_bitflag_v = requires(T m) {
+    { T::allow_bitops };
+};
 
 template<typename E>
+requires enum_is_bitflag_v<E>
 constexpr auto operator|(E lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
     using U = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<U>(lhs) | static_cast<U>(rhs));
 }
 template<typename E>
+requires enum_is_bitflag_v<E>
 constexpr auto operator&(E lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
     using U = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<U>(lhs) & static_cast<U>(rhs));
 }
 template<typename E>
+requires enum_is_bitflag_v<E>
 constexpr auto operator|=(E &lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
     lhs = lhs | rhs;
     return lhs;
@@ -293,6 +303,19 @@ template<typename E>
 inline bool has_flag(E target, E check) noexcept {
     using U = std::underlying_type_t<E>;
     return (static_cast<U>(target) & static_cast<U>(check)) == static_cast<U>(check);
+}
+
+template<typename E, typename... Args>
+requires std::conjunction_v<std::is_same<E, Args>...>
+bool has_any_flags(E target, Args &&...check) {
+    using U = std::underlying_type_t<E>;
+    return (((static_cast<U>(target) & static_cast<U>(check)) == static_cast<U>(check)) || ...);
+}
+template<typename E, typename... Args>
+requires std::conjunction_v<std::is_same<E, Args>...>
+bool has_all_flags(E target, Args &&...check) {
+    using U = std::underlying_type_t<E>;
+    return (((static_cast<U>(target) & static_cast<U>(check)) == static_cast<U>(check)) && ...);
 }
 
 template<typename E1, typename E2>
@@ -395,12 +418,13 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         ResetReason,
         EnvExpandMode,
         NormPolicy,
+        ResumePolicy,
         FileCollisionPolicy,
         FileResumePolicy,
         LogPolicy,
         RandomizerMode,
         OptType,
-        OptFunc,
+        OptCost,
         OptAlgo,
         OptSolver,
         OptRitz,
@@ -589,6 +613,13 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StateInitType::REAL)   return "REAL";
         if(item == StateInitType::CPLX)   return "CPLX";
     }
+    if constexpr(std::is_same_v<T, ResumePolicy>) {
+        if(item == ResumePolicy::IF_MAX_ITERS)                          return "IF_MAX_ITERS";
+        if(item == ResumePolicy::IF_SATURATED)                          return "IF_SATURATED";
+        if(item == ResumePolicy::IF_UNSUCCESSFUL)                       return "IF_UNSUCCESSFUL";
+        if(item == ResumePolicy::IF_SUCCESSFUL)                         return "IF_SUCCESSFUL";
+        if(item == ResumePolicy::ALWAYS)                                return "ALWAYS";
+    }
     if constexpr(std::is_same_v<T, FileCollisionPolicy>) {
         if(item == FileCollisionPolicy::RESUME)                         return "RESUME";
         if(item == FileCollisionPolicy::RENAME)                         return "RENAME";
@@ -677,10 +708,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptType::REAL)                                      return "REAL";
         if(item == OptType::CPLX)                                      return "CPLX";
     }
-    if constexpr(std::is_same_v<T,OptFunc>){
-        if(item == OptFunc::ENERGY  )                                  return "ENERGY";
-        if(item == OptFunc::VARIANCE)                                  return "VARIANCE";
-        if(item == OptFunc::OVERLAP)                                   return "OVERLAP";
+    if constexpr(std::is_same_v<T,OptCost>){
+        if(item == OptCost::ENERGY  )                                  return "ENERGY";
+        if(item == OptCost::VARIANCE)                                  return "VARIANCE";
+        if(item == OptCost::OVERLAP)                                   return "OVERLAP";
     }
     if constexpr(std::is_same_v<T,OptAlgo>){
         if(item == OptAlgo::DIRECT)                                    return "DIRECT";
@@ -750,12 +781,13 @@ constexpr auto sv2enum(std::string_view item) {
         ResetReason,
         EnvExpandMode,
         NormPolicy,
+        ResumePolicy,
         FileCollisionPolicy,
         FileResumePolicy,
         LogPolicy,
         RandomizerMode,
         OptType,
-        OptFunc,
+        OptCost,
         OptSolver,
         OptRitz,
         OptWhen,
@@ -941,6 +973,13 @@ constexpr auto sv2enum(std::string_view item) {
         if(item ==  "REAL")                                 return StateInitType::REAL;
         if(item ==  "CPLX")                                 return StateInitType::CPLX;
     }
+    if constexpr(std::is_same_v<T, ResumePolicy>) {
+        if(item == "IF_MAX_ITERS")                          return  ResumePolicy::IF_MAX_ITERS;
+        if(item == "IF_SATURATED")                          return  ResumePolicy::IF_SATURATED;
+        if(item == "IF_UNSUCCESSFUL")                       return  ResumePolicy::IF_UNSUCCESSFUL;
+        if(item == "IF_SUCCESSFUL")                         return  ResumePolicy::IF_SUCCESSFUL;
+        if(item == "ALWAYS")                                return  ResumePolicy::ALWAYS;
+    }
     if constexpr(std::is_same_v<T, FileCollisionPolicy>) {
         if(item == "RESUME")                                return FileCollisionPolicy::RESUME;
         if(item == "RENAME")                                return FileCollisionPolicy::RENAME;
@@ -1034,10 +1073,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "REAL")                                  return OptType::REAL;
         if(item == "CPLX")                                  return OptType::CPLX;
     }
-    if constexpr(std::is_same_v<T,OptFunc>){
-        if(item == "ENERGY")                                return OptFunc::ENERGY;
-        if(item == "VARIANCE")                              return OptFunc::VARIANCE;
-        if(item == "OVERLAP")                               return OptFunc::OVERLAP;
+    if constexpr(std::is_same_v<T,OptCost>){
+        if(item == "ENERGY")                                return OptCost::ENERGY;
+        if(item == "VARIANCE")                              return OptCost::VARIANCE;
+        if(item == "OVERLAP")                               return OptCost::OVERLAP;
     }
     if constexpr(std::is_same_v<T,OptAlgo>){
         if(item == "DIRECT")                                return OptAlgo::DIRECT;

@@ -356,6 +356,7 @@ namespace tools::finite::h5 {
         h5file.writeAttribute(state.get_length<size_t>(), mps_prefix, "model_size");
         h5file.writeAttribute(state.get_position<long>(), mps_prefix, "position");
         h5file.writeAttribute(sinfo.algo_type, mps_prefix, "algo_type", std::nullopt, h5_enum_algo_type::get_h5t());
+        h5file.writeAttribute(mps_prefix, sinfo.get_state_prefix(), "mps_is_saved");
         tools::common::h5::save::set_save_attrs(h5file, mps_prefix, sinfo);
     }
 
@@ -372,6 +373,7 @@ namespace tools::finite::h5 {
         h5file.writeAttribute(settings::model::model_size, table_path, "model_size");
         h5file.writeAttribute(settings::model::model_type, table_path, "model_type");
         h5file.writeAttribute(enum2sv(settings::model::model_type), table_path, "model_name");
+        h5file.writeAttribute(table_path, sinfo.get_state_prefix(), "model_is_saved");
     }
 
     /*! Write all the MPO's with site info in attributes */
@@ -458,9 +460,9 @@ namespace tools::finite::h5 {
         h5file.setKeepFileOpened();
 
         // The main results have now been written. Next we append data to tables
+        tools::common::h5::save::initial_state_attrs(h5file, sinfo); // Save the initial state type and pattern (rather than the MPS itself)
         tools::finite::h5::save::model(h5file, sinfo, model);
         tools::finite::h5::save::state(h5file, sinfo, state);
-        tools::common::h5::save::initial_state_attrs(h5file, sinfo); // Save the initial state type and pattern (rather than the MPS itself)
         tools::common::h5::save::status(h5file, sinfo, status);
         tools::common::h5::save::memory(h5file, sinfo);
         tools::common::h5::save::timer(h5file, sinfo);
@@ -477,6 +479,7 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::correlations(h5file, sinfo, state);
         tools::finite::h5::save::opdm(h5file, sinfo, state);
         tools::finite::h5::save::opdm_spectrum(h5file, sinfo, state);
+        tools::common::h5::save::resume_attrs(h5file, sinfo);   // Save attributes relevant for resuming
 
         // The file can now be closed
         h5file.setKeepFileClosed();

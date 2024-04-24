@@ -409,7 +409,8 @@ namespace tools::h5io {
             // The srcKeys that match an existing table are returned in "keys", with an additional parameter ".key" which
             // is an unique identifier to find the TableInfo object in the map srcTableDb
             // The database srcTableDb  is used to keep track the TableInfo structs for found datasets.
-            auto                   path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
+            auto                   path = srcKey.create_source_path();
+            // auto                   path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
             auto                   key  = fmt::format("{}|{}", srcParentPath, path);
             std::optional<hsize_t> numRecords_old;
             if(srcTableDb.find(key) == srcTableDb.end()) {
@@ -455,14 +456,15 @@ namespace tools::h5io {
         if constexpr(strictTableSize == StrictTableSize::TRUE) {
             if(keys.size() > 1) {
                 // Check that all tables have the same number of records in them
-                std::vector<hsize_t> numRecords;
+                std::vector<std::pair<std::string, hsize_t>> tableRecords;
+                tableRecords.reserve(keys.size());
                 for(const auto &table : keys) {
                     auto &srcInfo = srcTableDb.at(table.key);
-                    numRecords.emplace_back(srcInfo.numRecords.value());
+                    tableRecords.emplace_back(std::make_pair(srcInfo.tablePath.value(), srcInfo.numRecords.value()));
                 }
                 //            tools::logger::log->info("<{}> : numRecords: {}", sfinae::type_name<KeyT>(), numRecords);
-                if(not std::all_of(numRecords.begin(), numRecords.end(), [numRecords](hsize_t n) { return n == numRecords[0]; }))
-                    throw except::runtime_error("unequal number of records in {}: {}", keys.front().classtag, numRecords);
+                if(std::any_of(tableRecords.begin(), tableRecords.end(), [&tableRecords](auto rec) -> bool { return rec.second != tableRecords[0].second; }))
+                    throw except::runtime_error("unequal number of records in {} tables:\n{}\n", keys.front().classtag, fmt::join(tableRecords, "\n"));
             }
         }
         return keys;
@@ -499,33 +501,36 @@ namespace tools::h5io {
                 auto dsetKeys  = std::vector<DsetKey>();
                 auto tableKeys = std::vector<TableKey>();
                 auto fesupKeys = std::vector<FesUpKey>();
-                auto fesdnKeys = std::vector<FesDnKey>();
+                auto rbdsKeys  = std::vector<RbdsKey>();
+                auto rtesKeys  = std::vector<RtesKey>();
                 auto cronoKeys = std::vector<CronoKey>();
 
-//                auto mem_gather = prof::mem_hwm_in_mb();
+                //                auto mem_gather = prof::mem_hwm_in_mb();
 
                 try {
                     auto t_gather = tid::tic_scope("gather");
                     dsetKeys      = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
                     tableKeys     = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.table, pathid, keys.tables);
                     fesupKeys     = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.fesup, pathid, keys.fesups);
-                    fesdnKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.fesdn, pathid, keys.fesdns);
+                    rbdsKeys      = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.rbds, pathid, keys.rbdses);
+                    rtesKeys      = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.rtes, pathid, keys.rteses);
                     cronoKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
                 } catch(const std::runtime_error &ex) {
                     tools::logger::log->error("key gather failed in [{}]: {}", pathid.src_path, ex.what());
                     saveFailedJob(h5_src, "key gathering failed", ex);
                     continue; // File is broken. Do not transfer.
                 }
-//                auto mem_gather_end = prof::mem_hwm_in_mb();
-//                if(mem_gather_end > mem_gather) tools::logger::log->info("gather  : mem += {:.1f} MB", mem_gather_end - mem_gather);
-//                auto mem_xfer = prof::mem_hwm_in_mb();
+                //                auto mem_gather_end = prof::mem_hwm_in_mb();
+                //                if(mem_gather_end > mem_gather) tools::logger::log->info("gather  : mem += {:.1f} MB", mem_gather_end - mem_gather);
+                //                auto mem_xfer = prof::mem_hwm_in_mb();
 
                 try {
                     auto t_xfer = tid::tic_scope("xfer");
                     tools::h5xf::transferDatasets(h5_tgt, tgtdb.dset, h5_src, srcdb.dset, pathid, dsetKeys, fileId);
                     tools::h5xf::transferTables(h5_tgt, tgtdb.table, srcdb.table, pathid, tableKeys, fileId);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesup, srcdb.fesup, pathid, fesupKeys, fileId);
-                    tools::h5xf::transferSeries(h5_tgt, tgtdb.fesdn, srcdb.fesdn, pathid, fesdnKeys, fileId);
+                    tools::h5xf::transferSeries(h5_tgt, tgtdb.rbds, srcdb.rbds, pathid, rbdsKeys, fileId);
+                    tools::h5xf::transferSeries(h5_tgt, tgtdb.rtes, srcdb.rtes, pathid, rtesKeys, fileId);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
 
                 } catch(const std::runtime_error &ex) {
@@ -533,8 +538,8 @@ namespace tools::h5io {
                     saveFailedJob(h5_src, "transfer failed", ex);
                 }
                 //                h5_tgt.flush();
-//                auto mem_xfer_end = prof::mem_hwm_in_mb();
-//                if(mem_xfer_end > mem_xfer) tools::logger::log->info("transfer: mem += {:.1f} MB", mem_xfer_end - mem_xfer);
+                //                auto mem_xfer_end = prof::mem_hwm_in_mb();
+                //                if(mem_xfer_end > mem_xfer) tools::logger::log->info("transfer: mem += {:.1f} MB", mem_xfer_end - mem_xfer);
 
                 //                try {
                 //                    auto t_dsets  = tid::tic_scope("dsets");

@@ -8,6 +8,7 @@
 #include "debug/exceptions.h"
 #include "debug/info.h"
 #include "env/environment.h"
+#include "general/iter.h"
 #include "math/rnd.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/state/StateInfinite.h"
@@ -46,20 +47,32 @@ void AlgorithmLauncher::start_h5file() {
         switch(settings::storage::file_collision_policy) {
             case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
-                // Inspecting the file in READWRITE mode can update the file modification timestamp.
+                // Inspecting the file in READWRITE mode updates the file modification time stamp.
                 // Therefore, we must first inspect the file in READONLY mode, then reopen in READWRITE.
                 // If the file is somehow damaged or invalid, we simply truncate it and start from scratch.
-                // If the file has a fully processed set of simulations, then [common/finished_all] = true,
-                // in which case we consult settings::storage::file_resume_policy, to either exit or keep going
-                // and consult .cfg if there is anything more to be done.
+
                 try {
                     h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READONLY);
-                    tools::log->info("Checking if HDF5 file is valid: [{}]", settings::storage::output_filepath);
-                    if(not h5file->fileIsValid()) throw except::runtime_error("HDF5 file is not valid: {}", settings::storage::output_filepath);
+                    tools::log->info("Checking if the HDF5 file is valid: [{}]", settings::storage::output_filepath);
+                    if(not h5file->fileIsValid()) throw except::runtime_error("The HDF5 file is not valid: {}", settings::storage::output_filepath);
+
+                    // Let's first consider the new resume check method, which looks for attributes in the state_prefix.
+                    auto states_that_may_resume = tools::common::h5::resume::find_states_that_may_resume(*h5file, settings::storage::resume_policy);
+                    if(!states_that_may_resume.empty()) {
+                        // We did find states that may be resumed using the new method.
+                        tools::log->info("Found resumable states. Attempting to open file with READWRITE access");
+                        h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READWRITE);
+                        break;
+                    }
+
+                    // If we get to this point we should try the old method.
+                    // If the file has a fully processed set of simulations, then [common/finished_all] = true,
+                    // in which case we consult settings::storage::file_resume_policy, to either exit or keep going
+                    // and consult .cfg if there is anything more to be done.
+
                     if(not h5file->linkExists("common/finished_all"))
                         throw except::runtime_error("Could not find link common/finished_all in file: {}", settings::storage::output_filepath);
                     auto finished_all = h5file->readDataset<bool>("common/finished_all");
-
 
                     // For fLBIT simulations we can check if we actually got the expected number of iterations
                     auto time_num_steps    = h5file->readAttribute<std::optional<size_t>>("fLBIT/state_real", "time_num_steps");

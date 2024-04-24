@@ -39,7 +39,7 @@ namespace tools::finite::opt {
         std::optional<double>                 eigs_eigval      = std::nullopt;
         std::optional<std::string>            eigs_ritz        = std::nullopt;
         std::optional<cplx>                   eigs_shift       = std::nullopt;
-        std::optional<OptFunc>                optFunc          = std::nullopt;
+        std::optional<OptCost>                optCost          = std::nullopt;
         std::optional<OptAlgo>                optAlgo          = std::nullopt;
         std::optional<OptSolver>              optSolver        = std::nullopt;
         std::optional<OptRitz>                optRitz          = std::nullopt;
@@ -100,7 +100,7 @@ namespace tools::finite::opt {
         [[nodiscard]] std::string_view           get_eigs_ritz() const;
         [[nodiscard]] cplx                       get_eigs_shift() const;
         [[nodiscard]] OptSolver                  get_optsolver() const;
-        [[nodiscard]] OptFunc                    get_optfunc() const;
+        [[nodiscard]] OptCost                    get_optcost() const;
         [[nodiscard]] OptAlgo                    get_optalgo() const;
         [[nodiscard]] OptExit                    get_optexit() const;
         [[nodiscard]] long                       get_bond_lim() const;
@@ -139,8 +139,8 @@ namespace tools::finite::opt {
         void set_eigs_shift(const cplx shift_);
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
-        void set_optsolver(OptSolver optspace_);
-        void set_optfunc(OptFunc optfunc_);
+        void set_optsolver(OptSolver optsolver_);
+        void set_optcost(OptCost optcost_);
         void set_optalgo(OptAlgo optalgo_);
         void set_optexit(OptExit optexit_);
         void set_bond_limit(long bond_);

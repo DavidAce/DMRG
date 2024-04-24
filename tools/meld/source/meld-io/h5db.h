@@ -18,7 +18,8 @@ namespace tools::h5db {
         std::vector<TableKey> tables;
         std::vector<CronoKey> cronos;
         std::vector<FesUpKey> fesups;
-        std::vector<FesDnKey> fesdns;
+        std::vector<RbdsKey>  rbdses;
+        std::vector<RtesKey>  rteses;
         std::vector<ModelKey> models;
 
         [[nodiscard]] std::vector<std::string> get_algos() const {
@@ -27,7 +28,8 @@ namespace tools::h5db {
             for(auto &d : tables) v.emplace_back(d.algo);
             for(auto &d : cronos) v.emplace_back(d.algo);
             for(auto &d : fesups) v.emplace_back(d.algo);
-            for(auto &d : fesdns) v.emplace_back(d.algo);
+            for(auto &d : rbdses) v.emplace_back(d.algo);
+            for(auto &d : rteses) v.emplace_back(d.algo);
             for(auto &d : models) v.emplace_back(d.algo);
             std::sort(v.begin(), v.end());
             v.erase(std::unique(v.begin(), v.end()), v.end());
@@ -39,7 +41,8 @@ namespace tools::h5db {
             for(auto &d : tables) v.emplace_back(d.state);
             for(auto &d : cronos) v.emplace_back(d.state);
             for(auto &d : fesups) v.emplace_back(d.state);
-            for(auto &d : fesdns) v.emplace_back(d.state);
+            for(auto &d : rbdses) v.emplace_back(d.state);
+            for(auto &d : rteses) v.emplace_back(d.state);
             std::sort(v.begin(), v.end());
             v.erase(std::unique(v.begin(), v.end()), v.end());
             return v;
@@ -53,14 +56,16 @@ namespace tools::h5db {
         std::unordered_map<std::string, h5pp::TableInfo> table;
         std::unordered_map<std::string, h5pp::TableInfo> crono;
         std::unordered_map<std::string, h5pp::TableInfo> fesup;
-        std::unordered_map<std::string, h5pp::TableInfo> fesdn;
+        std::unordered_map<std::string, h5pp::TableInfo> rbds;
+        std::unordered_map<std::string, h5pp::TableInfo> rtes;
         std::unordered_map<std::string, ModelType>       model;
         void                                             clear() {
             dset.clear();
             table.clear();
             crono.clear();
             fesup.clear();
-            fesdn.clear();
+            rbds.clear();
+            rtes.clear();
             model.clear();
         }
     };
@@ -71,7 +76,8 @@ namespace tools::h5db {
         std::unordered_map<std::string, InfoId<h5pp::TableInfo>>   table;
         std::unordered_map<std::string, InfoId<BufferedTableInfo>> crono;
         std::unordered_map<std::string, InfoId<BufferedTableInfo>> fesup;
-        std::unordered_map<std::string, InfoId<BufferedTableInfo>> fesdn;
+        std::unordered_map<std::string, InfoId<BufferedTableInfo>> rbds;
+        std::unordered_map<std::string, InfoId<BufferedTableInfo>> rtes;
         std::unordered_map<std::string, InfoId<h5pp::TableInfo>>   model;
         void                                                       clear() {
             file.clear();
@@ -79,7 +85,8 @@ namespace tools::h5db {
             table.clear();
             crono.clear();
             fesup.clear();
-            fesdn.clear();
+            rbds.clear();
+            rtes.clear();
             model.clear();
         }
     };

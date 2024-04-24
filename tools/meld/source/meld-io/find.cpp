@@ -78,7 +78,7 @@ namespace tools::io {
                 }
             }
             std::sort(result.begin(), result.end());
-            tools::logger::log->info("Found {} directories with .h5 files. Splitting into {} groups", result.size(), mpi::world.size);
+            tools::logger::log->debug("Found {} directories with .h5 files. Splitting into {} groups", result.size(), mpi::world.size);
         }
         mpi::scatter_r(result, 0);
         return result;

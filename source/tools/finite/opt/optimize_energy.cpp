@@ -31,8 +31,8 @@ namespace tools::finite::opt {
 
     template<typename Scalar>
     std::vector<opt_mps> eigs_energy_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta) {
-        if(meta.optFunc != OptFunc::ENERGY)
-            throw except::runtime_error("eigs_energy_executor: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::ENERGY), enum2sv(meta.optFunc));
+        if(meta.optCost != OptCost::ENERGY)
+            throw except::runtime_error("eigs_energy_executor: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::ENERGY), enum2sv(meta.optCost));
 
         eig::Ritz ritz = eig::stringToRitz(enum2sv(meta.optRitz));
         tools::log->trace("Defining Hamiltonian matrix-vector product");
@@ -102,7 +102,7 @@ namespace tools::finite::opt {
 
     opt_mps internal::optimize_energy_eigs(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta) {
         if(meta.optSolver == OptSolver::EIG) return optimize_energy_eig(tensors, initial_mps, status, meta);
-        tools::log->debug("optimize_energy_eigs: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),
+        tools::log->debug("optimize_energy_eigs: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optCost),
                           enum2sv(meta.optAlgo));
 
 

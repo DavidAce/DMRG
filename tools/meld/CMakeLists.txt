@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.18)
-project(dmrg-meld VERSION 1.0.0 DESCRIPTION "Melds DMRG++ batch data in HDF5 format")
+project(meld VERSION 1.0.0 DESCRIPTION "Melds DMRG++ batch data in HDF5 format")
 
 include(${CMAKE_SOURCE_DIR}/cmake/environment.cmake)
 
 # Create an executable
-add_executable(dmrg-meld
+add_executable(meld
                source/main.cpp
                source/meld-io/find.cpp
                source/meld-io/logger.cpp
@@ -19,29 +19,29 @@ add_executable(dmrg-meld
                source/general/human.cpp
                source/mpi/mpi-tools.cpp
                )
-target_include_directories(dmrg-meld PRIVATE source)
+target_include_directories(meld PRIVATE source)
 
-target_link_libraries(dmrg-meld PRIVATE
+target_link_libraries(meld PRIVATE
                       dmrg-debug
                       dmrg-stacktrace
                       dmrg-tensors-mpo-h5tb # To read the hamiltonian table
                       dmrg-qm-lbit-h5tb  # To read the circuit table
                       dmrg-tid)
-target_link_libraries(dmrg-meld PRIVATE dmrg-flags)
-target_include_directories(dmrg-meld PRIVATE ${CMAKE_SOURCE_DIR}/source)
+target_link_libraries(meld PRIVATE dmrg-flags)
+target_include_directories(meld PRIVATE ${CMAKE_SOURCE_DIR}/source)
 
 find_package(MPI COMPONENTS CXX REQUIRED)
 find_package(CLI11 REQUIRED)
 find_package(h5pp REQUIRED)
 find_package(Backward REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE MPI::MPI_CXX)
-target_link_libraries(dmrg-meld PUBLIC CLI11::CLI11)
-target_link_libraries(dmrg-meld PUBLIC h5pp::h5pp)
-target_link_libraries(dmrg-meld PUBLIC Backward::Backward)
+target_link_libraries(meld PUBLIC CLI11::CLI11)
+target_link_libraries(meld PUBLIC h5pp::h5pp)
+target_link_libraries(meld PUBLIC Backward::Backward)
 
 # Print summary of CMake configuration
 include(${CMAKE_SOURCE_DIR}/cmake/PrintTargetInfo.cmake)
-print_project_summary(dmrg-meld)
+print_project_summary(meld)
 
 
 

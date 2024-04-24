@@ -18,7 +18,6 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
         auto eigvecs  = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
         auto eigvals  = eig::view::get_eigvals<real>(solver.result, converged_only);
-        bool fulldiag = eigvecs.rows() == eigvals.size(); /* Detects full diag*/
 
         if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
             double overlap_sq_sum = 0;
@@ -30,7 +29,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 auto &mps           = results.back();
                 mps.is_basis_vector = true;
                 if constexpr(settings::debug) tools::log->trace("Extracting result: idx {} | eigval {:.16f}", idx, eigvals(idx));
-                mps.set_name(fmt::format("eigenvector {} [{:^8}]",idx,  solver.config.tag));
+                mps.set_name(fmt::format("eigenvector {} [{:^8}]", idx, solver.config.tag));
                 mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_sites(initial_mps.get_sites());
                 mps.set_energy_shift(initial_mps.get_energy_shift()); // Will set energy if also given the eigval
@@ -48,7 +47,8 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.set_eigs_eigval(eigvals[idx]);
                 mps.set_eigs_ritz(solver.result.meta.ritz);
                 mps.set_eigs_shift(solver.result.meta.sigma);
-                mps.set_optfunc(meta.optFunc);
+                mps.set_optcost(meta.optCost);
+                mps.set_optalgo(meta.optAlgo);
                 mps.set_optsolver(meta.optSolver);
                 if(solver.result.meta.residual_norms.empty())
                     mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
@@ -71,29 +71,6 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 // a few eigenvectors contribute to most of the sum.
                 overlap_sq_sum += mps.get_overlap() * mps.get_overlap();
                 num_solutions++; // Count the number of solutions added
-                // if(fulldiag and meta.optFunc == OptFunc::ENERGY) {
-                // When doing full diagonalization, getting all the solutions is costly, and we basically never need them all.
-                // Let's instead break after collecting relevant solutions
-                // When optimizing energy we are looking for extremal energies, i.e. ritz SR/LR, so the results we are looking
-                // for are either first or last in the spectrum.
-                // if(overlap_sq_sum > max_overlap_sq_sum and num_solutions > 1) break; // Mainly used in eigs_optimize_energy
-                // }
-                // if(fulldiag and meta.optFunc == OptFunc::VARIANCE) {
-                // This happens when we optimize variance (i.e. <(H-E)>²) using full diagonalization.
-                // Since the eigenvalues are actually the same thing as the energy variance, the result we
-                // are looking for is naturally the eigenpair with smallest eigenvalue.
-                // Lapack gives us the results sorted in order of increasing eigenvalue, so it's enough
-                // to keep the first few eigenvectors here.
-                // if(num_solutions >= 2) break;
-                // }
-                //                if(fulldiag and meta.optFunc == OptFunc::ENERGY) {
-                //                    // This happens when we optimize energy (i.e. <(H-E)>) using full diagonalization.
-                //                    // Since the eigenvalues are actually the same thing as the energy variance, the result we
-                //                    // are looking for is naturally the eigenpair with smallest eigenvalue.
-                //                    // Lapack gives us the results sorted in order of increasing eigenvalue, so it's enough
-                //                    // to keep the first few eigenvectors here.
-                //                    if(num_solutions >= 16) break;
-                //                }
             }
         }
     }
@@ -115,7 +92,7 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 results.emplace_back(opt_mps());
                 auto &mps           = results.back();
                 mps.is_basis_vector = false;
-                mps.set_name(fmt::format("eigenvector {} [{:^8}]",idx,  solver.config.tag));
+                mps.set_name(fmt::format("eigenvector {} [{:^8}]", idx, solver.config.tag));
                 // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_tensor(subspace::get_vector_in_fullspace(subspace_mps, eigvecs.col(idx).normalized()), dims_mps);
                 mps.set_sites(initial_mps.get_sites());
@@ -134,7 +111,8 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 mps.set_eigs_eigval(eigvals[idx]);
                 mps.set_eigs_ritz(solver.result.meta.ritz);
                 mps.set_eigs_shift(solver.result.meta.sigma);
-                mps.set_optfunc(meta.optFunc);
+                mps.set_optcost(meta.optCost);
+                mps.set_optalgo(meta.optAlgo);
                 mps.set_optsolver(meta.optSolver);
                 if(solver.result.meta.residual_norms.empty())
                     mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),

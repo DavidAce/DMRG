@@ -93,8 +93,8 @@ void AlgorithmFinite::run()
 
 void AlgorithmFinite::run_rbds_analysis() {
     if(settings::strategy::rbds_rate == 0) return;
-    last_optmode  = std::nullopt;
-    last_optspace = std::nullopt;
+    last_optcost  = std::nullopt;
+    last_optsolver = std::nullopt;
     tools::log    = tools::Logger::setLogger(fmt::format("{}-rbds", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse bond dimension scaling with rate bond rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::rbds_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
@@ -141,8 +141,8 @@ void AlgorithmFinite::run_rbds_analysis() {
 
 void AlgorithmFinite::run_rtes_analysis() {
     if(settings::strategy::rtes_rate <= 1.0) return;
-    last_optmode  = std::nullopt;
-    last_optspace = std::nullopt;
+    last_optcost  = std::nullopt;
+    last_optsolver = std::nullopt;
     tools::log    = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse truncation error scaling with growth rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::rtes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
@@ -597,31 +597,25 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
 
     // Update alpha
     double old_expansion_alpha = status.env_expansion_alpha;
-    double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
-    double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
 
     // double factor_up = 1e+1;
     // double factor_dn = 1e-2;
+    double energy_variance   = tools::finite::measure::energy_variance(tensors);
+    double alpha_upper_limit = std::min(1e+1 * energy_variance, settings::strategy::max_env_expansion_alpha);
+    double alpha_lower_limit = std::min(1e-3 * status.energy_variance_lowest, alpha_upper_limit);
 
-    bool   var_has_improved  = status.energy_variance_lowest / status.env_expansion_variance < 0.9;
-    bool   var_has_converged = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold;
-    auto   energy_variance_current = tools::finite::measure::energy_variance(tensors);
-    double alpha_upper_limit       = std::min(1e+1 * energy_variance_current, settings::strategy::max_env_expansion_alpha);
-    double alpha_lower_limit       = std::min(1e-3 * status.energy_variance_lowest, alpha_upper_limit);
+    bool   var_has_improved    = status.energy_variance_lowest / status.env_expansion_variance < 0.9;
+    bool   var_has_converged   = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold;
+    bool   var_has_got_stuck   = !var_has_improved and !var_has_converged and (status.iter - status.env_expansion_iter) >= 2;
+    double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
+    double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
+    double factor              = var_has_improved or var_has_converged or var_has_got_stuck ? factor_dn : factor_up;
+    status.env_expansion_alpha = std::clamp(factor * status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
 
-    if( //  status.algorithm_has_stuck_for == 0 or
-        var_has_improved or var_has_converged)
-        status.env_expansion_alpha *= factor_dn;
-    else
-        status.env_expansion_alpha *= factor_up;
-
-    status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
-    if(status.env_expansion_alpha < old_expansion_alpha) {
-        status.env_expansion_step     = status.step;
+    if(std::abs(status.env_expansion_alpha/old_expansion_alpha-1.0) > 1e-6) {
         status.env_expansion_variance = status.energy_variance_lowest;
-        tools::log->trace("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
-    } else if(status.env_expansion_alpha > old_expansion_alpha) {
-        tools::log->trace("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
+        if(!var_has_got_stuck) status.env_expansion_iter = status.iter; // Last non-stuck iter
+        tools::log->info("Updated trace {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
     }
 }
 
@@ -1084,7 +1078,25 @@ void          AlgorithmFinite::print_status() {
     auto bonds_string = fmt::format("{}", bonds_merged);
     report += fmt::format("{0:<{1}} ", bonds_string, bonds_padlen);
 
-    if(last_optmode and last_optspace) report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()), enum2sv(last_optspace.value()));
+    if(last_optcost and last_optsolver and last_optalgo) {
+        std::string short_optalgo, short_optcost;
+        switch(last_optalgo.value()) {
+            case OptAlgo::DIRECT: short_optalgo = "DIR"; break;
+            case OptAlgo::DIRECTX2: short_optalgo = "DX2"; break;
+            case OptAlgo::MPSEIGS: short_optalgo = "MPS"; break;
+            case OptAlgo::SHIFTINV: short_optalgo = "SHI"; break;
+            case OptAlgo::SUBSPACE: short_optalgo = "SUB"; break;
+            default: short_optalgo = "???";
+        }
+        switch(last_optcost.value()) {
+            case OptCost::OVERLAP: short_optcost = "OVE"; break;
+            case OptCost::ENERGY: short_optcost = "ENE"; break;
+            case OptCost::VARIANCE: short_optcost = "VAR"; break;
+            default: short_optcost = "???";
+        }
+        report += fmt::format("opt:[{}|{}|{}] ", short_optcost, short_optalgo, enum2sv(last_optsolver.value()));
+    }
+
     report += fmt::format("con:{:<1} ", status.algorithm_converged_for);
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
     report +=

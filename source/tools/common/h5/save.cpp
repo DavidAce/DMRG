@@ -9,6 +9,7 @@
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
 #include <h5pp/h5pp.h>
+#include <math/eig/enums.h>
 #include <string>
 
 namespace tools::common::h5 {
@@ -67,6 +68,7 @@ namespace tools::common::h5 {
         tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
                           flag2str(settings::storage::table::status::policy));
         h5file.writeTableRecords(status, table_path, offset);
+        h5file.writeAttribute(table_path, sinfo.get_state_prefix(), "status_is_saved");
         save::set_save_attrs(h5file, table_path, sinfo);
     }
 
@@ -209,8 +211,31 @@ namespace tools::common::h5 {
         h5file.writeAttribute(enum2sv(settings::strategy::initial_state), state_prefix, "initial_state");
         h5file.writeAttribute(enum2sv(settings::strategy::initial_type), state_prefix, "initial_type");
         h5file.writeAttribute(settings::strategy::initial_axis, state_prefix, "initial_axis");
-        h5file.writeAttribute(settings::strategy::target_axis, state_prefix, "target_state_axis");
+        h5file.writeAttribute(settings::strategy::target_axis, state_prefix, "target_axis");
         if(!settings::strategy::initial_pattern.empty()) { h5file.writeAttribute(settings::strategy::initial_pattern, state_prefix, "initial_pattern"); }
+    }
+
+    void save::resume_attrs(h5pp::File &h5file, const StorageInfo &sinfo) {
+        using enum StorageEvent;
+
+        if(has_any_flags(sinfo.storage_event, INIT, MODEL, EMIN, PROJECTION, BOND_UPDATE, TRNC_UPDATE, ITERATION, FINISHED)) {
+            auto state_prefix = sinfo.get_state_prefix();
+            // Determine whether enough is stored about this state for the algorithm to resume
+            auto mps_is_saved   = h5file.readAttribute<std::optional<std::string>>(state_prefix, "mps_is_saved");
+            auto model_is_saved = h5file.readAttribute<std::optional<std::string>>(state_prefix, "model_is_saved");
+            if(not mps_is_saved.has_value() and h5file.linkExists(fmt::format("{}/mps", state_prefix))) {
+                mps_is_saved = fmt::format("{}/mps", state_prefix);
+                h5file.writeAttribute(mps_is_saved.value(), state_prefix, "mps_is_saved");
+            }
+            if(not model_is_saved.has_value() and h5file.linkExists(fmt::format("{}/model/hamiltonian", enum2sv(sinfo.algo_type)))) {
+                model_is_saved = fmt::format("{}/model/hamiltonian", enum2sv(sinfo.algo_type));
+                h5file.writeAttribute(model_is_saved.value(), state_prefix, "model_is_saved");
+            }
+            h5file.writeAttribute(mps_is_saved.has_value() and model_is_saved.has_value(), state_prefix, "algorithm_can_resume");
+            h5file.writeAttribute(sinfo.algorithm_has_finished, state_prefix, "algorithm_has_finished");
+            h5file.writeAttribute(sinfo.algorithm_has_succeeded, state_prefix, "algorithm_has_succeeded");
+            h5file.writeAttribute(enum2sv(sinfo.algo_stop), state_prefix, "algorithm_stop");
+        }
     }
 
     hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {

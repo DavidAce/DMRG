@@ -52,7 +52,6 @@ def get_h5_status(filename, batch):
             raise AssertionError(f"Expected model_type==ising_majorana. Got: {model_type}")
 
         expected_dset_paths = [
-            '/common/finished_all',
             '/xDMRG/model/hamiltonian',
             '/xDMRG/state_emid/measurements',
             '/xDMRG/state_emid/status',
@@ -72,6 +71,20 @@ def get_h5_status(filename, batch):
                     return f"FAILED|missing datasets:{missing_dsets}"
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing attributes:{missing_attrs}"
+                # We also check if the simulation saturated
+                if algorithm_stop := h5file['/xDMRG/state_emid'].attrs.get('algorithm_stop'): # This is a string!
+                    if algorithm_stop != 'SUCCESS':
+                        return f"FAILED|algorithm_stop:{algorithm_stop}"
+                else:
+                    # We need to check the status table manually
+                    enum_event = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['event']) # key value pairs defining the enum
+                    enum_algo_stop = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['algo_stop']) # key value pairs defining the enum
+                    # Find a finished event
+                    for int_event, int_algo_stop in zip(h5file['xDMRG/state_emid/status']['event'][::-1], h5file['xDMRG/state_emid/status']['algo_stop'][::-1]):
+                        if int_event == enum_event['FINISHED'] and int_algo_stop != enum_algo_stop['SUCCESS']:
+                            str_algo_stop = list(enum_algo_stop.keys())[list(enum_algo_stop.values()).index(int_algo_stop)]
+                            return f"FAILED|algorithm_stop:{str_algo_stop}"
+
                 return "FINISHED"
         except Exception as e:
             print(traceback.format_exc())

@@ -29,44 +29,44 @@ void BufferedTableInfo::insert(const std::vector<std::byte>::const_iterator begi
             r.rawdata.insert(r.rawdata.end(), begin, end);
             r.extent += 1;
             count++;
-            auto rsize = static_cast<double>(r.rawdata.size()) / 1024.0 / 1024.0;
-            auto rcpty = static_cast<double>(r.rawdata.capacity()) / 1024.0 / 1024.0;
-//            tools::logger::log->debug(
-//                "Inserting entry ({} bytes) with index {} into offset {} extent {} | rawdata {:.3f} MB capacity {:.3f} MB | maxRecords {}", entry_size, index,
-//                r.offset, r.extent, rsize, rcpty, maxRecords);
+            // auto rsize = static_cast<double>(r.rawdata.size()) / 1024.0 / 1024.0;
+            // auto rcpty = static_cast<double>(r.rawdata.capacity()) / 1024.0 / 1024.0;
+            //            tools::logger::log->debug(
+            //                "Inserting entry ({} bytes) with index {} into offset {} extent {} | rawdata {:.3f} MB capacity {:.3f} MB | maxRecords {}",
+            //                entry_size, index, r.offset, r.extent, rsize, rcpty, maxRecords);
             return;
         }
     }
     // None was found, so we make a new one
-//    tools::logger::log->debug("Starting a new buffer at index {}", index);
+    //    tools::logger::log->debug("Starting a new buffer at index {}", index);
     recordBuffer.emplace_back(ContiguousBuffer{.offset = index, .extent = 1ul, .rawdata = std::vector<std::byte>(begin, end)});
     count++;
 }
 
 void BufferedTableInfo::insert(const std::vector<std::byte> &entry, hsize_t index) {
     insert(entry.begin(), entry.end(), index);
-//    if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
-//    if(entry.size() != info->recordBytes.value()) throw std::runtime_error("insert: record and entry size mismatch");
-//    if(getNumRecordsInBuffer() >= maxRecords) flush();
-//
-//    // We need to find out if there is already a contigous buffer where we can append this entry. If not, we start a new contiguous buffer
-//    for(auto &r : recordBuffer) {
-//        if(r.offset + r.extent == index) {
-//            r.rawdata.insert(r.rawdata.end(), entry.begin(), entry.end());
-//            r.extent += 1;
-//            count++;
-//            auto rsize = static_cast<double>(r.rawdata.size()) / 1024.0 / 1024.0;
-//            auto rcpty = static_cast<double>(r.rawdata.capacity()) / 1024.0 / 1024.0;
-//            tools::logger::log->debug(
-//                "Inserting entry ({} bytes) with index {} into offset {} extent {} | rawdata {:.3f} MB capacity {:.3f} MB | maxRecords {}", entry.size(), index,
-//                r.offset, r.extent, rsize, rcpty, maxRecords);
-//            return;
-//        }
-//    }
-//    // None was found, so we make a new one
-//    tools::logger::log->debug("Starting a new buffer at index {}", index);
-//    recordBuffer.emplace_back(ContiguousBuffer{.offset = index, .extent = 1ul, .rawdata = entry});
-//    count++;
+    //    if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
+    //    if(entry.size() != info->recordBytes.value()) throw std::runtime_error("insert: record and entry size mismatch");
+    //    if(getNumRecordsInBuffer() >= maxRecords) flush();
+    //
+    //    // We need to find out if there is already a contigous buffer where we can append this entry. If not, we start a new contiguous buffer
+    //    for(auto &r : recordBuffer) {
+    //        if(r.offset + r.extent == index) {
+    //            r.rawdata.insert(r.rawdata.end(), entry.begin(), entry.end());
+    //            r.extent += 1;
+    //            count++;
+    //            auto rsize = static_cast<double>(r.rawdata.size()) / 1024.0 / 1024.0;
+    //            auto rcpty = static_cast<double>(r.rawdata.capacity()) / 1024.0 / 1024.0;
+    //            tools::logger::log->debug(
+    //                "Inserting entry ({} bytes) with index {} into offset {} extent {} | rawdata {:.3f} MB capacity {:.3f} MB | maxRecords {}", entry.size(),
+    //                index, r.offset, r.extent, rsize, rcpty, maxRecords);
+    //            return;
+    //        }
+    //    }
+    //    // None was found, so we make a new one
+    //    tools::logger::log->debug("Starting a new buffer at index {}", index);
+    //    recordBuffer.emplace_back(ContiguousBuffer{.offset = index, .extent = 1ul, .rawdata = entry});
+    //    count++;
 }
 
 void BufferedTableInfo::flush() {
@@ -140,51 +140,9 @@ bool PathId::match(std::string_view algo_pattern, std::string_view state_pattern
 
 [[nodiscard]] std::string PathId::dset_path(std::string_view dsetname) const { return h5pp::format("{}/{}/{}/dsets/{}", base, algo, state, dsetname); }
 [[nodiscard]] std::string PathId::table_path(std::string_view tablename) const { return h5pp::format("{}/{}/{}/tables/{}", base, algo, state, tablename); }
-[[nodiscard]] std::string PathId::crono_path(std::string_view tablename, size_t iter) const {
-    /*
-     * When collecting a "crono" kind of table:
-     *      - the source path is <base>/<algo>/<state>/tables/<tablename>
-     *      - we find entries for all iterations in <tablename>
-     *      - we collect the contribution from each realization to each iteration separately
-     *      - the target path <base>/<algo>/<state>/cronos/iter_<iter>/<tablename>, collects all the realizations
-     */
-    return h5pp::format("{}/{}/{}/cronos/iter_{}/{}", base, algo, state, iter, tablename);
-}
-[[nodiscard]] std::string PathId::scale_path(std::string_view tablename, size_t bond) const {
-    /*
-     * When collecting a "scale" kind of table:
-     *      - the source path is <base>/<algo>/<state>/tablename>
-     *      - we want all entries of event type BOND_STATE in each <tablename>
-     *      - we collect the contribution from each realization to each bond_# separately
-     *      - the target path <base>/<algo>/<state>/fes/bond_<#>/<tablename>, collects all the contributions
-     */
-    return h5pp::format("{}/{}/{}/fes-inc/bond_{}/{}", base, algo, state, bond, tablename);
-}
-
-[[nodiscard]] std::string PathId::fesle_path(std::string_view tablename, size_t bond) const {
-    /*
-     * When collecting a "FES" kind of table:
-     *      - the source paths are at <base>/<algo>/<state>/<tablename>
-     *      - we want all entries of event type FES_STATE in each <tablename>
-     *      - we collect the contribution from each realization to each bond_# separately
-     *      - the target path <base>/<algo>/<state>/fes/bond_<#>/<tablename>, collects all the contributions
-     */
-    return h5pp::format("{}/{}/{}/fes-dec/bond_{}/{}", base, algo, state, bond, tablename);
-}
-
-template<typename KeyT>
-[[nodiscard]] std::string PathId::create_path(std::string_view tablename, size_t idx) const {
-    static_assert(sfinae::is_any_v<KeyT, FesDnKey, FesUpKey, CronoKey>);
-    if constexpr(std::is_same_v<KeyT, FesDnKey>) return fesle_path(tablename, idx);
-    if constexpr(std::is_same_v<KeyT, FesUpKey>) return scale_path(tablename, idx);
-    if constexpr(std::is_same_v<KeyT, CronoKey>) return crono_path(tablename, idx);
-}
-template std::string PathId::create_path<FesDnKey>(std::string_view tablename, size_t idx) const;
-template std::string PathId::create_path<FesUpKey>(std::string_view tablename, size_t idx) const;
-template std::string PathId::create_path<CronoKey>(std::string_view tablename, size_t idx) const;
 
 H5T_FileId::H5T_FileId() { register_table_type(); }
-void H5T_FileId::register_table_type() {
+void        H5T_FileId::register_table_type() {
     if(h5_type.valid()) return;
     auto           t_scope  = tid::tic_scope(__FUNCTION__);
     h5pp::hid::h5t H5T_PATH = H5Tcopy(H5T_C_S1);
@@ -198,7 +156,7 @@ void H5T_FileId::register_table_type() {
 }
 
 H5T_SeedId::H5T_SeedId() { register_table_type(); }
-void H5T_SeedId::register_table_type() {
+void        H5T_SeedId::register_table_type() {
     auto t_scope = tid::tic_scope(__FUNCTION__);
     if(h5_type.valid()) return;
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(SeedId));
@@ -207,7 +165,7 @@ void H5T_SeedId::register_table_type() {
 }
 
 H5T_profiling::H5T_profiling() { register_table_type(); }
-void H5T_profiling::register_table_type() {
+void           H5T_profiling::register_table_type() {
     if(h5_type.valid()) return;
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(item));
     H5Tinsert(h5_type, "time", HOFFSET(item, time), H5T_NATIVE_DOUBLE);

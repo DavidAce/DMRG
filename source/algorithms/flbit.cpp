@@ -927,7 +927,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             uprop_default.ulayers = unitary_gates_2site_layers;
             auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, ulambdas, uwkinds, umkinds);
             if(h5file and settings::storage::dataset::lbit_analysis::policy == StoragePolicy::INIT) {
-                // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
+                // Put the sample dimension first so that we can collect many simulations in meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
                 auto shape_avgs = std::vector<long>{1, lbitSA.corravg.size()};
                 auto shape_data =

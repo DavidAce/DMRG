@@ -7,7 +7,7 @@
 #include <vector>
 
 enum class OptSolver;
-enum class OptFunc;
+enum class OptCost;
 enum class OptAlgo;
 enum class OptType;
 enum class OptWhen;
@@ -16,7 +16,7 @@ enum class OptRitz;
 
 namespace tools::finite::opt {
     struct OptMeta {
-        OptFunc                    optFunc;
+        OptCost                    optCost;
         OptAlgo                    optAlgo;
         OptSolver                  optSolver;
         OptType                    optType;
@@ -44,7 +44,7 @@ namespace tools::finite::opt {
         std::optional<int>         primme_maxBlockSize   = std::nullopt;
 
                            OptMeta();
-        explicit           OptMeta(OptRitz ritz, OptFunc mode);
+        explicit           OptMeta(OptRitz ritz, OptCost mode);
         [[nodiscard]] bool should_proceed(OptExit previous_exit) const;
         void               validate() const;
         std::string        string() const;

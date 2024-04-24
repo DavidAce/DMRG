@@ -72,17 +72,18 @@ namespace settings {
      *
      */
     namespace storage {
-        inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
-        inline bool                output_append_seed              = true;                         /*!< Append the seed for the random number generator to output_filepath */
-        inline size_t              storage_interval                = 1;                            /*!< Write to file this often, in units of iterations. Applies to StorageEvent::Iteration. */
-        inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
-        inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
-        inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
-        inline unsigned            compression_level               = 1;                            /*!< GZip compression level in HDF5. Choose between [0-9] (0 = off, 9 = max compression) */
-        inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;  /*!< What to do when a prior output file is found. Choose between RESUME, REVIVE, BACKUP, RENAME, REPLACE */
-        inline FileResumePolicy    file_resume_policy              = FileResumePolicy::FULL;       /*!< Depends on dataset "common/finished_all=bool" FULL: Ignore bool -> Scan .cfg to add missing items. FAST: exit if true. */
-        inline std::string         file_resume_name                = ""  ;                         /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
-        inline size_t              file_resume_iter                = -1ul;                         /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
+        inline std::string         output_filepath                 = "output/output.h5";            /*!< Name of the output HDF5 file relative to the execution point  */
+        inline bool                output_append_seed              = true;                          /*!< Append the seed for the random number generator to output_filepath */
+        inline size_t              storage_interval                = 1;                             /*!< Write to file this often, in units of iterations. Applies to StorageEvent::Iteration. */
+        inline bool                use_temp_dir                    = true;                          /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
+        inline size_t              copy_from_temp_freq             = 4;                             /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
+        inline std::string         temp_dir                        = "/tmp/DMRG";                   /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
+        inline unsigned            compression_level               = 1;                             /*!< GZip compression level in HDF5. Choose between [0-9] (0 = off, 9 = max compression) */
+        inline ResumePolicy        resume_policy                   = ResumePolicy::IF_UNSUCCESSFUL; /*!< Under which exit condition in the previous simulation should we resume this time */
+        inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;   /*!< What to do when a prior output file is found. Choose between RESUME, REVIVE, BACKUP, RENAME, REPLACE */
+        inline FileResumePolicy    file_resume_policy              = FileResumePolicy::FULL;        /*!< Depends on dataset "common/finished_all=bool" FULL: Ignore bool -> Scan .cfg to add missing items. FAST: exit if true. */
+        inline std::string         file_resume_name                = ""  ;                          /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
+        inline size_t              file_resume_iter                = -1ul;                          /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
 
         namespace mps::state_emid{
             /*! state_emid is obtained in the xDMRG algorithm (mid energy) */
@@ -406,6 +407,7 @@ namespace settings {
         inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline size_t     max_states                    = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool       store_wavefn                  = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline bool       try_directx2_when_stuck       = true;                    /*!< Try OptAlgo::DIRECTX2: find ritz SM for H instead of H² in the last stuck step. Keep if good, else  use as an initial guess for OptAlgo::DIRECT. */
         inline bool       finish_if_entanglm_saturated  = true;                    /*!< Finish early as soon as entanglement has saturated */
         inline bool       finish_if_variance_saturated  = false;                   /*!< Finish early as soon as energy variance has saturated */
     }

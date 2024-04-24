@@ -36,8 +36,8 @@ namespace tools::finite::opt::internal {
 
     opt_mps optimize_variance_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
         initial_mps.validate_basis_vector();
-        if(meta.optFunc != OptFunc::VARIANCE)
-            throw except::logic_error("optimize_variance_eig: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::VARIANCE), enum2sv(meta.optFunc));
+        if(meta.optCost != OptCost::VARIANCE)
+            throw except::logic_error("optimize_variance_eig: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::VARIANCE), enum2sv(meta.optCost));
         // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eig requires energy-shifted MPO²");
 
         const auto problem_size = tensors.active_problem_size();
@@ -45,7 +45,7 @@ namespace tools::finite::opt::internal {
             throw except::logic_error("optimize_variance_eig: the problem size is too large for eig: {}", problem_size);
 
         tools::log->trace("Full diagonalization of (H-E)²");
-        tools::log->debug("optimize_variance_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),
+        tools::log->debug("optimize_variance_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optCost),
                           enum2sv(meta.optAlgo));
 
         reports::eigs_add_entry(initial_mps, spdlog::level::debug);

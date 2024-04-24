@@ -54,14 +54,14 @@ namespace tools::finite::opt::internal {
     }
 
     opt_mps optimize_energy_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
-        if(meta.optFunc != OptFunc::ENERGY)
-            throw except::logic_error("optimize_energy_eig: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::ENERGY), enum2sv(meta.optFunc));
+        if(meta.optCost != OptCost::ENERGY)
+            throw except::logic_error("optimize_energy_eig: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::ENERGY), enum2sv(meta.optCost));
 
         const auto problem_size = tensors.active_problem_size();
         if(problem_size > settings::solver::eig_max_size)
             throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {} > {}(max)", problem_size, settings::solver::eig_max_size);
 
-        tools::log->debug("optimize_energy_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optFunc),
+        tools::log->debug("optimize_energy_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optCost),
                           enum2sv(meta.optAlgo));
 
         initial_mps.validate_initial_mps();

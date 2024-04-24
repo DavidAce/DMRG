@@ -60,8 +60,8 @@ using namespace tools::finite::opt::internal;
  * Step 2) Return the eigenstate with the highest overlap to the current state.
  */
 opt_mps tools::finite::opt::internal::optimize_overlap(const TensorsFinite &tensors, const opt_mps &initial_mps, OptMeta &meta) {
-    if(meta.optFunc != OptFunc::OVERLAP)
-        throw except::runtime_error("optimize_overlap: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::OVERLAP), enum2sv(meta.optFunc));
+    if(meta.optCost != OptCost::OVERLAP)
+        throw except::runtime_error("optimize_overlap: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::OVERLAP), enum2sv(meta.optCost));
     tools::log->trace("Optimizing in OVERLAP mode");
     auto t_olap = tid::tic_scope("overlap", tid::level::higher);
     initial_mps.validate_initial_mps();

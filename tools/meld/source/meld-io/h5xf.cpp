@@ -37,8 +37,8 @@ namespace tools::h5xf {
             tgtInfo.dsetSlab->offset->at(axis) = index;
 
             // Sometimes there is an extra entry at the end in the source data. We should ignore it.
-            if(tgtInfo.dsetSlab->extent->size() >= 3 and tgtInfo.dsetDims->size() >= 3)
-                tgtInfo.dsetSlab->extent->at(2) = tgtInfo.dsetDims->at(2); // Copy the time dimension to ignore extra entries
+            // if(tgtInfo.dsetSlab->extent->size() >= 3 and tgtInfo.dsetDims->size() >= 3)
+            // tgtInfo.dsetSlab->extent->at(2) = tgtInfo.dsetDims->at(2); // Copy the time dimension to ignore extra entries
 
             switch(ssel) {
                 case SlabSelect::FULL: {
@@ -91,15 +91,18 @@ namespace tools::h5xf {
             }
 
             if(tgtInfo.dsetSlab->extent->size() != tgtInfo.dsetSlab->offset->size()) {
-                throw except::logic_error("dsetSlab has mismatching ranks: \n "
+                throw except::logic_error("target dsetSlab has mismatching ranks: \n "
                                           "target: offset {}:{} != extent {}:{} | dset {}\n"
-                                          "source: dsetDimms {}:{} | dset {} \n"
+                                          "source: dsetDims {}:{} | dset {} \n"
                                           "axis: {}",
                                           tgtInfo.dsetSlab->offset.value(), tgtInfo.dsetSlab->offset->size(), tgtInfo.dsetSlab->extent.value(),
                                           tgtInfo.dsetSlab->extent->size(), tgtInfo.dsetPath.value(), srcInfo.dsetDims.value(), srcInfo.dsetDims->size(),
                                           srcInfo.dsetPath.value(), axis
 
                 );
+            }
+            if(std::any_of(tgtInfo.dsetSlab->extent->begin(), tgtInfo.dsetSlab->extent->end(), [](auto ext) -> bool { return ext == 0; })) {
+                throw except::logic_error("target dsetSlab has zero volume extent: {}", tgtInfo.dsetSlab->extent.value());
             }
             {
                 auto t_read = tid::tic_token("readDataset");
@@ -131,8 +134,8 @@ namespace tools::h5xf {
     void transferDatasets(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::DsetInfo>> &tgtDsetDb, const h5pp::File &h5_src,
                           std::unordered_map<std::string, h5pp::DsetInfo> &srcDsetDb, const PathId &pathid, const std::vector<DsetKey> &srcDsetKeys,
                           const FileId &fileId) {
-        auto t_scope      = tid::tic_scope(__FUNCTION__);
-//        auto mem_xferdset = prof::mem_hwm_in_mb();
+        auto t_scope = tid::tic_scope(__FUNCTION__);
+        //        auto mem_xferdset = prof::mem_hwm_in_mb();
         for(const auto &srcKey : srcDsetKeys) {
             if(srcDsetDb.find(srcKey.key) == srcDsetDb.end()) throw std::logic_error(h5pp::format("Key [{}] was not found in source map", srcKey.key));
             auto &srcInfo = srcDsetDb[srcKey.key];
@@ -165,7 +168,7 @@ namespace tools::h5xf {
                     tgtDims[0]                  = static_cast<hsize_t>(bond_max);
                 }
 
-                tools::logger::log->info("Adding target dset {} | dims {} | chnk {}", tgtPath, tgtDims, tgtChunk);
+                tools::logger::log->debug("Adding target dset {} | dims {} | chnk {}", tgtPath, tgtDims, tgtChunk);
                 tgtDsetDb[tgtPath] = h5_tgt.createDataset(tgtPath, srcInfo.h5Type.value(), H5D_CHUNKED, tgtDims, tgtChunk, tgtMaxDims);
             }
             auto &tgtId   = tgtDsetDb[tgtPath];
@@ -178,15 +181,15 @@ namespace tools::h5xf {
             // Update the database
             tgtId.insert(fileId.seed, index);
         }
-//        auto mem_xferdset_end = prof::mem_hwm_in_mb();
-//        if(mem_xferdset_end - mem_xferdset > 0) tools::logger::log->info("    xfer dset : mem += {:.1f} MB", mem_xferdset_end - mem_xferdset);
+        //        auto mem_xferdset_end = prof::mem_hwm_in_mb();
+        //        if(mem_xferdset_end - mem_xferdset > 0) tools::logger::log->info("    xfer dset : mem += {:.1f} MB", mem_xferdset_end - mem_xferdset);
     }
 
     void transferTables(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtTableDb,
                         std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<TableKey> &srcTableKeys,
                         const FileId &fileId) {
-        auto                      t_scope       = tid::tic_scope(__FUNCTION__);
-//        auto                      mem_xfertable = prof::mem_hwm_in_mb();
+        auto t_scope = tid::tic_scope(__FUNCTION__);
+        //        auto                      mem_xfertable = prof::mem_hwm_in_mb();
         std::vector<StorageEvent> srcEvents; // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
         for(const auto &srcKey : srcTableKeys) {
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::range_error("{}: Key [{}] was not found in source map", __FUNCTION__, srcKey.key);
@@ -213,8 +216,8 @@ namespace tools::h5xf {
             // Update the database
             tgtId.insert(fileId.seed, index);
         }
-//        auto mem_xfertable_end = prof::mem_hwm_in_mb();
-//        if(mem_xfertable_end - mem_xfertable > 0) tools::logger::log->info("    xfer table: mem += {:.1f} MB", mem_xfertable_end - mem_xfertable);
+        //        auto mem_xfertable_end = prof::mem_hwm_in_mb();
+        //        if(mem_xfertable_end - mem_xfertable > 0) tools::logger::log->info("    xfer table: mem += {:.1f} MB", mem_xfertable_end - mem_xfertable);
     }
 
     template<typename KeyT>
@@ -223,11 +226,7 @@ namespace tools::h5xf {
                         const FileId &fileId) {
         // In this function we take series data from each srcTable and create multiple tables tgtTable, one for each
         // index (e.g. iter, bond dim, etc). Each entry in tgtTable corresponds to the same index point on different realizations.
-        auto                      t_scope       = tid::tic_scope(__FUNCTION__);
-//        auto                      mem_xfercrono = prof::mem_hwm_in_mb();
-        std::vector<size_t>       srcIndices; // We can assume all tables have the same indexing numbers. Only update on mismatch
-        std::vector<StorageEvent> srcEvents;  // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
-
+        auto t_scope        = tid::tic_scope(__FUNCTION__);
         auto t_createTable  = tid::ur("createTable");
         auto t_readTableFld = tid::ur("readTableField");
         auto t_readTableRec = tid::ur("readTableRecords");
@@ -236,6 +235,9 @@ namespace tools::h5xf {
         auto t_reclaim      = tid::ur("reclaim");
 
         for(const auto &srcKey : srcKeys) {
+            std::vector<size_t>       srcIndices; // Stores the "<srcKey.indexkey>" column in the table (e.g. iter, bond_lim, and so on).
+            std::vector<StorageEvent> srcEvents;  // Stores the "event" column in the table, so we only transfer the desired event type.
+
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::logic_error("Key [{}] was not found in source map", srcKey.key);
             auto  t_buffer = tid::ur(fmt::format("bufferRecords-{}", srcKey.classtag));
             auto &srcInfo  = srcTableDb[srcKey.key];
@@ -244,37 +246,34 @@ namespace tools::h5xf {
             // Iterate over all table elements. These should be a time series measured at every iteration
             // Note that there could in principle exist duplicate entries, which is why we can't trust the
             // "rec" iterator but have to get the iteration number from the table directly.
-            try {
-                if(srcIndices.size() != srcInfo.numRecords.value()) {
-                    // Update iteration numbers if it's not the same that we have already.
-                    auto indexfield = text::match(srcKey.index, srcInfo.fieldNames.value());
-                    auto eventfield = text::match({"event"}, srcInfo.fieldNames.value());
-                    if(not indexfield)
-                        throw except::range_error("{}: Index field was not found in table [{}]\n Expected fields {}\n Existing fields {}", __FUNCTION__,
-                                                  srcInfo.tablePath.value(), srcKey.index, srcInfo.fieldNames.value());
-                    if(not eventfield)
-                        throw except::range_error("{}: Event field was not found in table [{}]\n Existing fields {}", __FUNCTION__, srcInfo.tablePath.value(),
-                                                  srcInfo.fieldNames.value());
-                    t_readTableFld.tic();
-                    h5pp::hdf5::readTableField(srcIndices, srcInfo, {indexfield.value()});
-                    h5pp::hdf5::readTableField(srcEvents, srcInfo, {eventfield.value()});
-                    t_readTableFld.toc();
-                }
-            } catch(const std::exception &ex) { throw std::logic_error(fmt::format("Failed to get iteration numbers: {}", ex.what())); }
 
+            //  Load the entire source table into memory while we distribute it to the different tables in the target file
             t_readTableRec.tic();
-            std::vector<std::byte> srcReadBuffer; //  This holds the source table in memory while we distribute it to the different tables in the target file
+            std::vector<std::byte> srcReadBuffer; //  This holds the source table
             h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, 0, srcInfo.numRecords.value(), h5_tgt.plists);
-
             t_readTableRec.toc();
-            //                        srcReadBuffer.resize(srcInfo.recordBytes.value());
+
+            // Read the index and event fields so that we can filter entries
+            auto indexfield = text::match(srcKey.indexkey, srcInfo.fieldNames.value());
+            auto eventfield = text::match({"event"}, srcInfo.fieldNames.value());
+            if(indexfield) {
+                t_readTableFld.tic();
+                h5pp::hdf5::readTableField(srcIndices, srcInfo, {indexfield.value()});
+                t_readTableFld.toc();
+            }
+            if(eventfield) {
+                t_readTableFld.tic();
+                h5pp::hdf5::readTableField(srcEvents, srcInfo, {eventfield.value()});
+                t_readTableFld.toc();
+            }
+
             for(size_t rec = 0; rec < srcInfo.numRecords.value(); rec++) {
                 size_t srcIndex = rec;
-                if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Get the actual index number from the table
+                if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Replace with the desired index value -- this is only used to generate the target path
                 if(not srcEvents.empty()) {
-                    if(not seq::has(srcKey.event, srcEvents[rec])) continue; // Ignore this entry if it is not the desired event type
+                    if(not seq::has(srcKey.eventkey, srcEvents[rec])) continue; // Ignore this entry if it is not the desired event type
                 }
-                auto tgtPath = pathid.create_path<KeyT>(tgtName, srcIndex);
+                auto tgtPath = pathid.create_target_path<KeyT>(tgtName, srcIndex);
                 if(tgtTableDb.find(tgtPath) == tgtTableDb.end()) {
                     t_createTable.tic();
                     tools::logger::log->debug("Adding target {} {}", srcKey.classtag, tgtPath);
@@ -300,7 +299,7 @@ namespace tools::h5xf {
                 // the size of the table (so we can append)
                 hsize_t tgtIndex = tgtId.get_index(fileId.seed);
                 tools::logger::log->trace("Transferring {} table {} ({} records) | {} {} @ idx {} -> tgt {}", srcKey.classtag, srcInfo.tablePath.value(),
-                                          srcInfo.numRecords.value(), srcKey.index, srcIndex, rec, tgtIndex);
+                                          srcInfo.numRecords.value(), srcKey.indexkey, srcIndex, rec, tgtIndex);
 
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
                 t_buffer.tic();
@@ -326,8 +325,8 @@ namespace tools::h5xf {
             }
             tid::get(fmt::format("bufferRecords-{}", srcKey.classtag)) += t_buffer;
         }
-//        auto mem_xfercrono_end = prof::mem_hwm_in_mb();
-//        if(mem_xfercrono_end - mem_xfercrono > 0) tools::logger::log->info("    xfer crono: mem += {:.2f} MB", mem_xfercrono_end - mem_xfercrono);
+        //        auto mem_xfercrono_end = prof::mem_hwm_in_mb();
+        //        if(mem_xfercrono_end - mem_xfercrono > 0) tools::logger::log->info("    xfer crono: mem += {:.2f} MB", mem_xfercrono_end - mem_xfercrono);
         tid::get("createTable") += t_createTable;
         tid::get("readTableField") += t_readTableFld;
         tid::get("readTableRecords") += t_readTableRec;
@@ -339,10 +338,12 @@ namespace tools::h5xf {
                                  std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<CronoKey> &srcKeys,
                                  const FileId &fileId);
     template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
-                                 std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<FesDnKey> &srcKeys,
-                                 const FileId &fileId);
-    template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
                                  std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<FesUpKey> &srcKeys,
                                  const FileId &fileId);
-
+    template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
+                                 std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<RbdsKey> &srcKeys,
+                                 const FileId &fileId);
+    template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
+                                 std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<RtesKey> &srcKeys,
+                                 const FileId &fileId);
 }

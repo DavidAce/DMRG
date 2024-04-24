@@ -3,6 +3,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "math/num.h"
+#include "math/tenx/threads.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
@@ -12,7 +13,6 @@
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
-#include "math/tenx/threads.h"
 #include <string>
 
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
@@ -37,7 +37,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
         meta.optSolver = OptSolver::EIGS;
     }
     tools::log->trace("Starting optimization: func [{}] | algo [{}] | solver [{}] | type [{}] | ritz [{}] | position [{}] | sites {} | shape {} = {}",
-                      enum2sv(meta.optFunc), enum2sv(meta.optAlgo), enum2sv(meta.optSolver), enum2sv(meta.optType), enum2sv(meta.optRitz), status.position,
+                      enum2sv(meta.optCost), enum2sv(meta.optAlgo), enum2sv(meta.optSolver), enum2sv(meta.optType), enum2sv(meta.optRitz), status.position,
                       tensors.active_sites, tensors.active_problem_dims(), tensors.active_problem_size());
 
     using namespace opt::internal;
@@ -45,49 +45,18 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     if(initial_mps.get_sites() != tensors.active_sites)
         throw except::runtime_error("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites);
     opt_mps result;
-    switch(meta.optFunc) {
-        case OptFunc::OVERLAP: result = internal::optimize_overlap(tensors, initial_mps, meta); break;
-        case OptFunc::ENERGY: result = internal::optimize_energy_eigs(tensors, initial_mps, status, meta); break;
-        case OptFunc::VARIANCE: {
+    switch(meta.optCost) {
+        case OptCost::OVERLAP: result = internal::optimize_overlap(tensors, initial_mps, meta); break;
+        case OptCost::ENERGY: result = internal::optimize_energy_eigs(tensors, initial_mps, status, meta); break;
+        case OptCost::VARIANCE: {
             switch(meta.optAlgo) {
                 case OptAlgo::DIRECT: {
                     result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta);
-                    tools::finite::opt::reports::print_eigs_report();
-
-                    // {
-                    //     auto meta1                  = meta;
-                    //     meta1.label                 = "GD(?,?)+k";
-                    //     meta1.primme_maxBlockSize   = tenx::threads::getNumThreads();
-                    //     auto result1                = internal::optimize_variance_eigs(tensors, initial_mps, status, meta1);
-                    //     tools::finite::opt::reports::print_eigs_report();
-                    // }
-                    //
-                    // {
-                    //     auto meta2                  = meta;
-                    //     meta2.label                 = "GD(8,16)+1";
-                    //     meta2.eigs_ncv              = 16;
-                    //     meta2.primme_minRestartSize = 8;
-                    //     meta2.primme_maxBlockSize   = 1;
-                    //     auto result2                = internal::optimize_variance_eigs(tensors, initial_mps, status, meta2);
-                    //     tools::finite::opt::reports::print_eigs_report();
-                    // }
-                    //
-                    // {
-                    //     auto meta3                  = meta;
-                    //     meta3.label                 = "GD(16,32)+1";
-                    //     meta3.eigs_ncv              = 32;
-                    //     meta3.primme_minRestartSize = 16;
-                    //     meta3.primme_maxBlockSize   = 1;
-                    //     auto result3                = internal::optimize_variance_eigs(tensors, initial_mps, status, meta3);
-                    //     tools::finite::opt::reports::print_eigs_report();
-                    // }
-
                     break;
                 }
                 case OptAlgo::DIRECTX2: {
                     auto metax2          = meta;
-                    metax2.optFunc       = OptFunc::ENERGY;
-                    metax2.eigs_iter_max = meta.eigs_iter_max.value_or(10000)/10;
+                    metax2.optCost       = OptCost::ENERGY;
                     result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
                     if(meta.optRitz == OptRitz::SM) {
@@ -102,14 +71,14 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         bool resnormfail = result.get_rnorm() >= 1e-10;
                         if(resnormfail or (eneislarger and varislarger)) {
                             // The result is not good enough. But we could use it as initial guess
-                            meta.optFunc = OptFunc::VARIANCE;
+                            meta.optCost = OptCost::VARIANCE;
                             result       = internal::optimize_variance_eigs(tensors, result, status, meta);
                         }
                     }
                     break;
                 }
                 case OptAlgo::SUBSPACE: result = internal::optimize_variance_subspace(tensors, initial_mps, status, meta); break;
-                case OptAlgo::SHIFTINV: throw except::runtime_error("OptFunc::VARIANCE is not compatible with OptAlgo::SHIFTINV");
+                case OptAlgo::SHIFTINV: throw except::runtime_error("OptCost::VARIANCE is not compatible with OptAlgo::SHIFTINV");
                 case OptAlgo::MPSEIGS: throw except::runtime_error("OptAlgo::MPSEIGS has not been implemented yet");
                 default: throw except::logic_error("Unrecognized OptAlgo::{}", static_cast<std::underlying_type_t<OptAlgo>>(meta.optAlgo));
             }
@@ -121,7 +90,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
     // Finish up
     result.set_optsolver(meta.optSolver);
-    result.set_optfunc(meta.optFunc);
+    result.set_optcost(meta.optCost);
+    result.set_optalgo(meta.optAlgo);
     result.set_optexit(meta.optExit);
     result.validate_result();
     return result;
@@ -134,7 +104,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsF
     tools::finite::opt::reports::print_eigs_report();
     // Finish up
     result.set_optsolver(meta.optSolver);
-    result.set_optfunc(meta.optFunc);
+    result.set_optcost(meta.optCost);
+    result.set_optalgo(meta.optAlgo);
     result.set_optexit(meta.optExit);
     result.validate_result();
     return result;
@@ -241,7 +212,7 @@ namespace tools::finite::opt::internal {
     bool Comparator::operator()(const opt_mps &lhs, const opt_mps &rhs) {
         if(not meta) throw except::logic_error("No opt_meta given to comparator");
         // The variance case first
-        if(meta->optFunc == OptFunc::VARIANCE) {
+        if(meta->optCost == OptCost::VARIANCE) {
             return comparator::eigval_and_overlap(lhs, rhs);
         } else {
             auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());

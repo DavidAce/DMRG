@@ -278,11 +278,11 @@ OptSolver opt_mps::get_optsolver() const {
     else
         throw except::runtime_error("opt_mps: optSolver not set");
 }
-OptFunc opt_mps::get_optfunc() const {
-    if(optFunc)
-        return optFunc.value();
+OptCost opt_mps::get_optcost() const {
+    if(optCost)
+        return optCost.value();
     else
-        throw except::runtime_error("opt_mps: optFunc not set");
+        throw except::runtime_error("opt_mps: optCost not set");
 }
 
 OptAlgo opt_mps::get_optalgo() const {
@@ -385,8 +385,8 @@ void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &
     norm   = get_vector().norm();
 }
 
-void opt_mps::set_optsolver(OptSolver optSpace_) { optSolver = optSpace_; }
-void opt_mps::set_optfunc(OptFunc optFunc_) { optFunc = optFunc_; }
+void opt_mps::set_optsolver(OptSolver optSolver_) { optSolver = optSolver_; }
+void opt_mps::set_optcost(OptCost optCost_) { optCost = optCost_; }
 void opt_mps::set_optalgo(OptAlgo optAlgo_) { optAlgo = optAlgo_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 void opt_mps::set_bond_limit(long bond_) { bond_lim = bond_; }

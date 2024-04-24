@@ -84,7 +84,7 @@ opt_mps tools::finite::opt::internal::optimize_variance_subspace(const TensorsFi
     auto t_sub = tid::tic_scope("subspace");
     initial_mps.validate_initial_mps();
     if(meta.optAlgo != OptAlgo::SUBSPACE)
-        throw except::runtime_error("optimize_variance_subspace: Expected OptAlgo [{}]. Got [{}]", enum2sv(OptAlgo::SUBSPACE), enum2sv(meta.optFunc));
+        throw except::runtime_error("optimize_variance_subspace: Expected OptAlgo [{}]. Got [{}]", enum2sv(OptAlgo::SUBSPACE), enum2sv(meta.optCost));
 
     // Handy references
     const auto &model = *tensors.model;

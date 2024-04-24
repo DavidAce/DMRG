@@ -36,8 +36,7 @@ namespace tools::finite::h5 {
                 tools::common::h5::load::timer(h5file, state_prefix, status);
                 tools::finite::h5::load::validate(h5file, state_prefix, tensors, status, algo_type);
             } else {
-                // Reset tensors
-                // To successfully load a simulation there has to be an MPS with StorageLevel::FULL.
+                // To successfully load a simulation there has to be an MPS
                 tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
                 MpsInfo info;
                 tools::finite::h5::load::state(h5file, state_prefix, *tensors.state, info);
@@ -135,8 +134,6 @@ namespace tools::finite::h5 {
         tensors.activate_sites({tensors.get_position<size_t>()});
         tensors.rebuild_edges();
         tools::log->debug("State labels: {}", tensors.state->get_labels());
-        auto measurements_path     = fmt::format("{}/measurements", state_prefix);
-        auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
         tensors.state->clear_cache();
         tensors.state->clear_measurements();
 
@@ -174,24 +171,29 @@ namespace tools::finite::h5 {
         }
 
         if(algo_type != AlgorithmType::fLBIT) {
-            // In this case we have loaded state_real from file.
-            // In the fLBIT case, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian makes no sense.
-            tools::log->debug("Validating resumed state energy (without energy reduction): [{}]", state_prefix);
-            tensors.clear_measurements();
-            compare(tools::finite::measure::energy(tensors), expected_measurements.energy, 1e-5, "Energy");
-            compare(tools::finite::measure::energy_variance(tensors), expected_measurements.energy_variance, 1e-5, "Energy variance");
-
-            if(settings::precision::use_energy_shifted_mpo) {
-                auto energy_shift = tools::finite::measure::energy(tensors);
-                tensors.set_energy_shift_mpo(energy_shift);
-                tensors.rebuild_mpo();
-                tensors.rebuild_mpo_squared();
-                tensors.compress_mpo_squared();
-                tensors.rebuild_edges();
-                tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
+            auto measurements_path = fmt::format("{}/measurements", state_prefix);
+            auto expected_measurements =
+                h5file.readTableRecords<std::optional<h5pp_table_measurements_finite::table>>(measurements_path, h5pp::TableSelection::LAST);
+            if(expected_measurements and expected_measurements->iter == status.iter) {
+                // In this case we have loaded state_real from file.
+                // In the fLBIT case, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian makes no sense.
+                tools::log->debug("Validating resumed state energy (without energy reduction): [{}]", state_prefix);
                 tensors.clear_measurements();
-                compare(tools::finite::measure::energy(tensors), expected_measurements.energy, 1e-5, "Energy");
-                compare(tools::finite::measure::energy_variance(tensors), expected_measurements.energy_variance, 1e-5, "Energy variance");
+                compare(tools::finite::measure::energy(tensors), expected_measurements->energy, 1e-5, "Energy");
+                compare(tools::finite::measure::energy_variance(tensors), expected_measurements->energy_variance, 1e-5, "Energy variance");
+
+                if(settings::precision::use_energy_shifted_mpo) {
+                    auto energy_shift = tools::finite::measure::energy(tensors);
+                    tensors.set_energy_shift_mpo(energy_shift);
+                    tensors.rebuild_mpo();
+                    tensors.rebuild_mpo_squared();
+                    tensors.compress_mpo_squared();
+                    tensors.rebuild_edges();
+                    tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
+                    tensors.clear_measurements();
+                    compare(tools::finite::measure::energy(tensors), expected_measurements->energy, 1e-5, "Energy");
+                    compare(tools::finite::measure::energy_variance(tensors), expected_measurements->energy_variance, 1e-5, "Energy variance");
+                }
             }
         }
     }

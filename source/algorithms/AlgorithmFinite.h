@@ -24,8 +24,9 @@ class AlgorithmFinite : public AlgorithmBase {
 
     size_t                   projected_iter = 0; /*!< The last iteration when projection was tried */
     size_t                   expanded_iter  = 0; /*!< The last iteration when expansion was tried */
-    std::optional<OptFunc>   last_optmode   = std::nullopt;
-    std::optional<OptSolver> last_optspace  = std::nullopt;
+    std::optional<OptCost>   last_optcost   = std::nullopt;
+    std::optional<OptAlgo>   last_optalgo   = std::nullopt;
+    std::optional<OptSolver> last_optsolver  = std::nullopt;
 
     public:
     virtual void resume()                = 0;

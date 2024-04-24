@@ -84,6 +84,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::copy_from_temp_freq"                 , storage::copy_from_temp_freq);
     dmrg_config.load_parameter("storage::temp_dir"                            , storage::temp_dir);
     dmrg_config.load_parameter("storage::compression_level"                   , storage::compression_level);
+    dmrg_config.load_parameter("storage::resume_policy"                       , storage::resume_policy);
     dmrg_config.load_parameter("storage::file_collision_policy"               , storage::file_collision_policy);
     dmrg_config.load_parameter("storage::file_resume_policy"                  , storage::file_resume_policy);
     dmrg_config.load_parameter("storage::file_resume_name"                    , storage::file_resume_name);
@@ -210,6 +211,28 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_multisite"                , precision::max_size_multisite);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
 
+
+
+    //Parameters controlling infinite-DMRG
+    dmrg_config.load_parameter("idmrg::on"                           , idmrg::on);
+    dmrg_config.load_parameter("idmrg::max_iters"                    , idmrg::max_iters);
+    dmrg_config.load_parameter("idmrg::bond_max"                     , idmrg::bond_max);
+    dmrg_config.load_parameter("idmrg::bond_init"                    , idmrg::bond_init);
+    dmrg_config.load_parameter("idmrg::print_freq"                   , idmrg::print_freq);
+
+
+    //Parameters controlling imaginary TEBD (Zero temperature)
+    dmrg_config.load_parameter("itebd::on"                   , itebd::on       );
+    dmrg_config.load_parameter("itebd::max_iters"            , itebd::max_iters);
+    dmrg_config.load_parameter("itebd::time_step_init_real"  , itebd::time_step_init_real  );
+    dmrg_config.load_parameter("itebd::time_step_init_imag"  , itebd::time_step_init_imag  );
+    dmrg_config.load_parameter("itebd::time_step_min"        , itebd::time_step_min);
+    dmrg_config.load_parameter("itebd::suzuki_order"         , itebd::suzuki_order);
+    dmrg_config.load_parameter("itebd::bond_max"             , itebd::bond_max  );
+    dmrg_config.load_parameter("itebd::bond_init"            , itebd::bond_init);
+    dmrg_config.load_parameter("itebd::print_freq"           , itebd::print_freq);
+
+
     //Parameters controlling finite-DMRG
     dmrg_config.load_parameter("fdmrg::on"                      , fdmrg::on);
     dmrg_config.load_parameter("fdmrg::ritz"                    , fdmrg::ritz);
@@ -248,6 +271,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::opdm::exit_when_done"         , flbit::opdm::exit_when_done);
 
 
+
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
     dmrg_config.load_parameter("xdmrg::ritz"                         , xdmrg::ritz);
@@ -260,27 +284,9 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
     dmrg_config.load_parameter("xdmrg::store_wavefn"                 , xdmrg::store_wavefn);
     dmrg_config.load_parameter("xdmrg::max_states"                   , xdmrg::max_states);
+    dmrg_config.load_parameter("xdmrg::try_directx2_when_stuck"      , xdmrg::try_directx2_when_stuck);
     dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
     dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
-
-    //Parameters controlling infinite-DMRG
-    dmrg_config.load_parameter("idmrg::on"                           , idmrg::on);
-    dmrg_config.load_parameter("idmrg::max_iters"                    , idmrg::max_iters);
-    dmrg_config.load_parameter("idmrg::bond_max"                     , idmrg::bond_max);
-    dmrg_config.load_parameter("idmrg::bond_init"                    , idmrg::bond_init);
-    dmrg_config.load_parameter("idmrg::print_freq"                   , idmrg::print_freq);
-
-
-    //Parameters controlling imaginary TEBD (Zero temperature)
-    dmrg_config.load_parameter("itebd::on"                   , itebd::on       );
-    dmrg_config.load_parameter("itebd::max_iters"            , itebd::max_iters);
-    dmrg_config.load_parameter("itebd::time_step_init_real"  , itebd::time_step_init_real  );
-    dmrg_config.load_parameter("itebd::time_step_init_imag"  , itebd::time_step_init_imag  );
-    dmrg_config.load_parameter("itebd::time_step_min"        , itebd::time_step_min);
-    dmrg_config.load_parameter("itebd::suzuki_order"         , itebd::suzuki_order);
-    dmrg_config.load_parameter("itebd::bond_max"             , itebd::bond_max  );
-    dmrg_config.load_parameter("itebd::bond_init"            , itebd::bond_init);
-    dmrg_config.load_parameter("itebd::print_freq"           , itebd::print_freq);
 
     //Timers
     dmrg_config.load_parameter("timer::level"      , timer::level     );

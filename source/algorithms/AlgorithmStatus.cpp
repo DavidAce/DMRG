@@ -58,7 +58,7 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->energy_variance_prec_limit    == s.energy_variance_prec_limit and
         this->env_expansion_alpha           == s.env_expansion_alpha and
         this->env_expansion_variance        == s.env_expansion_variance and
-        this->env_expansion_step            == s.env_expansion_step and
+        this->env_expansion_iter            == s.env_expansion_iter and
         this->phys_time                     == s.phys_time and
         this->wall_time                     == s.wall_time and
         this->algo_time                     == s.algo_time and

@@ -1,5 +1,5 @@
 if (DMRG_BUILD_TOOLS)
     cmake_minimum_required(VERSION 3.18)
     project(dmrg-tools)
-    add_subdirectory(dmrg-meld)
+    add_subdirectory(meld)
 endif ()

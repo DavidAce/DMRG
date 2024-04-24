@@ -5,12 +5,12 @@
 
 namespace tools::finite::opt {
     OptMeta::OptMeta()
-        : optFunc(OptFunc::VARIANCE), optAlgo(OptAlgo::DIRECT), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optWhen(OptWhen::ALWAYS),
+        : optCost(OptCost::VARIANCE), optAlgo(OptAlgo::DIRECT), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optWhen(OptWhen::ALWAYS),
           optRitz(OptRitz::SR), optExit(OptExit::NONE) {}
 
-    OptMeta::OptMeta(OptRitz ritz, OptFunc mode) : OptMeta() {
+    OptMeta::OptMeta(OptRitz ritz, OptCost mode) : OptMeta() {
         optRitz = ritz;
-        optFunc = mode;
+        optCost = mode;
     }
 
     bool OptMeta::should_proceed(OptExit previous_exit) const {
@@ -26,9 +26,9 @@ namespace tools::finite::opt {
         }
     }
     void OptMeta::validate() const {
-        //        if(optFunc == OptFunc::OVERLAP and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [OVERLAP] and solver [BFGS] are
-        //        incompatible"); if(optFunc == OptFunc::SUBSPACE and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver
-        //        [BFGS] are incompatible"); if(optFunc == OptFunc::ENERGY and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and
+        //        if(optCost == OptCost::OVERLAP and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [OVERLAP] and solver [BFGS] are
+        //        incompatible"); if(optCost == OptCost::SUBSPACE and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver
+        //        [BFGS] are incompatible"); if(optCost == OptCost::ENERGY and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and
         //        solver [BFGS] are incompatible");
     }
 
@@ -37,7 +37,7 @@ namespace tools::finite::opt {
         res += label;
         res += fmt::format(" | site {}", chosen_sites);
         res += fmt::format(" | dims {} = {}", problem_dims, problem_size);
-        res += fmt::format(" | cost {}", enum2sv(optFunc));
+        res += fmt::format(" | cost {}", enum2sv(optCost));
         res += fmt::format(" | solv {}", enum2sv(optSolver));
         res += fmt::format(" | type {}", enum2sv(optType));
         res += fmt::format(" | ritz {}", enum2sv(optRitz));

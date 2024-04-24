@@ -59,7 +59,7 @@ namespace tools::h5db {
 
         dbGroups.erase(std::remove_if(dbGroups.begin(), dbGroups.end(), missing), dbGroups.end());
 
-        tools::logger::log->info("Found {} databases for <{}>", dbGroups.size(), sfinae::type_name<KeyType>());
+        tools::logger::log->debug("Found {} databases for <{}>", dbGroups.size(), sfinae::type_name<KeyType>());
 
         for(auto &dbGroup : dbGroups) {
             // Find table databases
@@ -101,7 +101,8 @@ namespace tools::h5db {
     template std::unordered_map<std::string, InfoId<h5pp::TableInfo>>   loadDatabase(const h5pp::File &h5_tgt, const std::vector<TableKey> &keys);
     template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<CronoKey> &keys);
     template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<FesUpKey> &keys);
-    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<FesDnKey> &keys);
+    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<RbdsKey> &keys);
+    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<RtesKey> &keys);
     template std::unordered_map<std::string, InfoId<h5pp::TableInfo>>   loadDatabase(const h5pp::File &h5_tgt, const std::vector<ModelKey> &keys);
 
     void saveDatabase(h5pp::File &h5_tgt, const std::unordered_map<std::string, FileId> &fileIdDb) {

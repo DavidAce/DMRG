@@ -101,7 +101,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
                 tensors.state->set_name(get_state_name());
                 run_algorithm();
                 break;
-            case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
+            case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED, CopyPolicy::FORCE); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case fdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case fdmrg_task::POST_RBDS_ANALYSIS: run_rbds_analysis(); break;
@@ -218,7 +218,7 @@ fdmrg::OptMeta fdmrg::get_opt_meta() {
                              settings::solver::eigs_tol_max);                            // to max
     if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min; // Set to high precision when stuck
 
-    m1.optFunc   = OptFunc::ENERGY;
+    m1.optCost   = OptCost::ENERGY;
     m1.optAlgo   = OptAlgo::DIRECT;
     m1.optSolver = OptSolver::EIGS;
 
@@ -313,7 +313,7 @@ void fdmrg::update_state() {
 
     opt_state.set_optexit(opt_meta.optExit);
 
-    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver),
+    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optCost), enum2sv(opt_meta.optSolver),
                          flag2str(opt_meta.optExit), variance_before_step.value(), opt_state.get_variance(), opt_state.get_relchange() * 100);
     if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
@@ -323,11 +323,11 @@ void fdmrg::update_state() {
                           "{:20} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
                           opt_state.get_sites(),
-                          fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
+                          fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
                           opt_state.get_time());
     }
-    last_optspace = opt_state.get_optsolver();
-    last_optmode  = opt_state.get_optfunc();
+    last_optsolver = opt_state.get_optsolver();
+    last_optcost  = opt_state.get_optcost();
     tensors.state->tag_active_sites_normalized(false);
 
     // Do the truncation with SVD

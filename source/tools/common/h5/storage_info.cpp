@@ -115,6 +115,7 @@ StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_n
       bond_max(status.bond_max),                             //
       trnc_lim(status.trnc_lim),                             //
       algo_type(status.algo_type),                           //
+      algo_stop(status.algo_stop),                           //
       algo_name(status.algo_type_sv()),                      //
       storage_event(status.event),                           //
       state_name(state_name),                                //

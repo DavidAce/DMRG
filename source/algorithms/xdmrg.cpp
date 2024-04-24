@@ -42,10 +42,12 @@ void xdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto state_prefixes = tools::common::h5::resume::find_state_prefixes(*h5file, status.algo_type, "state_");
-    if(state_prefixes.empty()) throw except::state_error("no resumable states were found");
-    for(const auto &state_prefix : state_prefixes) {
-        tools::log->info("Resuming state [{}]", state_prefix);
+    auto states_that_may_resume =
+        tools::common::h5::resume::find_states_that_may_resume(*h5file, settings::storage::resume_policy, status.algo_type, "state_emid");
+    if(states_that_may_resume.empty()) throw except::state_error("no resumable states were found");
+    for(const auto &[state_prefix, algo_stop] : states_that_may_resume) {
+        tools::log->info("Resuming [{}] | previous stop reason: {} | resume policy: {} ", state_prefix, enum2sv(algo_stop),
+                         enum2sv(settings::storage::resume_policy));
         try {
             tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
         } catch(const except::load_error &le) {
@@ -107,7 +109,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
                 tensors.state->set_name("state_emid");
                 run_algorithm();
                 break;
-            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
+            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED, CopyPolicy::FORCE); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case xdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case xdmrg_task::POST_RBDS_ANALYSIS: run_rbds_analysis(); break;
@@ -289,7 +291,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.subspace_tol      = settings::precision::target_subspace_error;
     m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
     m1.eigs_nev          = 1;
-    m1.eigv_target       = 0.0;                        // We always target 0 when OptFunc::VARIANCE
+    m1.eigv_target       = 0.0;                        // We always target 0 when OptCost::VARIANCE
     m1.eigs_ncv          = settings::solver::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
 
     // Set up a multiplier for number of iterations
@@ -305,7 +307,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.eigs_tol = std::min(status.energy_variance_lowest, settings::solver::eigs_tol_max);
     if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min;
 
-    m1.optFunc   = OptFunc::VARIANCE;
+    m1.optCost   = OptCost::VARIANCE;
     m1.optAlgo   = OptAlgo::DIRECT;
     m1.optSolver = OptSolver::EIGS;
 
@@ -341,16 +343,19 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
-    //
-    // auto var_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
-    // bool var_stuck2 = var_latest < 1e-8 and status.algorithm_has_stuck_for > 2;
-    // bool var_toolow = status.variance_mpo_converged_for > 0 or var_latest < var_thresh;
-    // if(var_stuck2 and not var_toolow) {
-    //     m1.optFunc   = OptFunc::VARIANCE;
-    //     m1.optAlgo   = OptAlgo::DIRECTX2;
-    //     m1.optSolver = OptSolver::EIGS;
-    //     m1.optRitz   = OptRitz::SM;
-    // }
+
+
+    auto var_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
+    bool var_stuck2 = status.algorithm_has_stuck_for + 1 == settings::strategy::max_stuck_iters;
+    bool var_toolow = status.variance_mpo_converged_for > 0 or var_latest < var_thresh;
+    if(settings::xdmrg::try_directx2_when_stuck and var_stuck2 and not var_toolow) {
+        // A last desperate attempt. By this the full precision of the eigensolver is not sufficient to resolve the
+        // eigenvalues in H².. Perhaps the levels in H itself are easier, so we use a one-two punch in DIRECTX2.
+        m1.optCost   = OptCost::VARIANCE;
+        m1.optAlgo   = OptAlgo::DIRECTX2;
+        m1.optSolver = OptSolver::EIGS;
+        m1.optRitz   = OptRitz::SM;
+    }
 
     // if(status.env_expansion_alpha > 0) {
     //     // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -358,6 +363,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     // }
 
     m1.validate();
+
     return m1;
 }
 
@@ -382,7 +388,6 @@ void xdmrg::update_state() {
     if(tensors.active_sites.size() == 1) {
         // Use environment expansion if alpha_expansion is set
         expand_environment(status.env_expansion_alpha, svd::config(status.bond_lim, std::min(1e-15, status.trnc_min)));
-        // tensors.expand_environment(status.env_expansion_alpha, EnvExpandMode::VAR, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
     }
 
     // Run the optimization
@@ -406,7 +411,7 @@ void xdmrg::update_state() {
     opt_state.set_optexit(opt_meta.optExit);
     /* clang-format on */
 
-    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optFunc), enum2sv(opt_meta.optSolver),
+    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optCost), enum2sv(opt_meta.optSolver),
                       flag2str(opt_meta.optExit), var_latest, opt_state.get_variance(), opt_state.get_relchange() * 100);
     if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
@@ -415,12 +420,10 @@ void xdmrg::update_state() {
                           "sites {} |"
                           "{:20} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
-                          opt_state.get_sites(), fmt::format("[{}][{}]", enum2sv(opt_state.get_optfunc()), enum2sv(opt_state.get_optsolver())),
+                          opt_state.get_sites(), fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())),
                           flag2str(opt_state.get_optexit()), opt_state.get_time());
     }
 
-    last_optspace = opt_state.get_optsolver();
-    last_optmode  = opt_state.get_optfunc();
     tensors.state->tag_active_sites_normalized(false);
 
     // Do the truncation with SVD
@@ -455,6 +458,10 @@ void xdmrg::update_state() {
     var_latest    = var;
     ene_latest    = ene;
     var_mpo_step.emplace_back(var);
+
+    last_optsolver = opt_state.get_optsolver();
+    last_optalgo   = opt_state.get_optalgo();
+    last_optcost   = opt_state.get_optcost();
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
