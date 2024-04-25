@@ -593,28 +593,28 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
     if(settings::strategy::max_env_expansion_alpha <= 0) return;
     // if(not tensors.position_is_inward_edge()) return; // Update once per sweep
     // Set a good initial value in the first iteration
-    if(status.env_expansion_alpha == 0) status.env_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
 
     // Update alpha
+    double energy_variance = tools::finite::measure::energy_variance(tensors);
+    if(status.env_expansion_alpha == 0) status.env_expansion_alpha = std::min(energy_variance, settings::strategy::max_env_expansion_alpha);
     double old_expansion_alpha = status.env_expansion_alpha;
 
-    // double factor_up = 1e+1;
-    // double factor_dn = 1e-2;
-    double energy_variance   = tools::finite::measure::energy_variance(tensors);
-    double alpha_upper_limit = std::min(1e+1 * energy_variance, settings::strategy::max_env_expansion_alpha);
+    double alpha_upper_limit = std::min(1e+0 * energy_variance, settings::strategy::max_env_expansion_alpha);
     double alpha_lower_limit = std::min(1e-3 * status.energy_variance_lowest, alpha_upper_limit);
 
-    bool   var_has_improved    = status.energy_variance_lowest / status.env_expansion_variance < 0.9;
-    bool   var_has_converged   = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold;
-    bool   var_has_got_stuck   = !var_has_improved and !var_has_converged and (status.iter - status.env_expansion_iter) >= 2;
+    bool var_has_improved  = energy_variance / status.env_expansion_variance < 0.9;
+    bool var_has_converged = status.variance_mpo_converged_for > 0 or energy_variance < settings::precision::variance_convergence_threshold;
+    // bool   var_has_got_stuck   = !var_has_improved and !var_has_converged and (status.iter - status.env_expansion_iter) >= 2;
     double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
     double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
-    double factor              = var_has_improved or var_has_converged or var_has_got_stuck ? factor_dn : factor_up;
+    double factor              = var_has_improved or var_has_converged                                   // or var_has_got_stuck
+                                     ? factor_dn
+                                     : factor_up;
     status.env_expansion_alpha = std::clamp(factor * status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
 
     if(std::abs(status.env_expansion_alpha / old_expansion_alpha - 1.0) > 1e-6) {
-        status.env_expansion_variance = status.energy_variance_lowest;
-        if(!var_has_got_stuck) status.env_expansion_iter = status.iter; // Last non-stuck iter
+        status.env_expansion_variance = energy_variance;
+        status.env_expansion_iter     = status.iter; // Last non-stuck iter
         tools::log->trace("Updated alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
     }
 }
@@ -1004,6 +1004,9 @@ void AlgorithmFinite::clear_convergence_status() {
     status.bond_limit_has_reached_max = false;
     status.trnc_limit_has_reached_min = false;
     status.spin_parity_has_converged  = false;
+    status.energy_variance_lowest     = 1.0;
+    status.env_expansion_alpha        = 0.0;
+    status.env_expansion_variance     = 1.0;
 }
 
 void AlgorithmFinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {

@@ -29,11 +29,11 @@ class AlgorithmStatus {
     double            energy_tgt                 = std::numeric_limits<double>::quiet_NaN();
     double            energy_dens                = std::numeric_limits<double>::quiet_NaN();
     double            energy_dens_target         = std::numeric_limits<double>::quiet_NaN();
-    double            energy_variance_lowest     = 1;
+    double            energy_variance_lowest     = 1.0;
     size_t            energy_variance_max_digits = 0;
     double            energy_variance_prec_limit = 0;
     double            env_expansion_alpha        = 0; /*!< subspace expansion factor alpha */
-    double            env_expansion_variance     = 0; /*!< lowest variance when alpha was last updated */
+    double            env_expansion_variance     = 1; /*!< lowest variance when alpha was last updated */
     size_t            env_expansion_iter         = 0; /*!< step when alpha was last updated */
     h5pp::fstr_t<64>  phys_time                  = {};
     double            wall_time                  = 0;
