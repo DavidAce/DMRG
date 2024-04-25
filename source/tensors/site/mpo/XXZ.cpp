@@ -142,7 +142,7 @@ void XXZ::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     double delta            = h5tb.param.delta;
     double h                = settings::model::xxz::h_wdth;
     double L                = safe_cast<double>(all_parameters.size());
-    energy_maximum_estimate = (2 + delta) * (L - 1) + h * L;
+    global_energy_upper_bound = (2 + delta) * (L - 1) + h * L;
 }
 
 void XXZ::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {

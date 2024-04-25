@@ -40,12 +40,13 @@ void IsingMajorana::set_parameters(TableMap &parameters) {
 IsingMajorana::TableMap IsingMajorana::get_parameters() const {
     /* clang-format off */
     TableMap parameters;
-    parameters["g"]             = h5tb.param.g;
-    parameters["delta"]         = h5tb.param.delta;
-    parameters["J_rand"]        = h5tb.param.J_rand;
-    parameters["h_rand"]        = h5tb.param.h_rand;
-    parameters["spin_dim"]      = h5tb.param.spin_dim;
-    parameters["distribution"]  = h5tb.param.distribution;
+    parameters["g"]                             = h5tb.param.g;
+    parameters["delta"]                         = h5tb.param.delta;
+    parameters["J_rand"]                        = h5tb.param.J_rand;
+    parameters["h_rand"]                        = h5tb.param.h_rand;
+    parameters["spin_dim"]                      = h5tb.param.spin_dim;
+    parameters["distribution"]                  = h5tb.param.distribution;
+    parameters["local_energy_upper_bound"] = local_energy_upper_bound;
     return parameters;
     /* clang-format on */
 }
@@ -130,6 +131,11 @@ void IsingMajorana::randomize_hamiltonian() {
     h5tb.param.J_rand = rnd::uniform_double_box(0, delta_to_W_J(h5tb.param.delta));
     h5tb.param.h_rand = rnd::uniform_double_box(0, delta_to_W_h(h5tb.param.delta));
 
+    // Estimate the maximum energy contribution from this site
+    local_energy_upper_bound = std::abs(h5tb.param.h_rand) + 2 * std::abs(h5tb.param.g);
+    if(get_position() + 1 < settings::model::model_size) local_energy_upper_bound += std::abs(h5tb.param.J_rand) + std::abs(h5tb.param.g);
+    if(get_position() + 2 < settings::model::model_size) local_energy_upper_bound += std::abs(h5tb.param.g);
+
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
     unique_id                        = std::nullopt;
@@ -143,11 +149,12 @@ long IsingMajorana::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void IsingMajorana::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
     set_parameters(all_parameters[get_position()]);
-    double W_J              = delta_to_W_J(h5tb.param.delta);
-    double W_h              = delta_to_W_h(h5tb.param.delta);
-    double g                = h5tb.param.g;
-    double L                = safe_cast<double>(all_parameters.size());
-    energy_maximum_estimate = W_J * (L - 1) + W_h * L + g * (L - 1) + g * (L - 2);
+    global_energy_upper_bound = 0.0;
+    for(const auto &param : all_parameters) {
+        if(param.contains("local_energy_upper_bound")) {
+            global_energy_upper_bound += std::any_cast<decltype(global_energy_upper_bound)>(param.at("local_energy_upper_bound"));
+        }
+    }
 }
 
 void IsingMajorana::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {

@@ -56,18 +56,17 @@ class ModelFinite {
                  ModelFinite(const ModelFinite &other); // copy ctor
     ModelFinite &operator=(const ModelFinite &other);   // copy assign
 
-    void                         initialize(ModelType model_type_, size_t model_size);
-    void                         assert_validity() const;
-    [[nodiscard]] size_t         get_length() const;
-    [[nodiscard]] bool           is_real() const;
-    [[nodiscard]] bool           has_nan() const;
-    [[nodiscard]] const MpoSite &get_mpo(size_t pos) const;
-    [[nodiscard]] MpoSite       &get_mpo(size_t pos);
-    void                         build_mpo();
-    void                         build_mpo_squared();
-    void                         compress_mpo();
-    void                         compress_mpo_squared();
-
+    void                                                             initialize(ModelType model_type_, size_t model_size);
+    void                                                             assert_validity() const;
+    [[nodiscard]] size_t                                             get_length() const;
+    [[nodiscard]] bool                                               is_real() const;
+    [[nodiscard]] bool                                               has_nan() const;
+    [[nodiscard]] const MpoSite                                     &get_mpo(size_t pos) const;
+    [[nodiscard]] MpoSite                                           &get_mpo(size_t pos);
+    void                                                             build_mpo();
+    void                                                             build_mpo_squared();
+    void                                                             compress_mpo();
+    void                                                             compress_mpo_squared();
     [[nodiscard]] std::vector<std::reference_wrapper<const MpoSite>> get_mpo(const std::vector<size_t> &sites) const;
     [[nodiscard]] std::vector<std::reference_wrapper<MpoSite>>       get_mpo(const std::vector<size_t> &sites);
     [[nodiscard]] std::vector<std::reference_wrapper<const MpoSite>> get_mpo_active() const;
@@ -82,6 +81,8 @@ class ModelFinite {
     [[nodiscard]] double                get_energy_shift_mpo_per_site() const;
     [[nodiscard]] bool                  has_compressed_mpo_squared() const;
     [[nodiscard]] std::vector<std::any> get_parameter(std::string_view fieldname);
+    [[nodiscard]] double                get_energy_upper_bound() const;
+
 
     // For local operations
     ModelLocal get_local(const std::vector<size_t> &sites) const;

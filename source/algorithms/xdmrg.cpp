@@ -65,6 +65,7 @@ void xdmrg::resume() {
         set_parity_shift_mpo_squared();
         set_energy_shift_mpo();
         rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
+        update_precision_limit();
 
         // Initialize a custom task list
         std::deque<xdmrg_task> task_list;
@@ -185,6 +186,7 @@ void xdmrg::run_preprocessing() {
     set_parity_shift_mpo_squared();
     set_energy_shift_mpo();
     rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
+    update_precision_limit();
     write_to_file(StorageEvent::MODEL);
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
@@ -192,22 +194,37 @@ void xdmrg::run_preprocessing() {
     if(tensors.get_length<long>() <= 4) {
         // Print the spectrum if small
         // tensors.clear_cache();
-        auto        svd_solver = svd::solver();
-        auto        L          = tensors.get_length<long>();
-        auto        sites      = num::range<size_t>(0, L);
-        auto        ham1_      = tensors.model->get_multisite_ham(sites);
-        auto        ham1i      = svd_solver.pseudo_inverse(ham1_);
-        eig::solver solver1_, solver1i;
-        solver1_.eig<eig::Form::SYMM>(ham1_.data(), ham1_.dimension(0));
-        solver1i.eig<eig::Form::SYMM>(ham1i.data(), ham1i.dimension(0));
+        auto svd_solver = svd::solver();
+        auto L          = tensors.get_length<long>();
+        auto sites      = num::range<size_t>(0, L);
+        auto ham1      = tensors.model->get_multisite_ham(sites);
+        auto ham2      = tensors.model->get_multisite_ham_squared(sites);
+        auto norm_est = tensors.model->get_energy_upper_bound();
+        // auto        ham1i      = svd_solver.pseudo_inverse(ham1_);
+        eig::solver solver1, solver2;
+        solver1.eig<eig::Form::SYMM>(ham1.data(), ham1.dimension(0), eig::Vecs::OFF);
+        solver2.eig<eig::Form::SYMM>(ham2.data(), ham2.dimension(0), eig::Vecs::OFF);
+        // solver1i.eig<eig::Form::SYMM>(ham1i.data(), ham1i.dimension(0));
 
-        auto evals1_ = eig::view::get_eigvals<real>(solver1_.result);
-        auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
-        fmt::print("{:^8} {:<20} {:<20}\n", " ", "H¹", "H⁻¹");
-        for(long idx = 0; idx < std::min(evals1_.size(), evals1i.size()); ++idx) {
-            fmt::print("idx {:2}: {:20.16f} {:20.16f}\n", idx, evals1_[idx], evals1i[idx]);
+        auto evals1 = eig::view::get_eigvals<real>(solver1.result);
+        auto evals2 = eig::view::get_eigvals<real>(solver2.result);
+        // auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
+        fmt::print("{:^8} {:<20}\n", " ", "H¹");
+        for(long idx = 0; idx < evals1.size(); ++idx) {
+            // if(std::abs(evals1[idx]) > 1e-2) continue;
+            fmt::print("idx {:2}: {:20.16f}\n", idx, evals1[idx]);
         }
+        fmt::print("{:^8} {:<20}\n", " ", "H²");
+        for(long idx = 0; idx < evals2.size(); ++idx) {
+            // if(std::abs(evals2[idx]) > 1e-2) continue;
+            fmt::print("idx {:2}: {:20.16f}\n", idx, evals2[idx]);
+        }
+        // fmt::print("{:^8} {:<20} {:<20}\n", " ", "H¹", "H⁻¹");
+        // for(long idx = 0; idx < std::min(evals1_.size(), evals1i.size()); ++idx) {
+        //     fmt::print("idx {:2}: {:20.16f} {:20.16f}\n", idx, evals1_[idx], evals1i[idx]);
+        // }
         fmt::print("\n");
+        fmt::print("Hamiltonian norm estimate: {:.16f}\n", norm_est);
         // Try the iterative scheme
         // auto impos = tools::finite::mpo::get_inverted_mpos(tensors.model->get_compressed_mpos_squared(MposWithEdges::ON));
         // auto impos = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
@@ -229,7 +246,6 @@ void xdmrg::run_preprocessing() {
 
         // tools::log->info("Iterative inverse  H⁻¹");
         // for(long idx = 0; idx < evals3i.size(); ++idx) { fmt::print("idx {:2}: {:20.16f}\n", idx, evals3i[idx]); }
-        exit(0);
     }
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -343,7 +359,6 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
-
 
     auto var_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     bool var_stuck2 = status.algorithm_has_stuck_for + 1 == settings::strategy::max_stuck_iters;
@@ -469,7 +484,6 @@ void xdmrg::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
     auto t_con = tid::tic_scope("conv");
 
-    update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_axis);

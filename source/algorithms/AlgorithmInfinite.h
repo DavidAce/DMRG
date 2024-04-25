@@ -17,7 +17,7 @@ class AlgorithmInfinite : public AlgorithmBase {
     void run_preprocessing()                                                                                 override;
     void run_postprocessing()                                                                                override;
     void clear_convergence_status()                                                                          override;
-    void update_variance_max_digits(std::optional<double> energy = std::nullopt)                             final;
+    void update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt)                   final;
     void update_bond_dimension_limit()                                                                       final;
     void update_truncation_error_limit()                                                                     final;
 

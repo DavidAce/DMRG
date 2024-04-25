@@ -246,6 +246,9 @@ void   MpoSite::set_energy_shift_mpo(double site_energy) {
     }
 }
 
+[[nodiscard]] double MpoSite::get_global_energy_upper_bound() const { return global_energy_upper_bound; }
+[[nodiscard]] double MpoSite::get_local_energy_upper_bound() const { return local_energy_upper_bound; }
+
 template<typename T>
 Eigen::Tensor<T, 4> MpoSite::get_parity_shifted_mpo(const Eigen::Tensor<T, 4> &mpo_build) const {
     if(std::abs(parity_shift_sign_mpo) != 1) return mpo_build;
@@ -445,7 +448,9 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
                 q = parity_shift_sign_mpo;
             }
 
-            double a = 1.5*energy_maximum_estimate; // Increase the shift by some large factor to make sure the target energy in that axis is actually extremal
+            double a =
+                1.5 *
+                global_energy_upper_bound; // Increase the shift by some large factor to make sure the target energy in that axis is actually extremal
 
             ledge(ldim - 3) = 1.0; // The bottom left corner
             ledge(ldim - 2) = -a * r * 0.5;

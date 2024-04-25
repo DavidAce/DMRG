@@ -412,7 +412,6 @@ namespace tools::h5io {
             auto                   path = srcKey.create_source_path();
             // auto                   path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
             auto                   key  = fmt::format("{}|{}", srcParentPath, path);
-            std::optional<hsize_t> numRecords_old;
             if(srcTableDb.find(key) == srcTableDb.end()) {
                 srcTableDb[key] = h5_src.getTableInfo(path);
                 if(srcTableDb[key].tableExists.value()) tools::logger::log->debug("Detected new source {}: {}", srcKey.classtag, key);
@@ -422,7 +421,6 @@ namespace tools::h5io {
                 auto &srcInfo = srcTableDb[key];
                 // We reuse the struct srcDsetDb[key] for every source file,
                 // but each time have to renew the following fields
-                numRecords_old      = srcInfo.numRecords;
                 srcInfo.h5File      = h5_src.openFileHandle();
                 srcInfo.h5Dset      = std::nullopt;
                 srcInfo.numRecords  = std::nullopt;
@@ -435,14 +433,28 @@ namespace tools::h5io {
             if(srcInfo.tableExists and srcInfo.tableExists.value()) {
                 // Check that the tables are the same size before and after
                 if constexpr(strictTableSize == StrictTableSize::TRUE) {
-                    if(srcKey.expected_size == -1ul) { srcKey.expected_size = srcInfo.numRecords.value(); }
-                    if(srcInfo.numRecords.value() != srcKey.expected_size) {
-                        if(srcInfo.numRecords.value() < srcKey.expected_size)
-                            throw except::range_error("Table size mismatch:\n"
-                                                      "file: {}\n"
-                                                      "dset: {}\n"
-                                                      "records {} | expected {}",
-                                                      h5_src.getFilePath(), srcInfo.tablePath.value(), srcInfo.numRecords.value(), srcKey.expected_size);
+                    if constexpr(sfinae::is_any_v<KeyT, RbdsKey, RtesKey>) {
+                        if(srcKey.expected_size == -1ul) {
+                            // We should take the last N entries in these tables.
+                            // Here we first take the iter attribute on the table, and then count table records with that iter value.
+                            // The matching ones should be the last.
+                            auto iter_attr = h5_src.readAttribute<size_t>(srcInfo.tablePath.value(), "iter");
+                            auto iters = h5_src.readTableField<std::vector<size_t>>(srcInfo.tablePath.value(), {"iter"}, h5pp::TableSelection::ALL);
+                            auto count = std::count_if(iters.begin(), iters.end(), [& iter_attr](auto iter)->bool{return iter == iter_attr;});
+                            srcKey.expected_size = safe_cast<size_t>(count);
+                        }
+                    }else {
+                        if(srcKey.expected_size == -1ul) {
+                            srcKey.expected_size = srcInfo.numRecords.value();
+                        }
+                        if(srcInfo.numRecords.value() != srcKey.expected_size) {
+                            if(srcInfo.numRecords.value() < srcKey.expected_size)
+                                throw except::range_error("Table size mismatch:\n"
+                                                          "file: {}\n"
+                                                          "dset: {}\n"
+                                                          "records {} | expected {}",
+                                                          h5_src.getFilePath(), srcInfo.tablePath.value(), srcInfo.numRecords.value(), srcKey.expected_size);
+                        }
                     }
                 }
 

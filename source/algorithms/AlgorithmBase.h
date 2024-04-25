@@ -36,7 +36,7 @@ class AlgorithmBase {
     virtual void print_status()                                                                                                = 0;
     virtual void print_status_full()                                                                                           = 0;
     virtual void clear_convergence_status()                                                                                    = 0;
-    virtual void update_variance_max_digits(std::optional<double> energy = std::nullopt)                                       = 0;
+    virtual void update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt)                           = 0;
     virtual void update_bond_dimension_limit()                                                                                 = 0;
     virtual void update_truncation_error_limit()                                                                               = 0;
 

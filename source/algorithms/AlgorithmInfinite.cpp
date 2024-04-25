@@ -12,7 +12,8 @@
 #include "tools/infinite/h5.h"
 #include "tools/infinite/measure.h"
 
-AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_,OptRitz opt_ritz_,  AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_),opt_ritz_, algo_type) {
+AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz_, AlgorithmType algo_type)
+    : AlgorithmBase(std::move(h5ppFile_), opt_ritz_, algo_type) {
     tools::log->trace("Constructing algorithm infinite");
     tensors.initialize(settings::model::model_type);
     tensors.state->set_algorithm(status.algo_type);
@@ -46,16 +47,18 @@ void AlgorithmInfinite::initialize_model() {
     clear_convergence_status();
 }
 
-void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy) {
-    if(not energy) energy = tools::infinite::measure::energy_per_site_mpo(tensors) * static_cast<double>(status.iter);
-    if(settings::precision::use_energy_shifted_mpo)
-        status.energy_variance_max_digits =
-            safe_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::abs(energy.value())))));
-    else
-        status.energy_variance_max_digits =
-            safe_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy.value(), 2)))));
-
-    status.energy_variance_prec_limit = std::pow(10, -status.energy_variance_max_digits);
+void AlgorithmInfinite::update_precision_limit(std::optional<double> energy_upper_bound) {
+    if(not energy_upper_bound) energy_upper_bound = tools::infinite::measure::energy_per_site_mpo(tensors) * static_cast<double>(status.iter);
+    // The variance precision limit depends on the Hamiltonian operator norm ~ largest eigenvalue.
+    // We can get a rough order of magnitude etimate the largest eigenvalue by adding the absolute value of all the
+    // Hamiltonian couplings and fields.
+    double energy_abs                 = std::abs(energy_upper_bound.value());
+    double digits10                   = std::numeric_limits<double>::digits10;
+    double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_abs)));
+    double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
+    status.energy_variance_max_digits = safe_cast<size_t>(max_digits);
+    status.energy_variance_prec_limit = std::pow(10.0, -max_digits);
+    tools::log->info("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
 }
 
 void AlgorithmInfinite::update_bond_dimension_limit() {

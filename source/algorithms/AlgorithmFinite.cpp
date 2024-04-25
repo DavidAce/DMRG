@@ -93,9 +93,9 @@ void AlgorithmFinite::run()
 
 void AlgorithmFinite::run_rbds_analysis() {
     if(settings::strategy::rbds_rate == 0) return;
-    last_optcost  = std::nullopt;
+    last_optcost   = std::nullopt;
     last_optsolver = std::nullopt;
-    tools::log    = tools::Logger::setLogger(fmt::format("{}-rbds", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
+    tools::log     = tools::Logger::setLogger(fmt::format("{}-rbds", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse bond dimension scaling with rate bond rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::rbds_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_rbds         = tid::tic_scope("rbds");
@@ -141,9 +141,9 @@ void AlgorithmFinite::run_rbds_analysis() {
 
 void AlgorithmFinite::run_rtes_analysis() {
     if(settings::strategy::rtes_rate <= 1.0) return;
-    last_optcost  = std::nullopt;
+    last_optcost   = std::nullopt;
     last_optsolver = std::nullopt;
-    tools::log    = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
+    tools::log     = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse truncation error scaling with growth rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::rtes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_rbds         = tid::tic_scope("rtes");
@@ -396,19 +396,19 @@ void AlgorithmFinite::try_moving_sites() {
     settings::strategy::multisite_opt_site_def = multisite_opt_site_def_backup;
 }
 
-void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
+void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_bound) {
     if(not tensors.position_is_inward_edge()) return;
-    if(tensors.active_sites.empty()) return;
-    if(not energy) energy = tools::finite::measure::energy(tensors);
-    double energy_abs                 = std::abs(energy.value());
-    double energy_pow                 = energy_abs * energy_abs;
+    // The variance precision limit depends on the Hamiltonian operator norm ~ largest eigenvalue.
+    // We can get a rough order of magnitude etimate the largest eigenvalue by adding the absolute value of all the
+    // Hamiltonian couplings and fields.
+    if(not energy_upper_bound) energy_upper_bound = tensors.model->get_energy_upper_bound();
+    double energy_abs                 = std::abs(energy_upper_bound.value());
     double digits10                   = std::numeric_limits<double>::digits10;
-    double energy_top                 = settings::precision::use_energy_shifted_mpo ? energy_abs : energy_pow;
-    double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_top))) + 1;
+    double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_abs)));
     double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
     status.energy_variance_max_digits = safe_cast<size_t>(max_digits);
     status.energy_variance_prec_limit = std::pow(10.0, -max_digits);
-    tools::log->debug("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
+    tools::log->info("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
 }
 
 void AlgorithmFinite::update_bond_dimension_limit() {
@@ -612,10 +612,10 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
     double factor              = var_has_improved or var_has_converged or var_has_got_stuck ? factor_dn : factor_up;
     status.env_expansion_alpha = std::clamp(factor * status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
 
-    if(std::abs(status.env_expansion_alpha/old_expansion_alpha-1.0) > 1e-6) {
+    if(std::abs(status.env_expansion_alpha / old_expansion_alpha - 1.0) > 1e-6) {
         status.env_expansion_variance = status.energy_variance_lowest;
         if(!var_has_got_stuck) status.env_expansion_iter = status.iter; // Last non-stuck iter
-        tools::log->info("Updated trace {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
+        tools::log->trace("Updated alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
     }
 }
 

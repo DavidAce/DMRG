@@ -199,6 +199,19 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
 
     if debug:
         print('Looking for a dmrg algorithm group (depth:20) in {}'.format(h5_src.filename))
+
+    # Collect the values that were asked for in meta
+    include = {
+        'L': set(),
+        'g': set(),
+        'd': set(),
+    }
+    for mkey, mval in meta.items():
+        if incl := mval.get('include'):
+            if L := incl['L']: include['L'].update(L)
+            if g := incl['g']: include['g'].update(g)
+            if d := incl['d']: include['d'].update(d)
+
     for algokey, algopath, algonode in h5py_node_iterator(node=h5_src, keypattern='DMRG', dep=20,
                                                           excludeKeys=['.db', 'TEBD', 'LBIT'],
                                                           nodeType=h5py.Group, godeeper=False):
@@ -211,23 +224,10 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
         g = get_value(['g'], [hamiltonian], optional=False)
         d = get_value(['delta'], [hamiltonian], optional=False)
 
-
-        # L if r == np.iinfo(np.uint64).max else r
-        # Skip if not asked for
-        if incl := meta.get('common').get('include'):
-            val_requested = True
-            for tag, val in zip(['L', 'g', 'd'],
-                                [L, g, d]):
-                if tag in incl and not val in incl.get(tag):
-                    if debug:
-                        print(f" Not requested: {tag}:{val}")
-                    val_requested = False
-                    break
-            if not val_requested:
-                continue
-            elif debug:
-                print(" Adding keys:", [L, g, d])
-
+        # Skip if this point in the phase diagram was not asked for
+        if include['L'] and not L in include['L']: continue
+        if include['g'] and not g in include['g']: continue
+        if include['d'] and not d in include['d']: continue
 
         db['vals']['L'].add(L)
         db['vals']['g'].add(g)

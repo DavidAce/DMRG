@@ -142,6 +142,8 @@ std::vector<std::any> ModelFinite::get_parameter(std::string_view fieldname) {
     return fields;
 }
 
+double ModelFinite::get_energy_upper_bound() const { return MPO.front()->get_global_energy_upper_bound(); }
+
 void ModelFinite::randomize() {
     tools::log->info("Randomizing hamiltonian");
     std::vector<MpoSite::TableMap> all_params;

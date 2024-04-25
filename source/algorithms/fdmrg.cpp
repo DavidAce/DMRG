@@ -56,6 +56,7 @@ void fdmrg::resume() {
         set_parity_shift_mpo_squared();
         set_energy_shift_mpo();
         rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
+        update_precision_limit();
 
         // Initialize a custom task list
         std::deque<fdmrg_task> task_list;
@@ -147,6 +148,7 @@ void fdmrg::run_preprocessing() {
     set_parity_shift_mpo_squared();
     set_energy_shift_mpo();
     rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
+    update_precision_limit();
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -360,7 +362,6 @@ void fdmrg::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
     auto t_con = tid::tic_scope("conv");
 
-    update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_axis);

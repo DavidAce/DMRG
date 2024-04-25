@@ -49,10 +49,10 @@ def dmrg_plot(args):
 
 
 
-    palettes = [  # Palette group for up to 4 categories
+    # palettes = [  # Palette group for up to 4 categories
         # ["Dark2"]
         # ["gnuplot2"]
-        ["viridis_r"]
+        # ["viridis_r"]
         # ["autumn_r", "autumn_r", "winter_r", "spring_r"],
         # ["winter_r", "autumn_r", "winter_r", "spring_r"],
         # ["viridis_r"]
@@ -67,7 +67,7 @@ def dmrg_plot(args):
         # ["Blues", "Oranges", "Purples"],
         # ["Reds", "Purples", "Blues" ] # for epstest
         # ["Oranges"]
-    ]
+    # ]
 
 
     figspec = ['L']
@@ -78,12 +78,21 @@ def dmrg_plot(args):
 
     # logging.basicConfig(level=logging.DEBUG)
     #
+    # f = None
+    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
+    #     f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-g'], figs=f)
+    # save_figure(f)
+    #
+    # f = None
+    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
+    #     f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-d'], figs=f)
+    # save_figure(f)
+
     f = None
-    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-        f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum'], figspec=figspec, subspec=subspec,
-                                   linspec=linspec, figs=f, palette_name=palette)
-        break
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_dist_fig_sub_line(db=db, meta=meta['var-dist'], figs=f)
     save_figure(f)
+
 
     # plt.show()
     # exit(0)

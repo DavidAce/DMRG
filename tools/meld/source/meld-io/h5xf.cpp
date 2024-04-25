@@ -249,8 +249,17 @@ namespace tools::h5xf {
 
             //  Load the entire source table into memory while we distribute it to the different tables in the target file
             t_readTableRec.tic();
+            hsize_t record_offset = 0;                          // Start reading from record 0 by default
+            hsize_t record_extent = srcInfo.numRecords.value(); // Read all records by default
+            if constexpr(sfinae::is_any_v<KeyT, RbdsKey, RtesKey>) {
+                // We may have extra sets of entries. We want the last set.
+                if(srcKey.expected_size > 0) {
+                    record_extent = std::min(srcKey.expected_size, srcInfo.numRecords.value());
+                    record_offset = srcInfo.numRecords.value() - record_extent;
+                }
+            }
             std::vector<std::byte> srcReadBuffer; //  This holds the source table
-            h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, 0, srcInfo.numRecords.value(), h5_tgt.plists);
+            h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, record_offset, record_extent, h5_tgt.plists);
             t_readTableRec.toc();
 
             // Read the index and event fields so that we can filter entries
@@ -267,13 +276,14 @@ namespace tools::h5xf {
                 t_readTableFld.toc();
             }
 
-            for(size_t rec = 0; rec < srcInfo.numRecords.value(); rec++) {
-                size_t srcIndex = rec;
-                if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Replace with the desired index value -- this is only used to generate the target path
+            for(size_t rec = 0; rec < record_extent; rec++) {
+                size_t srcIndex = rec + record_offset;
+                if(not srcIndices.empty())
+                    srcIndex = srcIndices[srcIndex]; // Replace with the desired index value -- this is only used to generate the target path
                 if(not srcEvents.empty()) {
-                    if(not seq::has(srcKey.eventkey, srcEvents[rec])) continue; // Ignore this entry if it is not the desired event type
+                    if(not seq::has(srcKey.eventkey, srcEvents[srcIndex])) continue; // Ignore this entry if it is not the desired event type
                 }
-                auto tgtPath = pathid.create_target_path<KeyT>(tgtName, srcIndex);
+                auto tgtPath = pathid.create_target_path<KeyT>(tgtName, rec);
                 if(tgtTableDb.find(tgtPath) == tgtTableDb.end()) {
                     t_createTable.tic();
                     tools::logger::log->debug("Adding target {} {}", srcKey.classtag, tgtPath);
@@ -299,7 +309,7 @@ namespace tools::h5xf {
                 // the size of the table (so we can append)
                 hsize_t tgtIndex = tgtId.get_index(fileId.seed);
                 tools::logger::log->trace("Transferring {} table {} ({} records) | {} {} @ idx {} -> tgt {}", srcKey.classtag, srcInfo.tablePath.value(),
-                                          srcInfo.numRecords.value(), srcKey.indexkey, srcIndex, rec, tgtIndex);
+                                          srcInfo.numRecords.value(), srcKey.indexkey, rec, srcIndex, tgtIndex);
 
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
                 t_buffer.tic();

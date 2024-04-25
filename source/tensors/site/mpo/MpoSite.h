@@ -33,8 +33,9 @@ class MpoSite {
     std::array<long, 2>                   extent2{};                            /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<cplx, 4>                mpo_internal;
     Eigen::Tensor<cplx_t, 4>              mpo_internal_t;
-    std::optional<Eigen::Tensor<cplx, 4>> mpo_squared = std::nullopt;
-    double                                energy_maximum_estimate = 100.0;
+    std::optional<Eigen::Tensor<cplx, 4>> mpo_squared                   = std::nullopt;
+    double                                global_energy_upper_bound       = 100.0;
+    double                                local_energy_upper_bound = 0.0;
 
     virtual Eigen::Tensor<cplx, 4>   get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                              std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
@@ -97,6 +98,8 @@ class MpoSite {
     [[nodiscard]] bool                          has_compressed_mpo_squared() const;
     [[nodiscard]] double                        get_energy_shift_mpo() const;
     [[nodiscard]] double                        get_energy_shift_mpo2() const;
+    [[nodiscard]] double                        get_global_energy_upper_bound() const;
+    [[nodiscard]] double                        get_local_energy_upper_bound() const;
     template<typename Scalar = cplx>
     [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_left() const;
     template<typename Scalar = cplx>

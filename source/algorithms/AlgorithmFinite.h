@@ -39,7 +39,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void set_energy_shift_mpo(); // We override this in xdmrg
     void         rebuild_tensors();
-    void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
+    void         update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt) final;
     void         update_bond_dimension_limit() final;
     void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
     void         update_truncation_error_limit() final;

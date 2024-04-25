@@ -55,9 +55,10 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     break;
                 }
                 case OptAlgo::DIRECTX2: {
-                    auto metax2          = meta;
-                    metax2.optCost       = OptCost::ENERGY;
-                    result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
+                    auto metax2     = meta;
+                    metax2.optCost  = OptCost::ENERGY;
+                    metax2.eigs_tol = std::max(1e-12, meta.eigs_tol.value_or(1e-12));
+                    result          = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
                     if(meta.optRitz == OptRitz::SM) {
                         // We accept this result if the residual norm is small, and either

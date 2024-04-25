@@ -250,8 +250,8 @@ namespace settings {
         inline auto     use_compressed_mpo              = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
         inline auto     use_compressed_mpo_squared      = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
         inline bool     use_energy_shifted_mpo          = false ;           /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_parity_shifted_mpo          = true  ;           /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
-        inline bool     use_parity_shifted_mpo_squared  = true  ;           /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
+        inline bool     use_parity_shifted_mpo          = true  ;           /*!< Lift degeneracy by redefining H --> (H + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator */
+        inline bool     use_parity_shifted_mpo_squared  = true  ;           /*!< Lift degeneracy by redefining H² --> (H² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator */
         inline double   variance_convergence_threshold  = 1e-12 ;           /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_saturation_sensitivity = 1e-1  ;           /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
         inline double   entropy_saturation_sensitivity  = 1e-3  ;           /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
