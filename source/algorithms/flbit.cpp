@@ -415,8 +415,13 @@ void flbit::run_algorithm2() {
             tools::log->debug("Exponentiating the diagonal Hamiltonians");
 
             auto tevo_op = [&time](const auto &h) -> cplx {
-                __float128 fmod_th_128 = fmodq(time.real() * real_t(h.real()), 2 * M_PIq);
+                #if defined(USE_QUADMATH)
+                f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), 2 * M_PIq);
                 return std::exp(-1.0i * static_cast<real>(fmod_th_128));
+                #else
+                f128_t fmod_th_128 = std::fmod(time.real() * real_t(h.real()), 2 * std::numbers::pi_v<real_t>);
+                return std::exp(-1.0i * static_cast<real>(fmod_th_128));
+                #endif
             };
             //            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
             Eigen::VectorXcd tevo_eff_diagonal = hamiltonian_eff_diagonal.unaryExpr(tevo_op);

@@ -615,7 +615,7 @@ class mpo_functor5 : public ceres::FirstOrderFunction {
 
 template<typename Scalar>
 std::vector<Eigen::Tensor<cplx, 4>> get_inverted_mpos_internal(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos) {
-    using MatrixType         = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    // using MatrixType         = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using VectorType         = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     auto impos               = get_inverted_mpos_initial_guess(mpos, 72);
     auto svd_cfg             = svd::config();
@@ -678,7 +678,7 @@ std::vector<Eigen::Tensor<cplx, 4>> get_inverted_mpos_internal(const std::vector
 
         if constexpr(std::is_same_v<Scalar, real>) {
             auto B     = get_B(impos, pos);
-            int  niter = 0;
+            // int  niter = 0;
             // solver.compute(M);
             // B = solver.solve(N);
             // ceres::Problem        problem;

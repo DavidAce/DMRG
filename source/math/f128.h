@@ -58,7 +58,7 @@ struct f128_t {
         if(width < 0) width = 0;
         std::string buf;
         char        fstr[16] = {0};
-        auto        res = std::snprintf(fstr, sizeof fstr, "%%%s%d.%uQ%c", align == "<" ? "-" : align.data(), width, prec, pres);
+        auto        res      = std::snprintf(fstr, sizeof fstr, "%%%s%d.%uQ%c", align == "<" ? "-" : align.data(), width, prec, pres);
         if(res < 0) throw std::runtime_error("f128_t.string(): snprintf() returned < 0");
         auto size = quadmath_snprintf(nullptr, 0, fstr, val);
         if(size >= 0) {
@@ -96,8 +96,8 @@ struct f128_t {
     operator long double() const { return val; }
     template<typename T>
     bool operator==(T v) const {
-        static_assert(std::is_arithmetic_v<T> or std::is_same_v<T, __float128>);
-        if constexpr(std::is_same_v<T, __float128>)
+        static_assert(std::is_arithmetic_v<T>);
+        if constexpr(std::is_same_v<T, f128_t>)
             return val == v.val;
         else
             return val == v;

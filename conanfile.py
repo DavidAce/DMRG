@@ -42,6 +42,10 @@ class DMRGConan(ConanFile):
         }
 
     def config_options(self):
+        if self.settings.compiler != "gcc" and self.options.with_quadmath:
+            self.output.warning("Quadmath disabled (requires a GCC compiler)")
+            self.options.with_quadmath = False
+
         self.options["hdf5"].with_zlib = self.options.with_zlib
         self.options["h5pp"].with_quadmath = self.options.with_quadmath
         self.options["ceres-solver"].use_glog = True
@@ -52,9 +56,7 @@ class DMRGConan(ConanFile):
         # We take care of linking with system libdw instead, if needed.
         self.options["backward-cpp"].stack_walking = "backtrace"
         self.options["backward-cpp"].stack_details = "backtrace_symbol"
-        if self.settings.compiler != "gcc":
-            self.output.warning("Quadmath disabled (requires a GCC compiler)")
-            self.options["h5pp"].with_quadmath=False
+
 
 
     def requirements(self):

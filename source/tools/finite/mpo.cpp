@@ -323,7 +323,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
     auto mpo_rank2 = Eigen::Tensor<cplx, 2>(mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3}));
     auto mpo_map   = tenx::MatrixMap(mpo_rank2);
 
-    auto rows     = mpo_map.rows();
+    // auto rows     = mpo_map.rows();
     auto cols     = mpo_map.cols();
     auto col_keep = std::vector<long>{};
     auto mat_xfer = Eigen::MatrixXcd(cols, cols);
@@ -434,7 +434,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
     auto mpo_map   = tenx::MatrixMap(mpo_rank2);
 
     auto rows     = mpo_map.rows();
-    auto cols     = mpo_map.cols();
+    // auto cols     = mpo_map.cols();
     auto row_keep = std::vector<long>{};
     auto mat_xfer = Eigen::MatrixXcd(rows, rows);
     mat_xfer.setZero();

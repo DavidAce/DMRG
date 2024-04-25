@@ -20,7 +20,7 @@ target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPIL
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:RELWITHDEBINFO>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
 target_compile_options(dmrg-flags INTERFACE
                        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4>
-                       $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Wconversion -Wunused -Wformat=2 -Wdouble-promotion>)
+                       $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Wconversion -Wunused -Wformat -Wdouble-promotion>)
 ###  Enable c++17 support
 target_compile_features(dmrg-flags INTERFACE cxx_std_17)
 
