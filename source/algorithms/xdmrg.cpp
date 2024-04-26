@@ -191,7 +191,7 @@ void xdmrg::run_preprocessing() {
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
 
-    if(tensors.get_length<long>() <= 12) {
+    if(tensors.get_length<long>() <= 4) {
         // Print the spectrum if small
         // tensors.clear_cache();
         auto svd_solver = svd::solver();
