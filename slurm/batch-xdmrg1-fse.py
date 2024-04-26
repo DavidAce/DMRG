@@ -27,6 +27,8 @@ config_ranges = {
     "solver::svd_truncation_init": ['1e-8'],
     "solver::svd_switchsize_bdc": ['16'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
+    "precision::use_parity_shifted_mpo": ["true"],
+    "precision::use_parity_shifted_mpo_squared": ["true"],
     "model::model_type": ['ising_majorana'],
     "model::model_size": ['12'],
     "model::ising_majorana::g": ['0.00', '0.01', '0.02', '0.03'],
