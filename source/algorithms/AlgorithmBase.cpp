@@ -109,21 +109,22 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     for(size_t i = 0; i < report.Y_sat.size(); ++i) {
         // Below sensitivity --> saturated
         bool vec_sat = report.Y_vec_std[i] < sensitivity;
-        bool min_sat = report.Y_min_std[i] < sensitivity;
-        bool max_sat = report.Y_max_std[i] < sensitivity;
         bool mov_sat = report.Y_mov_ste[i] < sensitivity;
+        bool min_sat = report.Y_min_std[i] > 0 and report.Y_min_std[i] < sensitivity; // If these are zero we can't know if they recently changed a lot
+        bool max_sat = report.Y_max_std[i] > 0 and report.Y_max_std[i] < sensitivity; // If these are zero we can't know if they recently changed a lot
         if(is_decreasing) report.Y_sat[i] = vec_sat or mov_sat or min_sat;
         if(is_increasing) report.Y_sat[i] = vec_sat or mov_sat or max_sat;
         if(is_uncreasing) report.Y_sat[i] = vec_sat or mov_sat;
     }
 
-    // Since the last element in Y_vec is always zero, Y_sat is always one. we just copy the saturation state of the second to last element.
-    if(report.Y_sat.size() > 1) report.Y_sat.back() = report.Y_sat.rbegin()[1];
+    // Since the last element in Y_vec is always zero, Y_sat is always zero. we just copy the saturation state of the second to last element.
+    if(report.Y_sat.size() > 1) { report.Y_sat.back() = report.Y_sat.rbegin()[1]; }
 
     // From the end, count how many Y_sat[i] are 1,  before finding a 0.
+    report.saturated_point = report.Y_sat.size() - 1;
     for(const auto &[i, y] : iter::enumerate_reverse(report.Y_sat)) {
-        report.saturated_point = i;
         if(y == 0) break;
+        report.saturated_point = i;
         report.saturated_count++;
     }
     report.has_computed    = true;

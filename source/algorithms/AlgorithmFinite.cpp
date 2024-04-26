@@ -198,30 +198,11 @@ void AlgorithmFinite::run_postprocessing() {
 void AlgorithmFinite::expand_environment(std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
     if(settings::strategy::max_env_expansion_alpha <= 0) return;
     // Set a good initial value to start with
-    if(status.env_expansion_alpha <= 0) status.env_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
     alpha = alpha.value_or(status.env_expansion_alpha);
     if(alpha.value() <= 0) return;
 
-    // Update alpha
-    // double old_expansion_alpha = status.env_expansion_alpha;
-    // double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
-    // double factor_dn           = std::pow(1e-2, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
-    //
     bool var_has_improved = var_relchange < -0.01;
-    // bool var_has_converged = status.variance_mpo_converged_for > 0 or var_latest <= settings::precision::variance_convergence_threshold;
-    //
-    // if(var_has_improved or var_has_converged)
-    //     status.env_expansion_alpha *= factor_dn;
-    // else
-    //     status.env_expansion_alpha *= factor_up;
-    //
-    // double alpha_upper_limit = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
-    // double alpha_lower_limit = std::min(1e-3 * status.energy_variance_lowest, alpha_upper_limit);
-    //
-    // status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
-
     auto var_before_exp = tools::finite::measure::energy_variance(tensors);
-
     svd_cfg         = svd_cfg.value_or(svd::config(status.bond_lim, status.trnc_lim));
     auto expandMode = tensors.state->get_algorithm() == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
     tensors.expand_environment(alpha, expandMode, svd_cfg);
@@ -880,7 +861,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->debug("Energy variance convergence: converged {} | saturated {} (since {})", status.variance_mpo_converged_for, report.saturated_count,
                               report.saturated_point);
         if(tools::log->level() <= spdlog::level::trace) {
-            tools::log->trace("Energy variance linearFit details:");
+            tools::log->trace("Energy variance convergence details:");
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
             tools::log->trace(" -- threshold          = {:7.4e}", threshold.value());
             tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
@@ -946,7 +927,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
                 tools::log->debug("Entanglement ent. convergence at site {}: converged {} | saturated {} iters (since {})", last_saturated_site,
                                   status.entanglement_converged_for, report.saturated_count, report.saturated_point);
             if(tools::log->level() <= spdlog::level::trace) {
-                tools::log->trace("Entanglement linearFit details:");
+                tools::log->trace("Entanglement convergence details:");
                 tools::log->trace(" -- site               = {}", last_saturated_site);
                 tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
                 tools::log->trace(" -- saturated point    = {} ", report.saturated_point);

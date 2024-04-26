@@ -32,7 +32,6 @@
 #include <complex>
 #include <fmt/ranges.h>
 #include <h5pp/h5pp.h>
-#include <quadmath.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <unsupported/Eigen/MatrixFunctions>
 

@@ -319,7 +319,7 @@ void MpoSite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view axis
     }
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign != parity_shift_sign_mpo or axus != parity_shift_axus_mpo) {
-        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo: {} {:+} {}", get_position(), enum2sv(ritz), sign, axus);
+        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo: {} {:+}{}", get_position(), enum2sv(ritz), sign, axus);
         parity_shift_ritz_mpo = ritz;
         parity_shift_sign_mpo = sign;
         parity_shift_axus_mpo = axus;
@@ -435,26 +435,34 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
              *  So the left edge picks out the row for h, as well as 1 and σ along the diagonal
              *  We also put the signs r,q and factor 0.5 if this is the first site.
              */
-            double r = 1.0;
-            double q = 1.0;
+            // This redefines H --> H - r*Q(σ), where
+            //      * Q(σ) = 0.5 * ( I - q*prod(σ) )
+            //      * σ is a pauli matrix (usually σ^z)
+            //      * 0.5 is a scalar that we multiply on the left edge as well.
+            //      * r is the the shift direction depending on the ritz (target energy): ground state energy (r = -1, SR) or maximum energy state (r = +1, LR).
+            //        We multiply r just once on the left edge.
+            //      * q == parity_shift_sign_mpo is the sign of the parity sector we want to shift away from the target sector we are interested in.
+            //        Often this is done to resolve a degeneracy. We multiply q just once on the left edge.
+            double a = 1.0; // The shift amount. Use a large amount to make sure the target energy in that axis is actually extremal
+            double q = 1.0;                       // The parity sign to shift
+            double r = 1.0;                       // The energy shift direction (-1 is down, +1 is up)
 
             if(position == 0) {
+                a = global_energy_upper_bound;
+                q = -parity_shift_sign_mpo;
                 switch(parity_shift_ritz_mpo) {
                     case OptRitz::SR: r = -1.0; break;
                     case OptRitz::LR: r = +1.0; break;
                     case OptRitz::SM: r = -1.0; break;
                     default: throw except::runtime_error("expected ritz SR or LR, got: {}", enum2sv(parity_shift_ritz_mpo));
                 }
-                q = parity_shift_sign_mpo;
             }
 
-            double a =
-                1.5 *
-                global_energy_upper_bound; // Increase the shift by some large factor to make sure the target energy in that axis is actually extremal
-
+            if(get_position() == 0)
+                tools::log->trace("Shifting MPO energy of the {:+}{} parity sector by E -> E{:+.8f} (estimated Emax)", q, parity_shift_axus_mpo, a);
             ledge(ldim - 3) = 1.0; // The bottom left corner
             ledge(ldim - 2) = -a * r * 0.5;
-            ledge(ldim - 1) = -a * r * 0.5 * (-q);
+            ledge(ldim - 1) = -a * r * 0.5 * (q);
         }
     }
     return ledge;

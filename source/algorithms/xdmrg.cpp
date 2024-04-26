@@ -191,15 +191,15 @@ void xdmrg::run_preprocessing() {
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
 
-    if(tensors.get_length<long>() <= 4) {
+    if(tensors.get_length<long>() <= 12) {
         // Print the spectrum if small
         // tensors.clear_cache();
         auto svd_solver = svd::solver();
         auto L          = tensors.get_length<long>();
         auto sites      = num::range<size_t>(0, L);
-        auto ham1      = tensors.model->get_multisite_ham(sites);
-        auto ham2      = tensors.model->get_multisite_ham_squared(sites);
-        auto norm_est = tensors.model->get_energy_upper_bound();
+        auto ham1       = tensors.model->get_multisite_ham(sites);
+        auto ham2       = tensors.model->get_multisite_ham_squared(sites);
+        auto norm_est   = tensors.model->get_energy_upper_bound();
         // auto        ham1i      = svd_solver.pseudo_inverse(ham1_);
         eig::solver solver1, solver2;
         solver1.eig<eig::Form::SYMM>(ham1.data(), ham1.dimension(0), eig::Vecs::OFF);
@@ -211,12 +211,12 @@ void xdmrg::run_preprocessing() {
         // auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
         fmt::print("{:^8} {:<20}\n", " ", "H¹");
         for(long idx = 0; idx < evals1.size(); ++idx) {
-            // if(std::abs(evals1[idx]) > 1e-2) continue;
+            if(std::abs(evals1[idx]) > 1.0) continue;
             fmt::print("idx {:2}: {:20.16f}\n", idx, evals1[idx]);
         }
         fmt::print("{:^8} {:<20}\n", " ", "H²");
         for(long idx = 0; idx < evals2.size(); ++idx) {
-            // if(std::abs(evals2[idx]) > 1e-2) continue;
+            if(std::abs(evals2[idx]) > 0.1) continue;
             fmt::print("idx {:2}: {:20.16f}\n", idx, evals2[idx]);
         }
         // fmt::print("{:^8} {:<20} {:<20}\n", " ", "H¹", "H⁻¹");
@@ -246,6 +246,7 @@ void xdmrg::run_preprocessing() {
 
         // tools::log->info("Iterative inverse  H⁻¹");
         // for(long idx = 0; idx < evals3i.size(); ++idx) { fmt::print("idx {:2}: {:20.16f}\n", idx, evals3i[idx]); }
+        // exit(0);
     }
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -300,6 +301,10 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 
     // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_iter_multiplier : 1;
+    // Set up handy quantities
+    auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
+    bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
+    bool algo_stuck_long = status.algorithm_has_stuck_for + 1 == settings::strategy::max_stuck_iters;
 
     // Copy settings
     m1.min_sites         = settings::strategy::multisite_opt_site_def;
@@ -315,12 +320,12 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     double iter_max_converged    = std::min(10000.0, safe_cast<double>(settings::solver::eigs_iter_max));      // Run less when converged
     double iter_max_has_stuck    = safe_cast<double>(settings::solver::eigs_iter_max) * iter_stuck_multiplier; // Run more when stuck
     using iter_max_type          = decltype(m1.eigs_iter_max)::value_type;
-    m1.eigs_iter_max             = status.algorithm_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
+    m1.eigs_iter_max             = status.algorithm_converged_for > 0 or var_latest < var_conv_thresh
                                        ? safe_cast<iter_max_type>(std::min<double>(iter_max_converged, std::numeric_limits<iter_max_type>::max()))
                                        : safe_cast<iter_max_type>(std::min<double>(iter_max_has_stuck, std::numeric_limits<iter_max_type>::max()));
 
     // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
-    m1.eigs_tol = std::min(status.energy_variance_lowest, settings::solver::eigs_tol_max);
+    m1.eigs_tol = std::min(var_latest, settings::solver::eigs_tol_max);
     if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min;
 
     m1.optCost   = OptCost::VARIANCE;
@@ -360,10 +365,7 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
 
-    auto var_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
-    bool var_stuck2 = status.algorithm_has_stuck_for + 1 == settings::strategy::max_stuck_iters;
-    bool var_toolow = status.variance_mpo_converged_for > 0 or var_latest < var_thresh;
-    if(settings::xdmrg::try_directx2_when_stuck and var_stuck2 and not var_toolow) {
+    if(settings::xdmrg::try_directx2_when_stuck and algo_stuck_long and not var_isconverged) {
         // A last desperate attempt. By this the full precision of the eigensolver is not sufficient to resolve the
         // eigenvalues in H².. Perhaps the levels in H itself are easier, so we use a one-two punch in DIRECTX2.
         m1.optCost   = OptCost::VARIANCE;
@@ -371,11 +373,6 @@ xdmrg::OptMeta xdmrg::get_opt_meta() {
         m1.optSolver = OptSolver::EIGS;
         m1.optRitz   = OptRitz::SM;
     }
-
-    // if(status.env_expansion_alpha > 0) {
-    //     // If we are doing 1-site dmrg, then we better use subspace expansion
-    //     if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
-    // }
 
     m1.validate();
 
@@ -464,14 +461,14 @@ void xdmrg::update_state() {
         status.energy_dens = (tools::finite::measure::energy(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
 
     tools::log->trace("Updating variance record holder");
-    auto ene = tools::finite::measure::energy(tensors);
-    auto var = tools::finite::measure::energy_variance(tensors);
-    if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
-    var_delta     = var - var_latest;
-    ene_delta     = ene - ene_latest;
-    var_relchange = (var - var_latest) / var;
-    var_latest    = var;
-    ene_latest    = ene;
+    auto ene                      = tools::finite::measure::energy(tensors);
+    auto var                      = tools::finite::measure::energy_variance(tensors);
+    status.energy_variance_lowest = std::min(var, status.energy_variance_lowest);
+    var_delta                     = var - var_latest;
+    ene_delta                     = ene - ene_latest;
+    var_relchange                 = (var - var_latest) / var;
+    var_latest                    = var;
+    ene_latest                    = ene;
     var_mpo_step.emplace_back(var);
 
     last_optsolver = opt_state.get_optsolver();
