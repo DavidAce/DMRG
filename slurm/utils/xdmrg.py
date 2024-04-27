@@ -71,24 +71,39 @@ def get_h5_status(filename, batch):
                     return f"FAILED|missing datasets:{missing_dsets}"
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing attributes:{missing_attrs}"
+                enum_event = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['event'])  # key value pairs defining the enum
+                enum_algo_stop = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['algo_stop'])  # key value pairs defining the enum
+
                 # We also check if the simulation saturated
                 if algorithm_stop := h5file['/xDMRG/state_emid'].attrs.get('algorithm_stop'): # This is a string!
                     if algorithm_stop != 'SUCCESS':
-                        return f"FAILED|algorithm_stop:{algorithm_stop}"
+
+                        for evar, (int_event, prec_limit, int_algo_stop) in zip(
+                                h5file['xDMRG/state_emid/measurements']['energy_variance'][::-1],
+                                h5file['xDMRG/state_emid/status']['event', 'energy_variance_prec_limit', 'algo_stop'][
+                                ::-1]):
+                            if int_event != enum_event['FINISHED']:
+                                continue
+                            if evar < 100*prec_limit:
+                                return f"FINISHED"
+                            else:
+                                return f"FAILED|algorithm_stop:{algorithm_stop}:variance:{evar:.5e}[limit:{prec_limit:.5e}]"
                 else:
                     # We need to check the status table manually
-                    enum_event = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['event']) # key value pairs defining the enum
-                    enum_algo_stop = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['algo_stop']) # key value pairs defining the enum
                     # Find a finished event
-                    for evar, (int_event, int_algo_stop) in zip(h5file['xDMRG/state_emid/measurements']['energy_variance'][::-1],
-                                                                h5file['xDMRG/state_emid/status']['event', 'algo_stop'][::-1]):
-                        if int_event == enum_event['FINISHED'] and int_algo_stop == enum_algo_stop['SUCCESS']:
+                    for evar, (int_event, prec_limit, int_algo_stop) in zip(h5file['xDMRG/state_emid/measurements']['energy_variance'][::-1],
+                                                                h5file['xDMRG/state_emid/status']['event', 'energy_variance_prec_limit', 'algo_stop'][::-1]):
+                        if int_event != enum_event['FINISHED']:
+                            continue
+                        if evar <= prec_limit:
+                            return "FINISHED"
+                        if int_algo_stop == enum_algo_stop['SUCCESS']:
                             # Some realizations that "succeeded" actually have poor variance because they exited too soon.
                             # We need to check the variances
-                            if evar > 1e-12:
-                                return f"FAILED|variance is too high:{evar:.5e}"
+                            if evar > 10*prec_limit:
+                                return f"FAILED|variance is too high:{evar:.5e}[limit:{prec_limit:.5e}]"
 
-                        if int_event == enum_event['FINISHED'] and int_algo_stop != enum_algo_stop['SUCCESS']:
+                        if int_algo_stop != enum_algo_stop['SUCCESS']:
                             str_algo_stop = list(enum_algo_stop.keys())[list(enum_algo_stop.values()).index(int_algo_stop)]
                             return f"FAILED|algorithm_stop:{str_algo_stop}"
 

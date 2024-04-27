@@ -88,7 +88,7 @@ def parse(project_name):
     parser.add_argument('--minseed', type=int, help='Minimum seed value to consider',default=None)
     parser.add_argument('--maxseed', type=int, help='Maximum seed value to consider',default=None)
     parser.add_argument('--force-run', action='store_true', help='Force run of seeds with status failed|timeout|missing')
-    parser.add_argument('--replace', action='store_true', help='Set --replace instead of --revive')
+    parser.add_argument('--replace', action='store_true', help='Set --replace')
 
     args = parser.parse_args()
     if args.seedpath is None:

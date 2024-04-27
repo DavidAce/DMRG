@@ -175,7 +175,7 @@ run_sim_id() {
   # 3) If we make it this far, fetch the .h5 and .txt files from remote if they is newer than the local ones.
   #   -- We only need to do this if either status or infostatus is TIMEOUT|FAILED|MISSING
   # 4) Set the resume policy:
-  #   -- Set --revive by default
+  #   -- Set nothing by default, else replace if -R was given
   #   -- If -F (force_run) was passed: ignore the "FINISHED" status in the loginfo and run anyway (because the $status_path says FAILED/TIMEOUT/MISSING)
   # 5) Prepare to launch the simulation
   #   -- Append a "RUNNING" line to the info file, and send it to remote.
@@ -267,7 +267,7 @@ run_sim_id() {
 
   # Step 4)
   # Set the resume policy
-  extra_args="--revive"
+  extra_args=""
   if [ "$replace" == "true" ]; then
       extra_args="--replace"
   fi
