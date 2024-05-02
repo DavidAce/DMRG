@@ -97,6 +97,30 @@
       }
     },
     {
+      "name": "debug",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "TRUE",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
+        "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
+        "DMRG_CMAKE_DEBUG": "TRUE"
+      },
+      "environment": {
+        "VERBOSE": "1"
+      }
+    },
+    {
+      "name": "profiling",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "COMPILER_ENABLE_PCH": "TRUE",
+        "COMPILER_ENABLE_CCACHE": "TRUE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
+      }
+    },
+    {
       "name": "release",
       "hidden": true,
       "cacheVariables": {
@@ -107,45 +131,15 @@
       }
     },
     {
-      "name": "debug",
-      "hidden": true,
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": "TRUE",
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
-        "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
-        "DMRG_CMAKE_DEBUG": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      },
-      "environment": {
-        "VERBOSE": "1"
-      }
-    },
-    {
       "name": "asan",
       "hidden": true,
-      "inherits": [ "debug" ],
       "cacheVariables": {
         "COMPILER_ENABLE_ASAN": "TRUE",
         "COMPILER_ENABLE_USAN": "TRUE"
       }
     },
-
-    {
-      "name": "profiling",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
-        "COMPILER_ENABLE_PCH": "TRUE",
-        "COMPILER_ENABLE_CCACHE": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
-      }
-    },
     {
       "name": "native",
-      "inherits": "release",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
@@ -155,7 +149,6 @@
     },
     {
       "name": "haswell",
-      "inherits": "release",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
@@ -392,18 +385,19 @@
         "flexiblas",
         "conan",
         "profiling",
-        "release-gcc-12"
+        "gcc-12"
       ]
     },
     {
       "name": "profiling-gcc-13-conan-flexiblas-native",
       "displayName": "Release|gcc-13|conan|flexiblas|native",
       "inherits": [
+        "gcc-13",
         "native",
+        "profiling",
         "flexiblas",
         "conan",
-        "profiling",
-        "release-gcc-13"
+        "default"
       ]
     },
     {

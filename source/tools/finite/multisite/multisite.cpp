@@ -62,6 +62,7 @@ long tools::finite::multisite::get_problem_size(const StateFinite &state, std::o
 
 std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &state, long threshold, size_t max_sites, const size_t min_sites,
                                                                  const std::string &tag) {
+    // TODO: Rewrite generate_site_list
     if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
     tools::log->trace("Multisite activation {} | site {} | direction {} | sites min {} max {} | max problem size {}", tag, state.get_position<long>(),
                       state.get_direction(), min_sites, max_sites, threshold);
@@ -143,10 +144,10 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
 
     std::sort(sites.begin(), sites.end());
     if(at_edge or shape.empty() or sizes.empty())
-        tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | reason {}",
+        tools::log->debug("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | reason {}",
                           initial_position, direction, min_sites, max_sites, threshold, sites, reason);
     else
-        tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | "
+        tools::log->debug("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | "
                           "shape {} = {} | reason {}",
                           initial_position, direction, min_sites, max_sites, threshold, sites, shape.back(), sizes.back(), reason);
 

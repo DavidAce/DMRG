@@ -17,11 +17,17 @@ enum class MpoCompress {
 };
 enum class MposWithEdges { OFF, ON };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
-enum class MultisiteMove { ONE, MID, MAX };
-enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
-enum class MultisiteGrow {
-    OFF, /*!< Use the maximum number of sites immediately when conditions allow */
-    ON   /*!< Slowly ramp up to the maximum number of sites as the number of stuck/saturated iterations increase */
+enum class MultisitePolicy {
+    NEVER     = 0,                                    /*!< Never run multisite dmrg */
+    WARMUP    = 1,                                    /*!< Run multisite dmrg during warmup */
+    STUCK     = 2,                                    /*!< Run multisite dmrg when the algorithm is stuck */
+    CONVERGED = 8,                                    /*!< Run multisite dmrg when the algorithm has converged */
+    ALWAYS    = 16,                                   /*!< Always try running multisite dmrg */
+    GRADUAL   = 32,                                   /*!< When STUCK: Increase the number of sites gradually. Otherwise this is ignored */
+    MOVEMID   = 64,                                   /*!< Move m/2 sites after an m-site multisite dmrg step (instead of just 1) */
+    MOVEMAX   = 128,                                  /*!< Move m sites after an m-site multisite dmrg step (instead of just 1) */
+    DEFAULT   = WARMUP | STUCK | CONVERGED | GRADUAL, /*!< Default policy for multisite dmrg steps */
+    allow_bitops
 };
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
@@ -64,6 +70,20 @@ enum class LbitCircuitGateWeightKind : int {
     EXPDECAY, /*!< w_i = exp(-2|h[i] - h[i+1]|), where h[i] are on-site fields of the l-bit Hamiltonian */
 };
 
+/*! When to do projections to a symmetry sector */
+enum class ProjectionPolicy {
+    NEVER     = 0,                                   /*!< Never project */
+    INIT      = 1,                                   /*!< Project after initializing the state  */
+    WARMUP    = 2,                                   /*!< Project during warmup  */
+    STUCK     = 4,                                   /*!< Project when the algorithm is stuck */
+    ITER      = 8,                                   /*!< Project every iteration */
+    CONVERGED = 16,                                  /*!< Project on converged iterations */
+    FINISHED  = 32,                                  /*!< Project the finished state during postprocessing */
+    FORCE     = 64,                                  /*!< Project even if not needed */
+    DEFAULT   = INIT | STUCK | CONVERGED, /*!< Default policy for multisite dmrg steps */
+    allow_bitops
+};
+
 /*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
     NONE        = 0,    /*!< No event */
@@ -102,7 +122,6 @@ enum class StoragePolicy : int {
     RTES    = 8192, /*!< Store rtes steps */
     allow_bitops
 };
-
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
@@ -343,9 +362,7 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(std::is_same_v<T, OptExit> or //
-                  std::is_same_v<T, OptWhen> or //
-                  std::is_same_v<T, StoragePolicy>);
+    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, MultisitePolicy, ProjectionPolicy>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -385,6 +402,26 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, StoragePolicy::RTES)) v.emplace_back("RTES");
         if(v.empty()) return "NONE";
     }
+    if constexpr(std::is_same_v<T, MultisitePolicy>) {
+        if(has_flag(item, MultisitePolicy::WARMUP)) v.emplace_back("WARMUP");
+        if(has_flag(item, MultisitePolicy::STUCK)) v.emplace_back("STUCK");
+        if(has_flag(item, MultisitePolicy::CONVERGED)) v.emplace_back("CONVERGED");
+        if(has_flag(item, MultisitePolicy::ALWAYS)) v.emplace_back("ALWAYS");
+        if(has_flag(item, MultisitePolicy::GRADUAL)) v.emplace_back("GRADUAL");
+        if(has_flag(item, MultisitePolicy::MOVEMID)) v.emplace_back("MOVEMID");
+        if(has_flag(item, MultisitePolicy::MOVEMAX)) v.emplace_back("MOVEMAX");
+        if(v.empty()) return "NEVER";
+    }
+    if constexpr(std::is_same_v<T, ProjectionPolicy>) {
+        if(has_flag(item, ProjectionPolicy::INIT)) v.emplace_back("INIT");
+        if(has_flag(item, ProjectionPolicy::WARMUP)) v.emplace_back("WARMUP");
+        if(has_flag(item, ProjectionPolicy::STUCK)) v.emplace_back("STUCK");
+        if(has_flag(item, ProjectionPolicy::ITER)) v.emplace_back("ITER");
+        if(has_flag(item, ProjectionPolicy::CONVERGED)) v.emplace_back("CONVERGED");
+        if(has_flag(item, ProjectionPolicy::FINISHED)) v.emplace_back("FINISHED");
+        if(has_flag(item, ProjectionPolicy::FORCE)) v.emplace_back("FORCE");
+        if(v.empty()) return "NEVER";
+    }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
                            [](const std::string &ss, const std::string &s) { return ss.empty() ? s : ss + "|" + s; });
 }
@@ -399,9 +436,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         MpoCompress,
         MposWithEdges,
         MeanType,
-        MultisiteMove,
-        MultisiteWhen,
-        MultisiteGrow,
+        MultisitePolicy,
         SVDLibrary,
         UpdateWhen,
         GateMove,
@@ -458,23 +493,17 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case MposWithEdges::ON:                                   return "ON";
         default: return "MposWithEdges::UNDEFINED";
     }
-    if constexpr(std::is_same_v<T, MultisiteMove>) switch(item){
-        case MultisiteMove::ONE :                                       return "ONE";
-        case MultisiteMove::MID :                                       return "MID";
-        case MultisiteMove::MAX :                                       return "MAX";
-        default: return "MultisiteMove::UNDEFINED";
-    }
-    if constexpr(std::is_same_v<T, MultisiteWhen>) switch(item){
-        case MultisiteWhen::NEVER :                                     return "NEVER";
-        case MultisiteWhen::STUCK :                                     return "STUCK";
-        case MultisiteWhen::SATURATED :                                 return "SATURATED";
-        case MultisiteWhen::ALWAYS :                                    return "ALWAYS";
-        default: return "MultisiteWhen::UNDEFINED";
-    }
-    if constexpr(std::is_same_v<T, MultisiteGrow>) switch(item){
-        case MultisiteGrow::OFF :                                       return "NEVER";
-        case MultisiteGrow::ON :                                        return "ON";
-        default: return "MultisiteGrow::UNDEFINED";
+    if constexpr(std::is_same_v<T, MultisitePolicy>) switch(item){
+        case MultisitePolicy::NEVER :                                   return "NEVER";
+        case MultisitePolicy::WARMUP :                                  return "WARMUP";
+        case MultisitePolicy::STUCK :                                   return "STUCK";
+        case MultisitePolicy::CONVERGED :                               return "CONVERGED";
+        case MultisitePolicy::ALWAYS :                                  return "ALWAYS";
+        case MultisitePolicy::GRADUAL :                                 return "GRADUAL";
+        case MultisitePolicy::MOVEMID :                                 return "MOVEMID";
+        case MultisitePolicy::MOVEMAX :                                 return "MOVEMAX";
+        case MultisitePolicy::DEFAULT :                                 return "DEFAULT";
+        default: return "MultisitePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::NONE)                                       return "NONE";
@@ -520,6 +549,17 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     if constexpr(std::is_same_v<T, LbitCircuitGateWeightKind>) {
         if(item == LbitCircuitGateWeightKind::IDENTITY)                     return "IDENTITY";
         if(item == LbitCircuitGateWeightKind::EXPDECAY)                     return "EXPDECAY";
+    }
+    if constexpr(std::is_same_v<T, ProjectionPolicy>) {
+        if(item == ProjectionPolicy::NEVER)                             return "NEVER";
+        if(item == ProjectionPolicy::INIT)                              return "INIT";
+        if(item == ProjectionPolicy::WARMUP)                            return "WARMUP";
+        if(item == ProjectionPolicy::STUCK)                             return "STUCK";
+        if(item == ProjectionPolicy::ITER)                              return "ITER";
+        if(item == ProjectionPolicy::CONVERGED)                         return "CONVERGED";
+        if(item == ProjectionPolicy::FINISHED)                          return "FINISHED";
+        if(item == ProjectionPolicy::FORCE)                             return "FORCE";
+        if(item == ProjectionPolicy::DEFAULT)                           return "DEFAULT";
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
@@ -762,9 +802,7 @@ constexpr auto sv2enum(std::string_view item) {
         MpoCompress,
         MposWithEdges,
         MeanType,
-        MultisiteMove,
-        MultisiteWhen,
-        MultisiteGrow,
+        MultisitePolicy,
         SVDLibrary,
         UpdateWhen,
         GateMove,
@@ -772,6 +810,7 @@ constexpr auto sv2enum(std::string_view item) {
         CircuitOp,
         LbitCircuitGateMatrixKind,
         LbitCircuitGateWeightKind,
+        ProjectionPolicy,
         ModelType,
         EdgeStatus,
         TimeScale,
@@ -818,20 +857,27 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "OFF")                                   return MposWithEdges::OFF;
         if(item == "ON")                                    return MposWithEdges::ON;
     }
-    if constexpr(std::is_same_v<T, MultisiteMove>) {
-        if(item == "ONE")                                   return MultisiteMove::ONE;
-        if(item == "MID")                                   return MultisiteMove::MID;
-        if(item == "MAX")                                   return MultisiteMove::MAX;
+    if constexpr(std::is_same_v<T, MultisitePolicy>) {
+        if(item == "NEVER")                                 return MultisitePolicy::NEVER;
+        if(item == "WARMUP")                                return MultisitePolicy::WARMUP;
+        if(item == "STUCK")                                 return MultisitePolicy::STUCK;
+        if(item == "CONVERGED")                             return MultisitePolicy::CONVERGED;
+        if(item == "ALWAYS")                                return MultisitePolicy::ALWAYS;
+        if(item == "GRADUAL")                               return MultisitePolicy::GRADUAL;
+        if(item == "MOVEMID")                               return MultisitePolicy::MOVEMID;
+        if(item == "MOVEMAX")                               return MultisitePolicy::MOVEMAX;
+        if(item == "DEFAULT")                               return MultisitePolicy::DEFAULT;
     }
-    if constexpr(std::is_same_v<T, MultisiteWhen>) {
-        if(item == "NEVER")                                 return MultisiteWhen::NEVER;
-        if(item == "STUCK")                                 return MultisiteWhen::STUCK;
-        if(item == "SATURATED")                             return MultisiteWhen::SATURATED;
-        if(item == "ALWAYS")                                return MultisiteWhen::ALWAYS;
-    }
-    if constexpr(std::is_same_v<T, MultisiteGrow>) {
-        if(item == "OFF")                                   return MultisiteGrow::OFF;
-        if(item == "ON")                                    return MultisiteGrow::ON;
+    if constexpr(std::is_same_v<T, MultisitePolicy>) {
+        if(item == "NEVER")                                 return MultisitePolicy::NEVER;
+        if(item == "WARMUP")                                return MultisitePolicy::WARMUP;
+        if(item == "STUCK")                                 return MultisitePolicy::STUCK;
+        if(item == "CONVERGED")                             return MultisitePolicy::CONVERGED;
+        if(item == "ALWAYS")                                return MultisitePolicy::ALWAYS;
+        if(item == "GRADUAL")                               return MultisitePolicy::GRADUAL;
+        if(item == "MOVEMID")                               return MultisitePolicy::MOVEMID;
+        if(item == "MOVEMAX")                               return MultisitePolicy::MOVEMAX;
+        if(item == "DEFAULT")                               return MultisitePolicy::DEFAULT;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "NONE")                                  return OptRitz::NONE;
@@ -885,6 +931,17 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ising_majorana")                        return ModelType::ising_majorana;
         if(item == "lbit")                                  return ModelType::lbit;
         if(item == "xxz")                                   return ModelType::xxz;
+    }
+    if constexpr(std::is_same_v<T, ProjectionPolicy>) {
+        if(item == "NEVER")                                 return ProjectionPolicy::NEVER;
+        if(item == "INIT")                                  return ProjectionPolicy::INIT;
+        if(item == "WARMUP")                                return ProjectionPolicy::WARMUP;
+        if(item == "STUCK")                                 return ProjectionPolicy::STUCK;
+        if(item == "ITER")                                  return ProjectionPolicy::ITER;
+        if(item == "CONVERGED")                             return ProjectionPolicy::CONVERGED;
+        if(item == "FINISHED")                              return ProjectionPolicy::FINISHED;
+        if(item == "FORCE")                                 return ProjectionPolicy::FORCE;
+        if(item == "DEFAULT")                               return ProjectionPolicy::DEFAULT;
     }
     if constexpr(std::is_same_v<T, EdgeStatus>) {
         if(item == "STALE")                                 return EdgeStatus::STALE ;

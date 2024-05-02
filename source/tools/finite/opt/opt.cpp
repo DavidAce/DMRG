@@ -31,8 +31,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                                                                    OptMeta &meta) {
     auto t_opt        = tid::tic_scope("opt");
     meta.problem_size = tensors.active_problem_size();
-    if(meta.optSolver == OptSolver::EIG and meta.problem_size > settings::solver::eig_max_size) {
-        tools::log->debug("Problem size {} > eig_max_size ({}): Switching solver {} -> {}", meta.problem_size, settings::solver::eig_max_size,
+    if(meta.optSolver == OptSolver::EIG and meta.problem_size > settings::precision::eig_max_size) {
+        tools::log->debug("Problem size {} > eig_max_size ({}): Switching solver {} -> {}", meta.problem_size, settings::precision::eig_max_size,
                           enum2sv(meta.optSolver), enum2sv(OptSolver::EIGS));
         meta.optSolver = OptSolver::EIGS;
     }
@@ -58,7 +58,9 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     auto metax2     = meta;
                     metax2.optCost  = OptCost::ENERGY;
                     metax2.eigs_tol = std::max(1e-12, meta.eigs_tol.value_or(1e-12));
-                    result          = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
+                    metax2.eigs_ncv = std::max(32, meta.eigs_ncv.value_or(32));
+                    // metax2.primme_method = "PRIMME_DEFAULT_MIN_MATVECS";
+                    result = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
                     if(meta.optRitz == OptRitz::SM) {
                         // We accept this result if the residual norm is small, and either
@@ -67,14 +69,16 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         // Otherwise we call optimize_variance_eigs on the result
                         // auto sigma    = std::sqrt(initial_mps.get_variance());
                         // bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
-                        bool eneislarger = std::abs(result.get_energy()) > std::abs(initial_mps.get_energy());
-                        bool varislarger = result.get_variance() > initial_mps.get_variance();
-                        bool resnormfail = result.get_rnorm() >= 1e-10;
-                        if(resnormfail or (eneislarger and varislarger)) {
-                            // The result is not good enough. But we could use it as initial guess
-                            meta.optCost = OptCost::VARIANCE;
-                            result       = internal::optimize_variance_eigs(tensors, result, status, meta);
-                        }
+                        bool ene_ok   = std::abs(result.get_energy()) <= std::abs(initial_mps.get_energy());
+                        bool var_ok   = result.get_variance() <= initial_mps.get_variance();
+                        bool rnorm_ok = result.get_rnorm() <= 1e-10;
+                        // bool rnorm_nice = result.get_rnorm() <= 1e-12;
+                        // if(rnorm_nice) break;
+                        if(rnorm_ok and var_ok) break;
+
+                        // The result is not good enough. But we could use it as initial guess
+                        meta.optCost = OptCost::VARIANCE;
+                        result       = internal::optimize_variance_eigs(tensors, result, status, meta);
                     }
                     break;
                 }
@@ -217,7 +221,7 @@ namespace tools::finite::opt::internal {
             return comparator::eigval_and_overlap(lhs, rhs);
         } else {
             auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
-            if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
+            if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(meta->optRitz) {
                 case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");
                 case OptRitz::SR: return comparator::energy(lhs, rhs);

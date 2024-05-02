@@ -44,16 +44,6 @@ if(COMPILER_ENABLE_COVERAGE)
     target_link_options(dmrg-flags INTERFACE --coverage)
 endif()
 
-### Enable link time optimization
-if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT lto_supported OUTPUT lto_error)
-    if(lto_supported)
-        message(STATUS "LTO enabled")
-    else()
-        message(FATAL_ERROR "LTO is not supported: ${lto_error}")
-    endif()
-endif()
 
 # Enable static linking
 function(target_enable_static_libgcc tgt)

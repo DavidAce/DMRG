@@ -31,7 +31,7 @@ void itebd::run_preprocessing() {
 void itebd::run_algorithm() {
     tools::log->info("Starting {} simulation", status.algo_type_sv());
     auto t_run = tid::tic_scope("run");
-    while(status.iter < settings::itebd::max_iters and status.algorithm_converged_for == 0) {
+    while(status.iter < settings::itebd::iter_max and status.algorithm_converged_for == 0) {
         update_state();
         check_convergence();
         print_status();

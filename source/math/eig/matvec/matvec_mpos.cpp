@@ -12,6 +12,10 @@
 #include "tools/common/contraction.h"
 #include <Eigen/Cholesky>
 #include <primme/primme.h>
+#include <tblis/tblis.h>
+#include <tblis/util/thread.h>
+#include <tci/tci_config.h>
+
 namespace eig {
 
 #ifdef NDEBUG
@@ -54,9 +58,14 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     long spin_dim = 1;
     for(const auto &mpo : mpos) spin_dim *= mpo.dimension(2);
 
+    shape_mps = {spin_dim, envL.dimension(0), envR.dimension(0)};
+    size_mps  = spin_dim * envL.dimension(0) * envR.dimension(0);
 
-    shape_mps  = {spin_dim, envL.dimension(0), envR.dimension(0)};
-    size_mps   = spin_dim * envL.dimension(0) * envR.dimension(0);
+    // Now pre-shuffle each mpo if we have more than one
+    if(mpos.size() >= 2) {
+        for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
+    }
+
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_genMat   = std::make_unique<tid::ur>("Time genMat");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
@@ -84,6 +93,38 @@ void MatVecMPOS<T>::FactorOP() {
 }
 
 template<typename T>
+using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
+template<typename T>
+using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
+template<typename ea_type, typename eb_type, typename ec_type>
+void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
+                    const tblis::label_vector &lb, const tblis::label_vector &lc) {
+    const auto &ea_ref = static_cast<const ea_type &>(ea);
+    const auto &eb_ref = static_cast<const eb_type &>(eb);
+    auto       &ec_ref = static_cast<ec_type &>(ec);
+
+    tblis::len_vector da, db, dc;
+    da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
+    db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
+    dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
+
+    auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
+    typename ea_type::Scalar alpha = 1.0;
+    typename ec_type::Scalar beta  = 0.0;
+
+    tblis::tblis_tensor          A_s(alpha, ta);
+    tblis::tblis_tensor          B_s(tb);
+    tblis::tblis_tensor          C_s(beta, tc);
+    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
+#if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+    tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+#endif
+    tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
+}
+
+template<typename T>
 void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
     auto token   = t_multAx->tic_token();
     auto mps_in  = Eigen::TensorMap<Eigen::Tensor<T, 3>>(mps_in_, shape_mps);
@@ -91,34 +132,58 @@ void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
     if(mpos.size() == 1) {
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos.front(), envL, envR);
     } else {
-        auto &threads = tenx::threads::get();
+        auto &threads  = tenx::threads::get();
+        auto  mps_tmp1 = Eigen::Tensor<T, 6>();
+        auto  mps_tmp2 = Eigen::Tensor<T, 6>();
 
-        constexpr auto shf6            = std::array<long, 6>{0, 5, 1, 2, 3, 4};
-        auto           shp4            = std::array<long, 4>{shape_mps[0], shape_mps[2], envL.dimension(1), envL.dimension(2)};
-        auto           mps_tmp1        = Eigen::Tensor<T, 4>(shp4);
-        auto           mps_tmp2        = Eigen::Tensor<T, 4>();
-        mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0}));
-        auto mpodimprod                = [&](size_t fr, size_t to) -> long {
+        auto mpodimprod = [&](size_t fr, size_t to) -> long {
             long prod = 1;
             for(size_t idx = fr; idx < to; ++idx) {
-                if(idx >= mpos.size()) break;
-                prod *= mpos[idx].dimension(3);
+                if(idx >= mpos_shf.size()) break;
+                prod *= mpos_shf[idx].dimension(1);
             }
             return prod;
         };
-        for(size_t idx = 0; idx < mpos.size(); ++idx) {
-            const auto &mpo = mpos[idx];
-            auto        d0  = mpodimprod(0, idx);
-            auto        d1  = mpo.dimension(3);
-            auto        d2  = mpodimprod(idx + 1, mpos.size());
-            assert(d0 * d1 * d2 == mps_tmp1.dimension(0));
-            auto old_shp6 = std::array<long, 6>{d0, d1, d2, mps_tmp1.dimension(1), mps_tmp1.dimension(2), mps_tmp1.dimension(3)};
-            auto new_shp4 = std::array<long, 4>{mps_tmp1.dimension(0), mps_tmp1.dimension(1), mps_tmp1.dimension(2), mpo.dimension(1)};
-            mps_tmp2.resize(new_shp4);
-            mps_tmp2.device(*threads->dev) = mps_tmp1.reshape(old_shp6).contract(mpo, tenx::idx({5, 1}, {0, 2})).shuffle(shf6).reshape(new_shp4);
+
+        auto d0       = mpodimprod(0, 1);               // Split 0 --> 0,1
+        auto d1       = mpodimprod(1, mpos_shf.size()); // Split 0 --> 0,1
+        auto d2       = mps_in.dimension(2);
+        auto d3       = envL.dimension(1);
+        auto d4       = envL.dimension(2);
+        auto d5       = 1l; // A new dummy index
+        auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+        mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
+        mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
+
+        for(size_t idx = 0; idx < mpos_shf.size(); ++idx) {
+            // auto mpo = Eigen::Tensor<T, 4>(mpos[idx].shuffle(shf_mpo));
+            const auto &mpo = mpos_shf[idx];
+            // Set up the dimensions for the reshape after the contraction
+            d0 = mpodimprod(idx + 1, idx + 2);         // if idx == k, this has the mpo at idx == k+1
+            d1 = mpodimprod(idx + 2, mpos_shf.size()); // if idx == 0,  this has the mpos at idx == k+2...L-1
+            d2 = mps_tmp1.dimension(2);
+            d3 = mps_tmp1.dimension(3);
+            d4 = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
+            d5 = mpo.dimension(3);       // The virtual bond of the current mpo
+                                         // if constexpr(std::is_same_v<T, real>) {
+                                         //     auto md  = mps_tmp1.dimensions();
+                                         //     new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
+                                         //     mps_tmp2.resize(new_shp6);
+                                         //     contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg");
+                                         //     new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+                                         //     mps_tmp1 = mps_tmp2.reshape(new_shp6);
+                                         // } else {
+            new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+            mps_tmp2.resize(new_shp6);
+            mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
             mps_tmp1                       = std::move(mps_tmp2);
+            // }
         }
-        mps_out.device(*threads->dev) = mps_tmp1.contract(envR, tenx::idx({1, 3}, {0, 2}));
+        d0                            = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
+        d1                            = mps_tmp1.dimension(3);
+        d2                            = mps_tmp1.dimension(4);
+        d3                            = mps_tmp1.dimension(5);
+        mps_out.device(*threads->dev) = mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
     }
     num_mv++;
 }
@@ -192,6 +257,10 @@ void MatVecMPOS<T>::set_shift(std::complex<double> shift) {
         eig::log->debug("Shifted MPO {} energy by {:.16f}", idx, shift_per_mpo);
     }
     sigma = shift;
+    if(not mpos_shf.empty()) {
+        mpos_shf.clear();
+        for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
+    }
 
     readyShift = true;
 }

@@ -30,20 +30,25 @@ namespace tools::finite::opt::internal {
             case OptRitz::SM:
             case OptRitz::TE:
             case OptRitz::IS: {
-                auto eigval = initial_mps.get_energy_shift(); // The energy shift is our target energy for excited states
+                // Find all eigenvalues within a thin energy band
+                auto eigval = initial_mps.get_energy(); // The current energy
                 auto eigvar = initial_mps.get_variance();
-                auto vl     = eigval - 2 * eigvar;
-                auto vu     = eigval + 2 * eigvar;
+                auto eshift = initial_mps.get_energy_shift(); // The energy shift is our target energy for excited states
+                auto vl     = eshift-std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+                auto vu     = eshift+std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
                 solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
-
+                // tools::log->info("optimize_energy_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
                 // Filter the results
                 if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-                    tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
+                    // tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
                     auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
                     auto indices = num::range<long>(0l, eigvals.size());
                     auto eigComp = EigIdxComparator(meta.optRitz, eigval, eigvals.data(), eigvals.size());
                     std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
                     indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
+                    // for(auto idx : indices) {
+                    //     tools::log->info(" -- idx {}: {:.16f}", idx, eigvals(idx));
+                    // }
                     extract_results(tensors, initial_mps, meta, solver, results, false, indices);
                 }
                 return;
@@ -58,8 +63,8 @@ namespace tools::finite::opt::internal {
             throw except::logic_error("optimize_energy_eig: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::ENERGY), enum2sv(meta.optCost));
 
         const auto problem_size = tensors.active_problem_size();
-        if(problem_size > settings::solver::eig_max_size)
-            throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {} > {}(max)", problem_size, settings::solver::eig_max_size);
+        if(problem_size > settings::precision::eig_max_size)
+            throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {} > {}(max)", problem_size, settings::precision::eig_max_size);
 
         tools::log->debug("optimize_energy_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optCost),
                           enum2sv(meta.optAlgo));

@@ -17,7 +17,6 @@ class fdmrg : public AlgorithmFinite {
     private:
     std::optional<double> variance_before_step = std::nullopt;
     std::string_view      get_state_name() const;
-    [[nodiscard]] OptMeta get_opt_meta();
 
     public:
     // Inherit the constructor of class_algorithm_base
@@ -30,5 +29,4 @@ class fdmrg : public AlgorithmFinite {
     void     run_preprocessing() final;
     void     run_algorithm() final;
     void     update_state() final;
-    void     check_convergence() final;
 };

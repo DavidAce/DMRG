@@ -32,7 +32,7 @@ class MatVecMPOS {
     constexpr static eig::Factorization factorization    = eig::Factorization::NONE;
 
     private:
-    std::vector<Eigen::Tensor<T, 4>> mpos;
+    std::vector<Eigen::Tensor<T, 4>> mpos, mpos_shf;
     Eigen::Tensor<T, 3>              envL;
     Eigen::Tensor<T, 3>              envR;
     std::array<long, 3>              shape_mps;

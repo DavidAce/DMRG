@@ -127,9 +127,9 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     // Set up the svd settings if not given explicitly
     if(not svd_cfg) svd_cfg = svd::config();
-    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::solver::svd_truncation_lim);
-    svd_cfg->switchsize_gesdd = svd_cfg->switchsize_gesdd.value_or(settings::solver::svd_switchsize_bdc);
-    if(not svd_cfg->svd_save.has_value()) svd_cfg->svd_save = settings::solver::svd_save_fail ? svd::save::FAIL : svd::save::NONE;
+    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::precision::svd_truncation_lim);
+    svd_cfg->switchsize_gesdd = svd_cfg->switchsize_gesdd.value_or(settings::precision::svd_switchsize_bdc);
+    if(not svd_cfg->svd_save.has_value()) svd_cfg->svd_save = settings::precision::svd_save_fail ? svd::save::FAIL : svd::save::NONE;
 
     // Define dimensions and positions after the desired split
     long chiL = multisite_mps.dimension(1);
@@ -144,7 +144,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     auto pos_it = positions.begin();
     auto dim_it = spin_dims.begin();
     while(pos_it != positions.end() and dim_it != spin_dims.end()) {
-        if(num::cmp_less_equal(*pos_it, center_position)) {
+        if(std::cmp_less_equal(*pos_it, center_position)) {
             positions_left.emplace_back(*pos_it);
             spin_dims_left.emplace_back(*dim_it);
             dL *= *dim_it;

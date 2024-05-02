@@ -7,6 +7,7 @@
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_mpo.h"
 #include "math/eig/matvec/matvec_mpos.h"
+#include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -17,7 +18,6 @@
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include <primme/primme.h>
-#include <tensors/edges/EdgesFinite.h>
 
 namespace tools::finite::opt {
 
@@ -94,7 +94,7 @@ namespace tools::finite::opt {
         auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
         tools::log->trace("Finding largest-magnitude eigenvalue");
         eig::solver solver; // Define a solver just to find the maximum eigenvalue
-        solver.config.tol             = settings::solver::eigs_tol_min;
+        solver.config.tol             = settings::precision::eigs_tol_min;
         solver.config.maxIter         = 200;
         solver.config.maxNev          = 1;
         solver.config.maxNcv          = 16;
@@ -149,13 +149,13 @@ namespace tools::finite::opt {
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
         auto       &cfg           = solver.config;
-        cfg.loglevel              = 2;
+        cfg.loglevel              = 1;
         cfg.compute_eigvecs       = eig::Vecs::ON;
-        cfg.tol                   = meta.eigs_tol.value_or(settings::solver::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
-        cfg.maxIter               = meta.eigs_iter_max.value_or(settings::solver::eigs_iter_max);
+        cfg.tol                   = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
+        cfg.maxIter               = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
         cfg.maxNev                = meta.eigs_nev.value_or(1);
-        cfg.maxNcv                = meta.eigs_ncv.value_or(settings::solver::eigs_ncv);
-        cfg.maxTime               = 2 * 60 * 60; // Two hours
+        cfg.maxNcv                = meta.eigs_ncv.value_or(settings::precision::eigs_ncv);
+        cfg.maxTime               = meta.eigs_time_max.value_or(2 * 60 * 60); // Two hours default
         cfg.primme_minRestartSize = meta.primme_minRestartSize;
         cfg.primme_maxBlockSize   = meta.primme_maxBlockSize;
         cfg.lib                   = eig::Lib::PRIMME;
@@ -178,7 +178,7 @@ namespace tools::finite::opt {
         }
 
         //         Apply preconditioner if applicable, usually faster on small matrices
-        //                if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
+        //                if(initial_mps.get_tensor().size() > settings::precision::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
         //                    configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
         //        if(initial_mps.get_tensor().size() > 8192 and initial_mps.get_tensor().size() <= 20000)
         //        configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
@@ -191,7 +191,7 @@ namespace tools::finite::opt {
         const auto &mpos                = model.get_mpo_active();
         auto        hamiltonian_squared = MatVecMPOS<Scalar>(mpos, envs);
         if constexpr(hamiltonian_squared.can_shift_invert) {
-            if(initial_mps.get_tensor().size() <= settings::solver::eigs_max_size_shift_invert) {
+            if(initial_mps.get_tensor().size() <= settings::precision::eigs_max_size_shift_invert) {
                 cfg.shift_invert                  = eig::Shinv::ON;
                 cfg.sigma                         = cplx(0.0, 0.0);
                 cfg.primme_targetShifts           = {};

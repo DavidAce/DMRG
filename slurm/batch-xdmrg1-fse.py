@@ -17,6 +17,7 @@ config_paths = {
 config_ranges = {
     "filename" : [''],
     "storage::output_filepath": [get_output_filepath],
+    "storage::file_collision_policy": ['REVIVE'],
     "storage::temp_dir": [config_paths['temp_dir']],
     "storage::mps::state_emid::policy": ["ITER|FINISH|REPLACE"],
     "storage::table::kvornings_marker::policy": ["FINISH"],

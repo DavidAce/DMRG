@@ -25,10 +25,12 @@ namespace settings {
 
     extern bool     algorithm_is_on(AlgorithmType algo_type);
     extern size_t   print_freq(AlgorithmType algo_type);
-    extern long     get_bond_init(AlgorithmType algo_type);
+    extern long     get_bond_min(AlgorithmType algo_type);
     extern long     get_bond_max(AlgorithmType algo_type);
     extern OptRitz  get_ritz(AlgorithmType algo_type);
     extern bool     store_wave_function(AlgorithmType algo_type);
+    extern size_t   get_iter_min(AlgorithmType algo_type);
+    extern size_t   get_iter_max(AlgorithmType algo_type);
 
     /*!  \namespace settings::threading Parameters for multithreading
      *   num_threads is the total number of threads, num_threads = OMP_NUM_THREADS + std::threads
@@ -195,42 +197,22 @@ namespace settings {
         inline bool   timestamp     = false;                          /*!< Whether to put a timestamp on console outputs */
         inline size_t loglevel      = 2;                              /*!< Verbosity [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
         inline size_t logh5pp       = 2;                              /*!< Verbosity of h5pp library [0-6] Level 2 or 3 is recommended for normal use */
-}
-
-    /*! \namespace settings::solvers Settings affecting the solvers (eig, eigs, svd) */
-    namespace solver {
-        inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
-        inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
-        inline size_t   eigs_iter_multiplier           = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
-        inline double   eigs_tol_max                    = 1e-10 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline int      eigs_ncv                        = 0     ;                  /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
-        inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
-        inline double   svd_truncation_lim              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
-        inline double   svd_truncation_init             = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
-        inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
-        inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
     }
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the algorithms */
     namespace strategy {
         inline bool                move_sites_when_stuck       = true;                                   /*!< Try moving sites around when stuck */
-        inline size_t              project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
-        inline size_t              project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
-        inline bool                project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_increase_when == true). */
-        inline bool                project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
-        inline bool                project_final_state         = false;                                  /*!< Project to target axis/parity sector before writing down the final state */
+        inline ProjectionPolicy    projection_policy           = ProjectionPolicy::DEFAULT;              /*!< Enum bitflag to control projections to a symmetry sector {NEVER,+INIT,WARMUP,+STUCK,ITER,+CONVERGED,FINISHED,FORCE,DEFAULT} (+ are DEFAULT) */
         inline bool                use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
-        inline size_t              max_stuck_iters             = 5;                                      /*!< If stuck for this many iterations -> stop. */
-        inline size_t              max_saturated_iters         = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
-        inline size_t              min_saturated_iters         = 1;                                      /*!< Saturated at least this many iterations before stopping */
-        inline size_t              min_converged_iters         = 1;                                      /*!< Converged at least this many iterations before success */
+        inline size_t              iter_max_warmup             = 4;                                      /*!< Initial warmup iterations. In DMRG these iterations use an exact solver with reduced bond dimension */
+        inline size_t              iter_max_stuck              = 5;                                      /*!< If status.algorithm_saturated_for > 0 then status.algorithm_has_stuck_for +=1. If stuck for this many iterations, we stop. */
+        inline size_t              iter_max_saturated          = 5;                                      /*!< Saturation means that both variance and entanglement saturated. But if either saturates for this many iterations, then status.algorithm_saturated_for += 1 */
+        inline size_t              iter_min_converged          = 1;                                      /*!< Require convergence at least this many iterations before success */
         inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
-        inline size_t              multisite_opt_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
-        inline size_t              multisite_opt_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
-        inline MultisiteMove       multisite_opt_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multisite optimization step, choose between {ONE, MID, MAX} */
-        inline MultisiteWhen       multisite_opt_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {NEVER, STUCK, SATURATED, ALWAYS} */
-        inline MultisiteGrow       multisite_opt_grow          = MultisiteGrow::OFF;                     /*!< ON: grow up to max linearly with stuck/saturated iters. OFF: increase to max sites immediately when conditions are right */
+        inline MultisitePolicy     multisite_policy            = MultisitePolicy::DEFAULT;               /*!< Enum bitflag to control multisite dmrg {NEVER,+WARMUP,+STUCK,+CONVERGED,ALWAYS,+GRADUAL,MOVEMID,MOVEMAX,DEFAULT} (+ are DEFAULT) */
+        inline size_t              multisite_site_def          = 1;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
+        inline size_t              multisite_site_max          = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
+        inline long                multisite_max_prob_size     = 1024*2*1024;                            /*!< Restricts the number of sites "l" to keep the problem size below this limit. Problem size = chiL * (spindim ** l) * chiR */
         inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
@@ -247,6 +229,19 @@ namespace settings {
 
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
+        inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
+        inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
+        inline size_t   eigs_iter_multiplier            = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
+        inline double   eigs_tol_max                    = 1e-10 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline int      eigs_ncv                        = 0     ;                  /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
+        inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
+
+        inline double   svd_truncation_lim              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
+        inline double   svd_truncation_init             = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
+        inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
+        inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
+
         inline auto     use_compressed_mpo              = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
         inline auto     use_compressed_mpo_squared      = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
         inline bool     use_energy_shifted_mpo          = false ;           /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
@@ -257,8 +252,8 @@ namespace settings {
         inline double   entropy_saturation_sensitivity  = 1e-3  ;           /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
         inline double   target_subspace_error           = 1e-10 ;           /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
         inline size_t   max_subspace_size               = 256   ;           /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
-        inline long     max_size_multisite              = 131072;           /*!< Maximum problem size for multisite dmrg. If the linear size is larger than this, the algorithm prefers 1-site dmrg. */
         inline double   max_norm_error                  = 1e-10 ;           /*!< Maximum norm deviation from unity during integrity checks */
+
     }
 
 
@@ -325,9 +320,10 @@ namespace settings {
     /*! \namespace settings::idmrg Settings for the infinite DMRG algorithm */
     namespace idmrg {
         inline bool     on                  = false;                               /*!< Turns iDMRG simulation on/off. */
-        inline size_t   max_iters           = 5000;                                /*!< Maximum number of iDMRG iterations before forced termination */
+        inline size_t   iter_min            = 1;                                   /*!< Minimum number of iterations before being allowed to finish */
+        inline size_t   iter_max            = 5000;                                /*!< Maximum number of iterations before forced termination */
         inline long     bond_max            = 32;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init           = 16;                                  /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
+        inline long     bond_min            = 16;                                  /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t   print_freq          = 1000;                                /*!< Print frequency for console output. In units of iterations.  (0 = off). */
     }
 
@@ -335,13 +331,14 @@ namespace settings {
     /*! \namespace settings::itebd Settings for the imaginary-time infinite TEBD algorithm  */
     namespace itebd {
         inline bool      on                    = false;                            /*!< Turns iTEBD simulation on/off. */
-        inline size_t    max_iters             = 100000;                           /*!< Maximum number of iTEBD iterations before forced termination */
+        inline size_t    iter_min              = 1;                                /*!< Minimum number of iterations before being allowed to finish */
+        inline size_t    iter_max              = 100000;                           /*!< Maximum number of iterations before forced termination */
         inline double    time_step_init_real   = 0.0;                              /*!< Real part of initial time step delta_t */
         inline double    time_step_init_imag   = 0.1;                              /*!< Imag part of initial time step delta_t */
         inline double    time_step_min         = 0.00001;                          /*!< (Absolute value) Minimum and final time step for iTEBD time evolution. */
         inline size_t    suzuki_order          = 1;                                /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long      bond_max              = 8;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long      bond_init             = 4;                                /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
+        inline long      bond_min              = 4;                                /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t    print_freq            = 5000;                             /*!< Print frequency for console output. In units of iterations. (0 = off).*/
     }
 
@@ -349,11 +346,10 @@ namespace settings {
     namespace fdmrg {
         inline bool      on                  = false;                              /*!< Turns fdmrg simulation on/off. */
         inline auto      ritz                = OptRitz::SR;                        /*!< Select what part of the energy eigenspectrum to target (SR:smallest real / LR: largest real) */
-        inline size_t    max_iters           = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t    min_iters           = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
-        inline size_t    warmup_iters        = 2;                                  /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
+        inline size_t    iter_min            = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t    iter_max            = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
         inline long      bond_max            = 128;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long      bond_init           = 8;                                  /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
+        inline long      bond_min            = 8;                                  /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t    print_freq          = 100;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool      store_wavefn        = false;                              /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
@@ -364,12 +360,12 @@ namespace settings {
         inline bool     on                     = false;                            /*!< Turns flbit simulation on/off. */
         inline bool     run_iter_in_parallel   = false;                            /*!< Time evolve each time step in parallel (because these are independent!) */
         inline bool     run_effective_model    = false;                            /*!< Runs the effecive model before the actual simulation */
-        inline size_t   max_iters              = 10000;                            /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t   min_iters              = 4;                                /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t   iter_min               = 4;                                /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t   iter_max               = 10000;                            /*!< Max number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates         = true;                             /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
         inline bool     use_mpo_circuit        = false;                            /*!< Cast the unitary circuit to compressed mpo form (this is not generally faster or more accurate, but good for testing) */
-        inline long     bond_max               = 1024;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init              = 8;                                /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
+        inline long     bond_max               = 1024;                             /*!< Maximum bond dimension (maximum number of singular values to keep in SVD). */
+        inline long     bond_min               = 8;                                /*!< Minimum bond dimension */
         inline auto     time_scale             = TimeScale::LOGSPACED;             /*!< Choose linear or logarithmically spaced time points (LINEAR|LOG) */
         inline double   time_start_real        = 1e-1;                             /*!< Starting time point (real) */
         inline double   time_start_imag        = 0;                                /*!< Starting time point (imag) */
@@ -399,17 +395,14 @@ namespace settings {
         inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
         inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select what part of the energy eigenspectrum to target */
         inline double     energy_density_target         = 0.5;                     /*!< (Used with ritz == OptRitz::TE) Target energy in [0-1], Target energy = energy_density_target * (EMAX+EMIN) + EMIN. */
-        inline size_t     max_iters                     = 50;                      /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t     min_iters                     = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
-        inline size_t     warmup_iters                  = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
+        inline size_t     iter_min                      = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
+        inline size_t     iter_max                      = 50;                      /*!< Max number of iterations. One iterations moves L steps. */
         inline long       bond_max                      = 1024;                    /*!< Maximum bond dimension (number of singular values to keep after SVD). */
-        inline long       bond_init                     = 8;                       /*!< Initial bond dimension limit. Used during warmup or when bond_increase_when == true, or starting from an entangled state */
+        inline long       bond_min                      = 8;                       /*!< Minimum bond dimension. Used at the start, during warmup or when bond_increase_when == true, or when starting from an entangled state */
         inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline size_t     max_states                    = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool       store_wavefn                  = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline bool       try_directx2_when_stuck       = true;                    /*!< Try OptAlgo::DIRECTX2: find ritz SM for H instead of H² in the last stuck step. Keep if good, else  use as an initial guess for OptAlgo::DIRECT. */
-        inline bool       finish_if_entanglm_saturated  = true;                    /*!< Finish early as soon as entanglement has saturated */
-        inline bool       finish_if_variance_saturated  = false;                   /*!< Finish early as soon as energy variance has saturated */
     }
 }
 /* clang-format on */

@@ -425,7 +425,6 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
     Eigen::Tensor<cplx, 1> edgeR = get_mpo(sites.back()).get_MPO_edge_right();
 
     tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody_str);
-    if(sites.size() >= 12) throw except::runtime_error("Too many sites for multisite mpo: {}", sites.size());
 
     if(sites != positions) {
         for(const auto &pos : positions) {

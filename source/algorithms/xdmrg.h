@@ -1,12 +1,11 @@
 #pragma once
 
 #include "AlgorithmFinite.h"
+#include "qm/gate.h"
 #include <deque>
-#include <qm/gate.h>
 
 namespace tools::finite::opt {
     class opt_mps;
-    struct OptMeta;
 }
 /*!
  * \brief Class that runs the excited-state DMRG algorithm.
@@ -14,12 +13,8 @@ namespace tools::finite::opt {
 
 class StateFinite;
 class xdmrg : public AlgorithmFinite {
-    using OptMeta = tools::finite::opt::OptMeta;
-
     private:
-    double                energy_window_growth_factor = 1.0;
-
-    [[nodiscard]] OptMeta get_opt_meta();
+    double energy_window_growth_factor = 1.0;
 
     public:
     // Inherit the constructor of class_algorithm_base
@@ -33,7 +28,6 @@ class xdmrg : public AlgorithmFinite {
     void     run_algorithm() final;
     void     update_state() final;
     void     resume() final;
-    void     check_convergence() final;
     void     update_time_step();
     void     set_energy_shift_mpo() final;
 };

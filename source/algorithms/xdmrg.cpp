@@ -5,11 +5,14 @@
 #include "general/iter.h"
 #include "io/fmt_custom.h"
 #include "math/eig.h"
+#include "math/linalg/matrix.h"
 #include "math/num.h"
 #include "math/rnd.h"
+#include "math/svd.h"
 #include "qm/time.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
+#include "tensors/site/mpo/MpoSite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"
@@ -17,15 +20,11 @@
 #include "tools/common/prof.h"
 #include "tools/finite/h5.h"
 #include "tools/finite/measure.h"
-#include "tools/finite/multisite.h"
+#include "tools/finite/mpo.h"
 #include "tools/finite/opt.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
-#include <math/linalg/matrix.h>
-#include <math/svd.h>
-#include <tensors/site/mpo/MpoSite.h>
-#include <tools/finite/mpo.h>
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
@@ -191,7 +190,7 @@ void xdmrg::run_preprocessing() {
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
 
-    if(tensors.get_length<long>() <= 4) {
+    if(tensors.get_length<long>() <= 12) {
         // Print the spectrum if small
         // tensors.clear_cache();
         auto svd_solver = svd::solver();
@@ -211,7 +210,7 @@ void xdmrg::run_preprocessing() {
         // auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
         fmt::print("{:^8} {:<20}\n", " ", "H¹");
         for(long idx = 0; idx < evals1.size(); ++idx) {
-            if(std::abs(evals1[idx]) > 1.0) continue;
+            if(std::abs(evals1[idx]) > 0.01) continue;
             fmt::print("idx {:2}: {:20.16f}\n", idx, evals1[idx]);
         }
         fmt::print("{:^8} {:<20}\n", " ", "H²");
@@ -287,97 +286,6 @@ void xdmrg::run_algorithm() {
     //    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
 }
 
-xdmrg::OptMeta xdmrg::get_opt_meta() {
-    tools::log->trace("Configuring xDMRG optimization trial");
-    OptMeta m1;
-    m1.label = "opt_meta1";
-
-    // The first decision is easy. Real or complex optimization
-    if(tensors.is_real()) m1.optType = OptType::REAL;
-    // Set the target eigenvalue
-    m1.optRitz = status.opt_ritz;
-
-    // Set the default svd limits
-    m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-
-    // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_iter_multiplier : 1;
-    // Set up handy quantities
-    auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
-    bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
-    bool algo_stuck_long = status.algorithm_has_stuck_for + 1 == settings::strategy::max_stuck_iters;
-
-    // Copy settings
-    m1.min_sites         = settings::strategy::multisite_opt_site_def;
-    m1.max_sites         = settings::strategy::multisite_opt_site_def;
-    m1.subspace_tol      = settings::precision::target_subspace_error;
-    m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
-    m1.eigs_nev          = 1;
-    m1.eigv_target       = 0.0;                        // We always target 0 when OptCost::VARIANCE
-    m1.eigs_ncv          = settings::solver::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
-
-    // Set up a multiplier for number of iterations
-    double iter_stuck_multiplier = std::max(1.0, safe_cast<double>(std::pow(settings::solver::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
-    double iter_max_converged    = std::min(10000.0, safe_cast<double>(settings::solver::eigs_iter_max));      // Run less when converged
-    double iter_max_has_stuck    = safe_cast<double>(settings::solver::eigs_iter_max) * iter_stuck_multiplier; // Run more when stuck
-    using iter_max_type          = decltype(m1.eigs_iter_max)::value_type;
-    m1.eigs_iter_max             = status.algorithm_converged_for > 0 or var_latest < var_conv_thresh
-                                       ? safe_cast<iter_max_type>(std::min<double>(iter_max_converged, std::numeric_limits<iter_max_type>::max()))
-                                       : safe_cast<iter_max_type>(std::min<double>(iter_max_has_stuck, std::numeric_limits<iter_max_type>::max()));
-
-    // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
-    m1.eigs_tol = std::min(var_latest, settings::solver::eigs_tol_max);
-    if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min;
-
-    m1.optCost   = OptCost::VARIANCE;
-    m1.optAlgo   = OptAlgo::DIRECT;
-    m1.optSolver = OptSolver::EIGS;
-
-    if(status.iter < settings::xdmrg::warmup_iters) {
-        // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
-        m1.max_sites        = settings::strategy::multisite_opt_site_max;
-        m1.max_problem_size = settings::solver::eig_max_size; // Try to use full diagonalization instead
-        // m1.max_problem_size = settings::precision::max_size_multisite;
-        if(settings::xdmrg::bond_init > 0 and m1.svd_cfg->rank_max > settings::xdmrg::bond_init) {
-            tools::log->debug("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::xdmrg::bond_init);
-            m1.svd_cfg->rank_max = settings::xdmrg::bond_init;
-        }
-    } else {
-        using namespace settings::strategy;
-        m1.max_problem_size   = settings::precision::max_size_multisite;
-        size_t has_stuck_for  = status.algorithm_has_stuck_for;
-        size_t saturated_for  = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
-        double has_stuck_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(has_stuck_for) / safe_cast<double>(max_stuck_iters);
-        double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(max_saturated_iters);
-        switch(multisite_opt_when) {
-            case MultisiteWhen::NEVER: break;
-            case MultisiteWhen::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, has_stuck_frac)); break;
-            case MultisiteWhen::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_opt_site_def, multisite_opt_site_max, saturated_frac)); break;
-            case MultisiteWhen::ALWAYS: m1.max_sites = multisite_opt_site_max; break;
-        }
-    }
-    if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
-
-    // Set up the problem size here
-    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
-    m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
-    m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
-
-    // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
-    if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
-
-    if(settings::xdmrg::try_directx2_when_stuck and algo_stuck_long and not var_isconverged) {
-        // A last desperate attempt. By this the full precision of the eigensolver is not sufficient to resolve the
-        // eigenvalues in H².. Perhaps the levels in H itself are easier, so we use a one-two punch in DIRECTX2.
-        m1.optCost   = OptCost::VARIANCE;
-        m1.optAlgo   = OptAlgo::DIRECTX2;
-        m1.optSolver = OptSolver::EIGS;
-        m1.optRitz   = OptRitz::SM;
-    }
-
-    m1.validate();
-
-    return m1;
-}
 
 void xdmrg::update_state() {
     using namespace tools::finite;
@@ -399,7 +307,7 @@ void xdmrg::update_state() {
 
     if(tensors.active_sites.size() == 1) {
         // Use environment expansion if alpha_expansion is set
-        expand_environment(status.env_expansion_alpha, svd::config(status.bond_lim, std::min(1e-15, status.trnc_min)));
+        expand_environment(status.env_expansion_alpha, svd::config(status.bond_lim, std::min(5e-16, status.trnc_min)));
     }
 
     // Run the optimization
@@ -413,7 +321,7 @@ void xdmrg::update_state() {
     /* clang-format off */
     opt_meta.optExit = OptExit::SUCCESS;
     if(opt_state.get_grad_max()       > 1.000                         ) opt_meta.optExit |= OptExit::FAIL_GRADIENT;
-    if(opt_state.get_rnorm()          > settings::solver::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
+    if(opt_state.get_rnorm()          > settings::precision::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
     if(opt_state.get_eigs_nev()       == 0 and
        opt_meta.optSolver              == OptSolver::EIGS             ) opt_meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
     if(opt_state.get_overlap()        < 0.010                         ) opt_meta.optExit |= OptExit::FAIL_OVERLAP;
@@ -477,53 +385,6 @@ void xdmrg::update_state() {
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
-void xdmrg::check_convergence() {
-    if(not tensors.position_is_inward_edge()) return;
-    auto t_con = tid::tic_scope("conv");
-
-    check_convergence_variance();
-    check_convergence_entg_entropy();
-    check_convergence_spin_parity_sector(settings::strategy::target_axis);
-    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturated_iters or
-       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
-        status.algorithm_saturated_for++;
-    else
-        status.algorithm_saturated_for = 0;
-
-    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged)
-        status.algorithm_converged_for++;
-    else
-        status.algorithm_converged_for = 0;
-
-    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0)
-        status.algorithm_has_stuck_for++;
-    else
-        status.algorithm_has_stuck_for = 0;
-
-    if(status.iter < settings::xdmrg::warmup_iters) {
-        status.algorithm_saturated_for = 0;
-        status.algorithm_has_stuck_for = 0;
-    }
-
-    status.algorithm_has_succeeded = status.bond_limit_has_reached_max and status.algorithm_converged_for >= settings::strategy::min_converged_iters and
-                                     status.algorithm_saturated_for >= settings::strategy::min_saturated_iters;
-    status.algorithm_has_to_stop = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
-
-    tools::log->info(
-        "Algorithm report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
-        status.algorithm_converged_for, status.variance_mpo_converged_for, status.entanglement_converged_for, status.spin_parity_has_converged,
-        status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for, status.algorithm_has_stuck_for,
-        status.algorithm_has_succeeded, status.algorithm_has_to_stop, status.energy_variance_prec_limit);
-
-    status.algo_stop = AlgorithmStop::NONE;
-    if(status.iter >= settings::xdmrg::min_iters) {
-        if(status.iter >= settings::xdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
-        if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCESS;
-        if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
-        if(status.entanglement_saturated_for > 0 and settings::xdmrg::finish_if_entanglm_saturated) status.algo_stop = AlgorithmStop::SATURATED;
-        if(status.variance_mpo_saturated_for > 0 and settings::xdmrg::finish_if_variance_saturated) status.algo_stop = AlgorithmStop::SATURATED;
-    }
-}
 
 void xdmrg::find_energy_range() {
     // We only need to find an energy range if we are targeting a particular energy density window or target

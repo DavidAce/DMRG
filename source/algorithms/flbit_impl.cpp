@@ -112,7 +112,7 @@ AlgorithmStatus flbit_impl::check_convergence(const AlgorithmStatus &status_init
 
     status.algorithm_converged_for = status.iter + 1 - std::min(settings::flbit::time_num_steps, status.iter + 1);
     status.algorithm_has_succeeded = status.algorithm_converged_for > 0;
-    if(status.algorithm_saturated_for > settings::strategy::min_saturated_iters and status.algorithm_converged_for == 0)
+    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0)
         status.algorithm_has_stuck_for++;
     else
         status.algorithm_has_stuck_for = 0;
@@ -122,8 +122,8 @@ AlgorithmStatus flbit_impl::check_convergence(const AlgorithmStatus &status_init
     tools::log->debug("Simulation report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}", status.algorithm_converged_for,
                       status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded, status.algorithm_has_to_stop);
     status.algo_stop = AlgorithmStop::NONE;
-    if(status.iter >= settings::flbit::min_iters) {
-        if(status.iter >= settings::flbit::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
+    if(status.iter >= settings::flbit::iter_min) {
+        if(status.iter >= settings::flbit::iter_max) status.algo_stop = AlgorithmStop::MAX_ITERS;
         if(status.iter >= settings::flbit::time_num_steps) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
     }

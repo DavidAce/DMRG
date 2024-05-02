@@ -41,7 +41,7 @@ namespace tools::finite::opt::internal {
         // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eig requires energy-shifted MPO²");
 
         const auto problem_size = tensors.active_problem_size();
-        if(problem_size > settings::solver::eig_max_size)
+        if(problem_size > settings::precision::eig_max_size)
             throw except::logic_error("optimize_variance_eig: the problem size is too large for eig: {}", problem_size);
 
         tools::log->trace("Full diagonalization of (H-E)²");

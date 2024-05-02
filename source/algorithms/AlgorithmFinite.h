@@ -4,13 +4,20 @@
 #include "math/svd/config.h"
 #include "measure/MeasurementsStateFinite.h"
 #include "tensors/TensorsFinite.h"
+#include "tools/finite/opt_meta.h"
 
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;
+namespace tools::finite::opt {
+    class opt_mps;
+    struct OptMeta;
+}
 
 // class h5pp_table_measurements_finite;
 class AlgorithmFinite : public AlgorithmBase {
+    using OptMeta = tools::finite::opt::OptMeta;
+
     private:
     size_t                             iter_last_bond_reduce = 0;
     std::optional<std::vector<size_t>> sites_mps, sites_mpo; // Used when moving sites
@@ -26,38 +33,40 @@ class AlgorithmFinite : public AlgorithmBase {
     size_t                   expanded_iter  = 0; /*!< The last iteration when expansion was tried */
     std::optional<OptCost>   last_optcost   = std::nullopt;
     std::optional<OptAlgo>   last_optalgo   = std::nullopt;
-    std::optional<OptSolver> last_optsolver  = std::nullopt;
+    std::optional<OptSolver> last_optsolver = std::nullopt;
 
     public:
-    virtual void resume()                = 0;
-    virtual void run_default_task_list() = 0;
-    void         try_projection(std::optional<std::string> target_sector = std::nullopt);
-    void         set_parity_shift_mpo();
-    void         set_parity_shift_mpo_squared();
-    void         try_moving_sites();
-    void         expand_environment(std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
-    void         move_center_point(std::optional<long> num_moves = std::nullopt);
-    virtual void set_energy_shift_mpo(); // We override this in xdmrg
-    void         rebuild_tensors();
-    void         update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt) final;
-    void         update_bond_dimension_limit() final;
-    void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
-    void         update_truncation_error_limit() final;
-    void         update_expansion_factor_alpha();
-    void         initialize_model();
-    void         run() final;
-    void         run_rbds_analysis();
-    void         run_rtes_analysis();
-    void         run_postprocessing() override;
-    void         clear_convergence_status() override;
-    void         initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
-                                  std::optional<std::string> axis = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
-                                  std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
-                                  std::optional<double> trnc_lim = std::nullopt);
+    virtual void          resume()                = 0;
+    virtual void          run_default_task_list() = 0;
+    void                  try_projection(std::optional<std::string> target_sector = std::nullopt);
+    void                  set_parity_shift_mpo();
+    void                  set_parity_shift_mpo_squared();
+    void                  try_moving_sites();
+    void                  expand_environment(std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
+    void                  move_center_point(std::optional<long> num_moves = std::nullopt);
+    virtual void          set_energy_shift_mpo(); // We override this in xdmrg
+    void                  rebuild_tensors();
+    void                  update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt) final;
+    void                  update_bond_dimension_limit() final;
+    void                  reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
+    void                  update_truncation_error_limit() final;
+    void                  update_expansion_factor_alpha();
+    void                  initialize_model();
+    void                  run() final;
+    void                  run_rbds_analysis();
+    void                  run_rtes_analysis();
+    void                  run_postprocessing() override;
+    [[nodiscard]] OptMeta get_opt_meta();
+    void                  clear_convergence_status() override;
+    void                  initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
+                                           std::optional<std::string> axis = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
+                                           std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
+                                           std::optional<double> trnc_lim = std::nullopt);
 
     void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY) override;
     void print_status() override;
     void print_status_full() final;
+    void check_convergence() override;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_spin_parity_sector(std::string_view target_sector, double threshold = 1e-8);
@@ -76,9 +85,9 @@ class AlgorithmFinite : public AlgorithmBase {
 
     std::vector<log_entry> algorithm_history;
     std::vector<double>    var_mpo_step; // History of energy variances (from mpo) at each step
-    double                 ene_latest = 0.0;
-    double                 var_latest = 0.0;
-    double                 ene_delta = 0.0;
-    double                 var_delta = 0.0;
+    double                 ene_latest    = 0.0;
+    double                 var_latest    = 1.0;
+    double                 ene_delta     = 0.0;
+    double                 var_delta     = 0.0;
     double                 var_relchange = 0.0;
 };

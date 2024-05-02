@@ -27,8 +27,8 @@ namespace stat {
 
     template<typename ContainerType>
     void check_bounds(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
-        if(start_point.has_value() and num::cmp_greater_equal(start_point.value(), std::size(X))) throw std::range_error("Start point is out of range");
-        if(end_point.has_value() and (num::cmp_greater(end_point.value(), std::size(X)) or end_point.value() < start_point))
+        if(start_point.has_value() and std::cmp_greater_equal(start_point.value(), std::size(X))) throw std::range_error("Start point is out of range");
+        if(end_point.has_value() and (std::cmp_greater(end_point.value(), std::size(X)) or end_point.value() < start_point))
             throw std::range_error("End point is out of range");
     }
 

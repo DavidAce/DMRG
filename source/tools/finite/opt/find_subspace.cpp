@@ -98,7 +98,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, const
     }
 
     // If the mps is small enough you can afford full diag.
-    if(tensors.state->active_problem_size() <= settings::solver::eig_max_size) {
+    if(tensors.state->active_problem_size() <= settings::precision::eig_max_size) {
         std::tie(eigvecs, eigvals) = find_subspace_lapack<Scalar>(tensors);
     } else {
         // {
@@ -182,7 +182,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
 
     // Create a reusable config for multiple nev trials
     eig::settings config;
-    config.tol             = settings::solver::eigs_tol_min;
+    config.tol             = settings::precision::eigs_tol_min;
     config.sigma           = cplx(energy_target, 0.0);
     config.shift_invert    = eig::Shinv::ON;
     config.compute_eigvecs = eig::Vecs::ON;
@@ -284,7 +284,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     config.compute_eigvecs = eig::Vecs::ON;
     config.primme_locking  = 1;
     config.loglevel        = 2;
-    if(initial_mps.size() <= settings::solver::eigs_max_size_shift_invert) {
+    if(initial_mps.size() <= settings::precision::eigs_max_size_shift_invert) {
         hamiltonian.factorization   = eig::Factorization::LU;
         config.shift_invert         = eig::Shinv::ON;
         config.ritz                 = eig::Ritz::primme_largest_abs;

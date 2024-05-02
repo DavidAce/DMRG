@@ -28,7 +28,7 @@ void idmrg::run_algorithm() {
 
         // It's important not to perform the last move.
         // That last state would not get optimized
-        if(status.iter >= settings::idmrg::max_iters) {
+        if(status.iter >= settings::idmrg::iter_max) {
             status.algo_stop = AlgorithmStop::MAX_ITERS;
             break;
         }
@@ -40,7 +40,7 @@ void idmrg::run_algorithm() {
             status.algo_stop = AlgorithmStop::SATURATED;
             break;
         }
-        if(status.iter >= settings::idmrg::max_iters) {
+        if(status.iter >= settings::idmrg::iter_max) {
             status.algo_stop = AlgorithmStop::MAX_ITERS;
             break;
         }

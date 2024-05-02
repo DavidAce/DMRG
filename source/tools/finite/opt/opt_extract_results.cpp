@@ -16,8 +16,8 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
     auto t_ext    = tid::tic_scope("extract");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-        auto eigvecs  = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
-        auto eigvals  = eig::view::get_eigvals<real>(solver.result, converged_only);
+        auto eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
+        auto eigvals = eig::view::get_eigvals<real>(solver.result, converged_only);
 
         if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
             double overlap_sq_sum = 0;
@@ -50,10 +50,21 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.set_optcost(meta.optCost);
                 mps.set_optalgo(meta.optAlgo);
                 mps.set_optsolver(meta.optSolver);
-                if(solver.result.meta.residual_norms.empty())
-                    mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
-                                                                        tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
-                else
+                if(solver.result.meta.residual_norms.empty()) {
+                    // This may have come from full diagonalization of either H or H².
+                    // In both cases we know that the residual norm is great.
+                    switch(meta.optCost) {
+                        case OptCost::OVERLAP:
+                        case OptCost::ENERGY:
+                            mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo(),
+                                                                                tensors.get_multisite_env_ene_blk().L, tensors.get_multisite_env_ene_blk().R));
+                            break;
+                        case OptCost::VARIANCE:
+                            mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
+                                                                                tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
+                            break;
+                    }
+                } else
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);

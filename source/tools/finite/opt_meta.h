@@ -37,6 +37,7 @@ namespace tools::finite::opt {
         std::optional<int>         eigs_nev              = std::nullopt;
         std::optional<int>         eigs_ncv              = std::nullopt;
         std::optional<int>         eigs_iter_max         = std::nullopt;
+        std::optional<double>      eigs_time_max         = std::nullopt;
         std::optional<svd::config> svd_cfg               = std::nullopt;
         std::optional<std::string> primme_method         = std::nullopt;
         std::optional<std::string> primme_projection     = std::nullopt; /*!< Choose primme_proj_<default|RR|harmonic|refined> */

@@ -12,6 +12,16 @@ bool settings::algorithm_is_on(AlgorithmType algo_type) {
         default: return false;
     }
 }
+long settings::get_bond_min(AlgorithmType algo_type) {
+    switch(algo_type) {
+        case AlgorithmType::iDMRG: return settings::idmrg::bond_min;
+        case AlgorithmType::fDMRG: return settings::fdmrg::bond_min;
+        case AlgorithmType::xDMRG: return settings::xdmrg::bond_min;
+        case AlgorithmType::iTEBD: return settings::itebd::bond_min;
+        case AlgorithmType::fLBIT: return settings::flbit::bond_min;
+        default: return 8;
+    }
+}
 long settings::get_bond_max(AlgorithmType algo_type) {
     switch(algo_type) {
         case AlgorithmType::iDMRG: return settings::idmrg::bond_max;
@@ -41,16 +51,6 @@ size_t settings::print_freq(AlgorithmType algo_type) {
     }
 }
 
-long settings::get_bond_init(AlgorithmType algo_type) {
-    switch(algo_type) {
-        case AlgorithmType::iDMRG: return settings::idmrg::bond_init;
-        case AlgorithmType::fDMRG: return settings::fdmrg::bond_init;
-        case AlgorithmType::xDMRG: return settings::xdmrg::bond_init;
-        case AlgorithmType::iTEBD: return settings::itebd::bond_init;
-        case AlgorithmType::fLBIT: return settings::flbit::bond_init;
-        default: return 8;
-    }
-}
 bool settings::store_wave_function(AlgorithmType algo_type) {
     switch(algo_type) {
         case AlgorithmType::iDMRG: return false;
@@ -59,6 +59,28 @@ bool settings::store_wave_function(AlgorithmType algo_type) {
         case AlgorithmType::iTEBD: return false;
         case AlgorithmType::fLBIT: return settings::flbit::store_wavefn;
         default: return false;
+    }
+}
+
+extern size_t settings::get_iter_min(AlgorithmType algo_type) {
+    switch(algo_type) {
+        case AlgorithmType::iDMRG: return settings::idmrg::iter_min;
+        case AlgorithmType::fDMRG: return settings::fdmrg::iter_min;
+        case AlgorithmType::xDMRG: return settings::xdmrg::iter_min;
+        case AlgorithmType::iTEBD: return settings::itebd::iter_min;
+        case AlgorithmType::fLBIT: return settings::flbit::iter_min;
+        default: return 0;
+    }
+}
+
+extern size_t settings::get_iter_max(AlgorithmType algo_type) {
+    switch(algo_type) {
+        case AlgorithmType::iDMRG: return settings::idmrg::iter_max;
+        case AlgorithmType::fDMRG: return settings::fdmrg::iter_max;
+        case AlgorithmType::xDMRG: return settings::xdmrg::iter_max;
+        case AlgorithmType::iTEBD: return settings::itebd::iter_max;
+        case AlgorithmType::fLBIT: return settings::flbit::iter_max;
+        default: return -1ul;
     }
 }
 
@@ -159,22 +181,17 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
     dmrg_config.load_parameter("strategy::move_sites_when_stuck"              , strategy::move_sites_when_stuck);
-    dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
-    dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
-    dmrg_config.load_parameter("strategy::project_on_bond_update"             , strategy::project_on_bond_update);
-    dmrg_config.load_parameter("strategy::project_initial_state"              , strategy::project_initial_state);
-    dmrg_config.load_parameter("strategy::project_final_state"                , strategy::project_final_state);
+    dmrg_config.load_parameter("strategy::projection_policy"                  , strategy::projection_policy);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
-    dmrg_config.load_parameter("strategy::max_stuck_iters"                    , strategy::max_stuck_iters);
-    dmrg_config.load_parameter("strategy::max_saturated_iters"                , strategy::max_saturated_iters);
-    dmrg_config.load_parameter("strategy::min_saturated_iters"                , strategy::min_saturated_iters);
-    dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
+    dmrg_config.load_parameter("strategy::iter_max_warmup"                    , strategy::iter_max_warmup);
+    dmrg_config.load_parameter("strategy::iter_max_stuck"                     , strategy::iter_max_stuck);
+    dmrg_config.load_parameter("strategy::iter_max_saturated"                 , strategy::iter_max_saturated);
+    dmrg_config.load_parameter("strategy::iter_min_converged"                 , strategy::iter_min_converged);
     dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
-    dmrg_config.load_parameter("strategy::multisite_opt_site_def"             , strategy::multisite_opt_site_def);
-    dmrg_config.load_parameter("strategy::multisite_opt_site_max"             , strategy::multisite_opt_site_max);
-    dmrg_config.load_parameter("strategy::multisite_opt_move"                 , strategy::multisite_opt_move);
-    dmrg_config.load_parameter("strategy::multisite_opt_when"                 , strategy::multisite_opt_when);
-    dmrg_config.load_parameter("strategy::multisite_opt_grow"                 , strategy::multisite_opt_grow);
+    dmrg_config.load_parameter("strategy::multisite_policy"                   , strategy::multisite_policy);
+    dmrg_config.load_parameter("strategy::multisite_site_def"                 , strategy::multisite_site_def);
+    dmrg_config.load_parameter("strategy::multisite_site_max"                 , strategy::multisite_site_max);
+    dmrg_config.load_parameter("strategy::multisite_max_prob_size"            , strategy::multisite_max_prob_size);
     dmrg_config.load_parameter("strategy::target_axis"                        , strategy::target_axis);
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
@@ -186,18 +203,17 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);
     dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
 
-    dmrg_config.load_parameter("solver::eig_max_size"                         , solver::eig_max_size);
-    dmrg_config.load_parameter("solver::eigs_iter_max"                        , solver::eigs_iter_max);
-    dmrg_config.load_parameter("solver::eigs_tol_min"                         , solver::eigs_tol_min);
-    dmrg_config.load_parameter("solver::eigs_tol_max"                         , solver::eigs_tol_max);
-    dmrg_config.load_parameter("solver::eigs_ncv"                             , solver::eigs_ncv);
-    dmrg_config.load_parameter("solver::eigs_iter_multiplier"                , solver::eigs_iter_multiplier);
-    dmrg_config.load_parameter("solver::eigs_max_size_shift_invert"           , solver::eigs_max_size_shift_invert);
-    dmrg_config.load_parameter("solver::svd_truncation_lim"                   , solver::svd_truncation_lim);
-    dmrg_config.load_parameter("solver::svd_truncation_init"                  , solver::svd_truncation_init);
-    dmrg_config.load_parameter("solver::svd_switchsize_bdc"                   , solver::svd_switchsize_bdc);
-    dmrg_config.load_parameter("solver::svd_save_fail"                        , solver::svd_save_fail);
-
+    dmrg_config.load_parameter("precision::eig_max_size"                      , precision::eig_max_size);
+    dmrg_config.load_parameter("precision::eigs_iter_max"                     , precision::eigs_iter_max);
+    dmrg_config.load_parameter("precision::eigs_tol_min"                      , precision::eigs_tol_min);
+    dmrg_config.load_parameter("precision::eigs_tol_max"                      , precision::eigs_tol_max);
+    dmrg_config.load_parameter("precision::eigs_ncv"                          , precision::eigs_ncv);
+    dmrg_config.load_parameter("precision::eigs_iter_multiplier"              , precision::eigs_iter_multiplier);
+    dmrg_config.load_parameter("precision::eigs_max_size_shift_invert"        , precision::eigs_max_size_shift_invert);
+    dmrg_config.load_parameter("precision::svd_truncation_lim"                , precision::svd_truncation_lim);
+    dmrg_config.load_parameter("precision::svd_truncation_init"               , precision::svd_truncation_init);
+    dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);
+    dmrg_config.load_parameter("precision::svd_save_fail"                     , precision::svd_save_fail);
     dmrg_config.load_parameter("precision::use_compressed_mpo"                , precision::use_compressed_mpo);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared"        , precision::use_compressed_mpo_squared);
     dmrg_config.load_parameter("precision::use_energy_shifted_mpo"            , precision::use_energy_shifted_mpo);
@@ -208,85 +224,81 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);
     dmrg_config.load_parameter("precision::target_subspace_error"             , precision::target_subspace_error);
     dmrg_config.load_parameter("precision::max_subspace_size"                 , precision::max_subspace_size);
-    dmrg_config.load_parameter("precision::max_size_multisite"                , precision::max_size_multisite);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
 
 
 
     //Parameters controlling infinite-DMRG
-    dmrg_config.load_parameter("idmrg::on"                           , idmrg::on);
-    dmrg_config.load_parameter("idmrg::max_iters"                    , idmrg::max_iters);
-    dmrg_config.load_parameter("idmrg::bond_max"                     , idmrg::bond_max);
-    dmrg_config.load_parameter("idmrg::bond_init"                    , idmrg::bond_init);
-    dmrg_config.load_parameter("idmrg::print_freq"                   , idmrg::print_freq);
+    dmrg_config.load_parameter("idmrg::on"                                    , idmrg::on);
+    dmrg_config.load_parameter("idmrg::iter_max"                              , idmrg::iter_max);
+    dmrg_config.load_parameter("idmrg::bond_max"                              , idmrg::bond_max);
+    dmrg_config.load_parameter("idmrg::bond_min"                              , idmrg::bond_min);
+    dmrg_config.load_parameter("idmrg::print_freq"                            , idmrg::print_freq);
 
 
     //Parameters controlling imaginary TEBD (Zero temperature)
-    dmrg_config.load_parameter("itebd::on"                   , itebd::on       );
-    dmrg_config.load_parameter("itebd::max_iters"            , itebd::max_iters);
-    dmrg_config.load_parameter("itebd::time_step_init_real"  , itebd::time_step_init_real  );
-    dmrg_config.load_parameter("itebd::time_step_init_imag"  , itebd::time_step_init_imag  );
-    dmrg_config.load_parameter("itebd::time_step_min"        , itebd::time_step_min);
-    dmrg_config.load_parameter("itebd::suzuki_order"         , itebd::suzuki_order);
-    dmrg_config.load_parameter("itebd::bond_max"             , itebd::bond_max  );
-    dmrg_config.load_parameter("itebd::bond_init"            , itebd::bond_init);
-    dmrg_config.load_parameter("itebd::print_freq"           , itebd::print_freq);
+    dmrg_config.load_parameter("itebd::on"                                    , itebd::on       );
+    dmrg_config.load_parameter("itebd::iter_max"                              , itebd::iter_max);
+    dmrg_config.load_parameter("itebd::time_step_init_real"                   , itebd::time_step_init_real  );
+    dmrg_config.load_parameter("itebd::time_step_init_imag"                   , itebd::time_step_init_imag  );
+    dmrg_config.load_parameter("itebd::time_step_min"                         , itebd::time_step_min);
+    dmrg_config.load_parameter("itebd::suzuki_order"                          , itebd::suzuki_order);
+    dmrg_config.load_parameter("itebd::bond_max"                              , itebd::bond_max  );
+    dmrg_config.load_parameter("itebd::bond_min"                              , itebd::bond_min);
+    dmrg_config.load_parameter("itebd::print_freq"                            , itebd::print_freq);
 
 
     //Parameters controlling finite-DMRG
-    dmrg_config.load_parameter("fdmrg::on"                      , fdmrg::on);
-    dmrg_config.load_parameter("fdmrg::ritz"                    , fdmrg::ritz);
-    dmrg_config.load_parameter("fdmrg::max_iters"               , fdmrg::max_iters);
-    dmrg_config.load_parameter("fdmrg::min_iters"               , fdmrg::min_iters);
-    dmrg_config.load_parameter("fdmrg::bond_max"                , fdmrg::bond_max);
-    dmrg_config.load_parameter("fdmrg::bond_init"               , fdmrg::bond_init);
-    dmrg_config.load_parameter("fdmrg::print_freq "             , fdmrg::print_freq);
-    dmrg_config.load_parameter("fdmrg::store_wavefn"            , fdmrg::store_wavefn);
+    dmrg_config.load_parameter("fdmrg::on"                                    , fdmrg::on);
+    dmrg_config.load_parameter("fdmrg::ritz"                                  , fdmrg::ritz);
+    dmrg_config.load_parameter("fdmrg::iter_max"                              , fdmrg::iter_max);
+    dmrg_config.load_parameter("fdmrg::iter_min"                              , fdmrg::iter_min);
+    dmrg_config.load_parameter("fdmrg::bond_max"                              , fdmrg::bond_max);
+    dmrg_config.load_parameter("fdmrg::bond_min"                              , fdmrg::bond_min);
+    dmrg_config.load_parameter("fdmrg::print_freq "                           , fdmrg::print_freq);
+    dmrg_config.load_parameter("fdmrg::store_wavefn"                          , fdmrg::store_wavefn);
 
     //Parameters controlling finite-LBIT
-    dmrg_config.load_parameter("flbit::on"                           , flbit::on);
-    dmrg_config.load_parameter("flbit::run_iter_in_parallel"         , flbit::run_iter_in_parallel);
-    dmrg_config.load_parameter("flbit::run_effective_model"          , flbit::run_effective_model);
-    dmrg_config.load_parameter("flbit::max_iters"                    , flbit::max_iters);
-    dmrg_config.load_parameter("flbit::min_iters"                    , flbit::min_iters);
-    dmrg_config.load_parameter("flbit::use_swap_gates"               , flbit::use_swap_gates);
-    dmrg_config.load_parameter("flbit::use_mpo_circuit"              , flbit::use_mpo_circuit);
-    dmrg_config.load_parameter("flbit::bond_max"                     , flbit::bond_max);
-    dmrg_config.load_parameter("flbit::bond_init"                    , flbit::bond_init);
-    dmrg_config.load_parameter("flbit::time_scale"                   , flbit::time_scale);
-    dmrg_config.load_parameter("flbit::time_start_real"              , flbit::time_start_real);
-    dmrg_config.load_parameter("flbit::time_start_imag"              , flbit::time_start_imag);
-    dmrg_config.load_parameter("flbit::time_final_real"              , flbit::time_final_real);
-    dmrg_config.load_parameter("flbit::time_final_imag"              , flbit::time_final_imag);
-    dmrg_config.load_parameter("flbit::time_num_steps"               , flbit::time_num_steps);
-    dmrg_config.load_parameter("flbit::print_freq"                   , flbit::print_freq);
-    dmrg_config.load_parameter("flbit::store_wavefn"                 , flbit::store_wavefn);
-    dmrg_config.load_parameter("flbit::cls::num_rnd_circuits"        , flbit::cls::num_rnd_circuits);
-    dmrg_config.load_parameter("flbit::cls::exit_when_done"          , flbit::cls::exit_when_done);
-    dmrg_config.load_parameter("flbit::cls::randomize_hfields"       , flbit::cls::randomize_hfields);
-    dmrg_config.load_parameter("flbit::cls::mpo_circuit_switchdepth" , flbit::cls::mpo_circuit_switchdepth);
-    dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_bondlim" , flbit::cls::mpo_circuit_svd_bondlim);
-    dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_trnclim" , flbit::cls::mpo_circuit_svd_trnclim);
-    dmrg_config.load_parameter("flbit::opdm::num_rps"                , flbit::opdm::num_rps);
-    dmrg_config.load_parameter("flbit::opdm::exit_when_done"         , flbit::opdm::exit_when_done);
+    dmrg_config.load_parameter("flbit::on"                                    , flbit::on);
+    dmrg_config.load_parameter("flbit::run_iter_in_parallel"                  , flbit::run_iter_in_parallel);
+    dmrg_config.load_parameter("flbit::run_effective_model"                   , flbit::run_effective_model);
+    dmrg_config.load_parameter("flbit::iter_max"                              , flbit::iter_max);
+    dmrg_config.load_parameter("flbit::iter_min"                              , flbit::iter_min);
+    dmrg_config.load_parameter("flbit::use_swap_gates"                        , flbit::use_swap_gates);
+    dmrg_config.load_parameter("flbit::use_mpo_circuit"                       , flbit::use_mpo_circuit);
+    dmrg_config.load_parameter("flbit::bond_max"                              , flbit::bond_max);
+    dmrg_config.load_parameter("flbit::bond_min"                              , flbit::bond_min);
+    dmrg_config.load_parameter("flbit::time_scale"                            , flbit::time_scale);
+    dmrg_config.load_parameter("flbit::time_start_real"                       , flbit::time_start_real);
+    dmrg_config.load_parameter("flbit::time_start_imag"                       , flbit::time_start_imag);
+    dmrg_config.load_parameter("flbit::time_final_real"                       , flbit::time_final_real);
+    dmrg_config.load_parameter("flbit::time_final_imag"                       , flbit::time_final_imag);
+    dmrg_config.load_parameter("flbit::time_num_steps"                        , flbit::time_num_steps);
+    dmrg_config.load_parameter("flbit::print_freq"                            , flbit::print_freq);
+    dmrg_config.load_parameter("flbit::store_wavefn"                          , flbit::store_wavefn);
+    dmrg_config.load_parameter("flbit::cls::num_rnd_circuits"                 , flbit::cls::num_rnd_circuits);
+    dmrg_config.load_parameter("flbit::cls::exit_when_done"                   , flbit::cls::exit_when_done);
+    dmrg_config.load_parameter("flbit::cls::randomize_hfields"                , flbit::cls::randomize_hfields);
+    dmrg_config.load_parameter("flbit::cls::mpo_circuit_switchdepth"          , flbit::cls::mpo_circuit_switchdepth);
+    dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_bondlim"          , flbit::cls::mpo_circuit_svd_bondlim);
+    dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_trnclim"          , flbit::cls::mpo_circuit_svd_trnclim);
+    dmrg_config.load_parameter("flbit::opdm::num_rps"                         , flbit::opdm::num_rps);
+    dmrg_config.load_parameter("flbit::opdm::exit_when_done"                  , flbit::opdm::exit_when_done);
 
 
 
     //Parameters controlling excited state DMRG
-    dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
-    dmrg_config.load_parameter("xdmrg::ritz"                         , xdmrg::ritz);
-    dmrg_config.load_parameter("xdmrg::ritz_ted_target"              , xdmrg::energy_density_target);
-    dmrg_config.load_parameter("xdmrg::max_iters"                    , xdmrg::max_iters);
-    dmrg_config.load_parameter("xdmrg::min_iters"                    , xdmrg::min_iters);
-    dmrg_config.load_parameter("xdmrg::warmup_iters"                 , xdmrg::warmup_iters);
-    dmrg_config.load_parameter("xdmrg::bond_max"                     , xdmrg::bond_max);
-    dmrg_config.load_parameter("xdmrg::bond_init"                    , xdmrg::bond_init);
-    dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
-    dmrg_config.load_parameter("xdmrg::store_wavefn"                 , xdmrg::store_wavefn);
-    dmrg_config.load_parameter("xdmrg::max_states"                   , xdmrg::max_states);
-    dmrg_config.load_parameter("xdmrg::try_directx2_when_stuck"      , xdmrg::try_directx2_when_stuck);
-    dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
-    dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
+    dmrg_config.load_parameter("xdmrg::on"                                    , xdmrg::on);
+    dmrg_config.load_parameter("xdmrg::ritz"                                  , xdmrg::ritz);
+    dmrg_config.load_parameter("xdmrg::ritz_ted_target"                       , xdmrg::energy_density_target);
+    dmrg_config.load_parameter("xdmrg::iter_max"                              , xdmrg::iter_max);
+    dmrg_config.load_parameter("xdmrg::iter_min"                              , xdmrg::iter_min);
+    dmrg_config.load_parameter("xdmrg::bond_max"                              , xdmrg::bond_max);
+    dmrg_config.load_parameter("xdmrg::bond_min"                              , xdmrg::bond_min);
+    dmrg_config.load_parameter("xdmrg::print_freq "                           , xdmrg::print_freq);
+    dmrg_config.load_parameter("xdmrg::store_wavefn"                          , xdmrg::store_wavefn);
+    dmrg_config.load_parameter("xdmrg::max_states"                            , xdmrg::max_states);
+    dmrg_config.load_parameter("xdmrg::try_directx2_when_stuck"               , xdmrg::try_directx2_when_stuck);
 
     //Timers
     dmrg_config.load_parameter("timer::level"      , timer::level     );

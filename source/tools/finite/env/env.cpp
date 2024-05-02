@@ -65,7 +65,7 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
     // Set up the SVD
     auto bond_lim = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
     svd_cfg       = svd_cfg.value_or(svd::config());
-    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::solver::svd_truncation_lim);
+    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::precision::svd_truncation_lim);
     svd_cfg->rank_max         = std::min(bond_lim, svd_cfg->rank_max.value_or(bond_lim));
     svd::solver svd(svd_cfg);
 
@@ -210,7 +210,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
     // and let the proper truncation happen after optimization instead.
     auto bond_lim             = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
     svd_cfg                   = svd_cfg.value_or(svd::config());
-    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::solver::svd_truncation_lim);
+    svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::precision::svd_truncation_lim);
     svd_cfg->rank_max         = std::min(bond_lim, svd_cfg->rank_max.value_or(bond_lim));
     svd::solver svd(svd_cfg);
 

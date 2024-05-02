@@ -60,15 +60,25 @@ int eig::solver::dsyevr(real *matrix /*!< gets destroyed */, size_type L, char r
     std::vector<double> work(static_cast<size_t>(lwork));
     std::vector<int>    iwork(static_cast<size_t>(liwork));
     auto                t_prep = std::chrono::high_resolution_clock::now();
-    info = LAPACKE_dsyevr_work(LAPACK_COL_MAJOR, jobz, range, 'U', n, matrix, lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found, eigvals.data(),
+    info = LAPACKE_dsyevr_work(LAPACK_COL_MAJOR, jobz, range, 'U', n, matrix, lda, vl, vu, il, iu, LAPACKE_dlamch('S'), &m_found, eigvals.data(),
                                eigvecs.data(), ldz, isuppz.data(), work.data(), lwork, iwork.data(), liwork);
     if(info < 0) throw std::runtime_error("LAPACKE_dsyevr_work: info" + std::to_string(info));
+    /* From the MKL manual:
+        abstol
+        If jobz = 'V', the eigenvalues and eigenvectors output have residual norms bounded by abstol,
+        and the dot products between different eigenvectors are bounded by abstol.
+        If abstol < n *eps*||T||, then n *eps*||T|| is used instead, where eps is the machine precision,
+        and ||T|| is the 1-norm of the matrix T.
+        The eigenvalues are computed to an accuracy of eps*||T|| irrespective of abstol.
+        If high relative accuracy is important, set abstol to ?lamch('S').
+    */
 
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         eig::log->trace("Found {} eigenvalues", m_found);
         eigvals.resize(static_cast<size_t>(m_found));
         eigvecs.resize(static_cast<size_t>(ldz * m_found));
+        // result.meta.residual_norms = std::vector<double>(2 * LAPACKE_dlamch('S'), m_found);
         result.meta.eigvecsR_found = m_found > 0;
         result.meta.eigvals_found  = m_found > 0;
         result.meta.rows           = L;

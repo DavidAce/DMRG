@@ -124,6 +124,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         if(switchsize_gesvd != -1ul and std::cmp_greater_equal(sizeS, switchsize_gesvd)) svd_rtn = svd::rtn::gesvd;
         if(switchsize_gesdd != -1ul and std::cmp_greater_equal(sizeS, switchsize_gesdd)) svd_rtn = svd::rtn::gesdd;
 
+        if(svd_rtn != rtn::gesdd and rows * cols >= 256) svd_rtn = rtn::gesdd; // If it's a large problem, do gesdd anyway.
         if(svd_rtn == rtn::gesdd) {
             bool is_rank_low   = std::cmp_greater_equal(sizeS,
                                                         rank_lim * 8); // Will keep at least 25% of the singular values
@@ -251,7 +252,6 @@ template void svd::solver::print_vector<real>(const real *vec_ptr, long size, st
 
 template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, std::string_view tag, long dec) const;
 
-
 // template<typename Scalar>
 std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
     //        assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
@@ -342,21 +342,21 @@ std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> svd::solver::spli
     auto                     dim3      = mpo.dimension(1);
     auto                     dim_ddm   = dim0 * dim1 * dim2;
     Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3});
-    auto [U, S, VT]                     = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
-    auto Smin = S.real().minCoeff();
-    auto Smax = S.real().maxCoeff();
+    auto [U, S, VT]                    = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
+    auto Smin                          = S.real().minCoeff();
+    auto Smax                          = S.real().maxCoeff();
     // Stabilize by inserting avgS *  1/avgS
     auto avgS = num::next_power_of_two<double>(S.head(S.nonZeros()).real().mean()); // Nearest power of two larger than S.mean()
     if(avgS > 1) {
         S /= avgS;
         std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.real().head(S.real().nonZeros()));
-        U  = U.leftCols(rank).eval();
-        S  = S.head(rank).eval();
-        VT = VT.topRows(rank).eval();
+        U                                = U.leftCols(rank).eval();
+        S                                = S.head(rank).eval();
+        VT                               = VT.topRows(rank).eval();
         U *= avgS;
     }
     // rank = dropfilter(U, S, V, svd_cfg.truncation_limit.value_or(1e-16), 8);
-    VT    = S.asDiagonal() * VT; // Rescaled singular values
+    VT = S.asDiagonal() * VT; // Rescaled singular values
     fmt::print("S l2r min {:.5e} | max {:.5e} -->  min {:.5e} | max {:.5e} | size {}\n", Smin, Smax, S.real().minCoeff(), S.real().maxCoeff(), S.size());
     /* clang-format off */
     return std::make_tuple(
@@ -415,7 +415,7 @@ std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::spli
     auto dim_ddm = dim1 * dim2 * dim3;
 
     Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm});
-    auto [U, S, VT]                     = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
+    auto [U, S, VT]                    = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
 
     auto Smin = S.real().minCoeff();
     auto Smax = S.real().maxCoeff();
@@ -425,16 +425,15 @@ std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::spli
     if(avgS > 1) {
         S /= avgS;
         std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.real().head(S.real().nonZeros()));
-        U  = U.leftCols(rank).eval();
-        S  = S.head(rank).eval();
-        VT = VT.topRows(rank).eval();
+        U                                = U.leftCols(rank).eval();
+        S                                = S.head(rank).eval();
+        VT                               = VT.topRows(rank).eval();
         VT *= avgS;
-
     }
     // TRY PRINTING S before rescaling
     fmt::print("S r2l min {:.5e} | max {:.5e} -->  min {:.5e} | max {:.5e} | size {}\n", Smin, Smax, S.real().minCoeff(), S.real().maxCoeff(), S.size());
     // rank = dropfilter(U, S, V, svd_cfg.truncation_limit.value_or(1e-16), 8);
-    U    = U * S.asDiagonal();
+    U = U * S.asDiagonal();
 
     /* clang-format off */
     return std::make_tuple(

@@ -29,7 +29,7 @@ enum class From { A, B };
 template<From from, auto N, bool on = settings::debug_numen>
 [[nodiscard]] inline std::string bits_to_string(const std::bitset<N> &b, [[maybe_unused]] long state_size, long num_bits) {
     if constexpr(on) {
-        if(num_bits < 0l or num::cmp_greater_equal(num_bits, N)) {
+        if(num_bits < 0l or std::cmp_greater_equal(num_bits, N)) {
             tools::log->warn("num_bits should be in range [0,{}]. Got {} | bits {}", N, num_bits, b.to_string());
             return "SEE WARNING";
         }

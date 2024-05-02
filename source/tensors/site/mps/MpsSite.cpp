@@ -232,7 +232,7 @@ template unsigned long long MpsSite::get_position<unsigned long long>() const; /
 
 template<typename T>
 [[nodiscard]] bool MpsSite::is_at_position(T pos) const {
-    return num::cmp_equal(get_position(), pos);
+    return std::cmp_equal(get_position(), pos);
 }
 
 template bool MpsSite::is_at_position(size_t pos) const;

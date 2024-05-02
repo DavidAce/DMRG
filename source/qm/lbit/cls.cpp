@@ -75,7 +75,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     auto cfg             = svd::config();
     cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
     cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
-    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
+    cfg.switchsize_gesdd = settings::precision::svd_switchsize_bdc;
     cfg.svd_lib          = svd::lib::lapacke;
     cfg.svd_rtn          = svd::rtn::geauto;
     auto  svd            = svd::solver(cfg);
@@ -194,7 +194,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     auto cfg             = svd::config();
     cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
     cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
-    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
+    cfg.switchsize_gesdd = settings::precision::svd_switchsize_bdc;
     cfg.svd_lib          = svd::lib::lapacke;
     cfg.svd_rtn          = svd::rtn::geauto;
     auto  svd            = svd::solver(cfg);

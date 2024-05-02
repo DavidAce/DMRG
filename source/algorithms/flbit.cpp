@@ -66,7 +66,6 @@ void flbit::resume() {
         clear_convergence_status();
 
         // Create an initial state in the real basis
-        auto bond_lim = settings::get_bond_init(status.algo_type);
         switch(settings::strategy::initial_state) {
             case StateInit::PRODUCT_STATE_DOMAIN_WALL:
             case StateInit::PRODUCT_STATE_PATTERN:
@@ -88,7 +87,7 @@ void flbit::resume() {
             tools::log->warn("Expected initial_axis == z. Got {}", settings::strategy::initial_axis);
 
         tensors.initialize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_axis,
-                                 settings::strategy::use_eigenspinors, bond_lim, settings::strategy::initial_pattern);
+                                 settings::strategy::use_eigenspinors, settings::get_bond_min(status.algo_type), settings::strategy::initial_pattern);
 
         tensors.move_center_point_to_inward_edge();
 
@@ -414,13 +413,13 @@ void flbit::run_algorithm2() {
             tools::log->debug("Exponentiating the diagonal Hamiltonians");
 
             auto tevo_op = [&time](const auto &h) -> cplx {
-                #if defined(USE_QUADMATH)
+#if defined(USE_QUADMATH)
                 f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), 2 * M_PIq);
                 return std::exp(-1.0i * static_cast<real>(fmod_th_128));
-                #else
+#else
                 f128_t fmod_th_128 = std::fmod(time.real() * real_t(h.real()), 2 * std::numbers::pi_v<real_t>);
                 return std::exp(-1.0i * static_cast<real>(fmod_th_128));
-                #endif
+#endif
             };
             //            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
             Eigen::VectorXcd tevo_eff_diagonal = hamiltonian_eff_diagonal.unaryExpr(tevo_op);
@@ -512,7 +511,7 @@ void flbit::check_convergence() {
 
     status.algorithm_converged_for = status.iter + 1 - std::min(settings::flbit::time_num_steps, status.iter + 1);
     status.algorithm_has_succeeded = status.algorithm_converged_for > 0;
-    if(status.algorithm_saturated_for > settings::strategy::min_saturated_iters and status.algorithm_converged_for == 0)
+    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0)
         status.algorithm_has_stuck_for++;
     else
         status.algorithm_has_stuck_for = 0;
@@ -522,8 +521,8 @@ void flbit::check_convergence() {
     tools::log->debug("Simulation report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}", status.algorithm_converged_for,
                       status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded, status.algorithm_has_to_stop);
     status.algo_stop = AlgorithmStop::NONE;
-    if(status.iter >= settings::flbit::min_iters) {
-        if(status.iter >= settings::flbit::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
+    if(status.iter >= settings::flbit::iter_min) {
+        if(status.iter >= settings::flbit::iter_max) status.algo_stop = AlgorithmStop::MAX_ITERS;
         if(status.iter >= settings::flbit::time_num_steps) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
     }
