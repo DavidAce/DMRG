@@ -132,21 +132,22 @@ namespace tools::finite::h5 {
         // Check if the current entry has already been appended
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
         if(attrs == sinfo) return;
+        const auto &opdm = tools::finite::measure::opdm(state);
+        if(opdm.size() == 0) return;
         tools::log->trace("Appending to dataset: {}", dset_path);
-        auto opdm = tools::finite::measure::opdm(state);
         if(not attrs.link_exists) {
-            auto                 rows = safe_cast<hsize_t>(state.measurements.opdm->dimension(0));
-            auto                 cols = safe_cast<hsize_t>(state.measurements.opdm->dimension(1));
+            auto                 rows = safe_cast<hsize_t>(opdm.dimension(0));
+            auto                 cols = safe_cast<hsize_t>(opdm.dimension(1));
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::opdm::chunksize};
-            using opdm_type           = decltype(opdm)::Scalar;
+            using opdm_type           = std::remove_cvref_t<decltype(opdm)>::Scalar;
             h5file.createDataset(dset_path, h5pp::type::getH5Type<opdm_type>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
             h5file.writeAttribute("extent-1,offset,iter", dset_path, "index");
             h5file.writeAttribute("One-particle density matrix", dset_path, "description");
         }
         tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
                           flag2str(sinfo.get_dataset_storage_policy(dset_path)));
-        h5file.appendToDataset(state.measurements.opdm.value(), dset_path, 2);
+        h5file.appendToDataset(opdm, dset_path, 2);
         tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
     }
 
@@ -479,7 +480,7 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::correlations(h5file, sinfo, state);
         tools::finite::h5::save::opdm(h5file, sinfo, state);
         tools::finite::h5::save::opdm_spectrum(h5file, sinfo, state);
-        tools::common::h5::save::resume_attrs(h5file, sinfo);   // Save attributes relevant for resuming
+        tools::common::h5::save::resume_attrs(h5file, sinfo); // Save attributes relevant for resuming
 
         // The file can now be closed
         h5file.setKeepFileClosed();

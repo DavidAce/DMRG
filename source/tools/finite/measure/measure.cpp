@@ -1304,8 +1304,8 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::opdm(const StateFinite &state) {
      * Note also that the signs are "crossed" intentionally: r++ has sp and sm, and so on.
      *
      */
-
-    tools::log->trace("Measuring kvornings matrix");
+    if(state.measurements.opdm) return state.measurements.opdm.value();
+    tools::log->trace("Measuring the one-particle density matrix (OPDM)");
     long L   = state.get_length<long>();
     auto R   = Eigen::MatrixXcd(2 * L, 2 * L); // Allocate the full rho matrix "R"
     auto rpp = R.topLeftCorner(L, L);          // One quadrant of R: rho++
@@ -1366,7 +1366,8 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::opdm(const StateFinite &state) {
     tools::log->debug("R    : trace {:.16f}", R.trace());
     if(not R.isApprox(R.conjugate().transpose())) throw except::logic_error("R is not hermitian");
     if(std::abs(R.trace() - static_cast<double>(L)) > 1e-8) throw std::runtime_error("R.trace() != L");
-    return tenx::TensorMap(R);
+    state.measurements.opdm = tenx::TensorMap(R);
+    return state.measurements.opdm.value();
 }
 
 Eigen::Tensor<double, 1> tools::finite::measure::opdm_spectrum(const StateFinite &state) {
