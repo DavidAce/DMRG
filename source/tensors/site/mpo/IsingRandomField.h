@@ -10,7 +10,7 @@ class IsingRandomField : public MpoSite {
 
     [[nodiscard]] double   get_field() const;
     [[nodiscard]] double   get_coupling() const;
-    Eigen::Tensor<cplx, 4> get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    Eigen::Tensor<cplx, 4> get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                    std::optional<std::vector<size_t>> skip = std::nullopt) const final;
 
     public:

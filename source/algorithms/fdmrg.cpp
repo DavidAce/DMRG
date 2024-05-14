@@ -170,11 +170,9 @@ void fdmrg::run_algorithm() {
         if(status.algo_stop != AlgorithmStop::NONE) break;
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
-        update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
         set_energy_shift_mpo(); // Shift the energy in the mpos to get rid of critical cancellation (shifts by the current energy)
         rebuild_tensors();
-        expand_environment();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -283,20 +281,10 @@ void fdmrg::update_state() {
     // Hold the variance before the optimization step for comparison
     if(not variance_before_step) variance_before_step = tools::finite::measure::energy_variance(tensors); // Should just take value from cache
 
-    // Use environment expansion if alpha_expansion is set
-    // Note that this changes the mps and edges adjacent to "tensors.active_sites"
-    // if(opt_meta.alpha_expansion) {
-    //     tensors.expand_environment(opt_meta.alpha_expansion, EnvExpandMode::ENE, svd::config(status.bond_lim, std::min(1e-12, status.trnc_min)));
-    //     if(tensors.active_problem_size() > opt_meta.problem_size) {
-    //         // The problem size has grown after expansion. We need to reevaluate the choice of solver.
-    //         opt_meta.problem_size = tensors.active_problem_size();
-    //         opt_meta.problem_dims = tensors.active_problem_dims();
-    //         opt_meta.optSolver    = OptSolver::EIGS;
-    //         if(opt_meta.problem_size <= settings::precision::eig_max_size) opt_meta.optSolver = OptSolver::EIG;
-    //     }
-    // }
+    // Expand the environment to grow the bond dimension in 1-site dmrg
+    if(tensors.active_sites.size() == 1) { expand_environment(EnvExpandMode::ENE, EnvExpandSide::FORWARD); }
 
-    auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
+    auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors,opt_meta);
     auto opt_state   = tools::finite::opt::find_ground_state(tensors, initial_mps, status, opt_meta);
 
     // Determine the quality of the optimized state.

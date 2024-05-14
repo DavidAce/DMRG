@@ -164,12 +164,12 @@ bool ModelInfinite::is_shifted() const { return HA->has_energy_shifted_mpo() and
 double ModelInfinite::get_energy_shift_per_site() const {
     if(not num::all_equal(HA->get_energy_shift_mpo(), get_mpo_siteB().get_energy_shift_mpo()))
         throw except::runtime_error("Energy shift mismatch: HA {:.16f} != HB {:.16f}", get_mpo_siteA().get_energy_shift_mpo(), get_mpo_siteB().get_energy_shift_mpo());
-    return HA->get_energy_shift_mpo();
+    return HA->get_energy_shift_mpo().real();
 }
 
 void ModelInfinite::set_energy_shift_per_site(double energy_shift_per_site) {
-    HA->set_energy_shift_mpo(energy_shift_per_site);
-    HB->set_energy_shift_mpo(energy_shift_per_site);
+    HA->set_energy_shift_mpo(cplx(energy_shift_per_site,0.0));
+    HB->set_energy_shift_mpo(cplx(energy_shift_per_site,0.0));
 }
 
 const Eigen::Tensor<cplx, 4> &ModelInfinite::get_2site_mpo_AB() const {

@@ -30,7 +30,6 @@ class AlgorithmFinite : public AlgorithmBase {
     TensorsFinite tensors; // State, model and edges
 
     size_t                   projected_iter = 0; /*!< The last iteration when projection was tried */
-    size_t                   expanded_iter  = 0; /*!< The last iteration when expansion was tried */
     std::optional<OptCost>   last_optcost   = std::nullopt;
     std::optional<OptAlgo>   last_optalgo   = std::nullopt;
     std::optional<OptSolver> last_optsolver = std::nullopt;
@@ -42,15 +41,15 @@ class AlgorithmFinite : public AlgorithmBase {
     void                  set_parity_shift_mpo();
     void                  set_parity_shift_mpo_squared();
     void                  try_moving_sites();
-    void                  expand_environment(std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
+    void                  expand_environment(EnvExpandMode expandMode, EnvExpandSide expandSide = EnvExpandSide::FORWARD,
+                                             std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
     void                  move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void          set_energy_shift_mpo(); // We override this in xdmrg
     void                  rebuild_tensors();
     void                  update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt) final;
     void                  update_bond_dimension_limit() final;
-    void                  reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
+    void                  reduce_bond_dimension_limit(double rate, UpdatePolicy when, StorageEvent storage_event);
     void                  update_truncation_error_limit() final;
-    void                  update_expansion_factor_alpha();
     void                  initialize_model();
     void                  run() final;
     void                  run_rbds_analysis();
@@ -85,9 +84,9 @@ class AlgorithmFinite : public AlgorithmBase {
 
     std::vector<log_entry> algorithm_history;
     std::vector<double>    var_mpo_step; // History of energy variances (from mpo) at each step
-    double                 ene_latest    = 0.0;
-    double                 var_latest    = 1.0;
-    double                 ene_delta     = 0.0;
-    double                 var_delta     = 0.0;
-    double                 var_relchange = 0.0;
+    double                 ene_latest = 0.0;
+    double                 var_latest = 1.0;
+    double                 ene_delta  = 0.0;
+    double                 var_delta  = 0.0;
+    double                 var_change = 0.0; // Variance change from normal optimization
 };

@@ -25,6 +25,7 @@
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
+#include <h5pp/details/h5ppFile.h>
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
@@ -190,7 +191,7 @@ void xdmrg::run_preprocessing() {
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
 
-    if(tensors.get_length<long>() <= 12) {
+    if(tensors.get_length<long>() <= 4) {
         // Print the spectrum if small
         // tensors.clear_cache();
         auto svd_solver = svd::solver();
@@ -205,19 +206,31 @@ void xdmrg::run_preprocessing() {
         solver2.eig<eig::Form::SYMM>(ham2.data(), ham2.dimension(0), eig::Vecs::OFF);
         // solver1i.eig<eig::Form::SYMM>(ham1i.data(), ham1i.dimension(0));
 
-        auto evals1 = eig::view::get_eigvals<real>(solver1.result);
-        auto evals2 = eig::view::get_eigvals<real>(solver2.result);
+        auto            evals1 = eig::view::get_eigvals<real>(solver1.result);
+        auto            evals2 = eig::view::get_eigvals<real>(solver2.result);
+        Eigen::VectorXd diffs1 = Eigen::VectorXd::Zero(evals1.size());
+        Eigen::VectorXd diffs2 = Eigen::VectorXd::Zero(evals1.size());
+        auto            N1     = evals1.size() - 1;
+        auto            N2     = evals2.size() - 1;
+        diffs1.topRows(N1)     = (evals1.bottomRows(N1) - evals1.topRows(N1));
+        diffs2.topRows(N2)     = (evals2.bottomRows(N2) - evals2.topRows(N2));
+
         // auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
         fmt::print("{:^8} {:<20}\n", " ", "H¹");
         for(long idx = 0; idx < evals1.size(); ++idx) {
-            if(std::abs(evals1[idx]) > 0.01) continue;
-            fmt::print("idx {:2}: {:20.16f}\n", idx, evals1[idx]);
+            // if(std::abs(evals1[idx]) > 1.1) continue;
+            fmt::print("idx {:2}: {:20.16f} {:>10.3e}\n", idx, evals1[idx], diffs1[idx]);
         }
-        fmt::print("{:^8} {:<20}\n", " ", "H²");
+        fmt::print("{:^8} {:<20} {:<20} {:<20}\n", " ", "H²", "diff", "sqrt(H²)");
         for(long idx = 0; idx < evals2.size(); ++idx) {
-            if(std::abs(evals2[idx]) > 0.1) continue;
-            fmt::print("idx {:2}: {:20.16f}\n", idx, evals2[idx]);
+            // if(std::abs(evals2[idx]) > 1.1) continue;
+            fmt::print("idx {:2}: {:20.16f} {:>10.3e} {:20.16f}\n", idx, evals2[idx], diffs2[idx], std::sqrt(evals2[idx]));
         }
+        auto h5file = h5pp::File("../../output/spectrum.h5", h5pp::FileAccess::RENAME);
+        h5file.writeDataset(evals1, "H_evals");
+        h5file.writeDataset(diffs1, "H_diffs");
+        h5file.writeDataset(evals2, "H2_evals");
+        h5file.writeDataset(diffs2, "H2_diffs");
         // fmt::print("{:^8} {:<20} {:<20}\n", " ", "H¹", "H⁻¹");
         // for(long idx = 0; idx < std::min(evals1_.size(), evals1i.size()); ++idx) {
         //     fmt::print("idx {:2}: {:20.16f} {:20.16f}\n", idx, evals1_[idx], evals1i[idx]);
@@ -245,7 +258,7 @@ void xdmrg::run_preprocessing() {
 
         // tools::log->info("Iterative inverse  H⁻¹");
         // for(long idx = 0; idx < evals3i.size(); ++idx) { fmt::print("idx {:2}: {:20.16f}\n", idx, evals3i[idx]); }
-        // exit(0);
+        exit(0);
     }
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -274,7 +287,6 @@ void xdmrg::run_algorithm() {
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Updates the bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
-        update_expansion_factor_alpha(); // Updates the subspace expansion factor for growing the bond dimension during 1-site dmrg
         try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
@@ -285,7 +297,6 @@ void xdmrg::run_algorithm() {
     status.algorithm_has_finished = true;
     //    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
 }
-
 
 void xdmrg::update_state() {
     using namespace tools::finite;
@@ -304,14 +315,14 @@ void xdmrg::update_state() {
     tensors.rebuild_edges();
 
     tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
-
-    if(tensors.active_sites.size() == 1) {
-        // Use environment expansion if alpha_expansion is set
-        expand_environment(status.env_expansion_alpha, svd::config(status.bond_lim, std::min(5e-16, status.trnc_min)));
-    }
+    auto bond_dims_old = tensors.state->get_mps_dims_active();
+    // Expand the environment to grow the bond dimension in 1-site dmrg
+    if(tensors.active_sites.size() == 1) { expand_environment(EnvExpandMode::VAR, EnvExpandSide::FORWARD); }
+    auto variance_after_exp = tools::finite::measure::energy_variance(tensors);
+    auto bond_dims_exp      = tensors.state->get_mps_dims_active();
 
     // Run the optimization
-    auto initial_state = opt::get_opt_initial_mps(tensors);
+    auto initial_state = opt::get_opt_initial_mps(tensors, opt_meta);
     auto opt_state     = opt::find_excited_state(tensors, initial_state, status, opt_meta);
 
     // Determine the quality of the optimized state.
@@ -357,11 +368,11 @@ void xdmrg::update_state() {
     }
 
     // if constexpr(settings::debug) {
-    auto variance_before_svd = opt_state.get_variance();
-    auto variance_after_svd  = tools::finite::measure::energy_variance(tensors);
-    tools::log->debug("Variance check before SVD: {:8.2e}", variance_before_svd);
-    tools::log->debug("Variance check after  SVD: {:8.2e}", variance_after_svd);
-    tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / variance_before_svd);
+    auto variance_after_svd = tools::finite::measure::energy_variance(tensors);
+    tools::log->debug("Before update: variance {:8.2e} | mps dims {}", var_latest, bond_dims_old);
+    tools::log->debug("After  expns.: variance {:8.2e} | mps dims {}", variance_after_exp, bond_dims_exp);
+    tools::log->debug("After  merge : variance {:8.2e} | mps dims {}", variance_after_svd, tensors.state->get_mps_dims_active());
+    tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / opt_state.get_variance());
     // }
 
     // Update current energy density ε
@@ -374,7 +385,7 @@ void xdmrg::update_state() {
     status.energy_variance_lowest = std::min(var, status.energy_variance_lowest);
     var_delta                     = var - var_latest;
     ene_delta                     = ene - ene_latest;
-    var_relchange                 = (var - var_latest) / var;
+    var_change                    = var / var_latest;
     var_latest                    = var;
     ene_latest                    = ene;
     var_mpo_step.emplace_back(var);
@@ -384,7 +395,6 @@ void xdmrg::update_state() {
     last_optcost   = opt_state.get_optcost();
     if constexpr(settings::debug) tensors.assert_validity();
 }
-
 
 void xdmrg::find_energy_range() {
     // We only need to find an energy range if we are targeting a particular energy density window or target

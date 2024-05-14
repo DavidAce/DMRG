@@ -39,7 +39,21 @@ void MpoSite::build_mpo_squared() {
     mpo_squared  = apply_edge_right(mpo_squared.value(), get_MPO2_edge_right<cplx>());
     unique_id_sq = std::nullopt;
 }
-
+// Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
+//     tools::log->trace("mpo({}): building mpo²", get_position());
+// #pragma message "Testing (H-i1)(H+i1)"
+//     Eigen::Tensor<cplx, 4> mpo_m1 = get_mpo(cplx(0.0, 1.0)/ static_cast<real>(settings::model::model_size));
+//     Eigen::Tensor<cplx, 4> mpo_p1 = get_mpo(cplx(0.0, 1.0)/ static_cast<real>(settings::model::model_size));
+//     Eigen::Tensor<cplx, 4> mpo2;
+//     {
+//         auto d0 = mpo_m1.dimension(0) * mpo_m1.dimension(0);
+//         auto d1 = mpo_m1.dimension(1) * mpo_m1.dimension(1);
+//         auto d2 = mpo_m1.dimension(2);
+//         auto d3 = mpo_m1.dimension(3);
+//         mpo2    = mpo_m1.contract(mpo_p1.conjugate(), tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{d0, d1, d2, d3});
+//     }
+//     return mpo2;
+// }
 Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     tools::log->trace("mpo({}): building mpo²", get_position());
     Eigen::Tensor<cplx, 4> mpo = get_mpo(energy_shift_mpo);
@@ -82,10 +96,11 @@ bool MpoSite::has_mpo() const {
 }
 bool MpoSite::has_mpo_squared() const { return mpo_squared.has_value(); }
 
-Eigen::Tensor<cplx_t, 4> MpoSite::get_mpo_t(real_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cplx_t, 4> MpoSite::get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                             std::optional<std::vector<size_t>> skip) const {
     tools::log->debug("MpoSite::get_mpo_t(): Pointless upcast {} -> {}", sfinae::type_name<cplx>(), sfinae::type_name<cplx_t>());
-    auto mpo = get_mpo(static_cast<double>(energy_shift_per_site), nbody, skip);
+    auto ereal = cplx(static_cast<real>(energy_shift_per_site.real(), static_cast<real>(energy_shift_per_site.imag())));
+    auto mpo   = get_mpo(ereal, nbody, skip);
     return mpo.unaryExpr([](auto z) { return std::complex<real_t>(static_cast<real_t>(z.real()), static_cast<real_t>(z.imag())); });
 }
 
@@ -237,8 +252,8 @@ bool MpoSite::has_compressed_mpo_squared() const {
         return mpo_sq.dimension(0) < d0 or mpo_sq.dimension(1) < d1;
 }
 
-double MpoSite::get_energy_shift_mpo() const { return energy_shift_mpo; }
-void   MpoSite::set_energy_shift_mpo(double site_energy) {
+cplx MpoSite::get_energy_shift_mpo() const { return energy_shift_mpo; }
+void   MpoSite::set_energy_shift_mpo(cplx site_energy) {
     if(energy_shift_mpo != site_energy and settings::precision::use_energy_shifted_mpo) {
         energy_shift_mpo = site_energy;
         clear_mpo();
@@ -444,8 +459,8 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
             //      * q == parity_shift_sign_mpo is the sign of the parity sector we want to shift away from the target sector we are interested in.
             //        Often this is done to resolve a degeneracy. We multiply q just once on the left edge.
             double a = 1.0; // The shift amount. Use a large amount to make sure the target energy in that axis is actually extremal
-            double q = 1.0;                       // The parity sign to shift
-            double r = 1.0;                       // The energy shift direction (-1 is down, +1 is up)
+            double q = 1.0; // The parity sign to shift
+            double r = 1.0; // The energy shift direction (-1 is down, +1 is up)
 
             if(position == 0) {
                 a = global_energy_upper_bound;
@@ -590,12 +605,13 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_left() const {
     auto ledge2   = ledge.contract(ledge, tenx::idx()).reshape(tenx::array1{d0 * d0});
     if(std::abs(parity_shift_sign_mpo2) != 1.0) return ledge2;
     double q = 1.0;
+    double a = 2.0;                               // The shift amount (select 1.0 to shift up by 1.0)
     if(position == 0) q = parity_shift_sign_mpo2; // Selects the opposite sector sign (only needed on one MPO)
     auto ledge2_with_shift = Eigen::Tensor<Scalar, 1>(d0 * d0 + 2);
     ledge2_with_shift.setZero();
     ledge2_with_shift.slice(tenx::array1{0}, ledge2.dimensions()) = ledge2;
-    ledge2_with_shift(d0 * d0 + 0)                                = 0.5;        // 1.0;
-    ledge2_with_shift(d0 * d0 + 1)                                = 0.5 * (-q); // 1.0;
+    ledge2_with_shift(d0 * d0 + 0)                                = a * 0.5;        // 1.0;
+    ledge2_with_shift(d0 * d0 + 1)                                = a * 0.5 * (-q); // 1.0;
     return ledge2_with_shift;
 }
 template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO2_edge_left() const;

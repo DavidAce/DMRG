@@ -86,7 +86,7 @@ std::any IsingMajorana::get_parameter(const std::string_view name) const {
  *  delta = <ln J_i> - <ln h_i> =  2ln(W).
  *
  */
-Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(double energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                               [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
 
 {

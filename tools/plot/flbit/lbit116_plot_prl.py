@@ -1,12 +1,9 @@
 import glob
 import os.path
 
-import matplotlib.pyplot as plt
-from dmrg_plot.common.io.h5ops import *
-from dmrg_plot.common.io.parse import parse
+from common.io.parse import parse
 
 from database.database import *
-from lbit_avg import lbit_avg
 # from plotting.meta93_slack import *
 from plotting.meta93_prl import *
 from plotting.multiplot import *

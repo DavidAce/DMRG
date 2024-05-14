@@ -60,7 +60,7 @@ datafiles = [
 ]
 
 lbitpath = 'fLBIT/model/lbits'
-mplstyle = Path('../common/stylesheets/prb.mplstyle', )
+mplstyle = Path('common/stylesheets/prb.mplstyle', )
 # mplstyle = '../common/stylesheets/slack.mplstyle',
 plotdir = Path("plots/{}".format(mplstyle.stem))
 plotdir.mkdir(parents=True, exist_ok=True)

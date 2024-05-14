@@ -57,6 +57,7 @@ namespace tools::finite::measure {
     template<typename Scalar = cplx>
     [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                           (const std::vector<std::unique_ptr<MpsSite>> & mps_sites, std::string_view name);
     [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                           (const StateFinite & state);
+    [[nodiscard]] extern double entanglement_entropy                                (const Eigen::Tensor<cplx,1> & bond);
     [[nodiscard]] extern double entanglement_entropy_current                        (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_midchain                       (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies                 (const StateFinite & state);

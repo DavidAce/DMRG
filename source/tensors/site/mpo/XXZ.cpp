@@ -82,7 +82,7 @@ std::any XXZ::get_parameter(const std::string_view name) const {
  *         |---σz{i}---[3]------------------ Δσz{i+1}--------------|
  *
  */
-Eigen::Tensor<cplx, 4> XXZ::get_mpo(double energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cplx, 4> XXZ::get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                     [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
 
 {

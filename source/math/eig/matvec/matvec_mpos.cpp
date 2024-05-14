@@ -135,9 +135,12 @@ void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
         auto &threads  = tenx::threads::get();
         auto  mps_tmp1 = Eigen::Tensor<T, 6>();
         auto  mps_tmp2 = Eigen::Tensor<T, 6>();
+        auto  L        = mpos_shf.size();
 
         auto mpodimprod = [&](size_t fr, size_t to) -> long {
             long prod = 1;
+            if(fr == -1ul) fr = 0;
+            if(to == 0 or to == -1ul) return prod;
             for(size_t idx = fr; idx < to; ++idx) {
                 if(idx >= mpos_shf.size()) break;
                 prod *= mpos_shf[idx].dimension(1);
@@ -145,45 +148,78 @@ void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
             return prod;
         };
 
-        auto d0       = mpodimprod(0, 1);               // Split 0 --> 0,1
-        auto d1       = mpodimprod(1, mpos_shf.size()); // Split 0 --> 0,1
-        auto d2       = mps_in.dimension(2);
-        auto d3       = envL.dimension(1);
-        auto d4       = envL.dimension(2);
-        auto d5       = 1l; // A new dummy index
-        auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-        mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
-        mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
+        // At best, the number of operations for contracting left-to-right and right-to-left are equal.
+        // Since the site indices are contracted left to right, we do not need any shuffles in this direction.
 
-        for(size_t idx = 0; idx < mpos_shf.size(); ++idx) {
-            // auto mpo = Eigen::Tensor<T, 4>(mpos[idx].shuffle(shf_mpo));
-            const auto &mpo = mpos_shf[idx];
-            // Set up the dimensions for the reshape after the contraction
-            d0 = mpodimprod(idx + 1, idx + 2);         // if idx == k, this has the mpo at idx == k+1
-            d1 = mpodimprod(idx + 2, mpos_shf.size()); // if idx == 0,  this has the mpos at idx == k+2...L-1
-            d2 = mps_tmp1.dimension(2);
-            d3 = mps_tmp1.dimension(3);
-            d4 = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
-            d5 = mpo.dimension(3);       // The virtual bond of the current mpo
-                                         // if constexpr(std::is_same_v<T, real>) {
-                                         //     auto md  = mps_tmp1.dimensions();
-                                         //     new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
-                                         //     mps_tmp2.resize(new_shp6);
-                                         //     contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg");
-                                         //     new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-                                         //     mps_tmp1 = mps_tmp2.reshape(new_shp6);
-                                         // } else {
-            new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-            mps_tmp2.resize(new_shp6);
-            mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
-            mps_tmp1                       = std::move(mps_tmp2);
-            // }
+        // if(mps_in.dimension(1) <= mps_in.dimension(2)) { // Contract left to right
+        if(true) { // Contract left to right
+
+            auto d0       = mpodimprod(0, 1); // Split 0 --> 0,1
+            auto d1       = mpodimprod(1, L); // Split 0 --> 0,1
+            auto d2       = mps_in.dimension(2);
+            auto d3       = envL.dimension(1);
+            auto d4       = envL.dimension(2);
+            auto d5       = 1l; // A new dummy index
+            auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+            mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
+            mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
+            for(size_t idx = 0; idx < L; ++idx) {
+                // auto mpo = Eigen::Tensor<T, 4>(mpos[idx].shuffle(shf_mpo));
+                const auto &mpo = mpos_shf[idx];
+                // Set up the dimensions for the reshape after the contraction
+                d0       = mpodimprod(idx + 1, idx + 2); // if idx == k, this has the mpo at idx == k+1
+                d1       = mpodimprod(idx + 2, L);       // if idx == 0,  this has the mpos at idx == k+2...L-1
+                d2       = mps_tmp1.dimension(2);
+                d3       = mps_tmp1.dimension(3);
+                d4       = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
+                d5       = mpo.dimension(3);       // The virtual bond of the current mpo
+                new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+                mps_tmp2.resize(new_shp6);
+                mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
+                mps_tmp1                       = std::move(mps_tmp2);
+            }
+            d0 = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
+            d1 = mps_tmp1.dimension(3);
+            d2 = mps_tmp1.dimension(4);
+            d3 = mps_tmp1.dimension(5);
+            mps_out.device(*threads->dev) =
+                mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
+        } else { // Contract right to left
+
+            // Set up the dimensions for the zeroth step
+            auto d0       = mpodimprod(0, L - 1); // mpo 0...L-2 (all but the last one)
+            auto d1       = mpodimprod(L - 1, L); // mpo L-1 (the last one)
+            auto d2       = mps_in.dimension(1);
+            auto d3       = envR.dimension(1);
+            auto d4       = envR.dimension(2);
+            auto d5       = 1l; // A new dummy index
+            auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+            mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
+            mps_tmp1.device(*threads->dev) = mps_in.contract(envR, tenx::idx({2}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
+
+            for(size_t idx = L - 1; idx < L; --idx) {
+                // auto mpo = Eigen::Tensor<T, 4>(mpos[idx].shuffle(shf_mpo));
+                const auto &mpo = mpos_shf[idx];
+                // Set up the dimensions for the reshape after the contraction
+                d0 = mpodimprod(0, idx - 1);   // mpo 0...idx-2 (all to left of idx-1)
+                d1 = mpodimprod(idx - 1, idx); // mpo idx-1
+                d2 = mps_tmp1.dimension(2);
+                d3 = mps_tmp1.dimension(3);
+                d4 = mpodimprod(idx, L); // mpo idx...L-1 (i.e. including the one from the current iteration)
+                d5 = mpo.dimension(2);   // The virtual bond of the current mpo
+
+                new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+                mps_tmp2.resize(new_shp6);
+                mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({1, 5}, {0, 3})).reshape(new_shp6);
+                mps_tmp1                       = std::move(mps_tmp2);
+            }
+            d0 = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
+            d1 = mps_tmp1.dimension(3);
+            d2 = mps_tmp1.dimension(4);
+            d3 = mps_tmp1.dimension(5);
+            mps_out.device(*threads->dev) =
+                mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envL, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 2, 0});
         }
-        d0                            = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
-        d1                            = mps_tmp1.dimension(3);
-        d2                            = mps_tmp1.dimension(4);
-        d3                            = mps_tmp1.dimension(5);
-        mps_out.device(*threads->dev) = mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
     }
     num_mv++;
 }

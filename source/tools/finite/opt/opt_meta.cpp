@@ -41,6 +41,7 @@ namespace tools::finite::opt {
         res += fmt::format(" | solv {}", enum2sv(optSolver));
         res += fmt::format(" | type {}", enum2sv(optType));
         res += fmt::format(" | ritz {}", enum2sv(optRitz));
+        res += fmt::format(" | algo {}", enum2sv(optAlgo));
         if(eigv_target) res += fmt::format(" (tgt: {:.3e})", eigv_target.value());
         if(eigs_nev) res += fmt::format(" | nev {}", eigs_nev.value());
         if(eigs_ncv) res += fmt::format(" | ncv {}", eigs_ncv.value());

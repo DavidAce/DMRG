@@ -15,10 +15,10 @@ void AlgorithmStatus::reset() {
     algo_type          = status.algo_type;
     min_iters          = status.min_iters;
     bond_max           = status.bond_max;
-    bond_init          = status.bond_init;
+    bond_min           = status.bond_min;
     bond_lim           = status.bond_lim;
     trnc_min           = status.trnc_min;
-    trnc_init          = status.trnc_init;
+    trnc_max           = status.trnc_max;
     trnc_lim           = status.trnc_lim;
     energy_min         = status.energy_min;
     energy_max         = status.energy_max;
@@ -43,10 +43,10 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->algo_stop                     == s.algo_stop and
         this->min_iters                     == s.min_iters and
         this->bond_max                      == s.bond_max and
-        this->bond_init                     == s.bond_init and
+        this->bond_min                     == s.bond_min and
         this->bond_lim                      == s.bond_lim and
         this->trnc_min                      == s.trnc_min and
-        this->trnc_init                     == s.trnc_init and
+        this->trnc_max                     == s.trnc_max and
         this->trnc_lim                      == s.trnc_lim and
         this->energy_min                    == s.energy_min and
         this->energy_max                    == s.energy_max and
@@ -57,8 +57,6 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->energy_variance_max_digits    == s.energy_variance_max_digits and
         this->energy_variance_prec_limit    == s.energy_variance_prec_limit and
         this->env_expansion_alpha           == s.env_expansion_alpha and
-        this->env_expansion_variance        == s.env_expansion_variance and
-        this->env_expansion_iter            == s.env_expansion_iter and
         this->phys_time                     == s.phys_time and
         this->wall_time                     == s.wall_time and
         this->algo_time                     == s.algo_time and

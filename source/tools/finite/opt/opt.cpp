@@ -3,8 +3,10 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "math/num.h"
+#include "math/tenx.h"
 #include "math/tenx/threads.h"
 #include "tensors/model/ModelFinite.h"
+#include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
@@ -15,7 +17,7 @@
 #include "tools/finite/opt_mps.h"
 #include <string>
 
-tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
+tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors, const OptMeta &meta) {
     auto    t_init = tid::tic_scope("initial_mps", tid::level::higher);
     opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
                         tools::finite::measure::energy_shift(tensors),              // Shifted energy for full system
@@ -23,6 +25,10 @@ tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const Tensor
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap to initial state (self) is obviously 1
                         tensors.get_length());
+    if(meta.optAlgo == OptAlgo::DIRECTZ) {
+        assert(tensors.active_sites.size() == 1);
+        initial_mps.set_bond(tenx::asDiagonal(tensors.state->get_mps_site().get_LC()));
+    }
     initial_mps.validate_initial_mps();
     return initial_mps;
 }
@@ -54,13 +60,17 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta);
                     break;
                 }
+                case OptAlgo::DIRECTZ: {
+                    result = internal::optimize_variance_eigs(tensors, initial_mps, status, meta);
+                    break;
+                }
                 case OptAlgo::DIRECTX2: {
-                    auto metax2     = meta;
-                    metax2.optCost  = OptCost::ENERGY;
-                    metax2.eigs_tol = std::max(1e-12, meta.eigs_tol.value_or(1e-12));
-                    metax2.eigs_ncv = std::max(32, meta.eigs_ncv.value_or(32));
-                    // metax2.primme_method = "PRIMME_DEFAULT_MIN_MATVECS";
-                    result = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
+                    auto metax2          = meta;
+                    metax2.optCost       = OptCost::ENERGY;
+                    metax2.eigs_tol      = std::max(1e-12, meta.eigs_tol.value_or(1e-12));
+                    metax2.eigs_ncv      = std::max(128, meta.eigs_ncv.value_or(128));
+                    metax2.primme_method = "PRIMME_DEFAULT_MIN_MATVECS";
+                    result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
                     if(meta.optRitz == OptRitz::SM) {
                         // We accept this result if the residual norm is small, and either
@@ -74,7 +84,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         bool rnorm_ok = result.get_rnorm() <= 1e-10;
                         // bool rnorm_nice = result.get_rnorm() <= 1e-12;
                         // if(rnorm_nice) break;
-                        if(rnorm_ok and var_ok) break;
+                        if(rnorm_ok and (var_ok or ene_ok)) break;
 
                         // The result is not good enough. But we could use it as initial guess
                         meta.optCost = OptCost::VARIANCE;

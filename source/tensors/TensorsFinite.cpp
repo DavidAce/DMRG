@@ -510,14 +510,23 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
     normalize_state(svd_cfg, NormPolicy::IFNEEDED);
 }
 
-std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, EnvExpandMode envExpandMode, std::optional<svd::config> svd_cfg) {
+void TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, double alpha, svd::config svd_cfg) {
     // if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
-    auto t_exp = tid::tic_scope("exp_env");
-    // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-    auto pos_expanded = tools::finite::env::expand_environment_forward(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
-    if(not pos_expanded.empty()) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
+    auto t_exp        = tid::tic_scope("exp_env");
+    auto pos_expanded = std::vector<size_t>{};
+    switch(envExpandSide) {
+        case EnvExpandSide::BACKWARD: {
+            // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+            pos_expanded = tools::finite::env::expand_environment_backward(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
+            break;
+        }
+        case EnvExpandSide::FORWARD: {
+            pos_expanded = tools::finite::env::expand_environment_forward(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
+            break;
+        }
+    }
+    if(not pos_expanded.empty()) clear_measurements(LogPolicy::QUIET);
     if constexpr(settings::debug) assert_validity();
-    return pos_expanded;
 }
 
 void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::optional<long> new_pos) {

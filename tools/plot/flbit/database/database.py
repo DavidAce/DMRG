@@ -1,9 +1,9 @@
 import h5py
 
-from dmrg_plot.common.io.h5ops import *
 from plotting.filter import *
 import itertools
-from numbers import Integral, Real
+from numbers import Integral
+
 
 def get_bond_info(statenode, datanode):
     bavg_key = None

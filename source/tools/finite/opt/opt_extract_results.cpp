@@ -2,7 +2,9 @@
 #include "../opt_mps.h"
 #include "config/settings.h"
 #include "math/eig.h"
+#include "math/linalg/tensor.h"
 #include "math/num.h"
+#include "math/tenx.h"
 #include "measure/MeasurementsTensorsFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -10,6 +12,7 @@
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/opt/opt-internal.h"
+#include <fmt/ranges.h>
 
 void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta, const eig::solver &solver,
                                                    std::vector<opt_mps> &results, bool converged_only, std::optional<std::vector<long>> indices) {
@@ -30,7 +33,23 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.is_basis_vector = true;
                 if constexpr(settings::debug) tools::log->trace("Extracting result: idx {} | eigval {:.16f}", idx, eigvals(idx));
                 mps.set_name(fmt::format("eigenvector {} [{:^8}]", idx, solver.config.tag));
-                mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
+                const auto &old_mps = tensors.state->get_mps_site();
+                if(meta.optAlgo == OptAlgo::DIRECTZ) {
+                    auto bond = Eigen::TensorMap<const Eigen::Tensor<cplx, 2>>(eigvecs.col(idx).data(), tenx::array2{old_mps.get_chiR(), old_mps.get_chiR()});
+                    Eigen::Tensor<cplx, 0> trace  = bond.conjugate().contract(bond, tenx::idx({0}, {0})).trace();
+                    auto                   tensor = Eigen::Tensor<cplx, 3>(old_mps.get_M_bare().contract(bond, tenx::idx({2}, {0})));
+                    mps.set_tensor(tensor);
+                    // fmt::print("trace  : {:.16f}\n", trace.coeff(0));
+                    // fmt::print("eigval : {:.16f}\n", eigvals[idx]);
+                    // fmt::print("norm   : {:.16f}\n",eigvecs.col(idx).norm());
+                    // for(size_t bidx = 0; bidx < bond.dimension(0); ++bidx) {
+                    //     fmt::print("{:.10f} -> {:.10f}\n", old_mps.get_LC()[bidx].real(), bond(bidx, bidx).real());
+                    // }
+                    // fmt::print("bond old: \n{}\n", linalg::tensor::to_string(tenx::asDiagonal(old_mps.get_LC()), 6));
+                    // fmt::print("bond new: \n{}\n", linalg::tensor::to_string(bond, 6));
+                } else {
+                    mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
+                }
                 mps.set_sites(initial_mps.get_sites());
                 mps.set_energy_shift(initial_mps.get_energy_shift()); // Will set energy if also given the eigval
                 mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));

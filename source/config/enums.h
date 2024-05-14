@@ -18,19 +18,28 @@ enum class MpoCompress {
 enum class MposWithEdges { OFF, ON };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
 enum class MultisitePolicy {
-    NEVER     = 0,                                    /*!< Never run multisite dmrg */
-    WARMUP    = 1,                                    /*!< Run multisite dmrg during warmup */
-    STUCK     = 2,                                    /*!< Run multisite dmrg when the algorithm is stuck */
-    CONVERGED = 8,                                    /*!< Run multisite dmrg when the algorithm has converged */
-    ALWAYS    = 16,                                   /*!< Always try running multisite dmrg */
-    GRADUAL   = 32,                                   /*!< When STUCK: Increase the number of sites gradually. Otherwise this is ignored */
-    MOVEMID   = 64,                                   /*!< Move m/2 sites after an m-site multisite dmrg step (instead of just 1) */
-    MOVEMAX   = 128,                                  /*!< Move m sites after an m-site multisite dmrg step (instead of just 1) */
-    DEFAULT   = WARMUP | STUCK | CONVERGED | GRADUAL, /*!< Default policy for multisite dmrg steps */
+    NEVER     = 0,              /*!< Never run multisite dmrg */
+    WARMUP    = 1,              /*!< Run multisite dmrg during warmup */
+    STUCK     = 2,              /*!< Run multisite dmrg when the algorithm is stuck */
+    CONVERGED = 8,              /*!< Run multisite dmrg when the algorithm has converged */
+    ALWAYS    = 16,             /*!< Always try running multisite dmrg */
+    GRADUAL   = 32,             /*!< When STUCK: Increase the number of sites gradually. Otherwise this is ignored */
+    MOVEMID   = 64,             /*!< Move m/2 sites after an m-site multisite dmrg step (instead of just 1) */
+    MOVEMAX   = 128,            /*!< Move m sites after an m-site multisite dmrg step (instead of just 1) */
+    DEFAULT   = WARMUP | STUCK, /*!< Default policy for multisite dmrg steps */
+    allow_bitops
+};
+enum class UpdatePolicy {
+    NEVER     = 0,  /*!< Never update */
+    WARMUP    = 1,  /*!< Update during warmup */
+    ITERATION = 2,  /*!< Update every iteration */
+    FULLSWEEP = 4,  /*!< Update every second iteration (left to right + right to left sweep) */
+    TRUNCATED = 8,  /*!< Update whenever the state is truncated */
+    SATURATED = 16, /*!< Update when the algorithm is saturated */
+    STUCK     = 32, /*!< Update when the algorithm is stuck */
     allow_bitops
 };
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
-enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
 enum class CircuitOp { NONE, ADJ, TRN };
@@ -72,14 +81,14 @@ enum class LbitCircuitGateWeightKind : int {
 
 /*! When to do projections to a symmetry sector */
 enum class ProjectionPolicy {
-    NEVER     = 0,                                   /*!< Never project */
-    INIT      = 1,                                   /*!< Project after initializing the state  */
-    WARMUP    = 2,                                   /*!< Project during warmup  */
-    STUCK     = 4,                                   /*!< Project when the algorithm is stuck */
-    ITER      = 8,                                   /*!< Project every iteration */
-    CONVERGED = 16,                                  /*!< Project on converged iterations */
-    FINISHED  = 32,                                  /*!< Project the finished state during postprocessing */
-    FORCE     = 64,                                  /*!< Project even if not needed */
+    NEVER     = 0,                        /*!< Never project */
+    INIT      = 1,                        /*!< Project after initializing the state  */
+    WARMUP    = 2,                        /*!< Project during warmup  */
+    STUCK     = 4,                        /*!< Project when the algorithm is stuck */
+    ITER      = 8,                        /*!< Project every iteration */
+    CONVERGED = 16,                       /*!< Project on converged iterations */
+    FINISHED  = 32,                       /*!< Project the finished state during postprocessing */
+    FORCE     = 64,                       /*!< Project even if not needed */
     DEFAULT   = INIT | STUCK | CONVERGED, /*!< Default policy for multisite dmrg steps */
     allow_bitops
 };
@@ -125,6 +134,7 @@ enum class StoragePolicy : int {
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
+enum class EnvExpandSide { BACKWARD, FORWARD };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class ResumePolicy {
     IF_MAX_ITERS,
@@ -162,6 +172,7 @@ enum class OptCost {
  */
 enum class OptAlgo {
     DIRECT,   /*!< Apply the eigensolver directly on H|psi> (fdmrg) or (H-E)^2|psi> (xdmrg) */
+    DIRECTZ,  /*!< Try using Zero-site DMRG */
     DIRECTX2, /*!< For xdmrg with ritz SM: try H|psi> first, then H²|psi>. May resolve level spacing issues */
     SUBSPACE, /*!< Find a state |psi> = λ_0|psi_0> + λ_1|psi_1>... by finding the ground state of of (H-E)^2_ij = <psi_i|(H-E)^2|psi_j> , where psi_i,psi_j are
                  eigenstates of H which span the current state */
@@ -362,7 +373,7 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, MultisitePolicy, ProjectionPolicy>);
+    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, MultisitePolicy, UpdatePolicy, ProjectionPolicy>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -412,6 +423,15 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, MultisitePolicy::MOVEMAX)) v.emplace_back("MOVEMAX");
         if(v.empty()) return "NEVER";
     }
+    if constexpr(std::is_same_v<T, UpdatePolicy>) {
+        if(has_flag(item, UpdatePolicy::WARMUP)) v.emplace_back("WARMUP");
+        if(has_flag(item, UpdatePolicy::ITERATION)) v.emplace_back("ITERATION");
+        if(has_flag(item, UpdatePolicy::FULLSWEEP)) v.emplace_back("FULLSWEEP");
+        if(has_flag(item, UpdatePolicy::TRUNCATED)) v.emplace_back("TRUNCATED");
+        if(has_flag(item, UpdatePolicy::SATURATED)) v.emplace_back("SATURATED");
+        if(has_flag(item, UpdatePolicy::STUCK)) v.emplace_back("STUCK");
+        if(v.empty()) return "NEVER";
+    }
     if constexpr(std::is_same_v<T, ProjectionPolicy>) {
         if(has_flag(item, ProjectionPolicy::INIT)) v.emplace_back("INIT");
         if(has_flag(item, ProjectionPolicy::WARMUP)) v.emplace_back("WARMUP");
@@ -438,7 +458,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         MeanType,
         MultisitePolicy,
         SVDLibrary,
-        UpdateWhen,
+        UpdatePolicy,
         GateMove,
         GateOp,
         CircuitOp,
@@ -452,6 +472,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         CopyPolicy,
         ResetReason,
         EnvExpandMode,
+        EnvExpandSide,
         NormPolicy,
         ResumePolicy,
         FileCollisionPolicy,
@@ -518,13 +539,16 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == SVDLibrary::LAPACKE)                                 return "LAPACKE";
         if(item == SVDLibrary::RSVD)                                    return "RSVD";
     }
-    if constexpr(std::is_same_v<T, UpdateWhen>) {
-        if(item == UpdateWhen::NEVER)                                   return "NEVER";
-        if(item == UpdateWhen::TRUNCATED)                               return "TRUNCATED";
-        if(item == UpdateWhen::STUCK)                                   return "STUCK";
-        if(item == UpdateWhen::SATURATED)                               return "SATURATED";
-        if(item == UpdateWhen::ITERATION)                               return "ITERATION";
+    if constexpr(std::is_same_v<T, UpdatePolicy>) {
+        if(item == UpdatePolicy::NEVER)                                 return "NEVER";
+        if(item == UpdatePolicy::WARMUP)                                return "WARMUP";
+        if(item == UpdatePolicy::ITERATION)                             return "ITERATION";
+        if(item == UpdatePolicy::FULLSWEEP)                            return "FULLSWEEP";
+        if(item == UpdatePolicy::TRUNCATED)                             return "TRUNCATED";
+        if(item == UpdatePolicy::SATURATED)                             return "SATURATED";
+        if(item == UpdatePolicy::STUCK)                                 return "STUCK";
     }
+
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == GateMove::OFF)                                       return "OFF";
         if(item == GateMove::ON)                                        return "ON";
@@ -596,6 +620,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     if constexpr(std::is_same_v<T, EnvExpandMode>) {
         if(item == EnvExpandMode::ENE)                                  return "ENE";
         if(item == EnvExpandMode::VAR)                                  return "VAR";
+    }
+    if constexpr(std::is_same_v<T, EnvExpandSide>) {
+        if(item == EnvExpandSide::BACKWARD)                             return "BACKWARD";
+        if(item == EnvExpandSide::FORWARD)                              return "FORWARD";
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == NormPolicy::ALWAYS)                                  return "ALWAYS";
@@ -755,6 +783,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     }
     if constexpr(std::is_same_v<T,OptAlgo>){
         if(item == OptAlgo::DIRECT)                                    return "DIRECT";
+        if(item == OptAlgo::DIRECTZ)                                   return "DIRECTZ";
         if(item == OptAlgo::DIRECTX2)                                  return "DIRECTX2";
         if(item == OptAlgo::SUBSPACE)                                  return "SUBSPACE";
         if(item == OptAlgo::SHIFTINV)                                  return "SHIFTINV";
@@ -804,7 +833,7 @@ constexpr auto sv2enum(std::string_view item) {
         MeanType,
         MultisitePolicy,
         SVDLibrary,
-        UpdateWhen,
+        UpdatePolicy,
         GateMove,
         GateOp,
         CircuitOp,
@@ -819,6 +848,7 @@ constexpr auto sv2enum(std::string_view item) {
         CopyPolicy,
         ResetReason,
         EnvExpandMode,
+        EnvExpandSide,
         NormPolicy,
         ResumePolicy,
         FileCollisionPolicy,
@@ -858,26 +888,16 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ON")                                    return MposWithEdges::ON;
     }
     if constexpr(std::is_same_v<T, MultisitePolicy>) {
-        if(item == "NEVER")                                 return MultisitePolicy::NEVER;
-        if(item == "WARMUP")                                return MultisitePolicy::WARMUP;
-        if(item == "STUCK")                                 return MultisitePolicy::STUCK;
-        if(item == "CONVERGED")                             return MultisitePolicy::CONVERGED;
-        if(item == "ALWAYS")                                return MultisitePolicy::ALWAYS;
-        if(item == "GRADUAL")                               return MultisitePolicy::GRADUAL;
-        if(item == "MOVEMID")                               return MultisitePolicy::MOVEMID;
-        if(item == "MOVEMAX")                               return MultisitePolicy::MOVEMAX;
-        if(item == "DEFAULT")                               return MultisitePolicy::DEFAULT;
-    }
-    if constexpr(std::is_same_v<T, MultisitePolicy>) {
-        if(item == "NEVER")                                 return MultisitePolicy::NEVER;
-        if(item == "WARMUP")                                return MultisitePolicy::WARMUP;
-        if(item == "STUCK")                                 return MultisitePolicy::STUCK;
-        if(item == "CONVERGED")                             return MultisitePolicy::CONVERGED;
-        if(item == "ALWAYS")                                return MultisitePolicy::ALWAYS;
-        if(item == "GRADUAL")                               return MultisitePolicy::GRADUAL;
-        if(item == "MOVEMID")                               return MultisitePolicy::MOVEMID;
-        if(item == "MOVEMAX")                               return MultisitePolicy::MOVEMAX;
-        if(item == "DEFAULT")                               return MultisitePolicy::DEFAULT;
+        auto policy = MultisitePolicy::NEVER;
+        if(item.find("WARMUP")    != std::string_view::npos)  policy |= MultisitePolicy::WARMUP;
+        if(item.find("STUCK")     != std::string_view::npos)  policy |= MultisitePolicy::STUCK;
+        if(item.find("CONVERGED") != std::string_view::npos)  policy |= MultisitePolicy::CONVERGED;
+        if(item.find("ALWAYS")    != std::string_view::npos)  policy |= MultisitePolicy::ALWAYS;
+        if(item.find("GRADUAL")   != std::string_view::npos)  policy |= MultisitePolicy::GRADUAL;
+        if(item.find("MOVEMID")   != std::string_view::npos)  policy |= MultisitePolicy::MOVEMID;
+        if(item.find("MOVEMAX")   != std::string_view::npos)  policy |= MultisitePolicy::MOVEMAX;
+        if(item.find("DEFAULT")   != std::string_view::npos)  policy |= MultisitePolicy::DEFAULT;
+        return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "NONE")                                  return OptRitz::NONE;
@@ -892,12 +912,15 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "LAPACKE")                               return SVDLibrary::LAPACKE;
         if(item == "RSVD")                                  return SVDLibrary::RSVD;
     }
-    if constexpr(std::is_same_v<T, UpdateWhen>) {
-        if(item == "NEVER")                                 return UpdateWhen::NEVER;
-        if(item == "TRUNCATED")                             return UpdateWhen::TRUNCATED;
-        if(item == "STUCK")                                 return UpdateWhen::STUCK;
-        if(item == "SATURATED")                             return UpdateWhen::SATURATED;
-        if(item == "ITERATION")                             return UpdateWhen::ITERATION;
+    if constexpr(std::is_same_v<T, UpdatePolicy>) {
+        auto policy = UpdatePolicy::NEVER;
+        if(item.find("WARMUP")     != std::string_view::npos) policy |= UpdatePolicy::WARMUP;
+        if(item.find("ITERATION")  != std::string_view::npos) policy |= UpdatePolicy::ITERATION;
+        if(item.find("FULLSWEEP")  != std::string_view::npos) policy |= UpdatePolicy::FULLSWEEP;
+        if(item.find("TRUNCATED")  != std::string_view::npos) policy |= UpdatePolicy::TRUNCATED;
+        if(item.find("SATURATED")  != std::string_view::npos) policy |= UpdatePolicy::SATURATED;
+        if(item.find("STUCK")      != std::string_view::npos) policy |= UpdatePolicy::STUCK;
+        return policy;
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == "OFF")                                   return GateMove::OFF;
@@ -933,15 +956,16 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "xxz")                                   return ModelType::xxz;
     }
     if constexpr(std::is_same_v<T, ProjectionPolicy>) {
-        if(item == "NEVER")                                 return ProjectionPolicy::NEVER;
-        if(item == "INIT")                                  return ProjectionPolicy::INIT;
-        if(item == "WARMUP")                                return ProjectionPolicy::WARMUP;
-        if(item == "STUCK")                                 return ProjectionPolicy::STUCK;
-        if(item == "ITER")                                  return ProjectionPolicy::ITER;
-        if(item == "CONVERGED")                             return ProjectionPolicy::CONVERGED;
-        if(item == "FINISHED")                              return ProjectionPolicy::FINISHED;
-        if(item == "FORCE")                                 return ProjectionPolicy::FORCE;
-        if(item == "DEFAULT")                               return ProjectionPolicy::DEFAULT;
+        auto policy = ProjectionPolicy::NEVER;
+        if(item.find("INIT")        != std::string_view::npos) policy |= ProjectionPolicy::INIT;
+        if(item.find("WARMUP")      != std::string_view::npos) policy |= ProjectionPolicy::WARMUP;
+        if(item.find("STUCK")       != std::string_view::npos) policy |= ProjectionPolicy::STUCK;
+        if(item.find("ITER")        != std::string_view::npos) policy |= ProjectionPolicy::ITER;
+        if(item.find("CONVERGED")   != std::string_view::npos) policy |= ProjectionPolicy::CONVERGED;
+        if(item.find("FINISHED")    != std::string_view::npos) policy |= ProjectionPolicy::FINISHED;
+        if(item.find("FORCE")       != std::string_view::npos) policy |= ProjectionPolicy::FORCE;
+        if(item.find("DEFAULT")     != std::string_view::npos) policy |= ProjectionPolicy::DEFAULT;
+        return policy;
     }
     if constexpr(std::is_same_v<T, EdgeStatus>) {
         if(item == "STALE")                                 return EdgeStatus::STALE ;
@@ -973,7 +997,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ENE")                                   return EnvExpandMode::ENE;
         if(item == "VAR")                                   return EnvExpandMode::VAR;
     }
-
+    if constexpr(std::is_same_v<T, EnvExpandSide>) {
+        if(item == "BACKWARD")                              return EnvExpandSide::BACKWARD;
+        if(item == "FORWARD")                               return EnvExpandSide::FORWARD;
+    }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS")                                return NormPolicy::ALWAYS;
         if(item == "IFNEEDED")                              return NormPolicy::IFNEEDED;
@@ -1137,6 +1164,7 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T,OptAlgo>){
         if(item == "DIRECT")                                return OptAlgo::DIRECT;
+        if(item == "DIRECTZ")                               return OptAlgo::DIRECTZ;
         if(item == "DIRECTX2")                              return OptAlgo::DIRECTX2;
         if(item == "SUBSPACE")                              return OptAlgo::SUBSPACE;
         if(item == "SHIFTINV")                              return OptAlgo::SHIFTINV;

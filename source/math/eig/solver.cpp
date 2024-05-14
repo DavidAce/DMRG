@@ -4,6 +4,7 @@
 #include "matvec/matvec_dense.h"
 #include "matvec/matvec_mpo.h"
 #include "matvec/matvec_mpos.h"
+#include "matvec/matvec_zero.h"
 #include "matvec/matvec_sparse.h"
 #include "solver_arpack/solver_arpack.h"
 #include "tid/tid.h"
@@ -276,7 +277,8 @@ template void eig::solver::set_default_config(const MatVecMPO<real> &matrix);
 template void eig::solver::set_default_config(const MatVecMPO<cplx> &matrix);
 template void eig::solver::set_default_config(const MatVecMPOS<real> &matrix);
 template void eig::solver::set_default_config(const MatVecMPOS<cplx> &matrix);
-
+template void eig::solver::set_default_config(const MatVecZero<real> &matrix);
+template void eig::solver::set_default_config(const MatVecZero<cplx> &matrix);
 template<typename Scalar, eig::Storage storage>
 void eig::solver::eigs(const Scalar *matrix, size_type L, int nev, int ncv, Ritz ritz, Form form, Side side, std::optional<cplx> sigma, Shinv shift_invert,
                        Vecs compute_eigvecs, Dephase remove_phase, Scalar *residual) {
@@ -369,3 +371,5 @@ template void eig::solver::eigs(MatVecMPO<real> &matrix);
 template void eig::solver::eigs(MatVecMPO<cplx> &matrix);
 template void eig::solver::eigs(MatVecMPOS<real> &matrix);
 template void eig::solver::eigs(MatVecMPOS<cplx> &matrix);
+template void eig::solver::eigs(MatVecZero<real> &matrix);
+template void eig::solver::eigs(MatVecZero<cplx> &matrix);

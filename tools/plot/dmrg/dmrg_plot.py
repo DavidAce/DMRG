@@ -90,9 +90,13 @@ def dmrg_plot(args):
 
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
-        f = plot_dist_fig_sub_line(db=db, meta=meta['var-dist'], figs=f)
+        f = plot_dist_fig_sub_line(db=db, meta=meta['var-dist-d'], figs=f)
     save_figure(f)
 
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_dist_fig_sub_line(db=db, meta=meta['var-dist-g'], figs=f)
+    save_figure(f)
 
     # plt.show()
     # exit(0)

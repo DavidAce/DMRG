@@ -1,7 +1,7 @@
 import seaborn as sns
 from matplotlib import transforms
 
-from dmrg_plot.common.io.h5ops import *
+from common.io.h5ops import *
 from plotting.tools import *
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
@@ -63,7 +63,7 @@ datafiles = [
 ]
 
 lbitpath = 'fLBIT/model/lbits'
-mplstyle = Path('../common/stylesheets/prl.mplstyle', )
+mplstyle = Path('common/stylesheets/prl.mplstyle', )
 # mplstyle = '../common/stylesheets/slack.mplstyle',
 plotdir = Path("plots/{}".format(mplstyle.stem))
 plotdir.mkdir(parents=True, exist_ok=True)
@@ -828,7 +828,7 @@ if __name__ == '__main__':
         'ohr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
         # 'legendcols': ['f', 'u', 'xi', 'beta'],
         'legendcols': ['wi'],
-        'wilabel': 'off',
+        'wilabel': '$w_i=1$',
         # 'legend_in_subfig': False
     }
 

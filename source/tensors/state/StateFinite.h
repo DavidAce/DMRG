@@ -122,6 +122,8 @@ class StateFinite {
     // For multisite
     std::array<long, 3>              active_dimensions() const;
     long                             active_problem_size() const;
+    std::vector<long>                get_bond_dims(const std::vector<size_t> & sites) const;
+    std::vector<long>                get_bond_dims_active() const;
     std::vector<long>                get_spin_dims(const std::vector<size_t> &sites) const;
     std::vector<long>                get_spin_dims() const;
     long                             get_spin_dim() const;

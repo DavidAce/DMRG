@@ -2,6 +2,7 @@
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_mpos.h"
+#include "../matvec/matvec_zero.h"
 #include "../matvec/matvec_sparse.h"
 #include "../sfinae.h"
 #include "../solver.h"
@@ -441,6 +442,8 @@ template int eig::solver::eigs_primme(MatVecMPO<real> &matrix);
 template int eig::solver::eigs_primme(MatVecMPO<cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecMPOS<real> &matrix);
 template int eig::solver::eigs_primme(MatVecMPOS<cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecZero<real> &matrix);
+template int eig::solver::eigs_primme(MatVecZero<cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecDense<real> &matrix);
 template int eig::solver::eigs_primme(MatVecDense<cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecSparse<real> &matrix);

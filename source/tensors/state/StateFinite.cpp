@@ -275,8 +275,7 @@ const Eigen::Tensor<cplx, 1> &StateFinite::get_bond(long posL, long posR) const 
     auto pos = get_position<long>();
     if(pos < posL) return get_mps_site(posL).get_L(); // B.B
     if(pos > posL) return get_mps_site(posR).get_L(); // A.A or A.AC
-    return get_mps_site(posL).get_LC(); // AC.B
-
+    return get_mps_site(posL).get_LC();               // AC.B
 }
 
 const Eigen::Tensor<cplx, 1> &StateFinite::get_midchain_bond() const {
@@ -372,6 +371,28 @@ std::vector<std::reference_wrapper<MpsSite>>       StateFinite::get_mps_active()
 std::array<long, 3> StateFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 long StateFinite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
+
+std::vector<long> StateFinite::get_bond_dims(const std::vector<size_t> &sites) const {
+    // If the sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
+    // If sites is just {4}, it returns the bond between {4,5} when going left or right.
+    auto t_chi = tid::tic_scope("bond_merged", tid::level::highest);
+    if(sites.empty()) return {};
+    if(sites.size() == 1) {
+        // In single-site DMRG the active site is a center "AC" site:
+        //  * Going left-to-right, the forward (right) bond is expanded, and this same bond is truncated when merging
+        //  * Going right-to-left, the forward (left) bond is expanded (L), but LC is still the one truncated when merging.
+        return {get_mps_site(sites.front()).get_chiR()};
+    }
+    if(sites.size() == 2) return {get_mps_site(sites.front()).get_chiR()};
+    std::vector<long> bond_dimensions;
+    for(const auto &pos : sites) {
+        if(&pos == &sites.front()) continue;
+        const auto &mps = get_mps_site(pos);
+        bond_dimensions.push_back(mps.get_chiL());
+    }
+    return bond_dimensions;
+}
+std::vector<long> StateFinite::get_bond_dims_active() const { return get_bond_dims(active_sites); }
 
 std::vector<long> StateFinite::get_spin_dims(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No sites on which to collect spin dimensions");

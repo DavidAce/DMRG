@@ -4,9 +4,11 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
 #include "general/iter.h"
+#include "general/sfinae.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_mpo.h"
 #include "math/eig/matvec/matvec_mpos.h"
+#include "math/eig/matvec/matvec_zero.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
@@ -26,7 +28,11 @@ namespace tools::finite::opt {
         Eigen::Tensor<Scalar, 3> mps = {};
         long                     idx = 0;
     };
-
+    template<typename Scalar>
+    struct opt_bond_init_t {
+        Eigen::Tensor<Scalar, 2> bond = {};
+        long                     idx  = 0;
+    };
     template<typename Scalar>
     Eigen::Tensor<Scalar, 3> get_initial_guess(const opt_mps &initial_mps, const std::vector<opt_mps> &results) {
         if(results.empty()) {
@@ -48,7 +54,7 @@ namespace tools::finite::opt {
     }
 
     template<typename Scalar>
-    std::vector<opt_mps_init_t<Scalar>> get_initial_guesses(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
+    std::vector<opt_mps_init_t<Scalar>> get_initial_guess_mps(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
         std::vector<opt_mps_init_t<Scalar>> init;
         if(results.empty()) {
             if constexpr(std::is_same_v<Scalar, real>)
@@ -69,6 +75,35 @@ namespace tools::finite::opt {
                         init.push_back({results_idx_n.back().get().get_tensor().real(), n});
                     } else {
                         init.push_back({results_idx_n.back().get().get_tensor(), n});
+                    }
+                }
+            }
+        }
+        if(init.size() > safe_cast<size_t>(nev)) throw except::logic_error("Found too many initial guesses");
+        return init;
+    }
+    template<typename Scalar>
+    std::vector<opt_bond_init_t<Scalar>> get_initial_guess_bond(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
+        std::vector<opt_bond_init_t<Scalar>> init;
+        if(results.empty()) {
+            if constexpr(std::is_same_v<Scalar, real>)
+                init.push_back({initial_mps.get_bond().real(), 0});
+            else
+                init.push_back({initial_mps.get_bond(), 0});
+        } else {
+            for(long n = 0; n < nev; n++) {
+                // Take the latest result with idx == n
+
+                // Start by collecting the results with the correct index
+                std::vector<std::reference_wrapper<const opt_mps>> results_idx_n;
+                for(const auto &r : results) {
+                    if(r.get_eigs_idx() == n) results_idx_n.emplace_back(r);
+                }
+                if(not results_idx_n.empty()) {
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        init.push_back({results_idx_n.back().get().get_bond().real(), n});
+                    } else {
+                        init.push_back({results_idx_n.back().get().get_bond(), n});
                     }
                 }
             }
@@ -122,8 +157,14 @@ namespace tools::finite::opt {
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
 
         hamiltonian_squared.reset();
-        auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
-        for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
+        if constexpr(sfinae::is_any_v<MatVecType, MatVecZero<real>, MatVecZero<cplx>>) {
+            auto init = get_initial_guess_bond<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
+            for(auto &i : init) solver.config.initial_guess.push_back({i.bond.data(), i.idx});
+        } else {
+            auto init = get_initial_guess_mps<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
+            for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
+        }
+
         tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
         if(solver.config.lib == eig::Lib::ARPACK) {
@@ -135,11 +176,11 @@ namespace tools::finite::opt {
             if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->has_compressed_mpo_squared())
                 throw except::logic_error("optimize_variance_eigs with PRIMME with sigma requires non-compressed MPO²");
         }
-        tools::log->debug("Finding an eigenstate of [H²{}]{}{} | {} ritz {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
+        tools::log->debug("Finding an eigenstate of [H²{}]{}{} | {} ritz {} | shifts: {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
                           solver.config.sigma ? "-σ" : "", solver.config.shift_invert == eig::Shinv::ON ? "⁻¹" : "",
                           solver.config.sigma ? fmt::format(" | σ = {:.16f}", solver.config.sigma->real()) : "", eig::LibToString(solver.config.lib),
-                          eig::RitzToString(solver.config.ritz), solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(),
-                          hamiltonian_squared.get_shape_mps(), hamiltonian_squared.get_shape_mpo());
+                          eig::RitzToString(solver.config.ritz), solver.config.primme_targetShifts, solver.config.maxIter.value(), solver.config.tol.value(),
+                          hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.get_shape_mpo());
 
         solver.eigs(hamiltonian_squared);
         internal::extract_results(tensors, initial_mps, meta, solver, results, false);
@@ -149,7 +190,7 @@ namespace tools::finite::opt {
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
         auto       &cfg           = solver.config;
-        cfg.loglevel              = 1;
+        cfg.loglevel              = 2;
         cfg.compute_eigvecs       = eig::Vecs::ON;
         cfg.tol                   = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
         cfg.maxIter               = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
@@ -168,12 +209,11 @@ namespace tools::finite::opt {
                 cfg.ritz              = eig::Ritz::SA; // H² is positive semi-definite!
                 cfg.primme_projection = meta.primme_projection.value_or("primme_proj_refined");
                 if(cfg.primme_projection.value() != "primme_proj_default") {
-                    cfg.ritz                = eig::Ritz::primme_closest_abs;
+                    cfg.ritz = eig::Ritz::primme_closest_abs;
                     cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
                 }
                 break;
             }
-
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
 
@@ -185,22 +225,39 @@ namespace tools::finite::opt {
 
         // Overrides from default
 
-        const auto &model               = *tensors.model;
-        const auto &edges               = *tensors.edges;
-        const auto &envs                = edges.get_var_active();
-        const auto &mpos                = model.get_mpo_active();
-        auto        hamiltonian_squared = MatVecMPOS<Scalar>(mpos, envs);
-        if constexpr(hamiltonian_squared.can_shift_invert) {
-            if(initial_mps.get_tensor().size() <= settings::precision::eigs_max_size_shift_invert) {
-                cfg.shift_invert                  = eig::Shinv::ON;
-                cfg.sigma                         = cplx(0.0, 0.0);
-                cfg.primme_targetShifts           = {};
-                cfg.ritz                          = eig::Ritz::primme_largest_abs;
-                hamiltonian_squared.factorization = eig::Factorization::LLT;
-            }
-        }
+        const auto &state = *tensors.state;
+        const auto &model = *tensors.model;
+        const auto &edges = *tensors.edges;
+        const auto &mpss  = state.get_mps_active();
+        const auto &mpos  = model.get_mpo_active();
+        const auto &envs  = edges.get_var_active();
+        if(meta.optAlgo == OptAlgo::DIRECTZ) {
+            auto hamiltonian_squared = MatVecZero<Scalar>(mpss, mpos, envs);
+            // auto matrix = hamiltonian_squared.get_matrix();
+            // eig::solver sol;
+            // sol.eig<eig::Form::SYMM>(matrix.data(), matrix.rows(), eig::Vecs::ON);
+            // auto eval = eig::view::get_eigvals<real>(sol.result);
+            // fmt::print("{:^9} {:<20}\n", " ", "H_zero eigv");
+            // for(long idx = 0; idx < eval.size(); ++idx) {
+            //     // if(std::abs(evals1[idx]) > 1.1) continue;
+            //     fmt::print("idx {:2}: {:20.16f}\n", idx, eval[idx]);
+            // }
 
-        eigs_variance_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
+
+            eigs_variance_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
+        } else {
+            auto hamiltonian_squared = MatVecMPOS<Scalar>(mpos, envs);
+            if constexpr(hamiltonian_squared.can_shift_invert) {
+                if(initial_mps.get_tensor().size() <= settings::precision::eigs_max_size_shift_invert) {
+                    cfg.shift_invert                  = eig::Shinv::ON;
+                    cfg.sigma                         = cplx(0.0, 0.0);
+                    cfg.primme_targetShifts           = {};
+                    cfg.ritz                          = eig::Ritz::primme_largest_abs;
+                    hamiltonian_squared.factorization = eig::Factorization::LLT;
+                }
+            }
+            eigs_variance_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
+        }
     }
 
     opt_mps internal::optimize_variance_eigs(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,

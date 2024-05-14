@@ -15,7 +15,7 @@ namespace eig {
 namespace tools::finite::opt {
     class opt_mps;
     struct OptMeta;
-    extern opt_mps get_opt_initial_mps(const TensorsFinite &tensors);
+    extern opt_mps get_opt_initial_mps(const TensorsFinite &tensors, const OptMeta &meta);
     extern opt_mps find_excited_state(const TensorsFinite &tensors, const opt_mps &initial_state, const AlgorithmStatus &status, OptMeta &meta);
     extern opt_mps find_ground_state(const TensorsFinite &tensors, const opt_mps &initial_state, const AlgorithmStatus &status, OptMeta &meta);
 }

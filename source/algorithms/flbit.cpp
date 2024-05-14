@@ -1068,7 +1068,7 @@ void flbit::print_status(const AlgorithmStatus &st, const TensorsFinite &ts) {
     //        report += fmt::format("Sₙ(L/2):{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
 
     report +=
-        fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(st.algo_type), st.bond_lim, tools::finite::measure::bond_dimension_midchain(*ts.state));
+        fmt::format("χ:{:<3}|{:<3}|{:<3} ", st.bond_max, st.bond_lim, tools::finite::measure::bond_dimension_midchain(*ts.state));
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
         report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", st.phys_time.to_floating_point<real>()));
     if(settings::flbit::time_scale == TimeScale::LINSPACED)

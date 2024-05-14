@@ -12,6 +12,7 @@ namespace tools::finite::opt {
         // All of these values are supposed to be for the full system size
         std::optional<std::string>            name             = std::nullopt;
         std::optional<Eigen::Tensor<cplx, 3>> tensor           = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>> bond             = std::nullopt;
         std::optional<std::vector<size_t>>    sites            = std::nullopt;
         std::optional<double>                 eshift           = std::nullopt; /*!< current energy shift in the energy MPOs: (H-eshift)  */
         std::optional<double>                 eshift_eigval    = std::nullopt; /*!< eigenvalue of (H-eshift)  */
@@ -62,6 +63,7 @@ namespace tools::finite::opt {
         [[nodiscard]] bool                               is_initialized() const;
         [[nodiscard]] std::string_view                   get_name() const;
         [[nodiscard]] const Eigen::Tensor<cplx, 3>      &get_tensor() const;
+        [[nodiscard]] const Eigen::Tensor<cplx, 2>      &get_bond() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXcd> get_vector() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXd>  get_vector_cplx_as_2xreal() const;
         [[nodiscard]] Eigen::VectorXd                    get_vector_cplx_as_1xreal() const;
@@ -111,6 +113,8 @@ namespace tools::finite::opt {
         void set_name(std::string_view name_);
         void set_tensor(const Eigen::Tensor<cplx, 3> &tensor_);
         void set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<long, 3> &dims);
+        void set_bond(const Eigen::MatrixXcd &matrix);
+        void set_bond(const Eigen::Tensor<cplx, 2> &bond_);
         void set_sites(const std::vector<size_t> &sites_);
         void set_eshift_eigval(double eshift_eigval_);
         void set_energy_shift(double energy_shift_);

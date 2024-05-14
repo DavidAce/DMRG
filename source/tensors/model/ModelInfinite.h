@@ -1,7 +1,7 @@
 #pragma once
+#include "config/enums.h"
 #include "math/float.h"
 #include <complex>
-#include "config/enums.h"
 #include <memory>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -23,17 +23,17 @@ class ModelInfinite {
     public:
     ModelType model_type = ModelType::ising_tf_rf;
 
-    ModelInfinite();
-    ~ModelInfinite();                                     // Read comment on implementation
-    ModelInfinite(ModelInfinite &&other);                 // default move ctor
-    ModelInfinite &operator=(ModelInfinite &&other);      // default move assign
-    ModelInfinite(const ModelInfinite &other);            // copy ctor
-    ModelInfinite &operator=(const ModelInfinite &other); // copy assign
+                   ModelInfinite();
+    ~              ModelInfinite();                           // Read comment on implementation
+                   ModelInfinite(ModelInfinite &&other);      // default move ctor
+    ModelInfinite &operator=(ModelInfinite &&other);          // default move assign
+                   ModelInfinite(const ModelInfinite &other); // copy ctor
+    ModelInfinite &operator=(const ModelInfinite &other);     // copy assign
 
-    void                                               initialize(ModelType model_type_);
-    void                                               randomize();
-    void                                               reset_mpo_squared();
-    void                                               rebuild_mpo_squared();
+    void                                initialize(ModelType model_type_);
+    void                                randomize();
+    void                                reset_mpo_squared();
+    void                                rebuild_mpo_squared();
     std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared();
 
     bool is_real() const;
@@ -51,8 +51,8 @@ class ModelInfinite {
 
     Eigen::DSizes<long, 4> dimensions() const;
 
-    [[nodiscard]] bool   is_shifted() const;
+    [[nodiscard]] bool is_shifted() const;
     [[nodiscard]] double get_energy_shift_per_site() const;
-    void                 set_energy_shift_per_site(double energy_shift_per_site);
-    void                 clear_cache();
+    void               set_energy_shift_per_site(double energy_shift_per_site);
+    void               clear_cache();
 };

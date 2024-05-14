@@ -62,9 +62,8 @@ void AlgorithmInfinite::update_precision_limit(std::optional<double> energy_uppe
 }
 
 void AlgorithmInfinite::update_bond_dimension_limit() {
-    status.bond_max                   = settings::get_bond_max(status.algo_type);
     status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
-    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
+    if(settings::strategy::bond_increase_when == UpdatePolicy::NEVER) {
         status.bond_lim = status.bond_max;
         return;
     }
@@ -75,9 +74,9 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
     bool is_has_stuck      = status.algorithm_has_stuck_for > 1;
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
-    bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
-    bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
-    bool grow_if_has_stuck = settings::strategy::bond_increase_when == UpdateWhen::STUCK;
+    bool grow_if_truncated = settings::strategy::bond_increase_when == UpdatePolicy::TRUNCATED;
+    bool grow_if_saturated = settings::strategy::bond_increase_when == UpdatePolicy::SATURATED;
+    bool grow_if_has_stuck = settings::strategy::bond_increase_when == UpdatePolicy::STUCK;
 
     if(grow_if_truncated and not is_truncated) {
         tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
@@ -126,7 +125,7 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     if(status.trnc_lim == 0.0) throw std::runtime_error("trnc_lim is zero!");
     status.trnc_min                   = settings::precision::svd_truncation_lim;
     status.trnc_limit_has_reached_min = status.trnc_lim <= status.trnc_min;
-    if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
+    if(settings::strategy::trnc_decrease_when == UpdatePolicy::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
         status.trnc_lim                   = status.trnc_min;
         status.trnc_limit_has_reached_min = true;
         return;
@@ -138,9 +137,9 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
     bool is_has_stuck      = status.algorithm_has_stuck_for > 1; // Allow one round while saturated so that extra efforts get a chance.
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
-    bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdateWhen::TRUNCATED;
-    bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
-    bool drop_if_has_stuck = settings::strategy::trnc_decrease_when == UpdateWhen::STUCK;
+    bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdatePolicy::TRUNCATED;
+    bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdatePolicy::SATURATED;
+    bool drop_if_has_stuck = settings::strategy::trnc_decrease_when == UpdatePolicy::STUCK;
 
     if(drop_if_truncated and not is_truncated) {
         tools::log->info("State is not truncated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
@@ -311,7 +310,7 @@ void AlgorithmInfinite::print_status() {
     }
     report += fmt::format("ε: {:<8.2e} ", tools::infinite::measure::truncation_error(*tensors.state));
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::infinite::measure::entanglement_entropy(*tensors.state));
-    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
+    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", status.bond_max, status.bond_lim,
                           tools::infinite::measure::bond_dimension(*tensors.state));
     report += fmt::format("Sites: {:6}", tensors.get_length());
 
@@ -362,7 +361,7 @@ void AlgorithmInfinite::print_status_full() {
     }
     tools::log->info("Truncation error      = {:<8.2e}", tools::infinite::measure::truncation_error(*tensors.state));
     tools::log->info("Entanglement Entropy  = {:<16.16f}", tools::infinite::measure::entanglement_entropy(*tensors.state));
-    tools::log->info("χmax                  = {:<16d}", settings::get_bond_max(status.algo_type));
+    tools::log->info("χmax                  = {:<16d}", status.bond_max);
     tools::log->info("χ                     = {:<16d}", tools::infinite::measure::bond_dimension(*tensors.state));
 
     switch(status.algo_type) {

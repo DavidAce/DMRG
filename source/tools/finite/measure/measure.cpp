@@ -115,8 +115,8 @@ std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFini
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // In single-site DMRG the active site is a center "AC" site:
-        //  * Going left-to-right, the left bond is expanded, and the right bond (LC) is truncated after optimization
-        //  * Going right-to-left, the right bond (LC) is both expanded and truncated with SVD.
+        //  * Going left-to-right, the forward (right) bond is expanded, and this same bond is truncated when merging
+        //  * Going right-to-left, the forward (left) bond is expanded (L), but LC is still the one truncated when merging.
         return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
@@ -129,13 +129,16 @@ std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFini
     return bond_dimensions;
 }
 
+double tools::finite::measure::entanglement_entropy(const Eigen::Tensor<cplx, 1> &L) {
+    auto t_ent = tid::tic_scope("neumann_entropy", tid::level::highest);
+    auto S     = Eigen::Tensor<cplx, 0>(-L.square().contract(L.square().log().eval(), tenx::idx({0}, {0})));
+    return std::abs(S(0));
+}
+
 double tools::finite::measure::entanglement_entropy_current(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_current) return state.measurements.entanglement_entropy_current.value();
-    auto t_ent = tid::tic_scope("neumann_entropy", tid::level::highest);
     if(state.has_center_point()) {
-        auto                  &LC                       = state.current_bond();
-        Eigen::Tensor<cplx, 0> SE                       = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
-        state.measurements.entanglement_entropy_current = std::abs(SE(0));
+        state.measurements.entanglement_entropy_current = entanglement_entropy(state.current_bond());
     } else
         state.measurements.entanglement_entropy_current = 0;
     return state.measurements.entanglement_entropy_current.value();
@@ -143,10 +146,7 @@ double tools::finite::measure::entanglement_entropy_current(const StateFinite &s
 
 double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_midchain) return state.measurements.entanglement_entropy_midchain.value();
-    auto                   t_ent                     = tid::tic_scope("neumann_entropy", tid::level::highest);
-    auto                  &LC                        = state.get_midchain_bond();
-    Eigen::Tensor<cplx, 0> SE                        = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
-    state.measurements.entanglement_entropy_midchain = std::abs(SE(0));
+    state.measurements.entanglement_entropy_midchain = entanglement_entropy(state.get_midchain_bond());
     return state.measurements.entanglement_entropy_midchain.value();
 }
 
@@ -157,20 +157,17 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
     entanglement_entropies.reserve(state.get_length() + 1);
     if(not state.has_center_point()) entanglement_entropies.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
-        auto                  &L  = mps->get_L();
-        Eigen::Tensor<cplx, 0> SE = -L.square().contract(L.square().log().eval(), tenx::idx({0}, {0}));
-        entanglement_entropies.emplace_back(std::abs(SE(0)));
+        entanglement_entropies.emplace_back(entanglement_entropy(mps->get_L()));
         if(mps->isCenter()) {
-            auto &LC = mps->get_LC();
-            SE       = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
-            entanglement_entropies.emplace_back(std::abs(SE(0)));
-            state.measurements.entanglement_entropy_current = std::abs(SE(0));
+            entanglement_entropies.emplace_back(entanglement_entropy(mps->get_LC()));
+            state.measurements.entanglement_entropy_current = entanglement_entropies.back();
         }
     }
     if(entanglement_entropies.size() != state.get_length() + 1) throw except::logic_error("entanglement_entropies.size() should be length+1");
     if(entanglement_entropies.front() != 0.0) throw except::logic_error("First entropy should be 0. Got: {:.16f}", entanglement_entropies.front());
     if(entanglement_entropies.back() != 0.0) throw except::logic_error("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back());
-    state.measurements.entanglement_entropies = entanglement_entropies;
+    state.measurements.entanglement_entropy_midchain = entanglement_entropies[state.get_length<long>() / 2];
+    state.measurements.entanglement_entropies        = entanglement_entropies;
     return state.measurements.entanglement_entropies.value();
 }
 
@@ -278,8 +275,8 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
     Eigen::ArrayXXd see    = Eigen::ArrayXXd::Zero(len, len); // susbsystem entanglement entropy
 
     auto state_swap = state;
-    auto length = state_swap.get_length<size_t>();
-    auto sites  = num::range<size_t>(0, length);
+    auto length     = state_swap.get_length<size_t>();
+    auto sites      = num::range<size_t>(0, length);
 
     for(long off = 0; off < len; ++off) {
         if(state_swap.get_position<long>() != 0) {
@@ -303,9 +300,9 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
                 // auto sval_new                 = state_swap.get_bond(i, i + 1);
 
                 // tools::log->info("swap off {:2} | pos {} |  {} <-> {} | bond {:3} -> {:3} | trnc {:.3e} -> {:.3e} | sites {::2}",
-                                 // off,state_swap.get_position<long>(), i, i + 1, bond_old_R, bond_new_R, trnc_old.at(i + 1), trnc_new.at(i + 1), sites);
+                // off,state_swap.get_position<long>(), i, i + 1, bond_old_R, bond_new_R, trnc_old.at(i + 1), trnc_new.at(i + 1), sites);
                 // if(bond_new_R != sval_new.size())
-                    // throw except::logic_error("bond dimension mismatch: bond_new_R {} != sval_new.size() {}", bond_new_R, sval_new.size());
+                // throw except::logic_error("bond dimension mismatch: bond_new_R {} != sval_new.size() {}", bond_new_R, sval_new.size());
                 // for(long sidx = 0; sidx < std::max(sval_old.size(), sval_new.size()); ++sidx) {
                 //     auto sold = sidx < sval_old.size() ? sval_old.coeff(sidx).real() : 0.0;
                 //     auto snew = sidx < sval_new.size() ? sval_new.coeff(sidx).real() : 0.0;
@@ -1375,8 +1372,8 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::opdm(const StateFinite &state) {
 Eigen::Tensor<double, 1> tools::finite::measure::opdm_spectrum(const StateFinite &state) {
     if(not state.measurements.opdm) state.measurements.opdm = opdm(state);
     if(not state.measurements.opdm_spectrum) {
-        auto &opdm      = state.measurements.opdm.value();
-        auto solver = eig::solver();
+        auto &opdm   = state.measurements.opdm.value();
+        auto  solver = eig::solver();
         solver.eig<eig::Form::SYMM>(opdm.data(), opdm.dimension(0), eig::Vecs::OFF);
         state.measurements.opdm_spectrum = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
         tools::log->debug("OPDM spectrum: {::+9.4e}", tenx::span(state.measurements.opdm_spectrum.value()));

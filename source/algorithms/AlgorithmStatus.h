@@ -20,10 +20,10 @@ class AlgorithmStatus {
     size_t            min_iters                  = 0;
     long              bond_lim                   = 0; /*!< Current limit on bond dimension, can be increased dynamically */
     long              bond_max                   = 0; /*!< Maximum allowable bond dimension during an algorithm run */
-    long              bond_init                  = 0; /*!< Initial limit on bond dimension when an algorithm starts */
+    long              bond_min                   = 0; /*!< Minimum bond dimension. Used during init/warmup */
     double            trnc_lim                   = 0; /*!< Current truncation error limit */
     double            trnc_min                   = 0; /*!< Minimum truncation error limit for this simulation */
-    double            trnc_init                  = 0; /*!< Initial max limit on truncation error */
+    double            trnc_max                   = 0; /*!< Maximum truncation error limit. Used during init/warmup */
     double            energy_min                 = std::numeric_limits<double>::quiet_NaN();
     double            energy_max                 = std::numeric_limits<double>::quiet_NaN();
     double            energy_tgt                 = std::numeric_limits<double>::quiet_NaN();
@@ -32,9 +32,7 @@ class AlgorithmStatus {
     double            energy_variance_lowest     = 1.0;
     size_t            energy_variance_max_digits = 0;
     double            energy_variance_prec_limit = 0;
-    double            env_expansion_alpha        = 0; /*!< subspace expansion factor alpha */
-    double            env_expansion_variance     = 1; /*!< lowest variance when alpha was last updated */
-    size_t            env_expansion_iter         = 0; /*!< step when alpha was last updated */
+    double            env_expansion_alpha        = 1e-4; /*!< subspace expansion factor alpha */
     h5pp::fstr_t<64>  phys_time                  = {};
     double            wall_time                  = 0;
     double            algo_time                  = 0;

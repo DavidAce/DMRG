@@ -7,9 +7,9 @@
 
 using namespace tools::finite::opt;
 
-opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_,double eshift_, double eshift_eigval_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double eshift_eigval_,
                  std::optional<double> variance_, double overlap_, size_t length_)
-    : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_),  eshift_eigval(eshift_eigval_), energy(eshift_eigval_ + eshift_), variance(variance_),
+    : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_), eshift_eigval(eshift_eigval_), energy(eshift_eigval_ + eshift_), variance(variance_),
       overlap(overlap_), length(length_) {
     norm   = get_vector().norm();
     iter   = 0;
@@ -39,7 +39,12 @@ const Eigen::Tensor<cplx, 3> &opt_mps::get_tensor() const {
     else
         throw except::runtime_error("opt_mps: tensor not set");
 }
-
+const Eigen::Tensor<cplx, 2> &opt_mps::get_bond() const {
+    if(bond)
+        return bond.value();
+    else
+        throw except::runtime_error("opt_mps: bond not set");
+}
 Eigen::Map<const Eigen::VectorXcd> opt_mps::get_vector() const { return Eigen::Map<const Eigen::VectorXcd>(get_tensor().data(), get_tensor().size()); }
 
 Eigen::Map<const Eigen::VectorXd> opt_mps::get_vector_cplx_as_2xreal() const {
@@ -330,6 +335,12 @@ void opt_mps::set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<lon
     tensor = Eigen::TensorMap<const Eigen::Tensor<const cplx, 3>>(vector.data(), dims);
     norm   = get_vector().norm();
 }
+
+void opt_mps::set_bond(const Eigen::MatrixXcd &matrix) {
+    bond = Eigen::TensorMap<const Eigen::Tensor<const cplx, 2>>(matrix.data(), matrix.rows(), matrix.cols());
+}
+void opt_mps::set_bond(const Eigen::Tensor<cplx, 2> &bond_) { bond = bond_; }
+
 void opt_mps::set_sites(const std::vector<size_t> &sites_) { sites = sites_; }
 void opt_mps::set_eshift_eigval(double eshift_eigval_) {
     eshift_eigval = eshift_eigval_;

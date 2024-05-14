@@ -208,7 +208,7 @@ std::any LBit::get_parameter(std::string_view name) const {
             - M[F,F-1] = J3*n
 
   */
-Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(real_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                          std::optional<std::vector<size_t>> skip) const {
     using namespace qm::spin::half;
     tools::log->debug("mpo({}): building lbit mpo", get_position());
@@ -357,7 +357,7 @@ Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(real_t energy_shift_per_site, std::opti
     return mpo_build_t;
 }
 
-Eigen::Tensor<cplx, 4> LBit::get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cplx, 4> LBit::get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                      [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     auto mpo_t = get_mpo_t(energy_shift_per_site, nbody, skip);
     return mpo_t.unaryExpr([](auto z) { return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag())); });

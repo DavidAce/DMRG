@@ -130,7 +130,7 @@ bool ModelFinite::has_compressed_mpo_squared() const {
 
 double ModelFinite::get_energy_shift_mpo() const {
     // Check that all energies are the same
-    double e_shift = MPO.front()->get_energy_shift_mpo();
+    double e_shift = MPO.front()->get_energy_shift_mpo().real();
     for(const auto &mpo : MPO)
         if(mpo->get_energy_shift_mpo() != e_shift) throw std::runtime_error("Shifted energy per site mismatch!");
     return e_shift * static_cast<double>(get_length());
@@ -306,7 +306,7 @@ void ModelFinite::set_energy_shift_mpo(double energy_shift) {
     if(std::abs(get_energy_shift_mpo() - energy_shift) <= std::numeric_limits<double>::epsilon()) { return; }
     tools::log->trace("Shifting MPO energy: {:.16f}", energy_shift);
     double energy_shift_per_site = energy_shift / static_cast<double>(get_length());
-    for(const auto &mpo : MPO) mpo->set_energy_shift_mpo(energy_shift_per_site);
+    for(const auto &mpo : MPO) mpo->set_energy_shift_mpo(cplx(energy_shift_per_site, 0.0));
     clear_cache();
 }
 

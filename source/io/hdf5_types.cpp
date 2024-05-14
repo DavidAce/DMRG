@@ -178,10 +178,10 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_init",                   HOFFSET(table, bond_init),                  H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_min",                   HOFFSET(table, bond_min),                  H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "trnc_lim",                    HOFFSET(table, trnc_lim),                   H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "trnc_min",                    HOFFSET(table, trnc_min),                   H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "trnc_init",                   HOFFSET(table, trnc_init),                  H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "trnc_max",                   HOFFSET(table, trnc_max),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_min",                  HOFFSET(table, energy_min),                 H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max",                  HOFFSET(table, energy_max),                 H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_tgt",                  HOFFSET(table, energy_tgt),                 H5T_NATIVE_DOUBLE);
@@ -191,8 +191,6 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "energy_variance_max_digits",  HOFFSET(table, energy_variance_max_digits), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "energy_variance_prec_limit",  HOFFSET(table, energy_variance_prec_limit), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "env_expansion_alpha",         HOFFSET(table, env_expansion_alpha),        H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "env_expansion_variance",      HOFFSET(table, env_expansion_variance),     H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "env_expansion_iter",          HOFFSET(table, env_expansion_iter),         H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  decltype(table::phys_time)::get_h5type());
         H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);

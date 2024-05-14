@@ -208,8 +208,8 @@ namespace settings {
         inline size_t              iter_max_stuck              = 5;                                      /*!< If status.algorithm_saturated_for > 0 then status.algorithm_has_stuck_for +=1. If stuck for this many iterations, we stop. */
         inline size_t              iter_max_saturated          = 5;                                      /*!< Saturation means that both variance and entanglement saturated. But if either saturates for this many iterations, then status.algorithm_saturated_for += 1 */
         inline size_t              iter_min_converged          = 1;                                      /*!< Require convergence at least this many iterations before success */
-        inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
-        inline MultisitePolicy     multisite_policy            = MultisitePolicy::DEFAULT;               /*!< Enum bitflag to control multisite dmrg {NEVER,+WARMUP,+STUCK,+CONVERGED,ALWAYS,+GRADUAL,MOVEMID,MOVEMAX,DEFAULT} (+ are DEFAULT) */
+        inline double              max_env_expansion_alpha     = 1e-2;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
+        inline MultisitePolicy     multisite_policy            = MultisitePolicy::DEFAULT;               /*!< Enum bitflag to control multisite dmrg {NEVER,+WARMUP,+STUCK,+CONVERGED,ALWAYS,GRADUAL,MOVEMID,MOVEMAX,DEFAULT} (+ are DEFAULT) */
         inline size_t              multisite_site_def          = 1;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t              multisite_site_max          = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline long                multisite_max_prob_size     = 1024*2*1024;                            /*!< Restricts the number of sites "l" to keep the problem size below this limit. Problem size = chiL * (spindim ** l) * chiR */
@@ -220,9 +220,9 @@ namespace settings {
         inline std::string         initial_pattern             = {};                                     /*!< The actual random spin configuration used for the initial product state (for internal use) */
         inline double              rbds_rate                   = 0.5;                                    /*!< If rbds_rate > 0, runs reverse bond dimension scaling (rbds) after the main algorithm. Values [0,1] represent the shrink factor, while [1,infty] represents a shrink step */
         inline double              rtes_rate                   = 1e1;                                    /*!< If rtes_rate > 1, runs reverse truncation error scaling (rtes) after the main algorithm. Values [1, infty] represent the growth factor for the truncation error limit */
-        inline UpdateWhen          bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
+        inline UpdatePolicy        bond_increase_when          = UpdatePolicy::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
         inline double              bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
-        inline UpdateWhen          trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
+        inline UpdatePolicy        trnc_decrease_when          = UpdatePolicy::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
         inline double              trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
     }
 

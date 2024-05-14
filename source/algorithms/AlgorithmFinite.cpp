@@ -215,8 +215,8 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     bool algo_stuck_long = status.algorithm_has_stuck_for + 2 >= settings::strategy::iter_max_stuck;
 
     // Copy settings
-    m1.min_sites         = settings::strategy::multisite_site_def;
-    m1.max_sites         = settings::strategy::multisite_site_def;
+    m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_def);
+    m1.max_sites         = m1.min_sites;
     m1.subspace_tol      = settings::precision::target_subspace_error;
     m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
     m1.eigs_nev          = 1;
@@ -230,36 +230,37 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.eigs_iter_max             = safe_cast<iter_max_type>(std::min<double>(iter_max_has_stuck, std::numeric_limits<iter_max_type>::max()));
 
     // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
-    m1.eigs_tol = std::min(var_latest, settings::precision::eigs_tol_max);
+    m1.eigs_tol = std::clamp(var_latest * 1e-1, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
     if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::precision::eigs_tol_min;
 
-    m1.optCost   = status.algo_type == AlgorithmType::xDMRG ? OptCost::VARIANCE : OptCost::ENERGY;
-    m1.optAlgo   = OptAlgo::DIRECT;
+    m1.optCost = status.algo_type == AlgorithmType::xDMRG ? OptCost::VARIANCE : OptCost::ENERGY;
+    m1.optAlgo = OptAlgo::DIRECT;
+
     m1.optSolver = OptSolver::EIGS;
     if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
-        if(algo_stuck_long and not var_isconverged) m1.optAlgo = OptAlgo::DIRECTX2; // Last resort
+        if(algo_stuck_long and not var_isconverged and var_latest < 1e-8) m1.optAlgo = OptAlgo::DIRECTX2; // Last resort
     }
     if(status.iter < settings::strategy::iter_max_warmup) {
         using namespace settings::strategy;
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_sites        = has_flag(multisite_policy, MultisitePolicy::WARMUP) ? multisite_site_max : multisite_site_def;
         m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
-
-        if(settings::xdmrg::bond_min > 0 and m1.svd_cfg->rank_max > settings::xdmrg::bond_min) {
-            tools::log->debug("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::xdmrg::bond_min);
-            m1.svd_cfg->rank_max = settings::xdmrg::bond_min;
-        }
     } else {
         m1.max_problem_size = settings::strategy::multisite_max_prob_size;
         m1.max_sites        = settings::strategy::multisite_site_def;
         if(status.algorithm_has_stuck_for > 0 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::STUCK)) {
             m1.max_sites = settings::strategy::multisite_site_max;
             if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::GRADUAL)) {
-                auto site_range_stk = num::LinSpaced(std::max(1ul, settings::strategy::iter_max_stuck), settings::strategy::multisite_site_def,
-                                                     settings::strategy::multisite_site_max);
-                auto site_range_idx = std::min({site_range_stk.size() - 1, status.algorithm_has_stuck_for, settings::strategy::iter_max_stuck - 1});
-                m1.max_sites        = static_cast<size_t>(std::ceil(site_range_stk.at(site_range_idx)));
+                auto site_range = num::LinSpaced(std::max(1ul, settings::strategy::iter_max_stuck), settings::strategy::multisite_site_def,
+                                                 settings::strategy::multisite_site_max);
+                auto site_index = std::min({site_range.size() - 1, status.algorithm_has_stuck_for});
+                m1.max_sites    = static_cast<size_t>(site_range.at(site_index));
             }
+        }
+        if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS)) {
+            m1.max_sites     = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
+            m1.eigs_iter_max = 1;
+            m1.eigs_tol      = 1e-1;
         }
     }
     if(var_isconverged) {
@@ -269,9 +270,9 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         m1.eigs_tol      = settings::precision::eigs_tol_min;
         m1.eigs_iter_max = std::max(1000000, m1.eigs_iter_max.value());
         m1.eigs_time_max = 5.0 * 3600.0;
-        if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::CONVERGED)) m1.max_sites = settings::strategy::multisite_site_max;
+        if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::CONVERGED))
+            m1.max_sites = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
     }
-    if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS)) { m1.max_sites = settings::strategy::multisite_site_max; }
 
     // Set up the problem size here
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
@@ -281,28 +282,49 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     if(m1.problem_size <= settings::precision::eig_max_size) m1.optSolver = OptSolver::EIG;
 
+    // if(m1.optSolver == OptSolver::EIGS and m1.chosen_sites.size() == 1 and tensors.state->get_direction() < 0) {
+    // #pragma message "testing DIRECTZ"
+    //         m1.eigs_ncv = std::max(m1.eigs_ncv.value_or(32), 32);
+    //         m1.eigs_tol = 1e-12;
+    //         m1.optAlgo  = OptAlgo::DIRECTZ;
+    //     }
+
     m1.validate();
 
     return m1;
 }
 
-void AlgorithmFinite::expand_environment(std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
+void AlgorithmFinite::expand_environment(EnvExpandMode expandMode, EnvExpandSide expandSide, std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
     if(settings::strategy::max_env_expansion_alpha <= 0) return;
     // Set a good initial value to start with
     alpha = alpha.value_or(status.env_expansion_alpha);
     if(alpha.value() <= 0) return;
+    auto var_before_exp = tools::finite::measure::energy_variance(tensors);
+    if(not svd_cfg.has_value()) {
+        auto bond_lim = expandSide == EnvExpandSide::FORWARD ? status.bond_lim * 2 : status.bond_lim;
+        auto trnc_lim = expandSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
+        svd_cfg       = svd::config(bond_lim, trnc_lim);
+    }
 
-    bool var_has_improved = var_relchange < -0.01;
-    auto var_before_exp   = tools::finite::measure::energy_variance(tensors);
-    svd_cfg               = svd_cfg.value_or(svd::config(status.bond_lim, status.trnc_lim));
-    auto expandMode       = tensors.state->get_algorithm() == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
-    tensors.expand_environment(alpha, expandMode, svd_cfg);
+    tensors.expand_environment(expandMode, expandSide, alpha.value(), svd_cfg.value());
     auto var_after_exp = tools::finite::measure::energy_variance(tensors);
+    tools::log->debug("Expanded environment {} {} | alpha {:.3e} | var {:.3e} -> {:.3e}", enum2sv(expandMode), enum2sv(expandSide), alpha.value(),
+                      var_before_exp, var_after_exp);
 
-    auto var_relchange_expansion = (var_after_exp - var_before_exp) / var_after_exp;
+    /* Update alpha
+            alpha  = factor * alpha,
+            factor =  1.0/(q-bias)
+            q      = Var(H)_after / Var(H)_before  (after/before expansion)
+            bias   = 1e-2 seems good, larger (e.g 1e-1) introduces too much noise
+       This makes alpha dynamically adjust to make a meaningful (but not too disruptive) enrichment.
+    */
 
-    tools::log->debug("Expanded environment: alpha {:8.2e} | var improved {} | relchange: optimization {:.5e} env.expansion {:.5e} ({:.16f} --> {:.16f})",
-                      status.env_expansion_alpha, var_has_improved, var_relchange, var_relchange_expansion, var_before_exp, var_after_exp);
+    double old_alpha           = alpha.value();
+    double q                   = var_after_exp / var_before_exp;
+    double bias                = 0.1;
+    double factor              = std::clamp(0.2 + std::abs(1.0 / q), 1e-1, 1e+1);
+    status.env_expansion_alpha = std::clamp(factor * old_alpha, 0.0, settings::strategy::max_env_expansion_alpha);
+    tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f}", old_alpha, status.env_expansion_alpha, factor);
 }
 
 void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
@@ -336,7 +358,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
                 if(num_active >= 2 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::MOVEMID)) {
                     num_moves = num_active / 2; // We want the ceil of num_active/2 when odd
                 }
-                if(num_active >= 2 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::MOVEMID)) {
+                if(num_active >= 2 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::MOVEMAX)) {
                     num_moves = num_active - 1; // Move so that the center point moves out of the active region
                 }
             }
@@ -486,15 +508,20 @@ void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_
 
 void AlgorithmFinite::update_bond_dimension_limit() {
     if(not tensors.position_is_inward_edge()) return;
-    status.bond_max                   = settings::get_bond_max(status.algo_type);
     status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
-    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
+
+    if(status.iter < settings::strategy::iter_max_warmup and not has_flag(settings::strategy::bond_increase_when, UpdatePolicy::WARMUP)) {
+        tools::log->debug("Kept bond dimension limit: {} | warmup", status.bond_min);
+        status.bond_lim = status.bond_min;
+        return;
+    }
+    if(settings::strategy::bond_increase_when == UpdatePolicy::NEVER or settings::strategy::bond_increase_rate <= 1) {
         status.bond_lim                   = status.bond_max;
         status.bond_limit_has_reached_max = true;
         return;
     }
     if(status.bond_limit_has_reached_max) return;
-    auto tic = tid::tic_scope("bond_grow");
+    auto tic = tid::tic_scope("bond_grow", tid::level::higher);
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
@@ -510,26 +537,29 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         }
     }
     // If we got here we want to increase the bond dimension limit progressively during the simulation
-    bool is_saturated      = status.algorithm_saturated_for > 0; // Allow one round while saturated so that extra efforts get a chance.
-    bool is_has_stuck      = status.algorithm_has_stuck_for > 0;
-    bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
-    bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
-    bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
-    bool grow_if_has_stuck = settings::strategy::bond_increase_when == UpdateWhen::STUCK;
-
-    if(grow_if_truncated and not is_truncated) {
-        tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
+    bool                          is_on_warmup      = status.iter < settings::strategy::iter_max_warmup;
+    bool                          is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
+    bool                          is_saturated      = status.algorithm_saturated_for > 0; // Allow one round while saturated so that extra efforts get a chance.
+    bool                          is_has_stuck      = status.algorithm_has_stuck_for > 0;
+    bool                          is_next_iter      = true; // Should be checked
+    bool                          is_even_iter      = status.iter % 2 == 0;
+    bool                          grow_if_on_warmup = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::WARMUP);
+    bool                          grow_if_next_iter = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::ITERATION);
+    bool                          grow_if_even_iter = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::FULLSWEEP);
+    bool                          grow_if_truncated = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::TRUNCATED);
+    bool                          grow_if_saturated = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::SATURATED);
+    bool                          grow_if_has_stuck = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::STUCK);
+    std::vector<std::string_view> reason;
+    if(grow_if_on_warmup and is_on_warmup) reason.emplace_back("warmup");
+    if(grow_if_truncated and is_truncated) reason.emplace_back("truncated");
+    if(grow_if_saturated and is_saturated) reason.emplace_back("saturated");
+    if(grow_if_has_stuck and is_has_stuck) reason.emplace_back("stuck");
+    if(grow_if_next_iter and is_next_iter) reason.emplace_back("next iter");
+    if(grow_if_even_iter and is_even_iter) reason.emplace_back("even iter");
+    if(reason.empty()) {
+        tools::log->trace("Kept bond dimension limit: {} | no reason to update", status.bond_lim);
         return;
     }
-    if(grow_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated. Kept current bond limit {}", status.bond_lim);
-        return;
-    }
-    if(grow_if_has_stuck and not is_has_stuck) {
-        tools::log->info("Algorithm is not stuck. Kept current bond limit {}", status.bond_lim);
-        return;
-    }
-
     // Write current results before updating bond dimension
     write_to_file(StorageEvent::BOND_UPDATE);
 
@@ -547,25 +577,25 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         throw except::logic_error("Expected grow_rate > 1.0. Got {}", rate);
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
 
-    tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
+    tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
     status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
-void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event) {
+void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdatePolicy when, StorageEvent storage_event) {
     // We reduce the bond dimension limit during RBDS whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
-    if(when == UpdateWhen::NEVER) return;
+    if(when == UpdatePolicy::NEVER) return;
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
     size_t iter_since_reduce = std::max(status.iter, iter_last_bond_reduce) - std::min(status.iter, iter_last_bond_reduce);
-    bool   reduce_saturated  = when == UpdateWhen::SATURATED and status.algorithm_saturated_for > 0;
-    bool   reduce_truncated  = when == UpdateWhen::TRUNCATED and tensors.state->is_truncated(status.trnc_lim);
-    bool   reduce_iteration  = when == UpdateWhen::ITERATION and iter_since_reduce >= 1;
+    bool   reduce_saturated  = when == UpdatePolicy::SATURATED and status.algorithm_saturated_for > 0;
+    bool   reduce_truncated  = when == UpdatePolicy::TRUNCATED and tensors.state->is_truncated(status.trnc_lim);
+    bool   reduce_iteration  = when == UpdatePolicy::ITERATION and iter_since_reduce >= 1;
     if(reduce_saturated or reduce_truncated or reduce_iteration or iter_since_reduce >= 20) {
         write_to_file(storage_event, CopyPolicy::OFF);
 
@@ -581,7 +611,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, 
             // There would be no change in bond_lim
             status.algo_stop = AlgorithmStop::SUCCESS;
         } else {
-            if(storage_event != StorageEvent::NONE) tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
+            if(storage_event != StorageEvent::NONE) tools::log->info("Updated bond dimension limit {} -> {}", status.bond_lim, bond_new);
             status.bond_lim = safe_cast<long>(bond_new);
         }
         iter_last_bond_reduce = status.iter;
@@ -591,13 +621,19 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, 
 void AlgorithmFinite::update_truncation_error_limit() {
     if(not tensors.position_is_inward_edge()) return;
     if(status.trnc_lim == 0.0) throw std::runtime_error("trnc_lim is zero!");
-    status.trnc_min                   = settings::precision::svd_truncation_lim;
     status.trnc_limit_has_reached_min = status.trnc_lim <= status.trnc_min;
-    if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
+
+    if(status.iter < settings::strategy::iter_max_warmup and not has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::WARMUP)) {
+        status.trnc_lim = status.trnc_max;
+        return;
+    }
+
+    if(settings::strategy::trnc_decrease_when == UpdatePolicy::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
         status.trnc_lim                   = status.trnc_min;
         status.trnc_limit_has_reached_min = true;
         return;
     }
+
     if(status.trnc_limit_has_reached_min) return;
     auto tic = tid::tic_scope("trnc_down", tid::level::higher);
 
@@ -614,23 +650,24 @@ void AlgorithmFinite::update_truncation_error_limit() {
     }
 
     // If we got here we want to decrease the truncation error limit progressively during the simulation
-    bool is_saturated      = status.algorithm_saturated_for > 0; // Allow one round so that extra efforts get a chance.
-    bool is_has_stuck      = status.algorithm_has_stuck_for > 0; // Allow one round so that extra efforts get a chance.
-    bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
-    bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdateWhen::TRUNCATED;
-    bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
-    bool drop_if_has_stuck = settings::strategy::trnc_decrease_when == UpdateWhen::STUCK;
-
-    if(drop_if_truncated and not is_truncated) {
-        tools::log->info("State is not truncated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
-        return;
-    }
-    if(drop_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
-        return;
-    }
-    if(drop_if_has_stuck and not is_has_stuck) {
-        tools::log->info("Algorithm is not stuck. Kept current truncation error limit {:8.2e}", status.trnc_lim);
+    bool                          is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
+    bool                          is_saturated      = status.algorithm_saturated_for > 0; // Allow one round while saturated so that extra efforts get a chance.
+    bool                          is_has_stuck      = status.algorithm_has_stuck_for > 0;
+    bool                          is_next_iter      = true; // Should be checked
+    bool                          is_even_iter      = status.iter % 2 == 0;
+    bool                          drop_if_truncated = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::TRUNCATED);
+    bool                          drop_if_saturated = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::SATURATED);
+    bool                          drop_if_has_stuck = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::STUCK);
+    bool                          drop_if_next_iter = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::ITERATION);
+    bool                          drop_if_even_iter = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::FULLSWEEP);
+    std::vector<std::string_view> reason;
+    if(drop_if_truncated and is_truncated) reason.emplace_back("truncated");
+    if(drop_if_saturated and is_saturated) reason.emplace_back("saturated");
+    if(drop_if_has_stuck and is_has_stuck) reason.emplace_back("stuck");
+    if(drop_if_next_iter and is_next_iter) reason.emplace_back("next iter");
+    if(drop_if_even_iter and is_even_iter) reason.emplace_back("even iter");
+    if(reason.empty()) {
+        tools::log->trace("Kept truncation error limit:  {:8.2e} | no reason to update", status.trnc_lim);
         return;
     }
 
@@ -642,44 +679,15 @@ void AlgorithmFinite::update_truncation_error_limit() {
     if(rate > 1.0 or rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:8.2e} | must be in [0, 1]");
 
     auto trnc_new = std::max(status.trnc_min, status.trnc_lim * rate);
+    if(trnc_new < status.trnc_min / rate) trnc_new = status.trnc_min; // If the truncation error is close enough to reaching min, just set min.
 
-    tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {} | stuck {}", status.trnc_lim, trnc_new, is_truncated,
-                     is_saturated, is_has_stuck);
+    tools::log->info("Updated truncation error limit: {:8.2e} -> {:8.2e} | reasons: {}", status.trnc_lim, trnc_new, fmt::join(reason, " | "));
     status.trnc_lim                   = trnc_new;
-    status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_min;
-
+    status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
+    status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
-}
-
-void AlgorithmFinite::update_expansion_factor_alpha() {
-    if(settings::strategy::max_env_expansion_alpha <= 0) return;
-    // if(not tensors.position_is_inward_edge()) return; // Update once per sweep
-    // Set a good initial value in the first iteration
-
-    // Update alpha
-    if(status.env_expansion_alpha == 0) status.env_expansion_alpha = std::min(var_latest, settings::strategy::max_env_expansion_alpha);
-    double old_expansion_alpha = status.env_expansion_alpha;
-
-    // double alpha_upper_limit = settings::strategy::max_env_expansion_alpha;
-    double alpha_upper_limit = std::min(var_latest, settings::strategy::max_env_expansion_alpha);
-    double alpha_lower_limit = std::min(status.energy_variance_lowest, alpha_upper_limit);
-
-    bool var_has_improved  = var_latest / status.env_expansion_variance < 0.9;
-    bool var_has_converged = status.variance_mpo_converged_for > 0 or var_latest < settings::precision::variance_convergence_threshold;
-    // bool   var_has_got_stuck   = !var_has_improved and !var_has_converged and (status.iter - status.env_expansion_iter) >= 2;
-    double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
-    double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
-    double factor              = var_has_improved or var_has_converged                                   // or var_has_got_stuck
-                                     ? factor_dn
-                                     : factor_up;
-    status.env_expansion_alpha = std::clamp(factor * status.env_expansion_alpha, alpha_lower_limit, alpha_upper_limit);
-
-    if(std::abs(status.env_expansion_alpha / old_expansion_alpha - 1.0) > 1e-6) {
-        status.env_expansion_variance = var_latest;
-        status.env_expansion_iter     = status.iter; // Last non-stuck iter
-        tools::log->trace("Updated alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
-    }
 }
 
 void AlgorithmFinite::initialize_model() {
@@ -699,7 +707,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     if(not pattern) pattern = settings::strategy::initial_pattern;
     if(not bond_lim) {
         bond_lim = settings::get_bond_min(status.algo_type);
-        if(settings::strategy::bond_increase_when == UpdateWhen::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
+        if(settings::strategy::bond_increase_when == UpdatePolicy::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             bond_lim = safe_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
     if(not trnc_lim) {
@@ -725,7 +733,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
     status.algo_stop = AlgorithmStop::NONE;
-    if(settings::strategy::bond_increase_when != UpdateWhen::NEVER) status.bond_lim = bond_lim.value();
+    if(settings::strategy::bond_increase_when != UpdatePolicy::NEVER) status.bond_lim = bond_lim.value();
     if(tensors.state->find_largest_bond() > bond_lim.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
         //        bond_lim.value());
@@ -769,12 +777,12 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     if(projection_if_stuck or projection_if_conv or projection_if_iter or target_sector.has_value()) {
         if(not target_sector) target_sector = settings::strategy::target_axis;
         if(not qm::spin::half::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
-        std::string msg;
-        if(target_sector.has_value()) msg += fmt::format(" | reason: given sector {}", target_sector.value());
-        if(projection_if_stuck) msg += " | reason: stuck";
-        if(projection_if_conv) msg += " | reason: converged";
-        if(projection_if_iter) msg += " | reason: iter";
-        tools::log->info("Trying projection to {}{}", target_sector.value(), msg);
+        std::vector<std::string> msg;
+        if(target_sector.has_value()) msg.emplace_back(fmt::format("given sector {}", target_sector.value()));
+        if(projection_if_stuck) msg.emplace_back("stuck");
+        if(projection_if_conv) msg.emplace_back("converged");
+        if(projection_if_iter) msg.emplace_back("iter");
+        tools::log->info("Trying projection to {} | reasons: {}", target_sector.value(), fmt::join(msg, " | "));
 
         auto sector_sign   = qm::spin::half::get_sign(target_sector.value());
         auto energy_old    = tools::finite::measure::energy(tensors);
@@ -936,7 +944,7 @@ void AlgorithmFinite::check_convergence() {
         status.algorithm_has_stuck_for = 0;
     }
 
-    status.algorithm_has_succeeded = status.bond_limit_has_reached_max and status.algorithm_converged_for >= settings::strategy::iter_min_converged;
+    status.algorithm_has_succeeded = status.algorithm_converged_for > settings::strategy::iter_min_converged;
     status.algorithm_has_to_stop   = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck;
 
     tools::log->info(
@@ -959,8 +967,15 @@ AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFin
 
 void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
-    if(not threshold) threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
+    if(not threshold) {
+        if(status.iter < settings::strategy::iter_max_warmup) {
+            threshold = settings::precision::variance_convergence_threshold;
+        } else {
+            threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
+        }
+    }
+
     tools::log->trace("Checking convergence of variance mpo | convergence threshold {:.2e} | sensitivity {:.2e}", threshold.value(),
                       saturation_sensitivity.value());
 
@@ -1112,7 +1127,6 @@ void AlgorithmFinite::clear_convergence_status() {
     status.spin_parity_has_converged  = false;
     status.energy_variance_lowest     = 1.0;
     status.env_expansion_alpha        = 0.0;
-    status.env_expansion_variance     = 1.0;
 }
 
 void AlgorithmFinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
@@ -1179,8 +1193,13 @@ void          AlgorithmFinite::print_status() {
 
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
     if(settings::strategy::multisite_site_def == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
-    report += fmt::format("χ:{:<3}|{:<3}|", settings::get_bond_max(status.algo_type), status.bond_lim);
-    auto bonds_maxims = std::vector<long>(std::max<size_t>(1, settings::strategy::multisite_site_def - 1), settings::get_bond_max(status.algo_type));
+    if(status.bond_max == status.bond_lim) {
+        report += fmt::format("χ:{:<3}|", status.bond_max);
+    } else {
+        report += fmt::format("χ:{:<3}|{:<3}|", status.bond_max, status.bond_lim);
+    }
+    auto bonds_msites = std::clamp(settings::strategy::multisite_site_def - 1, 1ul, tensors.get_length<size_t>());
+    auto bonds_maxims = std::vector<long>(bonds_msites, status.bond_max);
     auto bonds_merged = tools::finite::measure::bond_dimensions_active(*tensors.state);
     auto bonds_padlen = fmt::format("{}", bonds_maxims).size();
     auto bonds_string = fmt::format("{}", bonds_merged);
@@ -1190,6 +1209,7 @@ void          AlgorithmFinite::print_status() {
         std::string short_optalgo, short_optcost;
         switch(last_optalgo.value()) {
             case OptAlgo::DIRECT: short_optalgo = "DIR"; break;
+            case OptAlgo::DIRECTZ: short_optalgo = "DRZ"; break;
             case OptAlgo::DIRECTX2: short_optalgo = "DX2"; break;
             case OptAlgo::MPSEIGS: short_optalgo = "MPS"; break;
             case OptAlgo::SHIFTINV: short_optalgo = "SHI"; break;
@@ -1238,7 +1258,7 @@ void AlgorithmFinite::print_status_full() {
         double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
         tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
     }
-    tools::log->info("Bond dimension maximum χmax        = {}", settings::get_bond_max(status.algo_type));
+    tools::log->info("Bond dimension maximum χmax        = {}", status.bond_max);
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
     tools::log->info("Entanglement entropies Sₑ          = {::8.2e}", tools::finite::measure::entanglement_entropies(*tensors.state));

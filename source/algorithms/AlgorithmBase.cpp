@@ -26,32 +26,30 @@ void AlgorithmBase::copy_from_tmp(StorageEvent storage_event, CopyPolicy copy_po
 }
 
 void AlgorithmBase::init_bond_dimension_limits() {
-    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
-        status.bond_max  = settings::get_bond_max(status.algo_type);
-        status.bond_lim  = settings::get_bond_max(status.algo_type);
-        status.bond_init = settings::get_bond_max(status.algo_type);
-    } else {
-        status.bond_max  = settings::get_bond_max(status.algo_type);
-        status.bond_lim  = settings::get_bond_min(status.algo_type);
-        status.bond_init = settings::get_bond_min(status.algo_type);
+    status.bond_max = settings::get_bond_max(status.algo_type); // Bond max from the loaded config file
+    if(has_any_flags(status.algo_type, AlgorithmType::fDMRG, AlgorithmType::xDMRG, AlgorithmType::fLBIT)) {
+        // Finite systems have limited bond dimension!
+        status.bond_max = std::min(status.bond_max, safe_cast<long>(std::pow(2.0, settings::model::model_size / 2)));
     }
+    status.bond_lim = std::min(status.bond_max, settings::get_bond_min(status.algo_type));
+    status.bond_min = std::min(status.bond_max, settings::get_bond_min(status.algo_type));
     // Sanity check
     if(status.bond_lim == 0) throw except::runtime_error("Bond dimension limit invalid: {}", status.bond_lim);
 }
 
 void AlgorithmBase::init_truncation_error_limits() {
-    if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) {
-        status.trnc_min  = settings::precision::svd_truncation_lim;
-        status.trnc_lim  = settings::precision::svd_truncation_lim;
-        status.trnc_init = settings::precision::svd_truncation_lim;
+    if(settings::strategy::trnc_decrease_when == UpdatePolicy::NEVER) {
+        status.trnc_min = settings::precision::svd_truncation_lim;
+        status.trnc_lim = settings::precision::svd_truncation_lim;
+        status.trnc_max = settings::precision::svd_truncation_lim;
     } else {
-        status.trnc_min  = settings::precision::svd_truncation_lim;
-        status.trnc_lim  = settings::precision::svd_truncation_init;
-        status.trnc_init = settings::precision::svd_truncation_init;
+        status.trnc_min = settings::precision::svd_truncation_lim;
+        status.trnc_lim = settings::precision::svd_truncation_init;
+        status.trnc_max = settings::precision::svd_truncation_init;
     }
     // Sanity check
     if(status.trnc_lim == 0.0) throw except::runtime_error("Truncation error limit invalid: {}", status.trnc_lim);
-    tools::log->info("Initialized truncation error limits: init {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_init, status.trnc_lim, status.trnc_min);
+    tools::log->info("Initialized truncation error limits: init {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_max, status.trnc_lim, status.trnc_min);
 }
 
 size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx) {

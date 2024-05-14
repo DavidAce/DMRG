@@ -22,24 +22,24 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id;
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
-    std::optional<size_t>                 position;                             /*!< Position on a finite chain */
-    double                                energy_shift_mpo       = 0;           /*!< Energy shift for this mpo (to make energy-shifted MPO views) */
-    OptRitz                               parity_shift_ritz_mpo  = OptRitz::SR; /*!< Shift direction depending on ritz (SR:-1, LR:+1) */
-    int                                   parity_shift_sign_mpo  = 0;           /*!< Sign of parity sector to shift for the MPO*/
-    std::string                           parity_shift_axus_mpo  = {};          /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
-    int                                   parity_shift_sign_mpo2 = 0;           /*!< Sign of parity sector to shift for the MPO²*/
-    std::string                           parity_shift_axus_mpo2 = {};          /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO² */
-    std::array<long, 4>                   extent4{};                            /*!< Extent of pauli matrices in a rank-4 tensor */
-    std::array<long, 2>                   extent2{};                            /*!< Extent of pauli matrices in a rank-2 tensor */
+    std::optional<size_t>                 position;                                /*!< Position on a finite chain */
+    cplx                                  energy_shift_mpo       = cplx(0.0, 0.0); /*!< Energy shift for this mpo (to make energy-shifted MPO views) */
+    OptRitz                               parity_shift_ritz_mpo  = OptRitz::SR;    /*!< Shift direction depending on ritz (SR:-1, LR:+1) */
+    int                                   parity_shift_sign_mpo  = 0;              /*!< Sign of parity sector to shift for the MPO*/
+    std::string                           parity_shift_axus_mpo  = {};             /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
+    int                                   parity_shift_sign_mpo2 = 0;              /*!< Sign of parity sector to shift for the MPO²*/
+    std::string                           parity_shift_axus_mpo2 = {};             /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO² */
+    std::array<long, 4>                   extent4{};                               /*!< Extent of pauli matrices in a rank-4 tensor */
+    std::array<long, 2>                   extent2{};                               /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<cplx, 4>                mpo_internal;
     Eigen::Tensor<cplx_t, 4>              mpo_internal_t;
-    std::optional<Eigen::Tensor<cplx, 4>> mpo_squared                   = std::nullopt;
-    double                                global_energy_upper_bound       = 100.0;
-    double                                local_energy_upper_bound = 0.0;
+    std::optional<Eigen::Tensor<cplx, 4>> mpo_squared               = std::nullopt;
+    double                                global_energy_upper_bound = 100.0;
+    double                                local_energy_upper_bound  = 0.0;
 
-    virtual Eigen::Tensor<cplx, 4>   get_mpo(real energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    virtual Eigen::Tensor<cplx, 4>   get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                              std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
-    virtual Eigen::Tensor<cplx_t, 4> get_mpo_t(real_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    virtual Eigen::Tensor<cplx_t, 4> get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                                std::optional<std::vector<size_t>> skip = std::nullopt) const;
 
     template<typename Scalar>
@@ -59,8 +59,8 @@ class MpoSite {
     void build_mpo_t();
     void set_position(size_t new_pos);
     void assert_validity() const;
-    void set_energy_shift_mpo(double site_energy);
-    void set_energy_shift_mpo2(double site_energy);
+    void set_energy_shift_mpo(cplx site_energy);
+    void set_energy_shift_mpo2(cplx site_energy);
     template<typename T>
     Eigen::Tensor<T, 4>                           get_parity_shifted_mpo(const Eigen::Tensor<T, 4> &mpo_build) const;
     Eigen::Tensor<cplx, 4>                        get_parity_shifted_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_build) const;
@@ -96,8 +96,8 @@ class MpoSite {
     [[nodiscard]] bool                          has_parity_shifted_mpo() const;
     [[nodiscard]] bool                          has_parity_shifted_mpo2() const;
     [[nodiscard]] bool                          has_compressed_mpo_squared() const;
-    [[nodiscard]] double                        get_energy_shift_mpo() const;
-    [[nodiscard]] double                        get_energy_shift_mpo2() const;
+    [[nodiscard]] cplx                          get_energy_shift_mpo() const;
+    [[nodiscard]] cplx                          get_energy_shift_mpo2() const;
     [[nodiscard]] double                        get_global_energy_upper_bound() const;
     [[nodiscard]] double                        get_local_energy_upper_bound() const;
     template<typename Scalar = cplx>

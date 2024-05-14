@@ -144,7 +144,7 @@ void flbit_impl::print_status(const StateFinite &state_real, const AlgorithmStat
     report += fmt::format("ε:{:<8.2e} ", state_real.get_truncation_error_midchain());
     report += fmt::format("Sₑ(L/2):{:<18.16f} ", tools::finite::measure::entanglement_entropy_midchain(state_real));
     report += fmt::format("Sₙ(L/2):{:<18.16f} ", tools::finite::measure::number_entropy_midchain(state_real));
-    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
+    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", status.bond_max, status.bond_lim,
                           tools::finite::measure::bond_dimension_midchain(state_real));
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
         report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<real>()));
