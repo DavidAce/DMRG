@@ -212,7 +212,6 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // Set up handy quantities
     auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
-    bool algo_stuck_long = status.algorithm_has_stuck_for + 2 >= settings::strategy::iter_max_stuck;
 
     // Copy settings
     m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_def);
@@ -238,6 +237,8 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 
     m1.optSolver = OptSolver::EIGS;
     if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
+        // Try this desperate measure for one iteration...
+        bool algo_stuck_long = status.algorithm_has_stuck_for + 2 == settings::strategy::iter_max_stuck;
         if(algo_stuck_long and not var_isconverged and var_latest < 1e-8) m1.optAlgo = OptAlgo::DIRECTX2; // Last resort
     }
     if(status.iter < settings::strategy::iter_max_warmup) {
