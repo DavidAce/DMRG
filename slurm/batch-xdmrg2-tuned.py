@@ -37,7 +37,7 @@ config_ranges = {
     "model::ising_majorana::g": ['0.00', '0.01', '0.02', '0.03'],
     "model::ising_majorana::delta": [f'{x:+.2f}' for x in range(-6,7)],
     "xdmrg::iter_min": ['1'],
-    "xdmrg::iter_max": ['100'],
+    "xdmrg::iter_max": ['200'],
     "xdmrg::warmup_iters": ['4'],
     "xdmrg::bond_max": ['8192'],
     "xdmrg::bond_init": ['32'],
