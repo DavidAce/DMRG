@@ -5,7 +5,7 @@ import h5py
 from .plots.tools import get_timepoints
 from .write_statistics_table import *
 from numba import njit,prange, float64,int64
-from line_profiler_pycharm import profile
+from line_profiler import profile
 from cProfile import Profile
 from pstats import SortKey, Stats
 
@@ -193,7 +193,7 @@ def get_qin_probability_slice(pslice,popcount):
 
 
 
-#@profile
+@profile
 def write_statistics_dset(meta, props, h5_tgt):
     print(f'writing dset stats: {meta[0]}')
     # Props contains the names of the datasets
@@ -512,6 +512,7 @@ def write_statistics_ed(h5_ed_src, tgt_node, L):
         write_stats_to_node(data=data, tgt_node=entropy_node, axis=0)
 
 
+@profile
 def write_statistics(src, tgt, reqs):
     with h5py.File(src, 'r', libver='latest', swmr=True, rdcc_nbytes=1 * 1024 ** 3, rdcc_nslots=521, driver='sec2') as h5_src:
         with h5py.File(tgt, 'w') as h5_tgt:
@@ -519,6 +520,8 @@ def write_statistics(src, tgt, reqs):
             for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20,
                                                                    excludeKeys=['.db', 'cronos', 'tables', 'iter_', '_spectrum' ],
                                                                    nodeType=h5py.Dataset):
+                if not 'g0.0300' in dsetpath:
+                    continue
                 print(' -- found dset: {}'.format(dsetpath))
                 write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
 
@@ -526,6 +529,8 @@ def write_statistics(src, tgt, reqs):
             for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
                                                                       excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                                       nodeType=h5py.Dataset):
+                if not 'g0.0300' in tablepath:
+                    continue
                 write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
 
 

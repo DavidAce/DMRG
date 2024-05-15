@@ -170,6 +170,38 @@ namespace stat {
         }
         return res;
     }
+    template<typename ContainerType>
+    [[nodiscard]] std::vector<double> rel_sterr_moving(const ContainerType &X, double width = 0.1, std::optional<size_t> start_point = std::nullopt,
+                                                       std::optional<size_t> end_point = std::nullopt) {
+        std::vector<double> res;
+        width             = std::clamp<double>(width, 0.0, 1.0);
+        auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
+        long idx0         = std::distance(X.begin(), x_it);
+        long idxN         = std::distance(X.begin(), x_en);
+        long xlen         = std::distance(x_it, x_en);                                             // Number of points to consider in X
+        long wlen         = std::max<long>(2, safe_cast<long>(width * static_cast<double>(xlen))); // Number of points in the moving window
+        while(x_it != x_en) {
+            long idx_beg = std::distance(X.begin(), x_it); // Center around x_it
+            long idx_end = std::distance(X.begin(), x_it); // Center around x_it
+            while(idx_end - idx_beg < wlen) {
+                idx_end = std::clamp(idx_end + 1, idx_end, idxN); // Move forward 1 step if possible.
+                if(idx_end - idx_beg < wlen) {
+                    idx_beg = std::clamp(idx_beg - 1, idx0, idx_beg); // Move back 1 step if possible.
+                }
+                if(idx_beg == idx0 and idx_end == idxN) break;
+            }
+            if(idx_beg < 0 or static_cast<size_t>(idx_end) > X.size()) break;
+            // Take relative X
+            auto Xavg = mean(X, idx_beg, idx_end);
+            auto Xrel = X;
+            if(std::abs(Xavg) > 0) {
+                for(auto &x : Xrel) x = x / Xavg;
+            }
+            res.emplace_back(sterr(Xrel, idx_beg, idx_end));
+            x_it++;
+        }
+        return res;
+    }
 
     template<typename ContainerType1, typename ContainerType2, typename = std::enable_if_t<is_iterable_v<ContainerType1> and is_iterable_v<ContainerType2>>>
     [[nodiscard]] std::vector<double> cumtrapz(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,

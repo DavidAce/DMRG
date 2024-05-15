@@ -306,6 +306,8 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 void AlgorithmFinite::expand_environment(EnvExpandMode expandMode, EnvExpandSide expandSide, std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
     if(settings::strategy::max_env_expansion_alpha <= 0) return;
     // Set a good initial value to start with
+    // if(status.step == 65) return;
+
     if(status.env_expansion_alpha == 0.0) status.env_expansion_alpha = settings::strategy::max_env_expansion_alpha;
     alpha = alpha.value_or(status.env_expansion_alpha);
     if(alpha.value() <= 0) return;

@@ -76,15 +76,15 @@ def dmrg_plot(args):
 
     # logging.basicConfig(level=logging.DEBUG)
     #
-    # f = None
-    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
-    #     f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-g'], figs=f)
-    # save_figure(f)
-    #
-    # f = None
-    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
-    #     f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-d'], figs=f)
-    # save_figure(f)
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-g'], figs=f)
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-d'], figs=f)
+    save_figure(f)
 
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
