@@ -13,23 +13,27 @@ enum class OptType;
 enum class OptWhen;
 enum class OptExit;
 enum class OptRitz;
+enum class EnvExpandMode;
+enum class EnvExpandSide;
 
 namespace tools::finite::opt {
     struct OptMeta {
-        OptCost                    optCost;
-        OptAlgo                    optAlgo;
-        OptSolver                  optSolver;
-        OptType                    optType;
-        OptWhen                    optWhen;
-        OptRitz                    optRitz;
-        OptExit                    optExit;
-        size_t                     max_sites        = 2;
-        size_t                     min_sites        = 1;
-        long                       max_problem_size = 0;
-        long                       problem_size     = 0;
+        OptCost       optCost;
+        OptAlgo       optAlgo;
+        OptSolver     optSolver;
+        OptType       optType;
+        OptWhen       optWhen;
+        OptRitz       optRitz;
+        OptExit       optExit;
+        EnvExpandMode expand_mode;
+        EnvExpandSide expand_side;
+        size_t        max_sites        = 2;
+        size_t        min_sites        = 1;
+        long          max_problem_size = 0;
+        long          problem_size     = 0;
         // std::optional<double>      alpha_expansion  = std::nullopt;
-        std::array<long, 3>        problem_dims     = {};
-        std::vector<size_t>        chosen_sites     = {};
+        std::array<long, 3>        problem_dims = {};
+        std::vector<size_t>        chosen_sites = {};
         std::string                label;
         std::optional<double>      subspace_tol          = std::nullopt;
         std::optional<double>      eigv_target           = std::nullopt; // AKA shift

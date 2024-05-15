@@ -289,6 +289,7 @@ void xdmrg::run_algorithm() {
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
         try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+        // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);
         move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -317,7 +318,11 @@ void xdmrg::update_state() {
     tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
     auto bond_dims_old = tensors.state->get_mps_dims_active();
     // Expand the environment to grow the bond dimension in 1-site dmrg
-    if(tensors.active_sites.size() == 1) { expand_environment(EnvExpandMode::VAR, EnvExpandSide::FORWARD); }
+    if(tensors.active_sites.size() == 1) {
+        expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
+        // expand_environment(EnvExpandMode::ENE, opt_meta.expand_side);
+        // expand_environment(EnvExpandMode::VAR, opt_meta.expand_side);
+    }
     auto variance_after_exp = tools::finite::measure::energy_variance(tensors);
     auto bond_dims_exp      = tensors.state->get_mps_dims_active();
 

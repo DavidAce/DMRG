@@ -1,11 +1,9 @@
 import glob
 import os.path
 
-import matplotlib.pyplot as plt
 from batches import get_batches
-from src.h5ops import *
 from src.database import *
-from src.plots.meta_xdmrg1_prl import *
+from meta_xdmrg2 import *
 from src.plots.multiplot import *
 
 
@@ -111,7 +109,7 @@ def dmrg_plot(args):
 
 
 if __name__ == '__main__':
-    batch = get_batches('xDMRG', ['xdmrg1-fse'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('xDMRG', ['xdmrg2-tuned'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     dmrg_plot(batch)
 
 

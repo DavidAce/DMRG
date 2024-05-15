@@ -222,6 +222,10 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.eigv_target       = 0.0;                           // We always target 0 when OptCost::VARIANCE
     m1.eigs_ncv          = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
 
+    // Set up the subspace (environent) expansion
+    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    m1.expand_side = EnvExpandSide::FORWARD;
+
     // Set up a multiplier for number of iterations
     double iter_stuck_multiplier = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
     double iter_max_has_stuck    = safe_cast<double>(settings::precision::eigs_iter_max) * iter_stuck_multiplier; // Run more when stuck
@@ -237,9 +241,13 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 
     m1.optSolver = OptSolver::EIGS;
     if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
-        // Try this desperate measure for one iteration...
-        bool algo_stuck_long = status.algorithm_has_stuck_for + 2 == settings::strategy::iter_max_stuck;
-        if(algo_stuck_long and not var_isconverged and var_latest < 1e-8) m1.optAlgo = OptAlgo::DIRECTX2; // Last resort
+        bool algo_stuck_long = status.algorithm_has_stuck_for + 3 ==
+                               std::clamp(status.algorithm_has_stuck_for + 3, settings::strategy::iter_max_stuck, settings::strategy::iter_max_stuck + 1);
+        if(algo_stuck_long and not var_isconverged and var_latest < 1e-2) {
+            // Try this desperate measure for one iteration...
+            m1.optAlgo     = OptAlgo::DIRECTX2;
+            m1.expand_mode = EnvExpandMode::ENE;
+        }
     }
     if(status.iter < settings::strategy::iter_max_warmup) {
         using namespace settings::strategy;
@@ -298,6 +306,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 void AlgorithmFinite::expand_environment(EnvExpandMode expandMode, EnvExpandSide expandSide, std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
     if(settings::strategy::max_env_expansion_alpha <= 0) return;
     // Set a good initial value to start with
+    if(status.env_expansion_alpha == 0.0) status.env_expansion_alpha = settings::strategy::max_env_expansion_alpha;
     alpha = alpha.value_or(status.env_expansion_alpha);
     if(alpha.value() <= 0) return;
     auto var_before_exp = tools::finite::measure::energy_variance(tensors);
@@ -320,11 +329,12 @@ void AlgorithmFinite::expand_environment(EnvExpandMode expandMode, EnvExpandSide
        This makes alpha dynamically adjust to make a meaningful (but not too disruptive) enrichment.
     */
 
-    double old_alpha           = alpha.value();
-    double q                   = var_after_exp / var_before_exp;
+    double old_alpha = alpha.value();
+    double qexp      = var_after_exp / var_before_exp;
+    // double qopt                = var_change; // (after opt/before opt)
     double bias                = 0.1;
-    double factor              = std::clamp(0.2 + std::abs(1.0 / q), 1e-1, 1e+1);
-    status.env_expansion_alpha = std::clamp(factor * old_alpha, 0.0, settings::strategy::max_env_expansion_alpha);
+    double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
+    status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);
     tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f}", old_alpha, status.env_expansion_alpha, factor);
 }
 

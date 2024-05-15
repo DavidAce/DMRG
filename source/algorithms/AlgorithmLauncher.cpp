@@ -58,7 +58,9 @@ void AlgorithmLauncher::start_h5file() {
 
                     // Let's first consider the new resume check method, which looks for attributes in the state_prefix.
                     auto states_that_may_resume = tools::common::h5::resume::find_states_that_may_resume(*h5file, settings::storage::resume_policy);
-                    if(!states_that_may_resume.empty()) {
+                    if(states_that_may_resume.empty()) {
+                        tools::log->info("Could not find any resumable states");
+                    } else {
                         // We did find states that may be resumed using the new method.
                         tools::log->info("Found resumable states. Attempting to open file with READWRITE access");
                         h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READWRITE);
