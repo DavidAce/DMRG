@@ -28,6 +28,8 @@ class ModelFinite {
         std::optional<Eigen::Tensor<cplx, 2>>                     multisite_ham_squared     = std::nullopt;
         std::unordered_map<std::string, Eigen::Tensor<cplx, 4>>   multisite_mpo_temps;   // Keeps previous results for reuse
         std::unordered_map<std::string, Eigen::Tensor<cplx_t, 4>> multisite_mpo_t_temps; // Keeps previous results for reuse
+        // std::unordered_map<std::string, Eigen::Tensor<cplx, 4>>   multisite_mpo_squared_temps;   // Keeps previous results for reuse
+        // std::unordered_map<std::string, Eigen::Tensor<cplx_t, 4>> multisite_mpo_squared_t_temps; // Keeps previous results for reuse
     };
     mutable Cache cache;
     //    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos);
@@ -83,7 +85,6 @@ class ModelFinite {
     [[nodiscard]] std::vector<std::any> get_parameter(std::string_view fieldname);
     [[nodiscard]] double                get_energy_upper_bound() const;
 
-
     // For local operations
     ModelLocal get_local(const std::vector<size_t> &sites) const;
     ModelLocal get_local() const;
@@ -96,6 +97,8 @@ class ModelFinite {
                                                                bool with_edgeL = false, bool with_edgeR = false) const;
     [[nodiscard]] Eigen::Tensor<cplx, 2>   get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
     [[nodiscard]] Eigen::Tensor<cplx_t, 2> get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    // [[nodiscard]] Eigen::Tensor<cplx, 4>   get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody =
+    // std::nullopt, bool with_edgeL = false, bool with_edgeR = false) const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4>   &get_multisite_mpo() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 2>   &get_multisite_ham() const;
     [[nodiscard]] const Eigen::Tensor<cplx_t, 4> &get_multisite_mpo_t() const;

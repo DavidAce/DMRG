@@ -290,7 +290,8 @@ void settings::load(Loader &dmrg_config) {
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                                    , xdmrg::on);
     dmrg_config.load_parameter("xdmrg::ritz"                                  , xdmrg::ritz);
-    dmrg_config.load_parameter("xdmrg::ritz_ted_target"                       , xdmrg::energy_density_target);
+    dmrg_config.load_parameter("xdmrg::energy_spectrum_shift"                 , xdmrg::energy_spectrum_shift);
+    dmrg_config.load_parameter("xdmrg::energy_density_target"                 , xdmrg::energy_density_target);
     dmrg_config.load_parameter("xdmrg::iter_max"                              , xdmrg::iter_max);
     dmrg_config.load_parameter("xdmrg::iter_min"                              , xdmrg::iter_min);
     dmrg_config.load_parameter("xdmrg::bond_max"                              , xdmrg::bond_max);

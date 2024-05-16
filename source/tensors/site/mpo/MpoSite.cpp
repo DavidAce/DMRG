@@ -253,8 +253,8 @@ bool MpoSite::has_compressed_mpo_squared() const {
 }
 
 cplx MpoSite::get_energy_shift_mpo() const { return energy_shift_mpo; }
-void   MpoSite::set_energy_shift_mpo(cplx site_energy) {
-    if(energy_shift_mpo != site_energy and settings::precision::use_energy_shifted_mpo) {
+void MpoSite::set_energy_shift_mpo(cplx site_energy) {
+    if(energy_shift_mpo != site_energy) {
         energy_shift_mpo = site_energy;
         clear_mpo();
         clear_mpo_squared();
@@ -597,13 +597,14 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_left() const {
      *        |h 1|
      *  The left edge should pick out the last row
      */
-    auto mpo1  = get_mpo(0.0);
+    auto mpo1  = get_mpo(cplx(0.0, 0.0));
     auto d0    = mpo1.dimension(0);
     auto ledge = Eigen::Tensor<Scalar, 1>(d0);
     ledge.setZero();
     ledge(d0 - 1) = 1;
     auto ledge2   = ledge.contract(ledge, tenx::idx()).reshape(tenx::array1{d0 * d0});
     if(std::abs(parity_shift_sign_mpo2) != 1.0) return ledge2;
+
     double q = 1.0;
     double a = 2.0;                               // The shift amount (select 1.0 to shift up by 1.0)
     if(position == 0) q = parity_shift_sign_mpo2; // Selects the opposite sector sign (only needed on one MPO)
@@ -633,7 +634,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_right() const {
      *        |h 1|
      *  The right edge should pick out the first column
      */
-    auto mpo1  = get_mpo(0.0);
+    auto mpo1  = get_mpo(cplx(0.0, 0.0));
     auto d0    = mpo1.dimension(1);
     auto redge = Eigen::Tensor<Scalar, 1>(d0);
     redge.setZero();

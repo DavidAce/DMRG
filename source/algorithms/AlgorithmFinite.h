@@ -41,7 +41,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void                  set_parity_shift_mpo();
     void                  set_parity_shift_mpo_squared();
     void                  try_moving_sites();
-    void                  expand_environment(EnvExpandMode expandMode, EnvExpandSide expandSide = EnvExpandSide::FORWARD,
+    void                  expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide = EnvExpandSide::FORWARD,
                                              std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
     void                  move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void          set_energy_shift_mpo(); // We override this in xdmrg
@@ -50,6 +50,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void                  update_bond_dimension_limit() final;
     void                  reduce_bond_dimension_limit(double rate, UpdatePolicy when, StorageEvent storage_event);
     void                  update_truncation_error_limit() final;
+    void                  update_environment_expansion_alpha();
     void                  initialize_model();
     void                  run() final;
     void                  run_rbds_analysis();
@@ -86,6 +87,7 @@ class AlgorithmFinite : public AlgorithmBase {
     std::vector<double>    var_mpo_step; // History of energy variances (from mpo) at each step
     double                 ene_latest = 0.0;
     double                 var_latest = 1.0;
+    double                 var_envexp = 1.0;
     double                 ene_delta  = 0.0;
     double                 var_delta  = 0.0;
     double                 var_change = 0.0; // Variance change from normal optimization

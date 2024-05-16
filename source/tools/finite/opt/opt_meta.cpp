@@ -42,7 +42,7 @@ namespace tools::finite::opt {
         res += fmt::format(" | type {}", enum2sv(optType));
         res += fmt::format(" | ritz {}", enum2sv(optRitz));
         res += fmt::format(" | algo {}", enum2sv(optAlgo));
-        res += fmt::format(" | expm {}", enum2sv(expand_mode));
+        res += fmt::format(" | expm {}", flag2str(expand_mode));
         res += fmt::format(" | exps {}", enum2sv(expand_side));
         if(eigv_target) res += fmt::format(" (tgt: {:.3e})", eigv_target.value());
         if(eigs_nev) res += fmt::format(" | nev {}", eigs_nev.value());

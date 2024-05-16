@@ -70,14 +70,22 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
         // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
         //      * mpsL is "AC(i)" and is the active site that will get moved into envL later
         //      * mpsR is "B(i+1)" and will become the active site after moving center position
-        auto                  &mpoL = model.get_mpo(posL);
-        Eigen::Tensor<cplx, 3> PL;
-        switch(envExpandMode) {
-            case EnvExpandMode::ENE: PL = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha); break;
-            case EnvExpandMode::VAR: PL = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha); break;
+        auto                  &mpoL   = model.get_mpo(posL);
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M(); // mpsL is going to be optimized, enriched with PL
+        long                   PLdim2 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            ML_PL                            = std::move(ML_PL_tmp);
+            PLdim2 += PL.dimension(2);
         }
-        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
-        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M().concatenate(PL, 2); // mpsL is going to be optimized, enriched with PL
+        if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            ML_PL                            = std::move(ML_PL_tmp);
+            PLdim2 += PL.dimension(2);
+        }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
         Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M().concatenate(P0, 1); // mpsR is going into the environment, padded with zeros
 
         auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg);
@@ -87,7 +95,7 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
         mpsR.set_M(MR_P0);
         mpsR.take_stash(mpsL); // right normalization of mpsR is lost here -- but we will move right soon, thereby left-normalizing it into an AC
         tools::log->debug("Environment expansion backward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
-                          enum2sv(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], ML_PL.dimension(2),
+                          flag2str(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], ML_PL.dimension(2),
                           mpsL.get_chiR());
         if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
         if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
@@ -96,17 +104,26 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
         // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
         //      * mpsL is "A(i-1)" and will become the active site after moving center position
         //      * mpsR is "AC(i)" and is the active site that will get moved into envR later
-        auto                  &mpsRR = state.get_mps_site(posR + 1);
-        auto                  &mpoR  = model.get_mpo(posR);
-        Eigen::Tensor<cplx, 3> PR;
-        switch(envExpandMode) {
-            case EnvExpandMode::ENE: PR = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha); break;
-            case EnvExpandMode::VAR: PR = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha); break;
+        auto                  &mpsRR  = state.get_mps_site(posR + 1);
+        auto                  &mpoR   = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // [ AC  P ]^T  including LC
+        long                   PRdim1 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
+            Eigen::Tensor<cplx, 3> PR         = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+            MR_PR                             = std::move(MR_PR_temp);
+            PRdim1 += PR.dimension(1);
         }
-        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+        if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
+            Eigen::Tensor<cplx, 3> PR         = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+            MR_PR                             = std::move(MR_PR_temp);
+            PRdim1 += PR.dimension(1);
+        }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
         Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // [ A   0 ]
-        Eigen::Tensor<cplx, 3> MR_PR = mpsR.get_M().concatenate(PR, 1); // [ AC  P ]^T  including LC
-        auto [U, S, V]               = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg);
+
+        auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg);
         // We have right-normalized AC = L * A * LC  --> S * V = L * B
         // Therefore the new truncated AC should absorb S, and then a subsequent left normalization produces the new LC again.
         auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
@@ -136,7 +153,7 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
         if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
         if(dimR_old[2] != mpsR.get_chiR()) tools::log->debug("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
         tools::log->debug("Environment expansion backward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
-                          enum2sv(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], MR_PR.dimension(1),
+                          flag2str(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], MR_PR.dimension(1),
                           mpsL.get_chiR());
     }
 
@@ -236,15 +253,23 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         //      * mpsR is "B(i+1)" and belongs in envR later in the optimization step
         auto  oldS = tools::finite::measure::entanglement_entropy(mpsL.get_LC());
         auto &mpoR = model.get_mpo(posR);
-        mpsR.set_M(state.get_multisite_mps({posR})); // mpsR absorbs the LC(i) bond from the left so that the SVD makes sense later
-        Eigen::Tensor<cplx, 3> PR;
-        switch(envExpandMode) {
-            case EnvExpandMode::ENE: PR = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha); break;
-            case EnvExpandMode::VAR: PR = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha); break;
+        mpsR.set_M(state.get_multisite_mps({posR}));       // mpsR absorbs the LC(i) bond from the left so that the SVD makes sense later
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M_bare(); // mpsR is going into the environment, enriched with PR.
+        long                   PRdim1 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
+            Eigen::Tensor<cplx, 3> PR        = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
         }
-        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+        if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
+            Eigen::Tensor<cplx, 3> PR        = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+        }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
         Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
-        Eigen::Tensor<cplx, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1); // mpsR is going into the environment, enriched with PR.
 
         auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg);
         mpsR.set_M(V);
@@ -274,7 +299,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         // }
 
         tools::log->debug("Environment expansion forward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
-                          enum2sv(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], ML_P0.dimension(2),
+                          flag2str(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], ML_P0.dimension(2),
                           mpsL.get_chiR());
     }
     if(state.get_direction() < 0) {
@@ -284,13 +309,22 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         auto  oldS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
         auto &mpoL = model.get_mpo(posL);
         mpsL.set_M(state.get_multisite_mps({posL})); // mpsL absorbs the L(i) bond from the right so that the SVD makes sense later
-        Eigen::Tensor<cplx, 3> PL;
-        switch(envExpandMode) {
-            case EnvExpandMode::ENE: PL = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha); break;
-            case EnvExpandMode::VAR: PL = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha); break;
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M_bare();
+        long                   PLdim2 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            ML_PL                            = std::move(ML_PL_tmp);
+            PLdim2 += PL.dimension(2);
         }
-        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
-        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
+        if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            ML_PL                            = std::move(ML_PL_tmp);
+            PLdim2 += PL.dimension(2);
+        }
+
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
         Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
         auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg);
@@ -322,7 +356,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         // }
 
         tools::log->debug("Environment expansion forward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
-                          enum2sv(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimR_old[1], MR_P0.dimension(1),
+                          flag2str(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimR_old[1], MR_P0.dimension(1),
                           mpsR.get_chiL());
     }
 

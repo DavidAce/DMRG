@@ -520,8 +520,6 @@ def write_statistics(src, tgt, reqs):
             for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20,
                                                                    excludeKeys=['.db', 'cronos', 'tables', 'iter_', '_spectrum' ],
                                                                    nodeType=h5py.Dataset):
-                if not 'g0.0300' in dsetpath:
-                    continue
                 print(' -- found dset: {}'.format(dsetpath))
                 write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
 
@@ -529,8 +527,6 @@ def write_statistics(src, tgt, reqs):
             for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
                                                                       excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                                       nodeType=h5py.Dataset):
-                if not 'g0.0300' in tablepath:
-                    continue
                 write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
 
 

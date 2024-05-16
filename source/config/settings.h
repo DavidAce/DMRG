@@ -242,17 +242,17 @@ namespace settings {
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
 
-        inline auto     use_compressed_mpo              = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
-        inline auto     use_compressed_mpo_squared      = MpoCompress::DPL; /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
-        inline bool     use_energy_shifted_mpo          = false ;           /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_parity_shifted_mpo          = true  ;           /*!< Lift degeneracy by redefining H --> (H + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator */
-        inline bool     use_parity_shifted_mpo_squared  = true  ;           /*!< Lift degeneracy by redefining H² --> (H² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator */
-        inline double   variance_convergence_threshold  = 1e-12 ;           /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
-        inline double   variance_saturation_sensitivity = 1e-1  ;           /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
-        inline double   entropy_saturation_sensitivity  = 1e-3  ;           /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
-        inline double   target_subspace_error           = 1e-10 ;           /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
-        inline size_t   max_subspace_size               = 256   ;           /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
-        inline double   max_norm_error                  = 1e-10 ;           /*!< Maximum norm deviation from unity during integrity checks */
+        inline auto     use_compressed_mpo              = MpoCompress::DPL;        /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
+        inline auto     use_compressed_mpo_squared      = MpoCompress::DPL;        /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
+        inline bool     use_energy_shifted_mpo          = false ;                  /*!< Prevent catastrophic cancellation in H²-E² by subtracting the current energy from the MPOs: H²-E² -> <H-E>² - <(H-E)²> (second term ~ 0). Recommended for fDMRG. */
+        inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Redefining H --> (H + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator (prevents degeneracy from mixing sectors) */
+        inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Redefining H² --> (H² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator (prevents degeneracy from mixing sectors) */
+        inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
+        inline double   variance_saturation_sensitivity = 1e-1  ;                  /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double   entropy_saturation_sensitivity  = 1e-3  ;                  /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double   target_subspace_error           = 1e-10 ;                  /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
+        inline size_t   max_subspace_size               = 256   ;                  /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
+        inline double   max_norm_error                  = 1e-10 ;                  /*!< Maximum norm deviation from unity during integrity checks */
 
     }
 
@@ -393,7 +393,8 @@ namespace settings {
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
         inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
-        inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select what part of the energy eigenspectrum to target */
+        inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select what part of the energy eigenspectrum to target [LR SR SM IS TE] */
+        inline double     energy_spectrum_shift         = 1e-10 ;                  /*!< (Used with ritz == OptRitz::SM) Shift the energy eigenvalue spectrum by this amount: H -> H - shift   */
         inline double     energy_density_target         = 0.5;                     /*!< (Used with ritz == OptRitz::TE) Target energy in [0-1], Target energy = energy_density_target * (EMAX+EMIN) + EMIN. */
         inline size_t     iter_min                      = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
         inline size_t     iter_max                      = 50;                      /*!< Max number of iterations. One iterations moves L steps. */

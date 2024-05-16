@@ -133,7 +133,12 @@ enum class StoragePolicy : int {
 };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
-enum class EnvExpandMode { ENE, VAR };
+enum class EnvExpandMode : int {
+    NONE = 0, /*!< No subspace expansion H */
+    ENE  = 1, /*!< Subspace expansion using H */
+    VAR  = 2, /*!< Subspace expansion using H² */
+    allow_bitops
+};
 enum class EnvExpandSide { BACKWARD, FORWARD };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class ResumePolicy {
@@ -373,7 +378,7 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, MultisitePolicy, UpdatePolicy, ProjectionPolicy>);
+    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, MultisitePolicy, UpdatePolicy, ProjectionPolicy, EnvExpandMode>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -441,6 +446,11 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, ProjectionPolicy::FINISHED)) v.emplace_back("FINISHED");
         if(has_flag(item, ProjectionPolicy::FORCE)) v.emplace_back("FORCE");
         if(v.empty()) return "NEVER";
+    }
+    if constexpr(std::is_same_v<T, EnvExpandMode>) {
+        if(has_flag(item, EnvExpandMode::ENE)) v.emplace_back("ENE");
+        if(has_flag(item, EnvExpandMode::VAR)) v.emplace_back("VAR");
+        if(v.empty()) return "NONE";
     }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
                            [](const std::string &ss, const std::string &s) { return ss.empty() ? s : ss + "|" + s; });

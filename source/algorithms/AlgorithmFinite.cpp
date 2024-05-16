@@ -212,6 +212,8 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // Set up handy quantities
     auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
+    bool algo_stuck_long = status.algorithm_has_stuck_for + 3 ==
+                           std::clamp(status.algorithm_has_stuck_for + 3, settings::strategy::iter_max_stuck, settings::strategy::iter_max_stuck + 1);
 
     // Copy settings
     m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_def);
@@ -223,9 +225,12 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.eigs_ncv          = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
 
     // Set up the subspace (environent) expansion
-    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
     m1.expand_side = EnvExpandSide::FORWARD;
-
+    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
+        // Expand with both when stuck for long
+        m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
+    }
     // Set up a multiplier for number of iterations
     double iter_stuck_multiplier = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
     double iter_max_has_stuck    = safe_cast<double>(settings::precision::eigs_iter_max) * iter_stuck_multiplier; // Run more when stuck
@@ -240,13 +245,11 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.optAlgo = OptAlgo::DIRECT;
 
     m1.optSolver = OptSolver::EIGS;
+
     if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
-        bool algo_stuck_long = status.algorithm_has_stuck_for + 3 ==
-                               std::clamp(status.algorithm_has_stuck_for + 3, settings::strategy::iter_max_stuck, settings::strategy::iter_max_stuck + 1);
         if(algo_stuck_long and not var_isconverged and var_latest < 1e-2) {
             // Try this desperate measure for one iteration...
-            m1.optAlgo     = OptAlgo::DIRECTX2;
-            m1.expand_mode = EnvExpandMode::ENE;
+            m1.optAlgo = OptAlgo::DIRECTX2;
         }
     }
     if(status.iter < settings::strategy::iter_max_warmup) {
@@ -303,7 +306,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     return m1;
 }
 
-void AlgorithmFinite::expand_environment(EnvExpandMode expandMode, EnvExpandSide expandSide, std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
+void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
     if(settings::strategy::max_env_expansion_alpha <= 0) return;
     // Set a good initial value to start with
     // if(status.step == 65) return;
@@ -313,31 +316,15 @@ void AlgorithmFinite::expand_environment(EnvExpandMode expandMode, EnvExpandSide
     if(alpha.value() <= 0) return;
     auto var_before_exp = tools::finite::measure::energy_variance(tensors);
     if(not svd_cfg.has_value()) {
-        auto bond_lim = expandSide == EnvExpandSide::FORWARD ? status.bond_lim * 2 : status.bond_lim;
-        auto trnc_lim = expandSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
+        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 2 : status.bond_lim;
+        auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
 
-    tensors.expand_environment(expandMode, expandSide, alpha.value(), svd_cfg.value());
-    auto var_after_exp = tools::finite::measure::energy_variance(tensors);
-    tools::log->debug("Expanded environment {} {} | alpha {:.3e} | var {:.3e} -> {:.3e}", enum2sv(expandMode), enum2sv(expandSide), alpha.value(),
-                      var_before_exp, var_after_exp);
-
-    /* Update alpha
-            alpha  = factor * alpha,
-            factor =  1.0/(q-bias)
-            q      = Var(H)_after / Var(H)_before  (after/before expansion)
-            bias   = 1e-2 seems good, larger (e.g 1e-1) introduces too much noise
-       This makes alpha dynamically adjust to make a meaningful (but not too disruptive) enrichment.
-    */
-
-    double old_alpha = alpha.value();
-    double qexp      = var_after_exp / var_before_exp;
-    // double qopt                = var_change; // (after opt/before opt)
-    double bias                = 0.1;
-    double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
-    status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);
-    tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f}", old_alpha, status.env_expansion_alpha, factor);
+    tensors.expand_environment(envexpMode, envexpSide, alpha.value(), svd_cfg.value());
+    var_envexp = tools::finite::measure::energy_variance(tensors);
+    tools::log->debug("Expanded environment {} {} | alpha {:.3e} | var {:.3e} -> {:.3e}", flag2str(envexpMode), enum2sv(envexpSide), alpha.value(),
+                      var_before_exp, var_envexp);
 }
 
 void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
@@ -701,6 +688,23 @@ void AlgorithmFinite::update_truncation_error_limit() {
     // status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
+}
+
+void AlgorithmFinite::update_environment_expansion_alpha() {
+    /* Update alpha
+           alpha  = factor * alpha,
+           factor =  1.0/(q-bias)
+           q      = Var(H)_after / Var(H)_before  (after/before expansion)
+           bias   = 1e-2 seems good, larger (e.g 1e-1) introduces too much noise
+      This makes alpha dynamically adjust to make a meaningful (but not too disruptive) enrichment.
+   */
+
+    double old_alpha           = status.env_expansion_alpha;
+    double qexp                = var_envexp / var_latest;
+    double bias                = 0.1;
+    double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
+    status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);
+    tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f}", old_alpha, status.env_expansion_alpha, factor);
 }
 
 void AlgorithmFinite::initialize_model() {

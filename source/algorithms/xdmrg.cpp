@@ -142,7 +142,11 @@ void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
             // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
         }
         case OptRitz::SM: {
-            status.energy_tgt = 0.0; // When the Hamiltonian is traceless, the energy level nearest zero is closest to the infinite-temperature limit
+            // When the Hamiltonian is traceless, the energy level nearest zero is closest to the infinite-temperature limit.
+            // Therefore we expect the energy target to be == 0. However, in some cases we get a symmetric energy spectrum, with
+            // every energy level having a counterpart with opposite sign (e.g. Ising-Majorana with g == 0).
+            // In this case we can break the degeneracy by setting a tiny shift ~1e-10 to bias xDMRG towards one of the states closest to 0.
+            status.energy_tgt = settings::xdmrg::energy_spectrum_shift;
             break;
         }
         case OptRitz::IS: {
@@ -191,7 +195,7 @@ void xdmrg::run_preprocessing() {
 
     // auto imodel = tools::finite::mpo::get_inverted_mpos(tensors.model->get_all_mpo_tensors(MposWithEdges::ON));
 
-    if(tensors.get_length<long>() <= 4) {
+    if(tensors.get_length<long>() <= 12) {
         // Print the spectrum if small
         // tensors.clear_cache();
         auto svd_solver = svd::solver();
@@ -258,7 +262,7 @@ void xdmrg::run_preprocessing() {
 
         // tools::log->info("Iterative inverse  H⁻¹");
         // for(long idx = 0; idx < evals3i.size(); ++idx) { fmt::print("idx {:2}: {:20.16f}\n", idx, evals3i[idx]); }
-        exit(0);
+        // exit(0);
     }
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -290,7 +294,8 @@ void xdmrg::run_algorithm() {
         try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);
-        move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
+        // update_environment_expansion_alpha();
+        move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }
@@ -320,8 +325,7 @@ void xdmrg::update_state() {
     // Expand the environment to grow the bond dimension in 1-site dmrg
     if(tensors.active_sites.size() == 1) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
-        // expand_environment(EnvExpandMode::ENE, opt_meta.expand_side);
-        // expand_environment(EnvExpandMode::VAR, opt_meta.expand_side);
+        update_environment_expansion_alpha();
     }
     auto variance_after_exp = tools::finite::measure::energy_variance(tensors);
     auto bond_dims_exp      = tensors.state->get_mps_dims_active();
@@ -465,6 +469,8 @@ void xdmrg::set_energy_shift_mpo() {
     tensors.compress_mpo_squared(); // Compress the mpo's if compression is enabled
     tensors.rebuild_edges();        // The shift modified all our mpo's. So we have to rebuild all the edges.
     if constexpr(settings::debug) tensors.assert_validity();
+    if(tensors.model->get_energy_shift_mpo() != status.energy_tgt)
+        throw except::runtime_error("Energy shift mismatch: {:.16f} != {:.16f}", tensors.model->get_energy_shift_mpo(), status.energy_tgt);
 }
 
 void xdmrg::update_time_step() {
