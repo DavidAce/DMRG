@@ -16,7 +16,7 @@ def dmrg_avg(args):
         datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged-example.h5'
+        tgt = datadir + '/averaged.h5'
         if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))

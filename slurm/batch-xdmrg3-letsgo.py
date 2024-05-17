@@ -33,8 +33,8 @@ config_ranges = {
     "precision::use_parity_shifted_mpo": ["true"],
     "precision::use_parity_shifted_mpo_squared": ["true"],
     "model::model_type": ['ising_majorana'],
-    "model::model_size": ['12'],
-    "model::ising_majorana::g": ['0.000', '0.010','0.020','0.030'],
+    "model::model_size": ['12', '14'],
+    "model::ising_majorana::g": ['0.000', '0.005', '0.010','0.015', '0.020','0.025', '0.030'],
     "model::ising_majorana::delta": [f'{x:+.2f}' for x in range(-6,7)],
     "xdmrg::energy_spectrum_shift": ['1e-6'],
     "xdmrg::iter_min": ['1'],
@@ -52,7 +52,7 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config['filename'])
 
-batch_setup = get_xdmrg_batch_setup('xdmrg2-tuned')
+batch_setup = get_xdmrg_batch_setup('xdmrg3-letsgo')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
 move_directories(batch_setup=batch_setup, config_paths=config_paths)

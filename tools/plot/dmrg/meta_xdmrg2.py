@@ -1,5 +1,5 @@
 from pathlib import Path
-import numpy  as np
+import numpy as np
 from matplotlib.ticker import LogLocator, \
     LogFormatterMathtext, FixedLocator, ScalarFormatter
 
@@ -42,12 +42,12 @@ def get_meta(plotdir, cachedir):
     #
     # figsize1x1_halfcol = 2.35229, 3.404 * 0.450, # Third-size for spanning a two-column document  with 3 figures
 
-    box_aspect = 2./3
-    figsize1x1_1col = 3.4039, 3.4039*box_aspect, # Third-size for spanning a two-column document  with 3 figures
-    figsize1x2_1col = 0.5 * 3.4039, 0.7 * 3.4039, # For two plots side by side in 1 column of a two-column doc
-    figsize2x3_2col = 7.0568/3, 7.0568/3*box_aspect, # Third-size for spanning a two-column document  with 3 figures
-    figsize2x2_2col = 7.0568/2, 7.0568/2*box_aspect, # Third-size for spanning a two-column document  with 3 figures
-    figsize3x3_2col = 7.0568/1, 7.0568/1*box_aspect, # Third-size for spanning a two-column document  with 3 figures
+    box_aspect = 2. / 3
+    figsize1x1_1col = 3.4039, 3.4039 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
+    figsize1x2_1col = 0.5 * 3.4039, 0.7 * 3.4039,  # For two plots side by side in 1 column of a two-column doc
+    figsize2x3_2col = 7.0568 / 3, 7.0568 / 3 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
+    figsize2x2_2col = 7.0568 / 2, 7.0568 / 2 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
+    figsize3x3_2col = 7.0568 / 1, 7.0568 / 1 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
 
     # figsize1x1_halfcol = 2.26926, 3.4039 * 0.440, # Third-size for spanning a two-column document  with 3 figures
     # figsize1x1_halfcol = 2.26926, 3.4039 * 0.440, # Third-size for spanning a two-column document  with 3 figures
@@ -160,8 +160,8 @@ def get_meta(plotdir, cachedir):
     subplots_halfheight = {
         'top': 1.0,
         'bottom': 0.15,
-        'left': 0.02,#0.17,#0.02,
-        'right': 0.72,#1.0,
+        'left': 0.02,  # 0.17,#0.02,
+        'right': 0.72,  # 1.0,
         'wspace': 0,
         'hspace': 0,
     }
@@ -176,26 +176,25 @@ def get_meta(plotdir, cachedir):
         'cachedir': Path(cachedir),
         'plotdir': Path(plotdir, Path(mplstyle).stem),
     }
-    figsize1x1_inset = 2.26926*0.34, 3.404 * 0.440*0.42, # Tiny size for insets
+    figsize1x1_inset = 2.26926 * 0.34, 3.404 * 0.440 * 0.42,  # Tiny size for insets
     subplots_inset = {
         'top': 0.94,
         'bottom': 0.18,
-        'left': 0.36,#0.17,#0.02,
-        'right': 0.970,#1.0,
+        'left': 0.36,  # 0.17,#0.02,
+        'right': 0.970,  # 1.0,
         'wspace': 0,
         'hspace': 0,
     }
     default_inset = {
-        'box_aspect': 1.0,#0.46,
+        'box_aspect': 1.0,  # 0.46,
         'figsize': figsize1x1_inset,
         'subspec_title': False,
         'figspec_title': False,
-        'legendoutside' : False,
-        'legendcollect' : False,
+        'legendoutside': False,
+        'legendcollect': False,
         'subplots': subplots_inset,
         'font.size': 7.0,
     }
-
 
     meta = {
         'common': {
@@ -213,9 +212,9 @@ def get_meta(plotdir, cachedir):
             'groupbase': 'tables',
             'groupname': 'opdm_spectrum',
             'colname': 'eigval',
-            'figspec' : ['L'],
-            'subspec' : ['d'],
-            'linspec' : ['g'],
+            'figspec': ['L'],
+            'subspec': ['d'],
+            'linspec': ['g'],
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'filename': 'opdm-spectrum-d',
             'palettes': ["viridis_r"],
@@ -291,7 +290,7 @@ def get_meta(plotdir, cachedir):
             'include': {
                 'L': [12],
                 'g': [0.03],
-                'd': range(-4,5,2),
+                'd': range(-4, 5, 2),
             },
             'groupbase': 'tables',
             'groupname': 'opdm_spectrum',
@@ -378,9 +377,9 @@ def get_meta(plotdir, cachedir):
             },
             'groupbase': 'tables',
             'groupname': 'measurements',
-            'dsetname' : 'data',
+            'dsetname': 'data',
             'colname': 'energy_variance',
-            'exactKeys' : True, # Match this column name exactly
+            'exactKeys': True,  # Match this column name exactly
             'figspec': ['L'],
             'subspec': ['g'],
             'linspec': ['d'],
@@ -414,7 +413,8 @@ def get_meta(plotdir, cachedir):
             'yscale': 'log',
             'xscale': 'log',
             # 'ynopos': 'mask',
-            'bins' : np.logspace(start=-18, stop=0, num=50, endpoint=True),
+            'xticks': [1e-15, 1e-10, 1e-5, 1e-0],
+            'bins': np.logspace(start=-18, stop=0, num=19, endpoint=True),
             'density': False,
             # 'ymin': -16,
             # 'ymin': 0,
@@ -498,10 +498,11 @@ def get_meta(plotdir, cachedir):
             # 'ycoords': (-0.34, 0.34),
             # 'xticklabels': ['$0$', '$L/2$', '$L$'],
             # 'yticks': [0, -3, -6, -9, -12, -15],
+            'xticks': [1e-15, 1e-10, 1e-5, 1e-0],
             'yscale': 'log',
             'xscale': 'log',
             # 'ynopos': 'mask',
-            'bins': np.logspace(start=-18, stop=0, num=50, endpoint=True),
+            'bins': np.logspace(start=-18, stop=0, num=19, endpoint=True),
             'density': False,
             # 'ymin': -16,
             # 'ymin': 0,
@@ -546,7 +547,7 @@ def get_meta(plotdir, cachedir):
 
         'ent': {
             'default': default,
-            'groupbase':'tables',
+            'groupbase': 'tables',
             'groupname': 'measurements',
             'colname': 'entanglement_entropy',
             'normpage': False,
@@ -577,7 +578,7 @@ def get_meta(plotdir, cachedir):
             'timeselection': 'lnt',
             'timenormalization': '',
             'mplstyle': mplstyle,
-            'legendcols': ['L','l', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'l', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
             # 'bbox_to_anchor': (1.0, 0.70),  # Use with loc 'upper right'
             'bbox_to_anchor': (1.00, 1.00),
