@@ -67,10 +67,14 @@ class TensorsFinite {
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
     /* clang-format on */
 
-    void project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg = std::nullopt);
-    void set_parity_shift_mpo(OptRitz ritz, std::string_view axis);
-    void set_parity_shift_mpo_squared(std::string_view axis);
-    void set_energy_shift_mpo(double energy_shift);
+    void                                                     project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg = std::nullopt);
+    void                                                     set_parity_shift_mpo(OptRitz ritz, std::string_view axis);
+    void                                                     set_parity_shift_mpo_squared(std::string_view axis);
+    void                                                     set_energy_shift_mpo(double energy_shift);
+    [[nodiscard]] std::tuple<OptRitz, int, std::string_view> get_parity_shift_mpo();
+    [[nodiscard]] std::pair<int, std::string_view>           get_parity_shift_mpo_squared();
+    [[nodiscard]] double                                     get_energy_shift_mpo();
+
     void rebuild_mpo();
     void rebuild_mpo_squared();
     void compress_mpo_squared();

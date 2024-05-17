@@ -193,6 +193,28 @@ void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional
     if(sign != 0) clear_cache();
 }
 
+struct DebugStatus {
+    double                                              ene = std::numeric_limits<double>::quiet_NaN();
+    double                                              red = std::numeric_limits<double>::quiet_NaN();
+    double                                              var = std::numeric_limits<double>::quiet_NaN();
+    std::string                                         tag;
+    std::pair<std::vector<size_t>, std::vector<size_t>> env_ids;
+    std::vector<size_t>                                 mpo_ids;
+
+    [[nodiscard]] std::string msg() const {
+        std::string msg;
+        msg.append(fmt::format("Energy {:<20} = {:>20.16f}\n", tag, ene));
+        msg.append(fmt::format("Shift  {:<20} = {:>20.16f}\n", tag, red));
+        msg.append(fmt::format("σ²H    {:<20} = {:>20.16f}\n", tag, var));
+        return msg;
+    }
+    void print() const {
+        tools::log->debug("Energy   [{:<20}] = {:>20.16f}", tag, ene);
+        tools::log->debug("Shift    [{:<20}] = {:>20.16f}", tag, red);
+        tools::log->debug("σ²H      [{:<20}] = {:>20.16f}", tag, var);
+    }
+};
+
 void TensorsFinite::set_parity_shift_mpo(OptRitz ritz, std::string_view axis) {
     if(not qm::spin::half::is_valid_axis(axis)) return;
     auto sign = qm::spin::half::get_sign(axis);
@@ -223,28 +245,6 @@ void TensorsFinite::set_parity_shift_mpo_squared(std::string_view axis) {
     if(parity_shift_new == parity_shift_old) return;
     model->set_parity_shift_mpo_squared(sign, axus); // will ignore the sign on the axis string if present
 }
-
-struct DebugStatus {
-    double                                              ene = std::numeric_limits<double>::quiet_NaN();
-    double                                              red = std::numeric_limits<double>::quiet_NaN();
-    double                                              var = std::numeric_limits<double>::quiet_NaN();
-    std::string                                         tag;
-    std::pair<std::vector<size_t>, std::vector<size_t>> env_ids;
-    std::vector<size_t>                                 mpo_ids;
-
-    [[nodiscard]] std::string msg() const {
-        std::string msg;
-        msg.append(fmt::format("Energy {:<20} = {:>20.16f}\n", tag, ene));
-        msg.append(fmt::format("Shift  {:<20} = {:>20.16f}\n", tag, red));
-        msg.append(fmt::format("σ²H    {:<20} = {:>20.16f}\n", tag, var));
-        return msg;
-    }
-    void print() const {
-        tools::log->debug("Energy   [{:<20}] = {:>20.16f}", tag, ene);
-        tools::log->debug("Shift    [{:<20}] = {:>20.16f}", tag, red);
-        tools::log->debug("σ²H      [{:<20}] = {:>20.16f}", tag, var);
-    }
-};
 
 std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view tag) {
     if constexpr(not settings::debug) return std::nullopt;
@@ -329,6 +329,10 @@ void TensorsFinite::set_energy_shift_mpo(double energy_shift) {
         }
     }
 }
+
+std::tuple<OptRitz, int, std::string_view> TensorsFinite::get_parity_shift_mpo() { return model->get_parity_shift_mpo(); }
+std::pair<int, std::string_view>           TensorsFinite::get_parity_shift_mpo_squared() { return model->get_parity_shift_mpo_squared(); }
+double                                     TensorsFinite::get_energy_shift_mpo() { return model->get_energy_shift_mpo(); }
 
 void TensorsFinite::rebuild_mpo() {
     if(model->has_mpo()) {

@@ -317,7 +317,7 @@ void ModelFinite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view 
         tools::log->debug("set_parity_shift_mpo: not needed -- parity shift is already [{} {} {}]", enum2sv(ritz), sign, axus);
         return;
     }
-    tools::log->info("Setting MPO parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
+    tools::log->info("Setting MPO parity shift for target axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
     for(const auto &mpo : MPO) mpo->set_parity_shift_mpo(ritz, sign, axis);
     clear_cache();
 }
@@ -356,7 +356,7 @@ bool ModelFinite::has_parity_shifted_mpo_squared() const {
 void ModelFinite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
     if(not qm::spin::half::is_valid_axis(axis)) return;
     if(get_parity_shift_mpo_squared() == std::make_pair(sign, axis)) return;
-    tools::log->info("Setting MPO² parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
+    tools::log->info("Setting MPO² parity shift for target axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
     for(const auto &mpo : MPO) mpo->set_parity_shift_mpo_squared(sign, axis);
     clear_cache();
 }

@@ -778,7 +778,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     write_to_file(StorageEvent::INIT);
 }
 
-void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
+void AlgorithmFinite::try_projection(std::optional<std::string> target_axis) {
     if(not tensors.position_is_inward_edge()) return;
     if(settings::strategy::projection_policy == ProjectionPolicy::NEVER) return;
     if(status.spin_parity_has_converged) return; // No need
@@ -791,28 +791,28 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     bool projection_if_conv  = has_flag(strategy::projection_policy, CONVERGED) and status.algorithm_converged_for > 0;
     bool projection_if_iter  = has_flag(strategy::projection_policy, ITER) and iter_since_last_projection > 0;
 
-    if(projection_if_stuck or projection_if_conv or projection_if_iter or target_sector.has_value()) {
-        if(not target_sector) target_sector = settings::strategy::target_axis;
-        if(not qm::spin::half::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
+    if(projection_if_stuck or projection_if_conv or projection_if_iter or target_axis.has_value()) {
+        if(not target_axis) target_axis = settings::strategy::target_axis;
+        if(not qm::spin::half::is_valid_axis(target_axis.value())) return; // Do not project unless the target sector is one of +- xyz
         std::vector<std::string> msg;
-        if(target_sector.has_value()) msg.emplace_back(fmt::format("given sector {}", target_sector.value()));
+        if(target_axis.has_value()) msg.emplace_back(fmt::format("given sector {}", target_axis.value()));
         if(projection_if_stuck) msg.emplace_back("stuck");
         if(projection_if_conv) msg.emplace_back("converged");
         if(projection_if_iter) msg.emplace_back("iter");
-        tools::log->info("Trying projection to {} | reasons: {}", target_sector.value(), fmt::join(msg, " | "));
+        tools::log->info("Trying projection to {} | reasons: {}", target_axis.value(), fmt::join(msg, " | "));
 
-        auto sector_sign   = qm::spin::half::get_sign(target_sector.value());
+        auto sector_sign   = qm::spin::half::get_sign(target_axis.value());
         auto energy_old    = tools::finite::measure::energy(tensors);
         auto variance_old  = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
         auto svd_cfg       = svd::config(status.bond_lim, status.trnc_lim);
         if(sector_sign != 0) {
-            tensors.project_to_nearest_axis(target_sector.value(), svd_cfg);
+            tensors.project_to_nearest_axis(target_axis.value(), svd_cfg);
             tensors.rebuild_edges();
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
             if(spincomp_new != spincomp_old) {
-                if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
+                if(target_axis.value() == settings::strategy::target_axis) projected_iter = status.iter;
                 write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);
             }
         } else {
@@ -823,8 +823,8 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             // projecting to the other sector will zero the norm. So we can only make this
             // decision if the |spin spin_component_along_requested_axis| < 1, otherwise we loose all precision.
             // We choose |spin_component_along_requested_axis| < 0.7 here, but this choice is arbitrary.
-            auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_sector.value());
-            tools::log->debug("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
+            auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_axis.value());
+            tools::log->debug("Spin component along {} = {:.16f}", target_axis.value(), spin_component_along_requested_axis);
             if(std::abs(spin_component_along_requested_axis) < 0.7) {
                 // Here we deem the spin component undecided enough to make a safe projection to both sides for comparison
                 auto tensors_neg  = tensors;
@@ -834,28 +834,28 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto variance_neg = std::numeric_limits<double>::quiet_NaN();
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
-                    tools::log->debug("Trying projection to -{}", target_sector.value());
-                    auto target_neg = fmt::format("-{}", target_sector.value());
+                    tools::log->debug("Trying projection to -{}", target_axis.value());
+                    auto target_neg = fmt::format("-{}", target_axis.value());
                     tensors_neg.project_to_nearest_axis(target_neg, svd_cfg);
                     tensors_neg.rebuild_edges();
                     energy_neg   = tools::finite::measure::energy(tensors_neg);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
 
-                } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
+                } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_axis.value(), ex.what()); }
 
                 try {
-                    tools::log->debug("Trying projection to +{}", target_sector.value());
-                    auto target_pos = fmt::format("+{}", target_sector.value());
+                    tools::log->debug("Trying projection to +{}", target_axis.value());
+                    auto target_pos = fmt::format("+{}", target_axis.value());
                     tensors_pos.project_to_nearest_axis(target_pos, svd_cfg);
                     tensors_pos.rebuild_edges();
                     energy_pos   = tools::finite::measure::energy(tensors_pos);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
+                } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_axis.value(), ex.what()); }
 
-                tools::log->debug("Projection to -{}: Energy: {:.16f} | Variance {:.3e}", target_sector.value(), energy_neg, variance_neg);
-                tools::log->debug("Projection to +{}: Energy: {:.16f} | Variance {:.3e}", target_sector.value(), energy_pos, variance_pos);
+                tools::log->debug("Projection to -{}: Energy: {:.16f} | Variance {:.3e}", target_axis.value(), energy_neg, variance_neg);
+                tools::log->debug("Projection to +{}: Energy: {:.16f} | Variance {:.3e}", target_axis.value(), energy_pos, variance_pos);
                 if(std::isnan(variance_neg) and std::isnan(variance_pos))
-                    tools::log->warn("Both -{0} and +{0} projections failed to yield a valid variance", target_sector.value());
+                    tools::log->warn("Both -{0} and +{0} projections failed to yield a valid variance", target_axis.value());
 
                 switch(status.opt_ritz) {
                     case OptRitz::SM: { // Take the smallest |energy|
@@ -898,7 +898,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 // Here the spin component is close to one sector. We just project to the nearest sector
                 // It may turn out that the spin component is almost exactly +-1 already, then no projection happens, but other
                 // routines may go through, such as sign selection on MPO² projection.
-                tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
+                tensors.project_to_nearest_axis(target_axis.value(), svd::config(status.bond_lim, status.trnc_lim));
             }
             tensors.rebuild_edges();
             auto energy_new    = tools::finite::measure::energy(tensors);
@@ -912,25 +912,27 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                     for(const auto &[i, e] : iter::enumerate(entropies_old)) {
                         tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
                     }
-                if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
+                if(target_axis.value() == settings::strategy::target_axis) projected_iter = status.iter;
                 write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);
             }
         }
     }
 }
 
-void AlgorithmFinite::set_parity_shift_mpo() {
+void AlgorithmFinite::set_parity_shift_mpo(std::optional<std::string> target_axis) {
     if(not settings::precision::use_parity_shifted_mpo) return;
     if(not tensors.position_is_inward_edge()) return;
+    target_axis = target_axis.value_or(settings::strategy::target_axis);
     // If ritz == SR we shift the spectrum of the non-targeted sector UP in energy.
     // If ritz == LR we shift the spectrum of the non-targetd sector DOWN in energy
-    tensors.set_parity_shift_mpo(settings::get_ritz(status.algo_type), settings::strategy::target_axis);
+    tensors.set_parity_shift_mpo(settings::get_ritz(status.algo_type), target_axis.value());
 }
 
-void AlgorithmFinite::set_parity_shift_mpo_squared() {
+void AlgorithmFinite::set_parity_shift_mpo_squared(std::optional<std::string> target_axis) {
     if(not settings::precision::use_parity_shifted_mpo_squared) return;
     if(not tensors.position_is_inward_edge()) return;
-    tensors.set_parity_shift_mpo_squared(settings::strategy::target_axis);
+    target_axis = target_axis.value_or(settings::strategy::target_axis);
+    tensors.set_parity_shift_mpo_squared(target_axis.value());
 }
 
 void AlgorithmFinite::check_convergence() {
@@ -1105,21 +1107,60 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     algorithm_history.back().status.entanglement_saturated_for = status.entanglement_saturated_for;
 }
 
-void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_sector, double threshold) {
+void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_axis, double threshold) {
     static constexpr std::array<std::string_view, 9> valid_sectors = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
-    bool sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
+    bool sector_is_valid                                           = std::find(valid_sectors.begin(), valid_sectors.end(), target_axis) != valid_sectors.end();
     if(sector_is_valid) {
-        auto axis                        = qm::spin::half::get_axis_unsigned(settings::strategy::target_axis);
-        auto sign                        = qm::spin::half::get_sign(settings::strategy::target_axis);
-        auto spin_components             = tools::finite::measure::spin_components(*tensors.state);
-        auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_axis);
-        status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;
-        if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
-            tools::log->warn("Spin component {} has converged: {::.16f} but requested sector was {}", axis, spin_components, target_sector);
+        tools::log->trace("Checking convergence of spin components");
+        auto target_axus               = qm::spin::half::get_axis_unsigned(target_axis);
+        auto target_sign               = qm::spin::half::get_sign(target_axis);
+        auto spin_components           = tools::finite::measure::spin_components(*tensors.state);
+        auto spin_component_along_axus = tools::finite::measure::spin_component(*tensors.state, target_axus);
+        bool spin_along_axus_near_abs1 = std::abs(std::abs(spin_component_along_axus) - 1) <= threshold;
+        auto spin_sign_along_axus      = tools::finite::measure::spin_sign(*tensors.state, target_axus);
+        // We may have shifted the spin parity sector in the MPO or MPO².
+        // If we shifted for +z, that means we are targeting +z and therefore shifted -z out of the way.
+        // So we would need to make sure we are actually converging to +z and not -z.
+        auto [target_ritz_mpo, target_sign_mpo, target_axus_mpo] = tensors.get_parity_shift_mpo();
+        auto [target_sign_mpo2, target_axus_mpo2]                = tensors.get_parity_shift_mpo_squared();
+
+        bool target_axus_mpo_ok  = target_axus_mpo.empty() or target_axus_mpo == target_axus;   // MPO parity shift disabled or same axus
+        bool target_sign_mpo_ok  = spin_sign_along_axus * target_sign_mpo >= 0;                 // MPO parity shift disabled or same sign
+        bool target_axus_mpo2_ok = target_axus_mpo2.empty() or target_axus_mpo2 == target_axus; // MPO² parity shift disabled or same axus
+        bool target_sign_mpo2_ok = spin_sign_along_axus * target_sign_mpo2 >= 0;                // MPO² parity shift disabled or same sign
+
+        bool target_axus_ok = target_axus_mpo_ok and target_axus_mpo2_ok;
+        bool target_sign_ok = target_sign_mpo_ok and target_sign_mpo2_ok;
+
+        std::string msg;
+        if(!target_axus_mpo_ok or !target_sign_mpo_ok) msg += fmt::format(" mpo {}{}", fmt::format("{:+}", target_sign_mpo).front(), target_axus_mpo);
+        if(!target_axus_mpo2_ok or !target_sign_mpo2_ok) msg += fmt::format(" mpo² {}{}", fmt::format("{:+}", target_sign_mpo2).front(), target_axus_mpo2);
+
+        if(!msg.empty()) {
+            tools::log->warn("check_convergence_spin_parity_sector: mismatch: target {} | spin parity shift:{} | spin components: {::.16f}", target_axis, msg,
+                             spin_components);
+            if(spin_along_axus_near_abs1) {
+                // We seem to have converged in the opposite parity sector.
+                // The algorithm will likely not be able to escape the current sector, so we might as well set it as the target.
+                auto target_axis_opposite = fmt::format("{}{}", fmt::format("{:+}", spin_sign_along_axus).front(), target_axus);
+                tools::log->warn("check_convergence_spin_parity_sector: resetting spin parity target: {}", target_axis_opposite);
+                set_parity_shift_mpo(target_axis_opposite);
+                set_parity_shift_mpo_squared(target_axis_opposite);
+                rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
+            }
+        }
+
+        status.spin_parity_has_converged = target_axus_ok and target_sign_ok and spin_along_axus_near_abs1;
+
+        if(status.spin_parity_has_converged and spin_component_along_axus * target_sign < 0)
+            tools::log->warn("Spin components: {::.16f} | {} converged ({} requested) | threshold {:8.2}", spin_components, target_axus, target_axis,
+                             threshold);
         if(not status.spin_parity_has_converged) {
-            tools::log->info("Spin component {} not converged: {::.16f} | threshold {:8.2e}", target_sector, spin_components, threshold);
+            tools::log->info("Spin components: {::.16f} | {} not converged ({} requested) | threshold {:8.2e}", spin_components, target_axus, target_axis,
+                             threshold);
         } else {
-            tools::log->debug("Spin component {} has converged: {::.16f} | threshold {:8.2e}", target_sector, spin_components, threshold);
+            tools::log->debug("Spin components: {::.16f} | {} converged ({} requested) | threshold {:8.2e}", spin_components, target_axus, target_axis,
+                              threshold);
         }
     } else
         status.spin_parity_has_converged = true; // Probably no sector was specified

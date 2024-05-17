@@ -37,9 +37,9 @@ class AlgorithmFinite : public AlgorithmBase {
     public:
     virtual void          resume()                = 0;
     virtual void          run_default_task_list() = 0;
-    void                  try_projection(std::optional<std::string> target_sector = std::nullopt);
-    void                  set_parity_shift_mpo();
-    void                  set_parity_shift_mpo_squared();
+    void                  try_projection(std::optional<std::string> target_axis = std::nullopt);
+    void                  set_parity_shift_mpo(std::optional<std::string> target_axis = std::nullopt);
+    void                  set_parity_shift_mpo_squared(std::optional<std::string> target_axis = std::nullopt);
     void                  try_moving_sites();
     void                  expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide = EnvExpandSide::FORWARD,
                                              std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
@@ -69,7 +69,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void check_convergence() override;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
-    void check_convergence_spin_parity_sector(std::string_view target_sector, double threshold = 1e-8);
+    void check_convergence_spin_parity_sector(std::string_view target_axis, double threshold = 1e-8);
     void write_to_file(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, StorageEvent storage_event,
                        CopyPolicy copy_policy = CopyPolicy::TRY);
     template<typename T>

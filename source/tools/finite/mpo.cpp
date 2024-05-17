@@ -276,8 +276,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_svdcompressed_mpos(s
     }
 
     // Print the results
-    // if(tools::log->level() == spdlog::level::trace)
-    for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->info("mpo {}: {} -> {}", idx, msg, mpos[idx].dimensions());
+    if(tools::log->level() == spdlog::level::debug)
+        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo {}: {} -> {}", idx, msg, mpos[idx].dimensions());
 
     return mpos;
 }
@@ -433,7 +433,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
     auto mpo_rank2 = Eigen::Tensor<cplx, 2>(mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm}));
     auto mpo_map   = tenx::MatrixMap(mpo_rank2);
 
-    auto rows     = mpo_map.rows();
+    auto rows = mpo_map.rows();
     // auto cols     = mpo_map.cols();
     auto row_keep = std::vector<long>{};
     auto mat_xfer = Eigen::MatrixXcd(rows, rows);
@@ -553,8 +553,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_deparallelized_mpos(
     }
 
     // Print the results
-    // if(tools::log->level() == spdlog::level::trace)
-    for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->info("mpo {}: {} -> {}", idx, msg, mpos[idx].dimensions());
+    if(tools::log->level() == spdlog::level::debug)
+        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo {}: {} -> {}", idx, msg, mpos[idx].dimensions());
 
     return mpos;
 }

@@ -334,7 +334,7 @@ void MpoSite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view axis
     }
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign != parity_shift_sign_mpo or axus != parity_shift_axus_mpo) {
-        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo: {} {:+}{}", get_position(), enum2sv(ritz), sign, axus);
+        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo: {} {}{}", get_position(), enum2sv(ritz), fmt::format("{:+}", sign).front(), axus);
         parity_shift_ritz_mpo = ritz;
         parity_shift_sign_mpo = sign;
         parity_shift_axus_mpo = axus;
@@ -415,7 +415,7 @@ void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
     }
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign != parity_shift_sign_mpo2 or axus != parity_shift_axus_mpo2) {
-        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo_squared: {:+}{}", get_position(), sign, axus);
+        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo_squared: {}{}", get_position(), fmt::format("{:+}", sign).front(), axus);
         parity_shift_sign_mpo2 = sign;
         parity_shift_axus_mpo2 = axus;
         clear_mpo_squared();
