@@ -43,6 +43,7 @@ config_ranges = {
     "xdmrg::bond_max": ['8192'],
     "xdmrg::bond_init": ['32'],
     "xdmrg::print_freq": ['1'],
+    "xdmrg::try_directx2_when_stuck": ['false'],
 }
 
 configs = get_config_product(config_ranges, config_paths)
