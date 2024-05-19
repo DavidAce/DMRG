@@ -3,7 +3,7 @@ import os.path
 
 from batches import get_batches
 from src.database import *
-from meta_xdmrg2 import *
+from meta_xdmrg3 import *
 from src.plots.multiplot import *
 
 
@@ -78,6 +78,21 @@ def dmrg_plot(args):
     #
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-d-g'], figs=f)
+    save_figure(f)
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-d-L'], figs=f)
+    save_figure(f)
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-g'], figs=f)
+    save_figure(f)
+    plt.show()
+    exit(0)
+
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-g'], figs=f)
     save_figure(f)
 
@@ -109,7 +124,7 @@ def dmrg_plot(args):
 
 
 if __name__ == '__main__':
-    batch = get_batches('xDMRG', ['xdmrg2-tuned'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     dmrg_plot(batch)
 
 

@@ -190,6 +190,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             'L': set(),
             'g': set(),
             'd': set(),
+            'ø': set()
         },
         'nodes': {},
         'filename': h5_src.filename,
@@ -205,13 +206,17 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
         'L': set(),
         'g': set(),
         'd': set(),
+        'ø': set(),
     }
     for mkey, mval in meta.items():
         if incl := mval.get('include'):
             if L := incl['L']: include['L'].update(L)
             if g := incl['g']: include['g'].update(g)
             if d := incl['d']: include['d'].update(d)
+            if 'ø' in incl:
+                if ø := incl['ø']: include['ø'].update(ø)
 
+    print(f"{include=}")
     for algokey, algopath, algonode in h5py_node_iterator(node=h5_src, keypattern='DMRG', dep=20,
                                                           excludeKeys=['.db', 'TEBD', 'LBIT'],
                                                           nodeType=h5py.Group, godeeper=False):
@@ -223,7 +228,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
         L = get_value('model_size', [modelnode, hamiltonian], optional=False)
         g = get_value(['g'], [hamiltonian], optional=False)
         d = get_value(['delta'], [hamiltonian], optional=False)
-
+        ø = None
         # Skip if this point in the phase diagram was not asked for
         if include['L'] and not L in include['L']: continue
         if include['g'] and not g in include['g']: continue
@@ -232,6 +237,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
         db['vals']['L'].add(L)
         db['vals']['g'].add(g)
         db['vals']['d'].add(d)
+        db['vals']['ø'].add(None)
 
 
         if debug:
@@ -272,6 +278,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             db['nodes'][nodepath]['vals']['L'] = L
             db['nodes'][nodepath]['vals']['g'] = g
             db['nodes'][nodepath]['vals']['d'] = d
+            db['nodes'][nodepath]['vals']['ø'] = ø
             db['nodes'][nodepath]['vals']['plotdir'] = meta['common']['plotdir']
             db['nodes'][nodepath]['vals']['cachedir'] = meta['common']['cachedir']
             db['nodes'][nodepath]['vals']['filename'] = h5_src.filename
@@ -282,15 +289,17 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             db['nodes'][nodepath]['tex'] = {
                 'keys': db['tex'],
                 'vals': {
-                    'L': '{}'.format(L),
-                    'g': '{}'.format(g),
-                    'd': '{}'.format(d),
+                    'L': f'{L}',
+                    'g': f'{g}',
+                    'd': f'{d}',
+                    'ø': f'{ø}',
                     'algo': algokey,
                 },
                 'eqs': {
                     'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
                     'g': '$g:{:.3f}$'.format(g),
                     'd': '$d:{:.2f}$'.format(d),
+                    'ø': 'None',
                 },
             }
 

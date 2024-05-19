@@ -9,7 +9,8 @@ def get_batches(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition', st
                     ]
     xdmrg_batches = ['xdmrg1-fse',  # First test after spending years on the lbit project
                      'xdmrg2-tuned',  # Fixed various issues that arised in xdmrg1-fse.
-                    ]
+                     'xdmrg3-letsgo',  # Fixed various issues that arised in xdmrg1-fse.
+                     ]
 
 
 
