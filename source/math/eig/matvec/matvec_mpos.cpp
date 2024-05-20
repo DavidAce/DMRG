@@ -12,9 +12,9 @@
 #include "tools/common/contraction.h"
 #include <Eigen/Cholesky>
 #include <primme/primme.h>
-#include <tblis/tblis.h>
-#include <tblis/util/thread.h>
-#include <tci/tci_config.h>
+// #include <tblis/tblis.h>
+// #include <tblis/util/thread.h>
+// #include <tci/tci_config.h>
 
 namespace eig {
 
@@ -92,37 +92,37 @@ void MatVecMPOS<T>::FactorOP() {
     throw std::runtime_error("template<typename T> void MatVecMPOS<T>::FactorOP(): Not implemented");
 }
 
-template<typename T>
-using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
-template<typename T>
-using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
-template<typename ea_type, typename eb_type, typename ec_type>
-void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-                    const tblis::label_vector &lb, const tblis::label_vector &lc) {
-    const auto &ea_ref = static_cast<const ea_type &>(ea);
-    const auto &eb_ref = static_cast<const eb_type &>(eb);
-    auto       &ec_ref = static_cast<ec_type &>(ec);
-
-    tblis::len_vector da, db, dc;
-    da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
-    db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
-    dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
-
-    auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-    auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-    auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-    typename ea_type::Scalar alpha = 1.0;
-    typename ec_type::Scalar beta  = 0.0;
-
-    tblis::tblis_tensor          A_s(alpha, ta);
-    tblis::tblis_tensor          B_s(tb);
-    tblis::tblis_tensor          C_s(beta, tc);
-    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
-#if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
-    tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-#endif
-    tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-}
+// template<typename T>
+// using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
+// template<typename T>
+// using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
+// template<typename ea_type, typename eb_type, typename ec_type>
+// void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
+//                     const tblis::label_vector &lb, const tblis::label_vector &lc) {
+//     const auto &ea_ref = static_cast<const ea_type &>(ea);
+//     const auto &eb_ref = static_cast<const eb_type &>(eb);
+//     auto       &ec_ref = static_cast<ec_type &>(ec);
+//
+//     tblis::len_vector da, db, dc;
+//     da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
+//     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
+//     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
+//
+//     auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
+//     auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
+//     auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
+//     typename ea_type::Scalar alpha = 1.0;
+//     typename ec_type::Scalar beta  = 0.0;
+//
+//     tblis::tblis_tensor          A_s(alpha, ta);
+//     tblis::tblis_tensor          B_s(tb);
+//     tblis::tblis_tensor          C_s(beta, tc);
+//     const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
+// #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+//     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+// #endif
+//     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
+// }
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {

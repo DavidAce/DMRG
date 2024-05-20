@@ -250,6 +250,7 @@ int main(int argc, char *argv[]) {
                 keys.rteses.emplace_back(RtesKey("xDMRG", "state_emid", "rtes", "status"));
                 keys.rteses.emplace_back(RtesKey("xDMRG", "state_emid", "rtes", "opdm_spectrum"));
 
+
                 keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "opdm", Size::FIX, 2));
                 keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "correlation_matrix_sx", Size::FIX, 2));
                 keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "correlation_matrix_sy", Size::FIX, 2));
@@ -257,6 +258,11 @@ int main(int argc, char *argv[]) {
                 keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "expectation_values_sx", Size::FIX, 1));
                 keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "expectation_values_sy", Size::FIX, 1));
                 keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "expectation_values_sz", Size::FIX, 1));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "", "subsystem_entanglement_entropies", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "rtes", "subsystem_entanglement_entropies", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_emid", "rbds", "subsystem_entanglement_entropies", Size::FIX, 2));
+
+
 
                 break;
             }
