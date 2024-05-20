@@ -12,18 +12,19 @@ endif()
 
 
 # Setup dependencies
-find_package(Threads                    REQUIRED)
-find_package(OpenMP                     REQUIRED COMPONENTS CXX )
-find_package(gfortran                   REQUIRED OPTIONAL_COMPONENTS quadmath)
-find_package(Lapacke                    REQUIRED MODULE)
-find_package(pcg-cpp                    REQUIRED)
-find_package(Eigen3     3.4.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
-find_package(Ceres      2.2.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
-find_package(h5pp       1.11.0...1.11.2 REQUIRED)                                         # h5pp for writing to file binary in format
-find_package(fmt        10.1.0...10.1.2 REQUIRED)
-find_package(spdlog     1.11.0...1.12.0 REQUIRED)
-find_package(CLI11      2.1.1...2.3.2   REQUIRED)                                         # Command line argument parser
-find_package(Backward   1.6             REQUIRED)
+find_package(Threads                      REQUIRED)
+find_package(OpenMP                       REQUIRED COMPONENTS CXX )
+find_package(gfortran                     REQUIRED OPTIONAL_COMPONENTS quadmath)
+find_package(Lapacke                      REQUIRED MODULE)
+find_package(pcg-cpp                      REQUIRED)
+find_package(Eigen3       3.4.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
+find_package(Ceres        2.2.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
+find_package(h5pp         1.11.0...1.11.3 REQUIRED)                                         # h5pp for writing to file binary in format
+find_package(fmt          10.1.0...10.1.2 REQUIRED)
+find_package(spdlog       1.11.0...1.12.0 REQUIRED)
+find_package(CLI11        2.1.1...2.3.2   REQUIRED)                                         # Command line argument parser
+find_package(Backward     1.6             REQUIRED)
+find_package(tomlplusplus 3.4.0           REQUIRED)
 #find_package(arpack++   2.3.0  REQUIRED)                                          # C++ frontend for arpack-ng. Custom find module.
 #find_package(mpfr       4.1.0  REQUIRED)
 
@@ -67,6 +68,7 @@ target_link_libraries(dmrg-deps INTERFACE
             primme::primme
             lbfgspp
             cppoptlib::cppoptlib
+            tomlplusplus::tomlplusplus
             # We link Backward::Backward on the dmrg-stacktrace object directly
             )
 

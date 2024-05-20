@@ -29,6 +29,13 @@ function(pkg_install_dependencies  package_name)
         # Backward for printing pretty stack traces
         pkg_install(Backward)
 
+        # For parsing toml config files (work in progress)
+        pkg_install(tomlplusplus)
+
+        # ceres-solver (for L-BFGS routine)
+        pkg_install(glog)
+        pkg_install(Ceres)
+
         pkg_install(primme)
 
         if(DMRG_ENABLE_TBLIS)
