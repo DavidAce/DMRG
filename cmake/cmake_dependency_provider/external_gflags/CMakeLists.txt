@@ -1,17 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
-project(external-glog)
+project(external-gflags)
 if(INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
 endif()
 include(GNUInstallDirs)
 include(ExternalProject)
-set(cxxflags "-w")
-ExternalProject_Add(external_glog
-        URL https://github.com/google/glog/archive/refs/tags/v0.6.0.tar.gz
-        URL_MD5 c98a6068bc9b8ad9cebaca625ca73aa2
+ExternalProject_Add(external_gflags
+        URL https://github.com/gflags/gflags/archive/v2.2.2.tar.gz
+        URL_MD5 1a865b93bacfa963201af3f75b7bd64c
         BUILD_ALWAYS TRUE
-        PREFIX ${CMAKE_BINARY_DIR}
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+        PREFIX          ${CMAKE_BINARY_DIR}
+        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
         #Give Ninja access to the terminal.
         USES_TERMINAL_DOWNLOAD TRUE
         USES_TERMINAL_UPDATE TRUE
@@ -20,6 +19,7 @@ ExternalProject_Add(external_glog
         USES_TERMINAL_INSTALL TRUE
         USES_TERMINAL_TEST TRUE
 
+        UPDATE_COMMAND ""
         CMAKE_ARGS
         ${INIT_CACHE_ARG}
         -DCMAKE_BUILD_TYPE=Release
@@ -30,13 +30,9 @@ ExternalProject_Add(external_glog
         #-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
         -DCMAKE_INSTALL_MESSAGE=LAZY
-        -DCMAKE_CXX_FLAGS=${cxxflags}
-        # glog flags
-        -Dgflags_ROOT:PATH=${gflags_ROOT}
-        -DWITH_GTEST:BOOL=FALSE
-        -DWITH_PKGCONFIG:BOOL=FALSE
-        -DWITH_SYMBOLIZE:BOOL=FALSE
-        -DWITH_THREADS:BOOL=TRUE
-        -DWITH_TLS:BOOL=TRUE
-        -DWITH_UNWIND:BOOL=FALSE
+        # gflags flags
+        -DGFLAGS_BUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+        -DGFLAGS_BUILD_STATIC_LIBS:BOOL=ON
+        -DGFLAGS_INSTALL_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+        -DGFLAGS_INSTALL_STATIC_LIBS:BOOL=ON
         )

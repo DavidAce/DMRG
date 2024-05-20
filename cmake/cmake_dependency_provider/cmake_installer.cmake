@@ -33,7 +33,8 @@ function(pkg_install_dependencies  package_name)
         pkg_install(tomlplusplus)
 
         # ceres-solver (for L-BFGS routine)
-        pkg_install(glog)
+#        pkg_install(gflags)
+#        pkg_install(glog)
         pkg_install(Ceres)
 
         pkg_install(primme)

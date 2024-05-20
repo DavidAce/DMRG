@@ -28,6 +28,8 @@ ExternalProject_Add(external_Ceres
         USES_TERMINAL_TEST TRUE
         CMAKE_ARGS
         ${INIT_CACHE_ARG}
+        -DBUILD_SHARED_LIBS=FALSE # Weird undefined references with shared libs
+        -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DCMAKE_INSTALL_RPATH:PATH=<INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}
@@ -40,7 +42,7 @@ ExternalProject_Add(external_Ceres
         -DBUILD_TESTING:BOOL=OFF
         -DBUILD_EXAMPLES:BOOL=OFF
         -DLAPACK:BOOL=OFF
-        -DEIGENSPARSE:BOOL=ON
+        -DEIGENSPARSE:BOOL=OFF
         -DGFLAGS:BOOL=OFF
         -DSUITESPARSE:BOOL=OFF
         -DCXSPARSE:BOOL=OFF
@@ -51,5 +53,5 @@ ExternalProject_Add(external_Ceres
         # These are only needed if we enable glog and gflags
         -Dgflags_ROOT:PATH=<INSTALL_DIR>
         -Dglog_ROOT:PATH=<INSTALL_DIR>
-        -DGLOG_FOUND:BOOL=TRUE # To fix a bug with Ceres looking checking GLOG_FOUND instead of Glog_FOUND
+#        -DGLOG_FOUND:BOOL=TRUE # To fix a bug with Ceres looking checking GLOG_FOUND instead of Glog_FOUND
         )
