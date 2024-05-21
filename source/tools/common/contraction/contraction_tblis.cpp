@@ -4,10 +4,11 @@
 #include "tid/tid.h"
 #include <fmt/ranges.h>
 #include <omp.h>
-#include <tblis/tblis.h>
-#include <tblis/util/thread.h>
-#include <tci/tci_config.h>
-
+#if defined(DMRG_ENABLE_TBLIS)
+    #include <tblis/tblis.h>
+    #include <tblis/util/thread.h>
+    #include <tci/tci_config.h>
+#endif
 #if defined(DMRG_SAVE_CONTRACTION)
     #include <h5pp/h5pp.h>
 #endif
@@ -95,7 +96,7 @@ template cplx tools::common::contraction::expectation_value(const cplx * const m
                                                             const cplx * const envR_ptr, std::array<long,3> envR_dims);
 
 /* clang-format on */
-
+#if defined(DMRG_ENABLE_TBLIS)
 template<typename ea_type, typename eb_type, typename ec_type>
 void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
                     const tblis::label_vector &lb, const tblis::label_vector &lc) {
@@ -118,11 +119,12 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     tblis::tblis_tensor          B_s(tb);
     tblis::tblis_tensor          C_s(beta, tc);
     const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
-#if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+    #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-#endif
+    #endif
     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
 }
+#endif
 
 /* clang-format off */
 template<typename Scalar>
@@ -147,7 +149,10 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(mps.dimension(0) != mpo.dimension(2))  throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
     if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
+
+#if defined(DMRG_ENABLE_TBLIS)
     if constexpr(std::is_same_v<Scalar, real>){
+
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
@@ -178,6 +183,22 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
                                      .shuffle(tenx::array3{1, 2, 0});
         }
     }
+    #else
+    auto &threads = tenx::threads::get();
+    if (mps.dimension(1) >= mps.dimension(2)){
+        res.device(*threads->dev) = mps
+                                 .contract(envL, tenx::idx({1}, {0}))
+                                 .contract(mpo,  tenx::idx({3, 0}, {0, 2}))
+                                 .contract(envR, tenx::idx({0, 2}, {0, 2}))
+                                 .shuffle(tenx::array3{1, 0, 2});
+    }else{
+        res.device(*threads->dev) = mps
+                                 .contract(envR, tenx::idx({2}, {0}))
+                                 .contract(mpo,  tenx::idx({3, 0}, {1, 2}))
+                                 .contract(envL, tenx::idx({0, 2}, {0, 2}))
+                                 .shuffle(tenx::array3{1, 2, 0});
+    }
+    #endif
 }
 
 using namespace tools::common::contraction;
@@ -252,8 +273,12 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     auto &threads = tenx::threads::get();
     if constexpr(std::is_same_v<Scalar, real>){
         auto tmp = Eigen::Tensor<Scalar,4>(mpsL_dims[0], mpsL_dims[1], mpsR_dims[0], mpsR_dims[2]);
+        #if defined(DMRG_ENABLE_TBLIS)
         contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd");
         res.device(*threads->dev)  = tmp.shuffle(shuffle_idx).reshape(res_dims);
+        #else
+        res.device(*threads->dev) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
+        #endif
     }else{
         res.device(*threads->dev) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
     }
