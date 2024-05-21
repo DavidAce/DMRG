@@ -3,6 +3,7 @@
 #include <complex>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
+#include <optional>
 
 class StateFinite;
 class ModelFinite;

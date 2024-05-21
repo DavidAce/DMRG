@@ -33,7 +33,7 @@
 // #include <Eigen/Cholesky>
 #include "general/sfinae.h"
 #include "math/linalg/tensor.h"
-#include <ceres.h>
+#include <ceres/ceres.h>
 #include <cppoptlib/solver/lbfgs.h>
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/LU>

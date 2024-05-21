@@ -38,7 +38,7 @@ config_ranges = {
     "model::model_type": ['ising_majorana'],
     "model::model_size": ['12', '14', '16'],
     "model::ising_majorana::g": ['0.000', '0.005', '0.010','0.015', '0.020','0.025', '0.030'],
-    "model::ising_majorana::delta": [f'{x:+.2f}' for x in range(-6,7)],
+    "model::ising_majorana::delta": ['-6.00', '-5.00', '-4.00', '-3.00', '-2.00', '-1.00', '-0.75', '-0.5' , '-0.25', '+0.00', '+0.25',  '+0.5' ,  '+0.75', '+1.00', '+2.00', '+3.00', '+4.00', '+5.00', '+6.00'],
     "xdmrg::energy_spectrum_shift": ['1e-6'],
     "xdmrg::iter_min": ['1'],
     "xdmrg::iter_max": ['200'],
