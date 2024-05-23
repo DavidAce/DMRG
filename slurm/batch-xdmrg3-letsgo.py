@@ -29,6 +29,7 @@ config_ranges = {
     "precision::svd_truncation_lim": ['1e-8'],
     "precision::svd_truncation_init": ['1e-8'],
     "precision::svd_switchsize_bdc": ['16'],
+    "precision::variance_convergence_threshold": ['1e-12'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
     "strategy::multisite_policy": ["WARMUP|MOVEMAX|STUCK|GRADUAL"],
     "strategy::multisite_site_def": ["1"],
