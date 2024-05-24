@@ -141,7 +141,11 @@ namespace tools::h5xf {
             auto &srcInfo = srcDsetDb[srcKey.key];
             if(not srcInfo.dsetExists or not srcInfo.dsetExists.value()) continue;
             auto tgtName = h5pp::fs::path(srcInfo.dsetPath.value()).filename().string();
-            auto tgtPath = h5pp::format("{}/{}", pathid.tgt_path, tgtName);
+            auto tgtPath = std::string{};
+            if(srcKey.subgroup.empty()) tgtPath = h5pp::format("{}/{}", pathid.tgt_path, tgtName);
+            else
+                tgtPath = h5pp::format("{}/{}/{}", pathid.tgt_path, srcKey.subgroup, tgtName);
+
             if(tgtDsetDb.find(tgtPath) == tgtDsetDb.end()) {
                 auto t_create = tid::tic_scope("createDataset");
                 auto tgtDims  = srcInfo.dsetDims.value();

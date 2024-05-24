@@ -45,6 +45,7 @@ def get_meta(plotdir, cachedir):
     box_aspect = 2. / 3
     figsize1x1_1col = 3.4039, 3.4039 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
     figsize1x2_1col = 0.5 * 3.4039, 0.7 * 3.4039,  # For two plots side by side in 1 column of a two-column doc
+    figsize1x2_2col = 0.5 * 7.0568, 0.54 * 3.4039,  # For two plots side by side in 1 column of a two-column doc
     figsize2x3_2col = 7.0568 / 3, 7.0568 / 3 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
     figsize2x2_2col = 7.0568 / 2, 7.0568 / 2 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
     figsize3x3_2col = 7.0568 / 1, 7.0568 / 1 * box_aspect,  # Third-size for spanning a two-column document  with 3 figures
@@ -64,6 +65,14 @@ def get_meta(plotdir, cachedir):
         'top': 0.997,
         'bottom': 0.10,
         'left': 0.21,
+        'right': 0.997,
+        'wspace': 0,
+        'hspace': 0,
+    }
+    subplots1x2_2col = {
+        'top': 0.998,
+        'bottom': 0.13,
+        'left': 0.11,
         'right': 0.997,
         'wspace': 0,
         'hspace': 0,
@@ -157,6 +166,19 @@ def get_meta(plotdir, cachedir):
         'cachedir': Path(cachedir),
         'plotdir': Path(plotdir, Path(mplstyle).stem),
     }
+    default1x2_2col = {
+        'box_aspect': 1.0,
+        'subspec_title': False,
+        'figspec_title': False,
+        'legendoutside': False,
+        'legendcollect': False,
+        'constrained_layout': False,
+        'axtitle': False,
+        'figsize': figsize1x2_2col,
+        'subplots': subplots1x2_2col,
+        'cachedir': Path(cachedir),
+        'plotdir': Path(plotdir, Path(mplstyle).stem),
+    }
     subplots_halfheight = {
         'top': 1.0,
         'bottom': 0.15,
@@ -200,6 +222,156 @@ def get_meta(plotdir, cachedir):
         'common': {
             'cachedir': Path(cachedir),
             'plotdir': Path(plotdir, Path(mplstyle).stem),
+        },
+        'infotopobit-d': {
+            'default': default,
+            'include': {
+                'L': [12, 14, 16],
+                'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
+                'd': [-6, -5, -4, -3, -2, -1,-0.75,-0.5, -0.25, 0,0.25,0.5,0.75, 1, 2, 3, 4, 5, 6],
+                'ø': [None],  # Dummy variable for subspec
+            },
+            'groupbase': 'xDMRG',
+            'groupname': 'state_emid',
+            'dsetname': 'information_per_scale',
+            'figspec': ['L'],
+            'subspec': ['ø'],
+            'linspec': ['g'],
+            'xaxspec': ['d'],
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'filename': 'infotopobit_vs_d_foreach_g',
+            'palettes': ["viridis_r", "autumn_r", "summer_r"],
+            'mplstyle': mplstyle,
+            # 'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
+            # 'filter': {
+            # 'L': [24],
+            # 'f': [0.2,0.4],
+            # 'u': [16],
+            # },
+            # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
+            # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'ylabel': 'topological bit $l = L$',
+            # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
+            'xlabel': "$\Delta$",
+            # 'xlabelpad': -8,
+            # 'xcoords': (0.5, -0.04),
+            # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prl else None,
+            # 'xticks': [0, 15],
+            # 'xticklabels': ["0","27"],
+            # 'yticks': [1e-2, 1e-12],
+            # 'ylabelpad': -16,
+
+            # 'yticklabels': ['$-1$','$-15$'],
+            # 'ycoords': (-0.34, 0.34),
+            # 'xticklabels': ['$0$', '$L/2$', '$L$'],
+            # 'yticks': [0, -3, -6, -9, -12, -15],
+            # 'yscale': 'log',
+            # 'ynopos': 'mask',
+
+            # 'ymin': -16,
+            # 'ymin': 0,
+            # 'ymax': 2,
+            # 'xmin': 0,
+            # 'xmax': 15,
+            # 'xnormalize': False,
+            # 'xshift2mid': False,
+            # 'xmax': 32 if prl else None,
+            # 'ymin': 1e-14,
+            # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'g:.3f'],  # Choose 'num', 'bmax','tsim'
+            # 'legendfits': ['xi', 'beta'] if prl else ['C', 'xi', 'beta', 'pos'],
+            'legendoutside': False,
+            'legendcollect': False,
+            # 'legendlocation': (0.18, 0.0),
+            'legendlocation': ['upper left' ],
+            # 'bbox_to_anchor': (1.0, 0.70),  # Use with loc 'upper right'
+            'bbox_to_anchor': (0.00, 1.0),
+            'frameon': False,
+            # 'legendtitle': 'Arithmetic average',
+            'legendtitle': None,  # '$\\overline O \propto e^{(\\frac{|i-j|}{\\xi_\\tau})^\\beta}$',
+            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            # 'lbit-site': [0, 'mid', 'last'],
+            # 'lbit-site': ['mid'],
+            # 'lbit-mean': 'arithmetic',
+            # 'lbit-axis': '',
+            # 'fit-beta': True,
+            # 'fit-ymin': 1e-16,
+            # 'fit-skip': 0 if prl else 0,
+            # 'fit-mark': False,
+            # 'fit-plot': False,
+            # 'inset-cls': {
+            #     # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
+            #     'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
+            #     'coords': [None, None, None, None],
+            #     # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+            #     'legendtitle': '$\\xi_\\tau$',
+            # },
+        },
+
+        'infoperscale-Lgd': {
+            'default': default1x2_2col,
+            'include': {
+                'L': [14, 16],
+                'g': [0.000,0.030],
+                # 'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
+                'd': [-4.0, 0.0, 4.0],
+            },
+
+            'groupbase': 'xDMRG',
+            'groupname': 'state_emid',
+            'dsetname': 'information_per_scale',
+            'figspec': ['L'],
+            'subspec': ['g'],
+            'linspec': ['d'],
+            'filename': 'infoperscale-Lgd',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            'palettes': ["viridis_r"],
+            'ylabel': '$i/L$',
+            'xlabel': "$l/L$",
+            # 'xnormalize': True,
+            # 'ynormalize': True,
+            'yscale': 'log',
+            'legendcols': ['g:.2f', 'd:.2f', 'L'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
+            'bbox_to_anchor': (1.05, 1.05),
+            'frameon': False,
+            'legendtitle': None,
+        },
+        'infoperscale-gdL': {
+            'default': default1x2_2col,
+            'include': {
+                'L': [12, 14],
+                'g': [0.000, 0.030],
+                # 'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
+                'd': [-0.5, 0.0, 0.5],
+            },
+
+            'groupbase': 'xDMRG',
+            'groupname': 'state_emid',
+            'dsetname': 'information_per_scale',
+            'figspec': ['g'],
+            'subspec': ['d'],
+            'linspec': ['L'],
+            'filename': 'infoperscale-gdL',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            'palettes': ["viridis_r"],
+            'ylabel': '$i/L$',
+            'xlabel': "$l/L$",
+            'xnormalize': True,
+            'ynormalize': True,
+            'yscale': 'log',
+            'legendcols': ['g:.2f', 'd:.2f', 'L'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
+            'bbox_to_anchor': (1.05, 1.05),
+            'frameon': False,
+            'legendtitle': None,
         },
 
         'opdm-spectrum-g': {
@@ -371,16 +543,16 @@ def get_meta(plotdir, cachedir):
         'opdm-gapsize-g': {
             'default': default,
             'include': {
-                'L': [12, 14],
+                'L': [14],
                 'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
-                'd': [0.0],
+                'd': [0.00, 1.0, 2.0],
             },
             'groupbase': 'tables',
             'groupname': 'opdm_spectrum',
             'colname': 'eigval',
-            'figspec': ['d'],
-            'subspec': ['d'],
-            'linspec': ['L'],
+            'figspec': ['L'],
+            'subspec': ['L'],
+            'linspec': ['d'],
             'xaxspec': ['g'],
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'filename': 'opdm-gapsize-g',
@@ -394,7 +566,7 @@ def get_meta(plotdir, cachedir):
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'ylabel': '$1-$ opdm gap',
+            'ylabel': 'opdm gap',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$g$",
             # 'xlabelpad': -8,
@@ -422,14 +594,14 @@ def get_meta(plotdir, cachedir):
             # 'xmax': 32 if prl else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'g', 'd'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L','d:.2f'],  # Choose 'num', 'bmax','tsim'
             # 'legendfits': ['xi', 'beta'] if prl else ['C', 'xi', 'beta', 'pos'],
             'legendoutside': False,
             'legendcollect': False,
             # 'legendlocation': (0.18, 0.0),
-            'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
+            'legendlocation': ['upper left' ],
             # 'bbox_to_anchor': (1.0, 0.70),  # Use with loc 'upper right'
-            'bbox_to_anchor': (1.00, 0.7),
+            'bbox_to_anchor': (0.00, 0.7),
             'frameon': False,
             # 'legendtitle': 'Arithmetic average',
             'legendtitle': None,  # '$\\overline O \propto e^{(\\frac{|i-j|}{\\xi_\\tau})^\\beta}$',
@@ -455,7 +627,7 @@ def get_meta(plotdir, cachedir):
         'opdm-gapsize-d-L': {
             'default': default,
             'include': {
-                'L': [12, 14],
+                'L': [12, 14, 16],
                 'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
                 'd': [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3 ,4 ,5 ,6],
                 'ø': [None], # Dummy variable for subspec
@@ -468,7 +640,7 @@ def get_meta(plotdir, cachedir):
             'linspec': ['L'],
             'xaxspec': ['d'],
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'filename': 'opdm-gapsize-d',
+            'filename': 'opdm-gapsize-d-L',
             'palettes': ["viridis_r"],
             'mplstyle': mplstyle,
             # 'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
@@ -479,7 +651,7 @@ def get_meta(plotdir, cachedir):
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'ylabel': '$1-$ opdm gap',
+            'ylabel': 'opdm gap',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$\Delta$",
             # 'xlabelpad': -8,
@@ -553,7 +725,7 @@ def get_meta(plotdir, cachedir):
             'linspec': ['g'],
             'xaxspec': ['d'],
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'filename': 'opdm-gapsize-d',
+            'filename': 'opdm-gapsize-d-g',
             'palettes': ["viridis_r"],
             'mplstyle': mplstyle,
             # 'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
@@ -564,7 +736,7 @@ def get_meta(plotdir, cachedir):
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'ylabel': '$1-$ opdm gap',
+            'ylabel': 'opdm gap',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$\Delta$",
             # 'xlabelpad': -8,

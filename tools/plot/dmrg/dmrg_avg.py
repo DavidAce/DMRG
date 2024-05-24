@@ -16,7 +16,7 @@ def dmrg_avg(args):
         datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged.h5'
+        tgt = datadir + '/averaged-new.h5'
         if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
@@ -30,6 +30,10 @@ def dmrg_avg(args):
             'dsets': {  # For time independent data (or at the last time step)
                 'model/hamiltonian': {'copy': True, },
                 'opdm' : {'copy': True, },
+                'subsystem_entanglement_entropies': {
+                    'copy': True,
+                    'info-lattice': True,
+                 },
             },
 
             'tables': {  # For data at the last time step
@@ -43,8 +47,6 @@ def dmrg_avg(args):
                 # If the following tables exist, save it under <tablename>/data
                 '__save_data__': ['mem_usage', 'measurements', 'opdm_spectrum'],
             },
-
-
         }
 
         write_statistics(src, tgt, data_props)

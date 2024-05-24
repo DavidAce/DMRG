@@ -273,7 +273,7 @@ namespace tools::h5io {
                 srcModelId.key        = key;
                 srcModelId.path       = hamiltonian_path;
                 srcModelId.basepath   = get_standardized_base(srcModelId);
-                tools::logger::log->info("srcModelId.basepath = {} | key {}", srcModelId.basepath, key);
+                tools::logger::log->debug("srcModelId.basepath = {} | key {}", srcModelId.basepath, key);
             }
             keys.emplace_back(srcKey);
             keys.back().key = key;

@@ -43,7 +43,7 @@ def dmrg_plot(args):
                 for state in state_filter:
                     metas.append(get_meta(plotdir, cachedir))
                     dbs.append(load_isingmajorana_database(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                                   state_filter=[state], debug=True))
+                                                   state_filter=[state], debug=False))
 
 
 
@@ -75,19 +75,37 @@ def dmrg_plot(args):
 
 
     # logging.basicConfig(level=logging.DEBUG)
-    #
+
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_infotopobit_fig_sub_line(db=db, meta=meta['infotopobit-d'], figs=f)
+    save_figure(f)
+
+
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_infoperscale_fig_sub_line(db=db, meta=meta['infoperscale-Lgd'], figs=f)
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_infoperscale_fig_sub_line(db=db, meta=meta['infoperscale-gdL'], figs=f)
+    save_figure(f)
+
+    plt.show()
+    exit(0)
+
+
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-d-g'], figs=f)
     save_figure(f)
-    f = None
-    for idx, (db, meta) in enumerate(zip(dbs, metas)):
-        f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-d-L'], figs=f)
-    save_figure(f)
+
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-g'], figs=f)
     save_figure(f)
+
     plt.show()
     exit(0)
 
@@ -100,6 +118,11 @@ def dmrg_plot(args):
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-d'], figs=f)
     save_figure(f)
+
+    # f = None
+    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
+    #     f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-d-L'], figs=f)
+    # save_figure(f)
 
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):

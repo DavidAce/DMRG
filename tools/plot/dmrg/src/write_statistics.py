@@ -191,7 +191,62 @@ def get_qin_probability_slice(pslice,popcount):
     q = np.where(q<1e-14, 0, q) # Cutoff
     return q / np.sum(q, axis=1).reshape(popcount, 1, d2, d3) # Normalize
 
+def calc_info_from_SvN(SvN):
+    '''
 
+    Parameters
+    ----------
+    SvN : Numpy Array L*L
+        The matrix with subsystem entanglement entropies.
+
+    Main usage
+    ----------
+    Analysis of the data obtained with DMRG where we compute the subsystem entanglement entropies
+
+    Returns
+    -------
+    info_latt: dictionary of np.arrays
+        info_latt[l] is the info on scale l
+
+    '''
+
+    L = int(len(SvN))
+    info_latt = {}
+
+    for l in range(1, L + 1):
+        if l == 1:
+            info_latt[l] = l - SvN[l - 1][:]
+        elif l == 2:
+            info_latt[l] = 2 - l - SvN[l - 1][:-1] + SvN[l - 2][:-1] + SvN[l - 2][1:]
+        else:
+            #print("SvN[l - 1][:-(l-1)]", SvN[l - 1][:-(l-1)])
+            #print("SvN[l - 2][:-(l-1)]", SvN[l - 2][:-(l-1)])
+            #print("SvN[l - 2][1:-(l-2)]", SvN[l - 2][1:-(l-2)])
+            #print("SvN[l - 3][1:-(l-2)]", SvN[l - 3][1:-(l-2)])
+            info_latt[l] = -SvN[l - 1][:-(l-1)] + SvN[l - 2][:-(l-1)] + SvN[l - 2][1:-(l-2)] - SvN[l - 3][1:-(l-2)]
+
+    #print("info_latt", info_latt)
+    return info_latt
+
+@njit([float64[:,:,:](float64[:,:,:])], cache=True,parallel=True)
+def get_information_lattices(SEE # Subsystem entanglement entropies, L x L x realizations
+                             ):
+    Ldim = np.shape(SEE)[0]
+    rdim = np.shape(SEE)[2] # Number of realizations
+    infolattices = np.zeros(shape=(Ldim, Ldim,rdim))
+    for l in prange(Ldim):
+        if l == 0:
+            infolattices[l, :, :] = (l+1) - SEE[l, :, :]
+        elif l == 1:
+            infolattices[l, :-1, :] = 2 - (l+1) - SEE[l, :-1, :] + SEE[l - 1, :-1, :] + SEE[l - 1, 1:, :]
+        else:
+            infolattices[l, :-l, :] = -SEE[l, :-l, :] + SEE[l - 1, :-l, :] + SEE[l - 1, 1:-(l-1)] - SEE[l - 2, 1:-(l-1)]
+
+    return np.abs(infolattices)
+
+def get_information_per_scale(infolattices # Information lattices, L x L x realizations
+                             ):
+    return np.sum(infolattices, axis=1)
 
 @profile
 def write_statistics_dset(meta, props, h5_tgt):
@@ -207,6 +262,20 @@ def write_statistics_dset(meta, props, h5_tgt):
         dsetaxis = 0
     if dsetname == 'schmidt_midchain':
         dsetdata = np.array(dsetnode.view(dtype=np.complex128).real)
+    if dsetname == 'subsystem_entanglement_entropies':
+        if props.get(dsetprop).get('info-lattice'):
+            # Calculate and store the information lattice for this matrix
+            print("subsystem_entanglement_entropies shape: ", np.shape(dsetnode))
+            infolattices = get_information_lattices(dsetnode[()])
+            infoperscale = get_information_per_scale(infolattices)
+            d0,d1,d2 = np.shape(infolattices)
+            tgt_node = h5_tgt.require_group(f'{dsetnode.parent.name}')
+            infolattices_dset = tgt_node.create_dataset(name='information_lattices', data=infolattices,
+                                                           dtype=np.float64, compression="gzip", compression_opts=3,
+                                                           chunks=(d0,d1,np.min([d2,50])), )
+            infoperscale_dset = tgt_node.create_dataset(name='information_per_scale', data=infoperscale,
+                                                           dtype=np.float64, compression="gzip", compression_opts=3,
+                                                           chunks=(d0,np.min([d2,50])), )
     if dsetname == 'number_probabilities':
         if dsetcopy:
             print(f'deep copying dset: {dsetname} {np.shape(dsetnode)}')
@@ -522,7 +591,7 @@ def write_statistics(src, tgt, reqs):
                                                                    nodeType=h5py.Dataset):
                 print(' -- found dset: {}'.format(dsetpath))
                 write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
-
+            # return
             print('Averaging tables')
             for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
                                                                       excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],

@@ -2,6 +2,7 @@ import h5py
 
 from .h5ops import *
 from numbers import Integral
+from line_profiler import profile
 
 def get_bond_info(statenode, datanode):
     bavg_key = None
@@ -165,6 +166,7 @@ def get_enum(key, node_candidates, choices, optional = True, default=None):
         raise LookupError(f'could not match key [{key}:{val}] to enum choices: [{choices}]')
     return val
 
+@profile
 def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=None, state_filter=None, debug=False):
     # Gather data
 
@@ -243,8 +245,8 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
         if debug:
             print(' Looking for datasets in meta: {}'.format(meta.keys()))
         for nodekey, nodepath, node in h5py_node_iterator(node=algonode,
-                                                              excludeKeys=db['nodes'].keys(),
-                                                              dep=6):
+                                                              excludeKeys=list(db['nodes'].keys()) + ['.db'],
+                                                              dep=3):
             # Figure out if we have asked for this node
             match = False
             for mval in meta.values():
@@ -255,6 +257,9 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
                     continue
                 if gname is not None and dname is not None:
                     # This meta requires both
+                    # Make sure we have gname/dname in the nodepath
+                    if not f'{gname}/{dname}' in nodepath:
+                        continue
                     if gname in nodepath and dname == nodekey and isinstance(node, h5py.Dataset):
                         match = True
                         break
