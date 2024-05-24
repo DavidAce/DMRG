@@ -311,9 +311,11 @@ void flbit::run_algorithm_parallel() {
     auto t_run          = tid::tic_scope("run", tid::level::normal);
 #pragma omp parallel for ordered schedule(dynamic, 1)
     for(size_t tidx = 0; tidx < time_points.size(); ++tidx) {
-        auto t_step     = tid::tic_scope("step");
-        auto gates_tevo = flbit_impl::get_time_evolution_gates(time_points[tidx], ham_swap_gates);
-        auto [state_tevo, status_tevo] =
+        auto t_step                       = tid::tic_scope("step");
+        auto gates_tevo                   = flbit_impl::get_time_evolution_gates(time_points[tidx], ham_swap_gates);
+        auto state_tevo                   = StateFinite();
+        auto status_tevo                  = AlgorithmStatus();
+        std::tie(state_tevo, status_tevo) = // Avoid structured binding here due to a bug in clang <= 15
             flbit_impl::update_state(tidx, time_points[tidx], *state_lbit_init, gates_tevo, unitary_gates_2site_layers, status_init);
         status_tevo.wall_time = tid::get_unscoped("t_tot").get_time();
         status_tevo.algo_time = t_run->get_time();
@@ -324,7 +326,7 @@ void flbit::run_algorithm_parallel() {
             status_tevo.event = StorageEvent::ITERATION;
             tools::finite::h5::save::simulation(*h5file, state_tevo, *tensors.model, *tensors.edges, status_tevo, CopyPolicy::OFF);
             status_tevo.event = StorageEvent::NONE;
-        };
+        }
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status_tevo.step, status_tevo.iter, status_tevo.position, status_tevo.direction);
         if(tidx + 1 == time_points.size()) {
             status         = status_tevo;
@@ -530,8 +532,8 @@ void flbit::check_convergence() {
 
 void flbit::create_time_points() {
     auto   t_crt = tid::tic_scope("create_time_points");
-    cplx_t time_start(settings::flbit::time_start_real, settings::flbit::time_start_imag);
-    cplx_t time_final(settings::flbit::time_final_real, settings::flbit::time_final_imag);
+    cplx_t time_start(static_cast<real_t>(settings::flbit::time_start_real), static_cast<real_t>(settings::flbit::time_start_imag));
+    cplx_t time_final(static_cast<real_t>(settings::flbit::time_final_real), static_cast<real_t>(settings::flbit::time_final_imag));
     tools::log->info("Creating time points ({},{}) -> ({},{})", settings::flbit::time_start_real, settings::flbit::time_start_imag,
                      settings::flbit::time_final_real, settings::flbit::time_final_imag);
 
@@ -567,10 +569,10 @@ void flbit::create_time_points() {
 
     //    tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
     // Sanity check
-    if(time_points.front().real() != settings::flbit::time_start_real) throw except::logic_error("Time start real mismatch");
-    if(time_points.front().imag() != settings::flbit::time_start_imag) throw except::logic_error("Time start imag mismatch");
-    if(time_points.back().real() != settings::flbit::time_final_real) throw except::logic_error("Time final real mismatch");
-    if(time_points.back().imag() != settings::flbit::time_final_imag) throw except::logic_error("Time final imag mismatch");
+    if(time_points.front().real() != static_cast<real_t>(settings::flbit::time_start_real)) throw except::logic_error("Time start real mismatch");
+    if(time_points.front().imag() != static_cast<real_t>(settings::flbit::time_start_imag)) throw except::logic_error("Time start imag mismatch");
+    if(time_points.back().real()  != static_cast<real_t>(settings::flbit::time_final_real)) throw except::logic_error("Time final real mismatch");
+    if(time_points.back().imag()  != static_cast<real_t>(settings::flbit::time_final_imag)) throw except::logic_error("Time final imag mismatch");
     if(time_points.size() != settings::flbit::time_num_steps)
         throw except::logic_error("Got time_points.size():[{}] != settings::flbit::time_num_steps:[{}]", time_points.size(), settings::flbit::time_num_steps);
 }
@@ -1067,8 +1069,7 @@ void flbit::print_status(const AlgorithmStatus &st, const TensorsFinite &ts) {
     //    if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
     //        report += fmt::format("Sₙ(L/2):{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
 
-    report +=
-        fmt::format("χ:{:<3}|{:<3}|{:<3} ", st.bond_max, st.bond_lim, tools::finite::measure::bond_dimension_midchain(*ts.state));
+    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", st.bond_max, st.bond_lim, tools::finite::measure::bond_dimension_midchain(*ts.state));
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
         report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", st.phys_time.to_floating_point<real>()));
     if(settings::flbit::time_scale == TimeScale::LINSPACED)

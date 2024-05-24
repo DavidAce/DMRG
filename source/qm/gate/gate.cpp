@@ -221,7 +221,7 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
 #else
                             {
                                 real_t two_pi_ld       = std::acos(real_t(-1.0)) * real_t(2.0);
-                                real_t alpha_h_ld      = std::imag(-alpha) * static_cast<real_t>(std::real(h));
+                                real_t alpha_h_ld      = static_cast<real_t>(std::imag(-alpha)) * static_cast<real_t>(std::real(h));
                                 real_t fmod_alpha_h_ld = std::fmod(alpha_h_ld, two_pi_ld);
                                 exp_ialpha_t           = std::exp(-1.0i * static_cast<real>(fmod_alpha_h_ld));
                                 if(std::isnan(fmod_alpha_h_ld)) { throw except::runtime_error("fmod gave nan"); }

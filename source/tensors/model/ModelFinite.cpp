@@ -666,7 +666,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
                 auto t_skip = tid::tic_scope("skipping", tid::level::highest);
                 // Trace the physical indices of this skipped mpo (this should trace an identity)
                 mpoR_traced = mpoR.trace(tenx::array2{2, 3});
-                mpoR_traced *= mpoR_traced.constant(0.5); // divide by 2 (after tracing identity)
+                mpoR_traced *= mpoR_traced.constant(static_cast<real_t>(0.5)); // divide by 2 (after tracing identity)
                 // Append it to the multisite mpo
                 multisite_mpo_t.device(*threads->dev) = mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
             } else {

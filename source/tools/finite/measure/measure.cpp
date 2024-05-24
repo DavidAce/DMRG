@@ -86,7 +86,7 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
     return state.measurements.bond_mid.value();
 }
 
-std::pair<long, long> tools::finite::measure::bond_dimensions(const StateFinite &state, long pos) {
+std::pair<long, long> tools::finite::measure::bond_dimensions(const StateFinite &state, size_t pos) {
     auto t_bond = tid::tic_scope("bond_dimensions", tid::level::highest);
     assert(pos < state.get_length<long>());
     return {state.mps_sites[pos]->get_chiL(), state.mps_sites[pos]->get_chiR()};
@@ -166,7 +166,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
     if(entanglement_entropies.size() != state.get_length() + 1) throw except::logic_error("entanglement_entropies.size() should be length+1");
     if(entanglement_entropies.front() != 0.0) throw except::logic_error("First entropy should be 0. Got: {:.16f}", entanglement_entropies.front());
     if(entanglement_entropies.back() != 0.0) throw except::logic_error("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back());
-    state.measurements.entanglement_entropy_midchain = entanglement_entropies[state.get_length<long>() / 2];
+    state.measurements.entanglement_entropy_midchain = entanglement_entropies[state.get_length<size_t>() / 2];
     state.measurements.entanglement_entropies        = entanglement_entropies;
     return state.measurements.entanglement_entropies.value();
 }
@@ -290,7 +290,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
             // Example with 6 sites
             //      012345 --> 123450
             //      123450 --> 234510
-            for(size_t i = 0; i < length - off; ++i) {
+            for(size_t i = 0; i < length - safe_cast<size_t>(off); ++i) {
                 // auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
                 // auto trnc_old                 = measure::truncation_errors(state_swap);
                 // auto sval_old                 = state_swap.get_bond(i, i + 1);
@@ -1137,8 +1137,8 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mps
         positions.emplace_back(mpo.get().get_position());
     }
 
-    auto mpsBra_split = tools::common::split::split_mps(mpsBra, spin_dims_bra, positions, positions.back(), svd_cfg);
-    auto mpsKet_split = tools::common::split::split_mps(mpsKet, spin_dims_ket, positions, positions.back(), svd_cfg);
+    auto mpsBra_split = tools::common::split::split_mps(mpsBra, spin_dims_bra, positions, safe_cast<long>(positions.back()), svd_cfg);
+    auto mpsKet_split = tools::common::split::split_mps(mpsKet, spin_dims_ket, positions, safe_cast<long>(positions.back()), svd_cfg);
 
     // Put them into a vector of reference wrappers for compatibility with the other expectation_value function
     auto mpsBra_refs = std::vector<std::reference_wrapper<const MpsSite>>(mpsBra_split.begin(), mpsBra_split.end());
@@ -1195,7 +1195,7 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mul
         return expectation_value(mps_refs, mps_refs, mpos, envs);
     } else {
         // Set the new center position in the interior of the set of positions, so we don't get stashes that need to be thrown away.
-        auto mps_split = tools::common::split::split_mps(multisite_mps, spin_dims_bra, positions, positions.front(), svd_cfg);
+        auto mps_split = tools::common::split::split_mps(multisite_mps, spin_dims_bra, positions, safe_cast<long>(positions.front()), svd_cfg);
         // Put them into a vector of reference wrappers for compatibility with the other expectation_value function
         auto mps_refs = std::vector<std::reference_wrapper<const MpsSite>>(mps_split.begin(), mps_split.end());
         return expectation_value(mps_refs, mps_refs, mpos, envs);

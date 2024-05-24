@@ -23,8 +23,8 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
         auto eigvals = eig::view::get_eigvals<real>(solver.result, converged_only);
 
         if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
-            double overlap_sq_sum = 0;
-            size_t num_solutions  = 0;
+            [[maybe_unused]] double overlap_sq_sum = 0;
+            [[maybe_unused]] size_t num_solutions  = 0;
             // Eigenvalues are normally sorted small to large, so we reverse when looking for large.
             for(const auto &idx : indices.value_or(num::range<long>(0, eigvals.size()))) {
                 if(idx >= eigvals.size()) throw except::logic_error("idx ({}) >= eigvals.size() ({})", idx, eigvals.size());

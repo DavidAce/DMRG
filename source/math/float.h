@@ -19,10 +19,12 @@ using cplx_t = std::complex<real_t>;
 
 template<typename Lhs, typename Rhs>
 bool cmp_t(Lhs lhs, Rhs rhs) {
-    if constexpr(std::is_same_v<Lhs, cplx_t> or std::is_same_v<Rhs, cplx_t>)
-        return cplx_t(lhs) == cplx_t(rhs);
-    else if constexpr(std::is_same_v<Lhs, real_t> or std::is_same_v<Rhs, real_t>)
-        return real_t(lhs) == real_t(rhs);
+    if constexpr(std::is_same_v<Lhs, cplx_t> or std::is_same_v<Rhs, cplx_t>) {
+        bool real_eq = static_cast<real_t>(std::real(lhs)) == static_cast<real_t>(std::real(rhs));
+        bool imag_eq = static_cast<real_t>(std::imag(lhs)) == static_cast<real_t>(std::imag(rhs));
+        return real_eq and imag_eq;
+    } else if constexpr(std::is_same_v<Lhs, real_t> or std::is_same_v<Rhs, real_t>)
+        return static_cast<real_t>(lhs) == static_cast<real_t>(rhs);
     else
         return lhs == rhs;
 }

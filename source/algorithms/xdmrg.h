@@ -13,9 +13,6 @@ namespace tools::finite::opt {
 
 class StateFinite;
 class xdmrg : public AlgorithmFinite {
-    private:
-    double energy_window_growth_factor = 1.0;
-
     public:
     // Inherit the constructor of class_algorithm_base
     using AlgorithmFinite::AlgorithmFinite;

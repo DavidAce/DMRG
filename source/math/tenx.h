@@ -481,10 +481,7 @@ namespace tenx {
             auto vector   = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(tensor.data(), tensor.size());
             auto imag_sum = vector.imag().cwiseAbs().sum();
             threshold *= std::max<double>(1.0, static_cast<double>(vector.size()));
-            //            if(imag_sum >= threshold) {
-            //                std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold);
-            //            }
-            return imag_sum < threshold;
+            return static_cast<double>(imag_sum) < threshold;
         } else {
             return true;
         }

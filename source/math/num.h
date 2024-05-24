@@ -260,12 +260,12 @@ namespace num {
         if(static_cast<TC>(first) < static_cast<TC>(last)) {
             while(static_cast<TC>(val) < static_cast<TC>(last)) {
                 vec.emplace_back(val);
-                val += std::cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
+                val += std::cmp_less(step, 0) ? -static_cast<TC>(step) : static_cast<TC>(step);
             }
         } else {
             while(static_cast<TC>(val) > static_cast<TC>(last)) {
                 vec.emplace_back(val);
-                val -= static_cast<TC>(step) < static_cast<TC>(0) ? -static_cast<T>(step) : static_cast<T>(step);
+                val -= static_cast<TC>(step) < static_cast<TC>(0) ? -static_cast<TC>(step) : static_cast<TC>(step);
             }
         }
         if constexpr(std::is_signed_v<T3>) {

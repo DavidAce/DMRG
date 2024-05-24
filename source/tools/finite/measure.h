@@ -1,9 +1,10 @@
 #pragma once
 #include "math/float.h"
+#include "math/svd/config.h"
 #include <complex>
+#include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
-#include <optional>
 
 class StateFinite;
 class ModelFinite;
@@ -17,9 +18,7 @@ template<typename T>
 struct env_pair;
 class EnvEne;
 class EnvVar;
-namespace svd {
-    struct config;
-}
+
 
 namespace tools::finite::measure {
     struct LocalObservableOp {
@@ -44,7 +43,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern long   bond_dimension_current                      (const StateFinite & state);
     [[nodiscard]] extern long   bond_dimension_midchain                     (const StateFinite & state);
     [[nodiscard]] extern std::vector<long>    bond_dimensions_active        (const StateFinite & state);
-    [[nodiscard]] extern std::pair<long,long> bond_dimensions               (const StateFinite & state, long pos);
+    [[nodiscard]] extern std::pair<long,long> bond_dimensions               (const StateFinite & state, size_t pos);
     [[nodiscard]] extern std::vector<long>    bond_dimensions               (const StateFinite & state);
     [[nodiscard]] extern double norm                                        (const StateFinite & state, bool full = false);
 

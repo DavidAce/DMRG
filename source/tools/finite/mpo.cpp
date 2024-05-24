@@ -335,12 +335,12 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
             col_keep.emplace_back(jdx);
             continue;
         }
-        auto kmax     = safe_cast<long>(col_keep.size()); // col_keep.size() increases inside the for loop
+        auto kmax     = static_cast<long>(col_keep.size()); // col_keep.size() increases inside the for loop
         bool keep_jdx = true;
         for(long kdx = 0; kdx < kmax; ++kdx) { // Kept col index
             // Check if the previous col(idx) is parallel to the current col(jdx)
-            auto col_jdx = mpo_map.col(jdx);           // A new column in mpo_map
-            auto col_kdx = mpo_map.col(col_keep[kdx]); // A kept column from cols_keep
+            auto col_jdx = mpo_map.col(jdx);                                // A new column in mpo_map
+            auto col_kdx = mpo_map.col(col_keep[static_cast<size_t>(kdx)]); // A kept column from cols_keep
 
             // Find the row index with the first nonzero element in both col_kdx and col_jdx
             auto prefactor = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); // Factor between the two columns
@@ -371,12 +371,12 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
         if(keep_jdx) {
             // We should keep column jdx if it isn't parallel to any of the kept columns
             col_keep.emplace_back(jdx); // must be added before setting xfer
-            mat_xfer(col_keep.size() - 1, jdx) = cplx(1.0, 0.0);
+            mat_xfer(static_cast<long>(col_keep.size() - 1ul), jdx) = cplx(1.0, 0.0);
         }
     }
 
     // Resize the transfer matrix. It should have size col_keep.size() x cols
-    mat_xfer.conservativeResize(col_keep.size(), Eigen::NoChange);
+    mat_xfer.conservativeResize(static_cast<long>(col_keep.size()), Eigen::NoChange);
 
     // Create the deparallelized mpo by shuffling the indices back into position
     auto matrix_dep = Eigen::MatrixXcd(mpo_map(Eigen::all, col_keep)); // Deparallelized matrix
@@ -449,8 +449,8 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
         bool keep_idx = true;
         for(long kdx = 0; kdx < kmax; ++kdx) { // Kept row index
             // Check if the previous row(idx) is parallel to the current row(idx)
-            auto row_idx = mpo_map.row(idx);           // A new row in mpo_map
-            auto row_kdx = mpo_map.row(row_keep[kdx]); // A kept row from cols_keep
+            auto row_idx = mpo_map.row(idx);                                // A new row in mpo_map
+            auto row_kdx = mpo_map.row(row_keep[static_cast<size_t>(kdx)]); // A kept row from cols_keep
 
             // Find the col index with the first nonzero element in both row_kdx and row_jdx
             auto prefactor = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); // Factor between the two columns
@@ -481,11 +481,11 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
         if(keep_idx) {
             // We should keep row idx if it isn't parallel to any of the kept rows
             row_keep.emplace_back(idx); // must be added before setting xfer
-            mat_xfer(idx, row_keep.size() - 1) = cplx(1.0, 0.0);
+            mat_xfer(idx, static_cast<long>(row_keep.size() - 1ul)) = cplx(1.0, 0.0);
         }
     }
     // Resize the transfer matrix. It should have size rows x row_keep.size()
-    mat_xfer.conservativeResize(Eigen::NoChange, row_keep.size());
+    mat_xfer.conservativeResize(Eigen::NoChange, static_cast<long>(row_keep.size()));
 
     // Create the deparallelized mpo by shuffling the indices back into position
     auto matrix_dep = Eigen::MatrixXcd(mpo_map(row_keep, Eigen::all)); // Deparallelized matrix
