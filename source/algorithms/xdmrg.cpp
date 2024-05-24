@@ -323,7 +323,7 @@ void xdmrg::update_state() {
     tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
     auto bond_dims_old = tensors.state->get_mps_dims_active();
     // Expand the environment to grow the bond dimension in 1-site dmrg
-    if(tensors.active_sites.size() == 1) {
+    if(tensors.active_sites.size() == 1 and opt_meta.expand_mode != EnvExpandMode::NONE) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
         update_environment_expansion_alpha();
     }

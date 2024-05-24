@@ -300,7 +300,9 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     //         m1.eigs_tol = 1e-12;
     //         m1.optAlgo  = OptAlgo::DIRECTZ;
     //     }
-
+    if(m1.chosen_sites.size() > 1 or var_isconverged) {
+        m1.expand_mode = EnvExpandMode::NONE; // No need to expand
+    }
     m1.validate();
 
     return m1;
