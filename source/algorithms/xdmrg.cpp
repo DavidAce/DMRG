@@ -26,6 +26,7 @@
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
 #include <h5pp/details/h5ppFile.h>
+#include <tools/finite/multisite.h>
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
@@ -326,6 +327,9 @@ void xdmrg::update_state() {
     if(tensors.active_sites.size() == 1 and opt_meta.expand_mode != EnvExpandMode::NONE) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
         update_environment_expansion_alpha();
+        opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
+        opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);
+        opt_meta.optSolver    = opt_meta.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
     }
     auto variance_after_exp = tools::finite::measure::energy_variance(tensors);
     auto bond_dims_exp      = tensors.state->get_mps_dims_active();
@@ -376,13 +380,13 @@ void xdmrg::update_state() {
         if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());
     }
 
-    // if constexpr(settings::debug) {
-    auto variance_after_svd = tools::finite::measure::energy_variance(tensors);
-    tools::log->debug("Before update: variance {:8.2e} | mps dims {}", var_latest, bond_dims_old);
-    tools::log->debug("After  expns.: variance {:8.2e} | mps dims {}", variance_after_exp, bond_dims_exp);
-    tools::log->debug("After  merge : variance {:8.2e} | mps dims {}", variance_after_svd, tensors.state->get_mps_dims_active());
-    tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / opt_state.get_variance());
-    // }
+    if constexpr(settings::debug) {
+        auto variance_after_svd = tools::finite::measure::energy_variance(tensors);
+        tools::log->debug("Before update: variance {:8.2e} | mps dims {}", var_latest, bond_dims_old);
+        tools::log->debug("After  expns.: variance {:8.2e} | mps dims {}", variance_after_exp, bond_dims_exp);
+        tools::log->debug("After  merge : variance {:8.2e} | mps dims {}", variance_after_svd, tensors.state->get_mps_dims_active());
+        tools::log->debug("Variance change from  SVD: {:.16f}%", 100 * variance_after_svd / opt_state.get_variance());
+    }
 
     // Update current energy density ε
     if(status.opt_ritz == OptRitz::TE)

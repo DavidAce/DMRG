@@ -2,14 +2,14 @@
 
 #include <array>
 #include <optional>
-#include <vector>
 #include <string>
+#include <vector>
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;
 
 namespace tools::finite::multisite {
-    extern long                get_problem_size(const StateFinite &state, std::optional<std::vector<size_t>> active_sites);
+    extern long                get_problem_size(const StateFinite &state, std::optional<std::vector<size_t>> sites = std::nullopt);
     extern std::array<long, 3> get_dimensions(const StateFinite &state, std::optional<std::vector<size_t>> sites = std::nullopt);
     extern std::array<long, 4> get_dimensions(const ModelFinite &model, std::optional<std::vector<size_t>> sites = std::nullopt);
     extern std::array<long, 4> get_dimensions_squared(const ModelFinite &model, std::optional<std::vector<size_t>> active_sites = std::nullopt);

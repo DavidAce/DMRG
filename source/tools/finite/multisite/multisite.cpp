@@ -10,7 +10,7 @@
 #include "tools/finite/mps.h"
 
 std::array<long, 3> tools::finite::multisite::get_dimensions(const StateFinite &state, std::optional<std::vector<size_t>> sites) {
-    if(not sites) sites = state.active_sites;
+    sites = sites.value_or(state.active_sites);
     if(sites.value().empty()) return std::array<long, 3>{0, 0, 0};
     std::array<long, 3> dimensions{};
     std::sort(sites.value().begin(), sites.value().end());
@@ -55,8 +55,8 @@ std::array<long, 4> tools::finite::multisite::get_dimensions_squared(const Model
     return dimensions;
 }
 
-long tools::finite::multisite::get_problem_size(const StateFinite &state, std::optional<std::vector<size_t>> active_sites) {
-    auto dims = get_dimensions(state, std::move(active_sites));
+long tools::finite::multisite::get_problem_size(const StateFinite &state, std::optional<std::vector<size_t>> sites) {
+    auto dims = get_dimensions(state, sites);
     return (dims[0] * dims[1] * dims[2]);
 }
 
@@ -157,7 +157,7 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
     return sites;
 }
 std::vector<size_t> tools::finite::multisite::generate_site_list_old(StateFinite &state, long threshold, size_t max_sites, size_t min_sites,
-                                                                 const std::string &tag) {
+                                                                     const std::string &tag) {
     // TODO: Rewrite generate_site_list
     min_sites = std::clamp(min_sites, 1ul, state.get_length<size_t>());
     max_sites = std::clamp(max_sites, min_sites, state.get_length<size_t>());

@@ -284,29 +284,29 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
             svd::config svd_cfg_move(settings::get_bond_max(state.get_algorithm()), settings::precision::svd_truncation_lim);
             finite::mps::move_center_point_to_pos_dir(state_swap, 0, 1, svd_cfg_move);
         }
-        // tools::log->info("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
+        tools::log->debug("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
         if(off > 0) {
             // Move the left-most site to one site beyond the last site
             // Example with 6 sites
             //      012345 --> 123450
             //      123450 --> 234510
             for(size_t i = 0; i < length - safe_cast<size_t>(off); ++i) {
-                // auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
-                // auto trnc_old                 = measure::truncation_errors(state_swap);
-                // auto sval_old                 = state_swap.get_bond(i, i + 1);
+                auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
+                auto trnc_old                 = measure::truncation_errors(state_swap);
+                auto sval_old                 = state_swap.get_bond(i, i + 1);
                 mps::swap_sites(state_swap, i, i + 1, sites, GateMove::OFF, svd_cfg);
-                // auto [bond_new_L, bond_new_R] = measure::bond_dimensions(state_swap, i);
-                // auto trnc_new                 = measure::truncation_errors(state_swap);
-                // auto sval_new                 = state_swap.get_bond(i, i + 1);
+                auto [bond_new_L, bond_new_R] = measure::bond_dimensions(state_swap, i);
+                auto trnc_new                 = measure::truncation_errors(state_swap);
+                auto sval_new                 = state_swap.get_bond(i, i + 1);
 
-                // tools::log->info("swap off {:2} | pos {} |  {} <-> {} | bond {:3} -> {:3} | trnc {:.3e} -> {:.3e} | sites {::2}",
-                // off,state_swap.get_position<long>(), i, i + 1, bond_old_R, bond_new_R, trnc_old.at(i + 1), trnc_new.at(i + 1), sites);
+                // tools::log->info("swap off {:2} | pos {} |  {} <-> {} | bond {:3} -> {:3} | trnc {:.3e} -> {:.3e} | sites {::2} | bonds {::3}",
+                // off,state_swap.get_position<long>(), i, i + 1, bond_old_R, bond_new_R, trnc_old.at(i + 1), trnc_new.at(i + 1), sites, measure::bond_dimensions(state_swap));
                 // if(bond_new_R != sval_new.size())
                 // throw except::logic_error("bond dimension mismatch: bond_new_R {} != sval_new.size() {}", bond_new_R, sval_new.size());
                 // for(long sidx = 0; sidx < std::max(sval_old.size(), sval_new.size()); ++sidx) {
-                //     auto sold = sidx < sval_old.size() ? sval_old.coeff(sidx).real() : 0.0;
-                //     auto snew = sidx < sval_new.size() ? sval_new.coeff(sidx).real() : 0.0;
-                //     tools::log->info("idx {:>4}: {:>10.5e} --> {:>10.5e}", sidx, sold, snew);
+                    // auto sold = sidx < sval_old.size() ? sval_old.coeff(sidx).real() : 0.0;
+                    // auto snew = sidx < sval_new.size() ? sval_new.coeff(sidx).real() : 0.0;
+                    // tools::log->info("idx {:>4}: {:>10.5e} --> {:>10.5e}", sidx, sold, snew);
                 // }
             }
         }

@@ -3,7 +3,8 @@ import os.path
 
 from batches import get_batches
 from src.database import *
-from meta_xdmrg3 import *
+from meta_fdmrg4 import *
+# from meta_xdmrg3 import *
 from src.plots.multiplot import *
 
 
@@ -16,16 +17,13 @@ def dmrg_plot(args):
     batches = args.batches
     h5avgs = []
     dbs = []
-    dbs_lbit = []
-    plotdir = None
     metas = []
-    metas_lbit = []
     for batch in batches:
         batchglob = glob.glob(f'{projdir}/{batch}*')
         batchnum = int(''.join(i for i in batch if i.isdigit()))
         version2 = batchnum <= 59
         version3 = batchnum >= 60
-        batchglob = [dir for dir in batchglob if not "test" in dir]
+        batchglob = [dir for dir in batchglob]
         if batchglob:
             print(f"globbed: {batchglob}")
             batchdir = batchglob[0]
@@ -43,7 +41,7 @@ def dmrg_plot(args):
                 for state in state_filter:
                     metas.append(get_meta(plotdir, cachedir))
                     dbs.append(load_isingmajorana_database(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                                   state_filter=[state], debug=False))
+                                                   state_filter=[state], debug=True))
 
 
 
@@ -147,7 +145,8 @@ def dmrg_plot(args):
 
 
 if __name__ == '__main__':
-    batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('fDMRG', ['fdmrg-see-test4'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    # batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     dmrg_plot(batch)
 
 

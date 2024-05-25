@@ -16,7 +16,7 @@ def dmrg_avg(args):
         datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged-new.h5'
+        tgt = datadir + '/averaged.h5'
         if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
@@ -53,6 +53,7 @@ def dmrg_avg(args):
 
 
 if __name__ == '__main__':
-    batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('fDMRG', ['fdmrg-see-test4'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    # batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     batch.clear = True
     dmrg_avg(batch)

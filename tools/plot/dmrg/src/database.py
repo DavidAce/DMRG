@@ -246,7 +246,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             print(' Looking for datasets in meta: {}'.format(meta.keys()))
         for nodekey, nodepath, node in h5py_node_iterator(node=algonode,
                                                               excludeKeys=list(db['nodes'].keys()) + ['.db'],
-                                                              dep=3):
+                                                              dep=4):
             # Figure out if we have asked for this node
             match = False
             for mval in meta.values():

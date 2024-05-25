@@ -15,14 +15,14 @@ struct Key {
                    Key()         = default;
                    Key(std::string_view algo_, std::string_view state_, std::string_view subgroup_, std::string_view name_, size_t expected_size_ = -1ul)
         : algo(algo_), state(state_), subgroup(subgroup_), name(name_), expected_size(expected_size_) {}
-    virtual std::string create_source_path() const {
-        std::string srcpath;
-        if(!algo.empty()) srcpath += fmt::format("/{}", algo);
-        if(!state.empty()) srcpath += fmt::format("/{}", state);
-        if(!subgroup.empty()) srcpath += fmt::format("/{}", subgroup);
-        if(!name.empty()) srcpath += fmt::format("/{}", name);
-        return srcpath;
-    };
+    virtual std::string create_source_path(const PathId &pathid) const {
+        std::string src_path = pathid.src_path;
+        // The strings from pathid are taken from the file itself.
+        // The strings in key are taken from user input and may have fuzzy patterns like "state_*"
+        if(!subgroup.empty()) src_path += fmt::format("/{}", subgroup);
+        if(!name.empty()) src_path += fmt::format("/{}", name);
+        return src_path;
+    }
 };
 
 struct DsetKey : public Key {

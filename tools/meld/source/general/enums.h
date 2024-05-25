@@ -6,6 +6,7 @@ enum class Model { SDUAL, MAJORANA, LBIT };
 enum class StrictTableSize { TRUE, FALSE };
 enum class SlabSelect { FULL, MIDCOL };
 template<typename T>
+requires std::is_enum_v<T>
 constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, FileIdStatus>) {
         if(item == FileIdStatus::UPTODATE) return "UPTODATE";
@@ -13,6 +14,7 @@ constexpr std::string_view enum2str(const T &item) {
         if(item == FileIdStatus::MISSING) return "MISSING";
     }
     if constexpr(std::is_same_v<T, Model>) {
+        if(item == Model::MAJORANA) return "MAJORANA";
         if(item == Model::SDUAL) return "SDUAL";
         if(item == Model::LBIT) return "LBIT";
     }

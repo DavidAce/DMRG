@@ -282,9 +282,16 @@ void fdmrg::update_state() {
     if(not variance_before_step) variance_before_step = tools::finite::measure::energy_variance(tensors); // Should just take value from cache
 
     // Expand the environment to grow the bond dimension in 1-site dmrg
-    if(tensors.active_sites.size() == 1) { expand_environment(EnvExpandMode::ENE, EnvExpandSide::FORWARD); }
+    if(tensors.active_sites.size() == 1 and opt_meta.expand_mode != EnvExpandMode::NONE) {
+        expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
+        update_environment_expansion_alpha();
+        // The expansion may have changed the problem size!
+        opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
+        opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);
+        opt_meta.optSolver    = opt_meta.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
+    }
 
-    auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors,opt_meta);
+    auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors, opt_meta);
     auto opt_state   = tools::finite::opt::find_ground_state(tensors, initial_mps, status, opt_meta);
 
     // Determine the quality of the optimized state.
@@ -340,8 +347,19 @@ void fdmrg::update_state() {
 
     tools::log->trace("Updating variance record holder");
     auto var = tools::finite::measure::energy_variance(tensors);
-    if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
+    auto ene                      = tools::finite::measure::energy(tensors);
+    status.energy_variance_lowest = std::min(var, status.energy_variance_lowest);
+    var_delta                     = var - var_latest;
+    ene_delta                     = ene - ene_latest;
+    var_change                    = var / var_latest;
+    var_latest                    = var;
+    ene_latest                    = ene;
     var_mpo_step.emplace_back(var);
+
+    last_optsolver = opt_state.get_optsolver();
+    last_optalgo   = opt_state.get_optalgo();
+    last_optcost   = opt_state.get_optcost();
+
     if constexpr(settings::debug) tensors.assert_validity();
 
 }

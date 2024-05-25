@@ -228,8 +228,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.expand_side = EnvExpandSide::FORWARD;
     m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
     if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-        // Expand with both when stuck for long
-        m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
+        if(status.algo_type == AlgorithmType::xDMRG) m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
     }
     // Set up a multiplier for number of iterations
     double iter_stuck_multiplier = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
@@ -269,18 +268,18 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
                 m1.max_sites    = static_cast<size_t>(site_range.at(site_index));
             }
         }
-        if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS)) {
-            m1.max_sites     = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
-            m1.eigs_iter_max = 1;
-            m1.eigs_tol      = 1e-1;
-        }
+        // if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS)) {
+        //     m1.max_sites     = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
+        //     m1.eigs_iter_max = 1;
+        //     m1.eigs_tol      = 1e-1;
+        // }
     }
     if(var_isconverged) {
         // Run very careful steps when converged. Sometimes the solver realizes that the current eigenpair is not actually the most extremal.
         // In that case, it will switch target state, and the residual norm will be poor for many steps.
         // We want the solver to converge when this happens!
         m1.eigs_tol      = settings::precision::eigs_tol_min;
-        m1.eigs_iter_max = std::max(1000000, m1.eigs_iter_max.value());
+        m1.eigs_iter_max = status.algo_type == AlgorithmType::xDMRG ? std::max(1000000, m1.eigs_iter_max.value()) : m1.eigs_iter_max.value();
         m1.eigs_time_max = 5.0 * 3600.0;
         if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::CONVERGED))
             m1.max_sites = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
@@ -292,7 +291,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
-    if(m1.problem_size <= settings::precision::eig_max_size) m1.optSolver = OptSolver::EIG;
+    m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
 
     // if(m1.optSolver == OptSolver::EIGS and m1.chosen_sites.size() == 1 and tensors.state->get_direction() < 0) {
     // #pragma message "testing DIRECTZ"
@@ -702,7 +701,7 @@ void AlgorithmFinite::update_environment_expansion_alpha() {
    */
 
     double old_alpha           = status.env_expansion_alpha;
-    double qexp                = std::sqrt(var_envexp / var_latest);
+    double qexp                = var_envexp / var_latest;
     double bias                = 0.1;
     double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
     status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);

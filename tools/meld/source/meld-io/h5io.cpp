@@ -358,7 +358,8 @@ namespace tools::h5io {
             // The srcKeys that match an existing dataset are returned in "keys", with an additional parameter ".key" which
             // is an unique identifier to find the DsetInfo object in the map srcDsetDb
             // The database srcDsetDb  is used to keep track the DsetInfo structs for found datasets.
-            auto path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
+            // auto path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
+            auto path = srcKey.create_source_path(pathid);
             auto key  = fmt::format("{}|{}", srcParentPath, path);
             if(srcDsetDb.find(key) == srcDsetDb.end()) {
                 srcDsetDb[key] = h5_src.getDatasetInfo(path);
@@ -409,7 +410,8 @@ namespace tools::h5io {
             // The srcKeys that match an existing table are returned in "keys", with an additional parameter ".key" which
             // is an unique identifier to find the TableInfo object in the map srcTableDb
             // The database srcTableDb  is used to keep track the TableInfo structs for found datasets.
-            auto                   path = srcKey.create_source_path();
+            auto path = srcKey.create_source_path(pathid);
+            // auto path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
             // auto                   path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
             auto                   key  = fmt::format("{}|{}", srcParentPath, path);
             if(srcTableDb.find(key) == srcTableDb.end()) {
