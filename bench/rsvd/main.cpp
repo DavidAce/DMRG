@@ -66,7 +66,7 @@ void bench() {
                 svd::solver svd(svd_settings);
                 auto [U_, S_, VT_]    = svd.do_svd(A_file);
                 auto   Y              = Eigen::VectorXd(S_.real().array().log());
-                auto   X              = num::range<double>(0.0, Y.size(), 1.0);
+                auto   X              = num::range<double>(0, Y.size());
                 auto   fit            = fit::log_stretched(X, Y, {1.0, 0.1, 1.0});
                 auto   C              = fit.coeffs[0];
                 auto   k              = fit.coeffs[1];
