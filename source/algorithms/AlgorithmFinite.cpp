@@ -701,7 +701,7 @@ void AlgorithmFinite::update_environment_expansion_alpha() {
    */
 
     double old_alpha           = status.env_expansion_alpha;
-    double qexp                = var_envexp / var_latest;
+    double qexp                = std::sqrt(var_envexp / var_latest);
     double bias                = 0.1;
     double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
     status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);

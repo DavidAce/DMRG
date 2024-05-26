@@ -284,23 +284,23 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
             svd::config svd_cfg_move(settings::get_bond_max(state.get_algorithm()), settings::precision::svd_truncation_lim);
             finite::mps::move_center_point_to_pos_dir(state_swap, 0, 1, svd_cfg_move);
         }
-        tools::log->debug("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
+        // tools::log->debug("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
         if(off > 0) {
             // Move the left-most site to one site beyond the last site
             // Example with 6 sites
             //      012345 --> 123450
             //      123450 --> 234510
             for(size_t i = 0; i < length - safe_cast<size_t>(off); ++i) {
-                auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
-                auto trnc_old                 = measure::truncation_errors(state_swap);
-                auto sval_old                 = state_swap.get_bond(i, i + 1);
+                // auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
+                // auto trnc_old                 = measure::truncation_errors(state_swap);
+                // auto sval_old                 = state_swap.get_bond(i, i + 1);
                 mps::swap_sites(state_swap, i, i + 1, sites, GateMove::OFF, svd_cfg);
-                auto [bond_new_L, bond_new_R] = measure::bond_dimensions(state_swap, i);
-                auto trnc_new                 = measure::truncation_errors(state_swap);
-                auto sval_new                 = state_swap.get_bond(i, i + 1);
+                // auto [bond_new_L, bond_new_R] = measure::bond_dimensions(state_swap, i);
+                // auto trnc_new                 = measure::truncation_errors(state_swap);
+                // auto sval_new                 = state_swap.get_bond(i, i + 1);
 
-                // tools::log->info("swap off {:2} | pos {} |  {} <-> {} | bond {:3} -> {:3} | trnc {:.3e} -> {:.3e} | sites {::2} | bonds {::3}",
-                // off,state_swap.get_position<long>(), i, i + 1, bond_old_R, bond_new_R, trnc_old.at(i + 1), trnc_new.at(i + 1), sites, measure::bond_dimensions(state_swap));
+                // tools::log->debug("swap off {:2} | pos {} |  {} <-> {} | sites {::2} | bonds {::3}",
+                // off,state_swap.get_position<long>(), i, i + 1, sites, measure::bond_dimensions(state_swap));
                 // if(bond_new_R != sval_new.size())
                 // throw except::logic_error("bond dimension mismatch: bond_new_R {} != sval_new.size() {}", bond_new_R, sval_new.size());
                 // for(long sidx = 0; sidx < std::max(sval_old.size(), sval_new.size()); ++sidx) {
@@ -1363,7 +1363,7 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::opdm(const StateFinite &state) {
     //    tools::log->info("rho+-: trace {:.16f}\n{}", rpm.trace(), linalg::matrix::to_string(rpm, 8));
     //    tools::log->info("rho-+: trace {:.16f}\n{}", rmp.trace(), linalg::matrix::to_string(rmp, 8));
     //    tools::log->info("rho--: trace {:.16f}\n{}", rmm.trace(), linalg::matrix::to_string(rmm, 8));
-    tools::log->debug("R    : trace {:.16f}", R.trace());
+    // tools::log->debug("R    : trace {:.16f}", R.trace());
     if(not R.isApprox(R.conjugate().transpose())) throw except::logic_error("R is not hermitian");
     if(std::abs(R.trace() - static_cast<double>(L)) > 1e-8) throw std::runtime_error("R.trace() != L");
     state.measurements.opdm = tenx::TensorMap(R);
@@ -1377,7 +1377,7 @@ Eigen::Tensor<double, 1> tools::finite::measure::opdm_spectrum(const StateFinite
         auto  solver = eig::solver();
         solver.eig<eig::Form::SYMM>(opdm.data(), opdm.dimension(0), eig::Vecs::OFF);
         state.measurements.opdm_spectrum = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
-        tools::log->debug("OPDM spectrum: {::+9.4e}", tenx::span(state.measurements.opdm_spectrum.value()));
+        // tools::log->debug("OPDM spectrum: {::+9.4e}", tenx::span(state.measurements.opdm_spectrum.value()));
     }
     return state.measurements.opdm_spectrum.value();
 }

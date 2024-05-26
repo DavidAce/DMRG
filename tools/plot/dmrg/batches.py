@@ -5,12 +5,15 @@ def get_batches(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition', st
     if batches is not None:
         if not isinstance(batches, list):
             raise TypeError("batches must be a list")
-    fdmrg_batches = ['fdmrg-see-test4',  # Subsystem entanglement entropy test for L=25
+    fdmrg_batches = [
+        'fdmrg-see-test3',  # Subsystem entanglement entropy test for L=25 tr 1e-6
+        'fdmrg-see-test4',  # Subsystem entanglement entropy test for L=25 tr 1e-8
     ]
-    xdmrg_batches = ['xdmrg1-fse',  # First test after spending years on the lbit project
-                     'xdmrg2-tuned',  # Fixed various issues that arised in xdmrg1-fse.
-                     'xdmrg3-letsgo',  # Fixed various issues that arised in xdmrg1-fse.
-                     ]
+    xdmrg_batches = [
+        'xdmrg1-fse',  # First test after spending years on the lbit project
+        'xdmrg2-tuned',  # Fixed various issues that arised in xdmrg1-fse.
+        'xdmrg3-letsgo',  # Fixed various issues that arised in xdmrg1-fse.
+    ]
 
 
 

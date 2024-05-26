@@ -32,6 +32,7 @@ def dmrg_plot(args):
             cachedir = f'{batchdir}/analysis/cache'
             for avgfile in [
                             f'{batchdir}/analysis/data/averaged.h5',
+                            '/mnt/WDB-AN1500/mbl_transition/fdmrg-see-test4/analysis/data/averaged.h5',
             ]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
@@ -104,8 +105,7 @@ def dmrg_plot(args):
         f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-g'], figs=f)
     save_figure(f)
 
-    plt.show()
-    exit(0)
+
 
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
@@ -116,7 +116,8 @@ def dmrg_plot(args):
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm-spectrum-d'], figs=f)
     save_figure(f)
-
+    plt.show()
+    exit(0)
     # f = None
     # for idx, (db, meta) in enumerate(zip(dbs, metas)):
     #     f = plot_opdm_gap_fig_sub_line(db=db, meta=meta['opdm-gapsize-d-L'], figs=f)
@@ -145,7 +146,7 @@ def dmrg_plot(args):
 
 
 if __name__ == '__main__':
-    batch = get_batches('fDMRG', ['fdmrg-see-test4'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('fDMRG', ['fdmrg-see-test3'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
     # batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     dmrg_plot(batch)
 
