@@ -8,6 +8,7 @@ def get_batches(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition', st
     fdmrg_batches = [
         'fdmrg-see-test3',  # Subsystem entanglement entropy test for L=25 tr 1e-6
         'fdmrg-see-test4',  # Subsystem entanglement entropy test for L=25 tr 1e-8
+        'fdmrg6-see',       # Subsystem entanglement entropy test for L=35 tr 1e-6
     ]
     xdmrg_batches = [
         'xdmrg1-fse',  # First test after spending years on the lbit project

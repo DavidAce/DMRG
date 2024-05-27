@@ -4,6 +4,7 @@ import os.path
 from batches import get_batches
 from src.database import *
 from meta_fdmrg4 import *
+from meta_fdmrg6 import *
 # from meta_xdmrg3 import *
 from src.plots.multiplot import *
 
@@ -32,7 +33,6 @@ def dmrg_plot(args):
             cachedir = f'{batchdir}/analysis/cache'
             for avgfile in [
                             f'{batchdir}/analysis/data/averaged.h5',
-                            '/mnt/WDB-AN1500/mbl_transition/fdmrg-see-test4/analysis/data/averaged.h5',
             ]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
@@ -146,7 +146,8 @@ def dmrg_plot(args):
 
 
 if __name__ == '__main__':
-    batch = get_batches('fDMRG', ['fdmrg-see-test3'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    # batch = get_batches('fDMRG', ['fdmrg-see-test3'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('fDMRG', ['fdmrg6-see'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
     # batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     dmrg_plot(batch)
 
