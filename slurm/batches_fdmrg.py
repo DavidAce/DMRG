@@ -124,6 +124,17 @@ def get_fdmrg_batch_setup(projectname):
                 'd+9.00|g0.500': {'seed_extent': [5000], 'seed_offset': [2_900_0500_000000], },
             }
         },
+        'fdmrg7-sawtooth': {
+            'description': "Quick check to see if the sawtooth remains at smaller system sizes"
+                           " Eg:  1|600|0000|00000"
+                           "     +-| d | g  | extra ",
+            'projectname': 'fdmrg7-sawtooth',
+            'batch': {
+                'd+3.00|g0.500': {'seed_extent': [100], 'seed_offset': [2_300_0500_000000], },
+                'd+6.00|g0.500': {'seed_extent': [100], 'seed_offset': [2_600_0500_000000], },
+                'd+9.00|g0.500': {'seed_extent': [100], 'seed_offset': [2_900_0500_000000], },
+            }
+        },
     }
 
     return batch_setup[projectname]

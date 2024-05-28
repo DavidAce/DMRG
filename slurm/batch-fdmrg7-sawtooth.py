@@ -1,11 +1,11 @@
 from utils.generators import get_config_product, write_config_file, write_batch_files, move_directories
-from utils.xdmrg import get_output_filepath, get_config_filename, update_batch_status
-from batches_xdmrg import get_xdmrg_batch_setup
+from utils.fdmrg import get_output_filepath, get_config_filename, update_batch_status
+from batches_fdmrg import get_fdmrg_batch_setup
 import os
 import platform
 
 config_paths = {
-    'config_template'   : 'template_configs/xdmrg-ising-majorana.cfg',
+    'config_template'   : 'template_configs/fdmrg-ising-majorana.cfg',
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
     'output_stem'       : 'mbl',
     'config_dir'        : "config",
@@ -20,14 +20,14 @@ config_ranges = {
     "storage::resume_policy": ['IF_UNSUCCESSFUL'],
     "storage::file_collision_policy": ['REVIVE'],
     "storage::temp_dir": [config_paths['temp_dir']],
-    "storage::mps::state_emid::policy": ["ITER|FINISH|REPLACE"],
+    "storage::mps::state_emin::policy": ["NONE"],
     "storage::table::opdm::policy": ["FINISH|RBDS|RTES"],
     "storage::table::opdm_spectrum::policy": ["FINISH|RBDS|RTES"],
     "storage::dataset::subsystem_entanglement_entropies::bond_lim": ["2048"],
     "storage::dataset::subsystem_entanglement_entropies::trnc_lim": ["1e-6"],
     "console::loglevel": ['2'],
-    "precision::svd_truncation_lim": ['1e-8'],
-    "precision::svd_truncation_init": ['1e-8'],
+    "precision::svd_truncation_lim": ['1e-9'],
+    "precision::svd_truncation_init": ['1e-9'],
     "precision::svd_switchsize_bdc": ['16'],
     "precision::variance_convergence_threshold": ['1e-12'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
@@ -37,17 +37,17 @@ config_ranges = {
     "precision::use_parity_shifted_mpo": ["true"],
     "precision::use_parity_shifted_mpo_squared": ["true"],
     "model::model_type": ['ising_majorana'],
-    "model::model_size": ['12', '14', '16'],
-    "model::ising_majorana::g": ['0.000', '0.005', '0.010','0.015', '0.020','0.025', '0.030'],
-    "model::ising_majorana::delta": ['-6.00', '-5.00', '-4.00', '-3.00', '-2.00', '-1.00', '-0.75', '-0.50' , '-0.25', '+0.00', '+0.25',  '+0.50' ,  '+0.75', '+1.00', '+2.00', '+3.00', '+4.00', '+5.00', '+6.00'],
-    "xdmrg::energy_spectrum_shift": ['1e-6'],
-    "xdmrg::iter_min": ['1'],
-    "xdmrg::iter_max": ['200'],
-    "xdmrg::warmup_iters": ['4'],
-    "xdmrg::bond_max": ['8192'],
-    "xdmrg::bond_init": ['32'],
-    "xdmrg::print_freq": ['1'],
-    "xdmrg::try_directx2_when_stuck": ['false'],
+    "model::model_size": ['15'],
+    "model::ising_majorana::g": ['0.500'],
+    "model::ising_majorana::delta": ['+9.00'],
+    "fdmrg::ritz": ['SR'],
+    "fdmrg::iter_max": ['30'],
+    "fdmrg::iter_min": ['1'],
+    "fdmrg::warmup_iters": ['2'],
+    "fdmrg::bond_max": ['2048'],
+    "fdmrg::bond_init": ['16'],
+    "fdmrg::print_freq": ['1'],
+    "fdmrg::store_wavefn": ['false'],
 }
 
 configs = get_config_product(config_ranges, config_paths)
@@ -57,7 +57,7 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config['filename'])
 
-batch_setup = get_xdmrg_batch_setup('xdmrg3-letsgo')
+batch_setup = get_fdmrg_batch_setup('fdmrg7-sawtooth')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
 move_directories(batch_setup=batch_setup, config_paths=config_paths)
