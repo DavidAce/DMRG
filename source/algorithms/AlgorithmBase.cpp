@@ -93,7 +93,6 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     bool is_decreasing = Y_avg_left > Y_avg_full and Y_avg_full > Y_avg_rite;
     bool is_increasing = Y_avg_left < Y_avg_full and Y_avg_full < Y_avg_rite;
     bool is_uncreasing = not is_increasing and not is_decreasing; // May be more complicated
-    tools::log->trace("inc {} dec {} unc {}", is_increasing, is_decreasing, is_uncreasing);
     // Calculate the running standard deviation from i to end
     report.Y_vec_std.resize(report.Y_vec.size());
     report.Y_min_std.resize(report.Y_min.size());

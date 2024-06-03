@@ -98,7 +98,7 @@ bool MpoSite::has_mpo_squared() const { return mpo_squared.has_value(); }
 
 Eigen::Tensor<cplx_t, 4> MpoSite::get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                             std::optional<std::vector<size_t>> skip) const {
-    tools::log->debug("MpoSite::get_mpo_t(): Pointless upcast {} -> {}", sfinae::type_name<cplx>(), sfinae::type_name<cplx_t>());
+    // tools::log->trace("MpoSite::get_mpo_t(): Pointless upcast {} -> {}", sfinae::type_name<cplx>(), sfinae::type_name<cplx_t>());
     auto ereal = cplx(static_cast<real>(energy_shift_per_site.real(), static_cast<real>(energy_shift_per_site.imag())));
     auto mpo   = get_mpo(ereal, nbody, skip);
     return mpo.unaryExpr([](auto z) { return std::complex<real_t>(static_cast<real_t>(z.real()), static_cast<real_t>(z.imag())); });

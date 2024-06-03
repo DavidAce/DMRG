@@ -106,8 +106,8 @@ opt_mps tools::finite::opt::internal::optimize_variance_subspace(const TensorsFi
     if(subspace.size() == 1) {
         auto &sub_mps      = subspace.front();
         auto  measurements = MeasurementsTensorsFinite();
-        auto  sub_energy   = tools::finite::measure::energy(subspace.front().get_tensor(), *tensors.model, *tensors.edges, meta.svd_cfg, &measurements);
-        auto sub_variance = tools::finite::measure::energy_variance(subspace.front().get_tensor(), *tensors.model, *tensors.edges, meta.svd_cfg, &measurements);
+        auto  sub_energy   = tools::finite::measure::energy(subspace.front().get_tensor(), *tensors.model, *tensors.edges, std::nullopt, &measurements);
+        auto sub_variance = tools::finite::measure::energy_variance(subspace.front().get_tensor(), *tensors.model, *tensors.edges, std::nullopt, &measurements);
         subspace.front().set_energy(sub_energy);
         subspace.front().set_variance(sub_variance);
         if(meta.optRitz == OptRitz::SM) {

@@ -132,8 +132,12 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::table::opdm_spectrum::policy"                          , storage::table::opdm_spectrum::policy);
     dmrg_config.load_parameter("storage::table::expectation_values_spin_xyz::policy"            , storage::table::expectation_values_spin_xyz::policy);
     dmrg_config.load_parameter("storage::table::random_unitary_circuit::policy"                 , storage::table::random_unitary_circuit::policy);
+    dmrg_config.load_parameter("storage::table::information_per_scale::policy"                  , storage::table::information_per_scale::policy);
+    dmrg_config.load_parameter("storage::table::information_typ_scale::policy"                  , storage::table::information_typ_scale::policy);
     dmrg_config.load_parameter("storage::dataset::opdm::policy"                                 , storage::dataset::opdm::policy);
     dmrg_config.load_parameter("storage::dataset::opdm::chunksize"                              , storage::dataset::opdm::chunksize);
+    dmrg_config.load_parameter("storage::dataset::information_lattice::policy"                  , storage::dataset::information_lattice::policy);
+    dmrg_config.load_parameter("storage::dataset::information_lattice::chunksize"               , storage::dataset::information_lattice::chunksize);
     dmrg_config.load_parameter("storage::dataset::lbit_analysis::policy"                        , storage::dataset::lbit_analysis::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::policy"     , storage::dataset::subsystem_entanglement_entropies::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::chunksize"  , storage::dataset::subsystem_entanglement_entropies::chunksize);
@@ -189,9 +193,9 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::iter_min_converged"                 , strategy::iter_min_converged);
     dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
     dmrg_config.load_parameter("strategy::multisite_policy"                   , strategy::multisite_policy);
-    dmrg_config.load_parameter("strategy::multisite_site_def"                 , strategy::multisite_site_def);
-    dmrg_config.load_parameter("strategy::multisite_site_max"                 , strategy::multisite_site_max);
-    dmrg_config.load_parameter("strategy::multisite_max_prob_size"            , strategy::multisite_max_prob_size);
+    dmrg_config.load_parameter("strategy::dmrg_min_blocksize"                 , strategy::dmrg_min_blocksize);
+    dmrg_config.load_parameter("strategy::dmrg_max_blocksize"                 , strategy::dmrg_max_blocksize);
+    dmrg_config.load_parameter("strategy::dmrg_max_prob_size"            , strategy::dmrg_max_prob_size);
     dmrg_config.load_parameter("strategy::target_axis"                        , strategy::target_axis);
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);

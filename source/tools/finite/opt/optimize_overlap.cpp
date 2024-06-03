@@ -86,7 +86,7 @@ opt_mps tools::finite::opt::internal::optimize_overlap(const TensorsFinite &tens
     auto max_overlap_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace);
     if(max_overlap_idx) {
         auto &eigvec_max_overlap = *std::next(subspace.begin(), safe_cast<long>(max_overlap_idx.value()));
-        eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors, meta.svd_cfg));
+        eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors, std::nullopt));
         if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("optimize_overlap: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}", max_overlap_idx.value(),
                               eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy(), eigvec_max_overlap.get_variance());

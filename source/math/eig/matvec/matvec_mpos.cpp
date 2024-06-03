@@ -12,9 +12,9 @@
 #include "tools/common/contraction.h"
 #include <Eigen/Cholesky>
 #include <primme/primme.h>
-// #include <tblis/tblis.h>
-// #include <tblis/util/thread.h>
-// #include <tci/tci_config.h>
+#include <tblis/tblis.h>
+#include <tblis/util/thread.h>
+#include <tci/tci_config.h>
 
 namespace eig {
 
@@ -92,141 +92,55 @@ void MatVecMPOS<T>::FactorOP() {
     throw std::runtime_error("template<typename T> void MatVecMPOS<T>::FactorOP(): Not implemented");
 }
 
-// template<typename T>
-// using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
-// template<typename T>
-// using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
-// template<typename ea_type, typename eb_type, typename ec_type>
-// void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-//                     const tblis::label_vector &lb, const tblis::label_vector &lc) {
-//     const auto &ea_ref = static_cast<const ea_type &>(ea);
-//     const auto &eb_ref = static_cast<const eb_type &>(eb);
-//     auto       &ec_ref = static_cast<ec_type &>(ec);
-//
-//     tblis::len_vector da, db, dc;
-//     da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
-//     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
-//     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
-//
-//     auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-//     typename ea_type::Scalar alpha = 1.0;
-//     typename ec_type::Scalar beta  = 0.0;
-//
-//     tblis::tblis_tensor          A_s(alpha, ta);
-//     tblis::tblis_tensor          B_s(tb);
-//     tblis::tblis_tensor          C_s(beta, tc);
-//     const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
-// #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
-//     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-// #endif
-//     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-// }
+template<typename T>
+using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
+template<typename T>
+using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
+template<typename ea_type, typename eb_type, typename ec_type>
+void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
+                    const tblis::label_vector &lb, const tblis::label_vector &lc) {
+    const auto &ea_ref = static_cast<const ea_type &>(ea);
+    const auto &eb_ref = static_cast<const eb_type &>(eb);
+    auto       &ec_ref = static_cast<ec_type &>(ec);
+
+    tblis::len_vector da, db, dc;
+    da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
+    db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
+    dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
+
+    auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
+    typename ea_type::Scalar alpha = 1.0;
+    typename ec_type::Scalar beta  = 0.0;
+
+    tblis::tblis_tensor          A_s(alpha, ta);
+    tblis::tblis_tensor          B_s(tb);
+    tblis::tblis_tensor          C_s(beta, tc);
+    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
+#if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+    tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+#endif
+    tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
+}
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
-    auto token   = t_multAx->tic_token();
+    // auto token   = t_multAx->tic_token();
     auto mps_in  = Eigen::TensorMap<Eigen::Tensor<T, 3>>(mps_in_, shape_mps);
     auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(mps_out_, shape_mps);
     if(mpos.size() == 1) {
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos.front(), envL, envR);
     } else {
-        auto &threads  = tenx::threads::get();
-        auto  mps_tmp1 = Eigen::Tensor<T, 6>();
-        auto  mps_tmp2 = Eigen::Tensor<T, 6>();
-        auto  L        = mpos_shf.size();
-
-        auto mpodimprod = [&](size_t fr, size_t to) -> long {
-            long prod = 1;
-            if(fr == -1ul) fr = 0;
-            if(to == 0 or to == -1ul) return prod;
-            for(size_t idx = fr; idx < to; ++idx) {
-                if(idx >= mpos_shf.size()) break;
-                prod *= mpos_shf[idx].dimension(1);
-            }
-            return prod;
-        };
-
-        // At best, the number of operations for contracting left-to-right and right-to-left are equal.
-        // Since the site indices are contracted left to right, we do not need any shuffles in this direction.
-
-        // if(mps_in.dimension(1) <= mps_in.dimension(2)) { // Contract left to right
-        if(true) { // Contract left to right
-
-            auto d0       = mpodimprod(0, 1); // Split 0 --> 0,1
-            auto d1       = mpodimprod(1, L); // Split 0 --> 0,1
-            auto d2       = mps_in.dimension(2);
-            auto d3       = envL.dimension(1);
-            auto d4       = envL.dimension(2);
-            auto d5       = 1l; // A new dummy index
-            auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-            mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
-            mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
-            for(size_t idx = 0; idx < L; ++idx) {
-                // auto mpo = Eigen::Tensor<T, 4>(mpos[idx].shuffle(shf_mpo));
-                const auto &mpo = mpos_shf[idx];
-                // Set up the dimensions for the reshape after the contraction
-                d0       = mpodimprod(idx + 1, idx + 2); // if idx == k, this has the mpo at idx == k+1
-                d1       = mpodimprod(idx + 2, L);       // if idx == 0,  this has the mpos at idx == k+2...L-1
-                d2       = mps_tmp1.dimension(2);
-                d3       = mps_tmp1.dimension(3);
-                d4       = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
-                d5       = mpo.dimension(3);       // The virtual bond of the current mpo
-                new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-                mps_tmp2.resize(new_shp6);
-                mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
-                mps_tmp1                       = std::move(mps_tmp2);
-            }
-            d0 = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
-            d1 = mps_tmp1.dimension(3);
-            d2 = mps_tmp1.dimension(4);
-            d3 = mps_tmp1.dimension(5);
-            mps_out.device(*threads->dev) =
-                mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
-        } else { // Contract right to left
-
-            // Set up the dimensions for the zeroth step
-            auto d0       = mpodimprod(0, L - 1); // mpo 0...L-2 (all but the last one)
-            auto d1       = mpodimprod(L - 1, L); // mpo L-1 (the last one)
-            auto d2       = mps_in.dimension(1);
-            auto d3       = envR.dimension(1);
-            auto d4       = envR.dimension(2);
-            auto d5       = 1l; // A new dummy index
-            auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-            mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
-            mps_tmp1.device(*threads->dev) = mps_in.contract(envR, tenx::idx({2}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
-
-            for(size_t idx = L - 1; idx < L; --idx) {
-                // auto mpo = Eigen::Tensor<T, 4>(mpos[idx].shuffle(shf_mpo));
-                const auto &mpo = mpos_shf[idx];
-                // Set up the dimensions for the reshape after the contraction
-                d0 = mpodimprod(0, idx - 1);   // mpo 0...idx-2 (all to left of idx-1)
-                d1 = mpodimprod(idx - 1, idx); // mpo idx-1
-                d2 = mps_tmp1.dimension(2);
-                d3 = mps_tmp1.dimension(3);
-                d4 = mpodimprod(idx, L); // mpo idx...L-1 (i.e. including the one from the current iteration)
-                d5 = mpo.dimension(2);   // The virtual bond of the current mpo
-
-                new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-                mps_tmp2.resize(new_shp6);
-                mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({1, 5}, {0, 3})).reshape(new_shp6);
-                mps_tmp1                       = std::move(mps_tmp2);
-            }
-            d0 = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
-            d1 = mps_tmp1.dimension(3);
-            d2 = mps_tmp1.dimension(4);
-            d3 = mps_tmp1.dimension(5);
-            mps_out.device(*threads->dev) =
-                mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envL, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 2, 0});
-        }
+        tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos_shf, envL, envR);
     }
     num_mv++;
 }
 
 template<typename T>
-void MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    // #pragma omp parallel for for schedule(static, 8)
+void        MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    // tools::log->info("blocksize: {}", *blockSize);
+    // #pragma omp parallel for
     for(int i = 0; i < *blockSize; i++) {
         T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
         T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;

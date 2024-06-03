@@ -19,6 +19,7 @@ class AlgorithmFinite : public AlgorithmBase {
     using OptMeta = tools::finite::opt::OptMeta;
 
     private:
+    long                               dmrg_blocksize        = 1; // Number of sites in a DMRG step. This is updated by the information per scale mass center
     size_t                             iter_last_bond_reduce = 0;
     std::optional<std::vector<size_t>> sites_mps, sites_mpo; // Used when moving sites
 
@@ -35,27 +36,28 @@ class AlgorithmFinite : public AlgorithmBase {
     std::optional<OptSolver> last_optsolver = std::nullopt;
 
     public:
-    virtual void          resume()                = 0;
-    virtual void          run_default_task_list() = 0;
-    void                  try_projection(std::optional<std::string> target_axis = std::nullopt);
-    void                  set_parity_shift_mpo(std::optional<std::string> target_axis = std::nullopt);
-    void                  set_parity_shift_mpo_squared(std::optional<std::string> target_axis = std::nullopt);
-    void                  try_moving_sites();
-    void                  expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide = EnvExpandSide::FORWARD,
-                                             std::optional<double> alpha = std::nullopt, std::optional<svd::config> svd_cfg = std::nullopt);
-    void                  move_center_point(std::optional<long> num_moves = std::nullopt);
-    virtual void          set_energy_shift_mpo(); // We override this in xdmrg
-    void                  rebuild_tensors();
-    void                  update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt) final;
-    void                  update_bond_dimension_limit() final;
-    void                  reduce_bond_dimension_limit(double rate, UpdatePolicy when, StorageEvent storage_event);
-    void                  update_truncation_error_limit() final;
-    void                  update_environment_expansion_alpha();
-    void                  initialize_model();
-    void                  run() final;
-    void                  run_rbds_analysis();
-    void                  run_rtes_analysis();
-    void                  run_postprocessing() override;
+    virtual void resume()                = 0;
+    virtual void run_default_task_list() = 0;
+    void         try_projection(std::optional<std::string> target_axis = std::nullopt);
+    void         set_parity_shift_mpo(std::optional<std::string> target_axis = std::nullopt);
+    void         set_parity_shift_mpo_squared(std::optional<std::string> target_axis = std::nullopt);
+    void         try_moving_sites();
+    void         expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide = EnvExpandSide::FORWARD, std::optional<double> alpha = std::nullopt,
+                                    std::optional<svd::config> svd_cfg = std::nullopt);
+    void         move_center_point(std::optional<long> num_moves = std::nullopt);
+    virtual void set_energy_shift_mpo(); // We override this in xdmrg
+    void         rebuild_tensors();
+    void         update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt) final;
+    void         update_bond_dimension_limit() final;
+    void         reduce_bond_dimension_limit(double rate, UpdatePolicy when, StorageEvent storage_event);
+    void         update_truncation_error_limit() final;
+    void         update_environment_expansion_alpha();
+    void         update_dmrg_blocksize();
+    void         initialize_model();
+    void         run() final;
+    void         run_rbds_analysis();
+    void         run_rtes_analysis();
+    void         run_postprocessing() override;
     [[nodiscard]] OptMeta get_opt_meta();
     void                  clear_convergence_status() override;
     void                  initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,

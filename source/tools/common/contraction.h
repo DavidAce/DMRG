@@ -28,6 +28,14 @@ namespace tools::common::contraction {
                                const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                const Scalar * const envR_ptr, std::array<long,3> envR_dims);
 
+
+    template<typename Scalar, typename mpo_type>
+    void matrix_vector_product(Scalar * res_ptr,
+                               const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+                               const std::vector<mpo_type> & mpos_shf,
+                               const Scalar * const envL_ptr, std::array<long,3> envL_dims,
+                               const Scalar * const envR_ptr, std::array<long,3> envR_dims);
+
     template<typename Scalar>
     void matrix_inverse_vector_product(      Scalar * res_ptr,
                                        const Scalar * const mps_ptr, std::array<long,3> mps_dims,
@@ -37,9 +45,9 @@ namespace tools::common::contraction {
 
     template<typename mps_type, typename mpo_type, typename env_type>
     auto expectation_value(const TensorRead<mps_type> & mps,
-                             const TensorRead<mpo_type> & mpo,
-                             const TensorRead<env_type> & envL,
-                             const TensorRead<env_type> & envR){
+                           const TensorRead<mpo_type> & mpo,
+                           const TensorRead<env_type> & envL,
+                           const TensorRead<env_type> & envR){
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3 passed to calculation of expectation_value");
         static_assert(mpo_type::NumIndices == 4 and "Wrong mpo tensor rank != 4 passed to calculation of expectation_value");
         static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of expectation_value");
@@ -78,6 +86,29 @@ namespace tools::common::contraction {
             envL_eval.data(), envL_eval.dimensions(),
             envR_eval.data(), envR_eval.dimensions());
     }
+
+    template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
+    void matrix_vector_product(TensorWrite<res_type> &res,
+                               const TensorRead<mps_type> & mps,
+                               const std::vector<mpo_type> & mpos_shf,
+                               const TensorRead<env_type> & envL,
+                               const TensorRead<env_type> & envR){
+        static_assert(res_type::NumIndices == 3 and "Wrong res tensor rank != 3 passed to calculation of matrix_vector_product");
+        static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3 passed to calculation of matrix_vector_product");
+        static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of matrix_vector_product");
+        auto & res_ref = static_cast<res_type&>(res);
+        auto  mps_eval = tenx::asEval(mps);
+        // auto  mpo_eval = tenx::asEval(mpo);
+        auto  envL_eval = tenx::asEval(envL);
+        auto  envR_eval = tenx::asEval(envR);
+        matrix_vector_product(
+            res_ref.data(),
+            mps_eval.data(), mps_eval.dimensions(),
+            mpos_shf,
+            envL_eval.data(), envL_eval.dimensions(),
+            envR_eval.data(), envR_eval.dimensions());
+    }
+
 
     template<typename mps_type, typename mpo_type, typename env_type>
     mps_type matrix_vector_product(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
@@ -219,12 +250,13 @@ namespace tools::common::contraction {
     template<typename Scalar>
     Scalar contract_mps_mps_overlap(const Scalar *const mps1_ptr, std::array<long, 3> mps1_dims, const Scalar *const mps2_ptr, std::array<long, 3> mps2_dims);
 
-    template<typename mps_type>
-    auto contract_mps_norm(const TensorRead<mps_type> &mps1, const TensorRead<mps_type> &mps2) {
-        static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
+    template<typename mps_type1, typename mps_type2>
+    auto contract_mps_overlap(const TensorRead<mps_type1> &mps1, const TensorRead<mps_type2> &mps2) {
+        static_assert(mps_type1::NumIndices == 3 and "Wrong mps1 tensor rank != 3");
+        static_assert(mps_type2::NumIndices == 3 and "Wrong mps2 tensor rank != 3");
         auto mps1_eval = tenx::asEval(mps1);
         auto mps2_eval = tenx::asEval(mps2);
-        return contract_mps_overlap(mps1_eval.data(), mps1_eval.dimensions(), mps2_eval.data(), mps2_eval.dimensions());
+        return contract_mps_mps_overlap(mps1_eval.data(), mps1_eval.dimensions(), mps2_eval.data(), mps2_eval.dimensions());
     }
 
     template<typename mps_type>

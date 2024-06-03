@@ -157,6 +157,8 @@ namespace tools::finite::h5 {
         save::data_as_table(h5file, sinfo, opdm_spectrum, "opdm_spectrum", "One-particle Density Matrix spectrum", "eigval");
     }
 
+
+
     template<typename T>
     void save::data_as_table(h5pp::File &h5file, const StorageInfo &sinfo, const T *const data, size_t size, std::string_view table_name,
                              std::string_view table_title, std::string_view fieldname) {
@@ -245,6 +247,43 @@ namespace tools::finite::h5 {
                           flag2str(sinfo.get_dataset_storage_policy(dset_path)));
         h5file.appendToDataset(state.measurements.subsystem_entanglement_entropies.value(), dset_path, 2);
         tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
+    }
+
+    void save::information_lattice(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::dataset::information_lattice::policy)) return;
+        if(not state.measurements.information_lattice)
+            state.measurements.information_lattice = tools::finite::measure::information_lattice(state);
+        auto t_hdf     = tid::tic_scope("information_lattice", tid::level::higher);
+        auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "information_lattice");
+        // Check if the current entry has already been appended
+        auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
+        if(attrs == sinfo) return;
+        tools::log->trace("Appending to dataset: {}", dset_path);
+        if(not attrs.link_exists) {
+            auto                 rows = safe_cast<hsize_t>(state.measurements.information_lattice->rows());
+            auto                 cols = safe_cast<hsize_t>(state.measurements.information_lattice->cols());
+            std::vector<hsize_t> dims = {rows, cols, 0};
+            std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::information_lattice::chunksize};
+            h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
+            h5file.writeAttribute("extent-1,offset,iter", dset_path, "index");
+            h5file.writeAttribute("Information lattice", dset_path, "description");
+        }
+        tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                          flag2str(sinfo.get_dataset_storage_policy(dset_path)));
+        h5file.appendToDataset(state.measurements.information_lattice.value(), dset_path, 2);
+        tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
+    }
+
+    void save::information_per_scale(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::table::information_per_scale::policy)) return;
+        auto information_per_scale = tools::finite::measure::information_per_scale(state);
+        save::data_as_table(h5file, sinfo, information_per_scale, "information_per_scale", "Information per length scale", "scale");
+    }
+
+    void save::information_typ_scale(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::table::information_typ_scale::policy)) return;
+        auto information_typ_scale = tools::finite::measure::information_typ_scale(state);
+        save::data_as_table(h5file, sinfo, information_typ_scale, "information_typ_scale", "Information typical scale", "scale");
     }
 
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
@@ -473,6 +512,9 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::truncation_errors(h5file, sinfo, state);
         tools::finite::h5::save::entanglement_entropies(h5file, sinfo, state);
         tools::finite::h5::save::subsystem_entanglement_entropies(h5file, sinfo, state);
+        tools::finite::h5::save::information_lattice(h5file, sinfo, state);
+        tools::finite::h5::save::information_per_scale(h5file, sinfo, state);
+        tools::finite::h5::save::information_typ_scale(h5file, sinfo, state);
         tools::finite::h5::save::renyi_entropies(h5file, sinfo, state);
         tools::finite::h5::save::number_entropies(h5file, sinfo, state);
         tools::finite::h5::save::number_probabilities(h5file, sinfo, state);

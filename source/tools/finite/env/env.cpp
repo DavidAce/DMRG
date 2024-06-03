@@ -293,7 +293,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         // if constexpr(settings::debug) {
         state.clear_measurements();
         auto newS = tools::finite::measure::entanglement_entropy(mpsL.get_LC());
-        if(std::abs(newS - oldS) > 1e-4) {
+        if(std::abs(newS - oldS) > std::max(1e-4,alpha)) {
             tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
         }
         // }
@@ -350,7 +350,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         // if constexpr(settings::debug) {
         state.clear_measurements();
         auto newS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
-        if(std::abs(newS - oldS) > 1e-4) {
+        if(std::abs(newS - oldS) > std::max(1e-4,alpha)) {
             tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
         }
         // }

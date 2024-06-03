@@ -29,6 +29,7 @@ namespace tools::finite::opt {
         std::optional<size_t>                 num_mv           = std::nullopt; // Number of matrix-vector products
         std::optional<size_t>                 num_pc           = std::nullopt; // Number of preconditioner calls
         std::optional<double>                 time             = std::nullopt;
+        std::optional<double>                 time_mv          = std::nullopt;
         std::optional<double>                 delta_f          = std::nullopt;
         std::optional<double>                 grad_tol         = std::nullopt;
         std::optional<double>                 grad_max         = std::nullopt;
@@ -90,6 +91,7 @@ namespace tools::finite::opt {
         [[nodiscard]] size_t                     get_mv() const;
         [[nodiscard]] size_t                     get_pc() const;
         [[nodiscard]] double                     get_time() const;
+        [[nodiscard]] double                     get_time_mv() const;
         [[nodiscard]] double                     get_delta_f() const;
         [[nodiscard]] double                     get_grad_tol() const;
         [[nodiscard]] double                     get_grad_max() const;
@@ -130,6 +132,7 @@ namespace tools::finite::opt {
         void set_mv(size_t mv_);
         void set_pc(size_t pc_);
         void set_time(double time_);
+        void set_time_mv(double time_mv_);
         void set_delta_f(double delta_f_);
         void set_grad_tol(double grad_tol_);
         void set_grad_max(double grad_max_);

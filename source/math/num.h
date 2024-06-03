@@ -31,6 +31,10 @@ namespace num {
 #else
         static constexpr bool use_quadmath = false;
 #endif
+
+        template<typename T>
+        concept has_value_type_v = requires { typename T::value_type; };
+
         template<typename T>
         struct is_reference_wrapper : std::false_type {};
 
@@ -105,80 +109,6 @@ namespace num {
                 return std::ceil(v);
         }
     }
-    //
-    // // Safe integer comparison functions from C++20
-    //
-    // template<class T, class U>
-    // [[nodiscard]] constexpr bool cmp_equal(T t, U u) noexcept {
-    //     if constexpr(internal::is_reference_wrapper_v<T>)
-    //         return cmp_equal(t.get(), u);
-    //     else if constexpr(internal::is_reference_wrapper_v<U>)
-    //         return cmp_equal(t, u.get());
-    //     else if constexpr(std::is_same_v<T, U>)
-    //         return t == u;
-    //     else if constexpr(std::is_floating_point_v<T> and std::is_floating_point_v<U>)
-    //         return t == u;
-    //     else if constexpr(std::is_floating_point_v<T>)
-    //         return static_cast<T>(t) == static_cast<T>(u);
-    //     else if constexpr(std::is_floating_point_v<U>)
-    //         return static_cast<U>(t) == static_cast<U>(u);
-    //     else {
-    //         using UT = std::make_unsigned_t<T>;
-    //         using UU = std::make_unsigned_t<U>;
-    //         if constexpr(std::is_signed_v<T> == std::is_signed_v<U>)
-    //             return t == u;
-    //         else if constexpr(std::is_signed_v<T>)
-    //             return t < 0 ? false : UT(t) == u;
-    //         else
-    //             return u < 0 ? false : t == UU(u);
-    //     }
-    // }
-    //
-    // template<class T, class U>
-    // [[nodiscard]] constexpr bool cmp_not_equal(T t, U u) noexcept {
-    //     return !cmp_equal(t, u);
-    // }
-    //
-    // template<class T, class U>
-    // [[nodiscard]] constexpr bool cmp_less(T t, U u) noexcept {
-    //     if constexpr(internal::is_reference_wrapper_v<T>)
-    //         return std::cmp_less(t.get(), u);
-    //     else if constexpr(internal::is_reference_wrapper_v<U>)
-    //         return std::cmp_less(t, u.get());
-    //     else if constexpr(std::is_same_v<T, U>)
-    //         return t < u;
-    //     else if constexpr(std::is_floating_point_v<T> and std::is_floating_point_v<U>)
-    //         return t < u;
-    //     else if constexpr(std::is_floating_point_v<T>)
-    //         return static_cast<T>(t) < static_cast<T>(u);
-    //     else if constexpr(std::is_floating_point_v<U>)
-    //         return static_cast<U>(t) < static_cast<U>(u);
-    //     else {
-    //         using UT = std::make_unsigned_t<T>;
-    //         using UU = std::make_unsigned_t<U>;
-    //         if constexpr(std::is_signed_v<T> == std::is_signed_v<U>)
-    //             return t < u;
-    //         else if constexpr(std::is_signed_v<T>)
-    //             return t < 0 ? true : UT(t) < u;
-    //         else
-    //             return u < 0 ? false : t < UU(u);
-    //     }
-    // }
-    //
-    // template<class T, class U>
-    // [[nodiscard]] constexpr bool cmp_greater(T t, U u) noexcept {
-    //     return std::cmp_less(u, t);
-    // }
-    //
-    // template<class T, class U>
-    // [[nodiscard]] constexpr bool cmp_less_equal(T t, U u) noexcept {
-    //     return !std::cmp_greater(t, u);
-    // }
-    //
-    // template<class T, class U>
-    // [[nodiscard]] constexpr bool cmp_greater_equal(T t, U u) noexcept {
-    //     return !std::cmp_less(t, u);
-    // }
 
     template<typename out_t, typename ContainerT, typename Func>
     std::vector<out_t> cast(const ContainerT &x, Func &&f) {
@@ -406,6 +336,72 @@ namespace num {
         return cumop(in, [](auto a, auto b) { return std::max(a, b); }, from, num);
     }
 
+    namespace internal {
+        template<typename ContainerType, typename Scalar>
+        requires floating_point<Scalar>
+        size_t nearestNeighbourIndex(const ContainerType &x, Scalar value) {
+            Scalar dist    = std::numeric_limits<Scalar>::max();
+            Scalar newDist = dist;
+            size_t idx     = 0;
+            for(size_t i = 0; i < x.size(); ++i) {
+                newDist = std::abs(value - x[i]);
+                if(newDist <= dist) {
+                    dist = newDist;
+                    idx  = i;
+                }
+            }
+            return idx;
+        }
+        template<typename ContainerType, typename Scalar>
+        requires floating_point<Scalar>
+        size_t previousNeighbourIndex(const ContainerType &x, Scalar value) {
+            size_t idx     = 0;
+            for(size_t i = 0; i < x.size(); ++i) {
+                if(x[i] >= value) {
+                    return idx;
+                }
+                idx = i;
+            }
+            return idx;
+        }
+    }
+
+    template<typename ContainerTypeX, typename ContainerTypeY, typename ContainerTypeXnew>
+    ContainerTypeY interp1(const ContainerTypeX &x, const ContainerTypeY &y, const ContainerTypeXnew &x_new) {
+        using ScalarY = std::conditional_t<internal::has_value_type_v<ContainerTypeY>, typename ContainerTypeY::value_type, typename ContainerTypeY::Scalar>;
+        static_assert(internal::floating_point<ScalarY>);
+        ContainerTypeY y_new(x_new.size());
+        ScalarY        dx, dy, m, b;
+
+        for(size_t i = 0; i < x_new.size(); ++i) {
+            size_t idx = internal::nearestNeighbourIndex(x, x_new[i]);
+            if(x[idx] > static_cast<ScalarY>(x_new[i])) {
+                dx = idx > 0 ? (x[idx] - x[idx - 1]) : (x[idx + 1] - x[idx]);
+                dy = idx > 0 ? (y[idx] - y[idx - 1]) : (y[idx + 1] - y[idx]);
+            } else {
+                dx = idx + 1 < x.size() ? (x[idx + 1] - x[idx]) : (x[idx] - x[idx - 1]);
+                dy = idx + 1 < x.size() ? (y[idx + 1] - y[idx]) : (y[idx] - y[idx - 1]);
+            }
+            m        = dy / dx;
+            b        = y[idx] - x[idx] * m;
+            y_new[i] = static_cast<ScalarY>(x_new[i]) * m + b;
+        }
+        return y_new;
+    }
+
+    template<typename ContainerTypeX, typename ContainerTypeY, typename ContainerTypeXnew>
+    ContainerTypeY interp1_prev(const ContainerTypeX &x, const ContainerTypeY &y, const ContainerTypeXnew &x_new) {
+        // Interpolates using the previous value
+        using ScalarY = std::conditional_t<internal::has_value_type_v<ContainerTypeY>, typename ContainerTypeY::value_type, typename ContainerTypeY::Scalar>;
+        static_assert(internal::floating_point<ScalarY>);
+        ContainerTypeY y_new(x_new.size());
+        for(size_t i = 0; i < x_new.size(); ++i) {
+            size_t idx = internal::previousNeighbourIndex(x, x_new[i]);
+            y_new[i] = y[idx];
+        }
+        return y_new;
+    }
+
     /*! \brief Trapezoidal rule for numerical integration
      *   \param X a vector-like container
      *   \param Y a vector-like container
@@ -414,27 +410,71 @@ namespace num {
      *   \return product of of elements with type Input::value_type .
      *   \example Let <code> v = {1,2,3,4}</code>. Then <code> prod(v,0,3) = 24 </code>.
      */
-    template<typename ContainerType1, typename ContainerType2>
-    double trapz(const ContainerType1 &X, const ContainerType2 &Y, long from = 0, long num = -1) {
-        auto   xfrm = std::clamp<long>(from, 0, safe_cast<long>(X.size()));
-        auto   yfrm = std::clamp<long>(from, 0, safe_cast<long>(Y.size()));
-        auto   xnum = std::clamp<long>(num, xfrm, safe_cast<long>(X.size()));
-        auto   ynum = std::clamp<long>(num, yfrm, safe_cast<long>(Y.size()));
-        auto   x_it = X.begin() + from;
-        auto   y_it = Y.begin() + from;
-        auto   x_en = X.begin() + xnum;
-        auto   y_en = Y.begin() + ynum;
-        double res  = 0.0;
+    template<typename ContainerTypeX, typename ContainerTypeY>
+    auto trapz(const ContainerTypeX &X, const ContainerTypeY &Y, long from = 0, long num = -1) {
+        using ScalarY = std::conditional_t<internal::has_value_type_v<ContainerTypeY>, typename ContainerTypeY::value_type, typename ContainerTypeY::Scalar>;
+        static_assert(internal::floating_point<ScalarY>);
+        auto xfrm = std::clamp<size_t>(from, 0, static_cast<size_t>(X.size()));
+        auto yfrm = std::clamp<size_t>(from, 0, static_cast<size_t>(Y.size()));
+        auto xnum = std::clamp<size_t>(num, xfrm, static_cast<size_t>(X.size()));
+        auto ynum = std::clamp<size_t>(num, yfrm, static_cast<size_t>(Y.size()));
+        auto x_it = X.begin() + from;
+        auto y_it = Y.begin() + from;
+        auto x_en = X.begin() + xnum;
+        auto y_en = Y.begin() + ynum;
+        auto res  = ScalarY(0.0);
         while(x_it != x_en and y_it != y_en) {
             auto x_nx = std::next(x_it);
             auto y_nx = std::next(y_it);
             if(x_nx == x_en) break;
             if(y_nx == y_en) break;
-            res += (*x_nx - *x_it) * 0.5 * (*y_nx + *y_it);
+            res += static_cast<ScalarY>(*x_nx - *x_it) * 0.5 * (*y_nx + *y_it);
             x_it++;
             y_it++;
         }
         return res;
+    }
+
+    /*! \brief Cumulative sum of the trapezoidal numerical integration
+     *   \param X a vector-like container
+     *   \param Y a vector-like container
+     *   \param from first element to multiply (default == 0)
+     *   \param to last element to multiply (default == -1: from - size)
+     *   \return product of of elements with type Input::value_type .
+     *   \example Let <code> v = {1,2,3,4}</code>. Then <code> prod(v,0,3) = 24 </code>.
+     */
+    template<typename ContainerTypeX, typename ContainerTypeY>
+    ContainerTypeY cumtrapz(const ContainerTypeX &X, const ContainerTypeY &Y, long from = 0, long num = -1) {
+        using ScalarY = std::conditional_t<internal::has_value_type_v<ContainerTypeY>, typename ContainerTypeY::value_type, typename ContainerTypeY::Scalar>;
+        static_assert(internal::floating_point<ScalarY>);
+        auto R    = ContainerTypeY(Y.size());
+        auto xfrm = std::clamp<size_t>(from, 0, static_cast<size_t>(X.size()));
+        auto yfrm = std::clamp<size_t>(from, 0, static_cast<size_t>(Y.size()));
+        auto rfrm = std::clamp<size_t>(from, 0, static_cast<size_t>(R.size()));
+        auto xnum = std::clamp<size_t>(num, xfrm, static_cast<size_t>(X.size()));
+        auto ynum = std::clamp<size_t>(num, yfrm, static_cast<size_t>(Y.size()));
+        auto rnum = std::clamp<size_t>(num, rfrm, static_cast<size_t>(R.size()));
+        auto x_it = X.begin() + from;
+        auto y_it = Y.begin() + from;
+        auto r_it = R.begin() + from;
+        auto x_en = X.begin() + xnum;
+        auto y_en = Y.begin() + ynum;
+        auto r_en = R.begin() + rnum;
+
+        auto sum = ScalarY(0.0);
+        while(x_it != x_en and y_it != y_en and r_it != r_en) {
+            auto x_nx = std::next(x_it);
+            auto y_nx = std::next(y_it);
+            if(x_nx == x_en) break;
+            if(y_nx == y_en) break;
+            *r_it = sum;
+            sum += static_cast<ScalarY>(*x_nx - *x_it) * 0.5 * (*y_nx + *y_it);
+            x_it++;
+            y_it++;
+            r_it++;
+        }
+        *r_it = sum;
+        return R;
     }
 
     /*! \brief Checks if multiple values are equal to each other

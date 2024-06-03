@@ -292,6 +292,7 @@ void xdmrg::run_algorithm() {
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Updates the bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
+        update_dmrg_blocksize();         // Updates the number sites used in dmrg steps using the information typical scale
         try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);

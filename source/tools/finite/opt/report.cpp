@@ -78,7 +78,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                           entry.overlap,entry.norm, entry.rnorm,
                           entry.iter, entry.mv, entry.pc,
                           entry.time,
-                          static_cast<double>(entry.mv)/entry.time);
+                          static_cast<double>(entry.mv)/entry.time_mv);
     }
     eigs_log.clear();
 }
@@ -95,5 +95,5 @@ void tools::finite::opt::reports::eigs_add_entry(const opt_mps &mps, spdlog::lev
     std::string description = fmt::format("{:<24}", mps.get_name());
     eigs_log.push_back(eigs_entry{description, std::string(mps.get_eigs_ritz()), mps.get_tensor().size(), mps.get_eigs_idx(), mps.get_eigs_nev(),
                                   mps.get_eigs_ncv(), mps.get_energy(), mps.get_eigs_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                  mps.get_rnorm(), mps.get_eigs_tol(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(), level});
+                                  mps.get_rnorm(), mps.get_eigs_tol(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(), mps.get_time_mv(), level});
 }

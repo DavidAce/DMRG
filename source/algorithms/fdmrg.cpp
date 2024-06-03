@@ -204,8 +204,8 @@ void fdmrg::run_algorithm() {
 // // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::precision::eigs_iter_multiplier : 1;
 //
 // // Copy settings
-// m1.min_sites     = settings::strategy::multisite_site_def;
-// m1.max_sites     = settings::strategy::multisite_site_def;
+// m1.min_sites     = settings::strategy::dmrg_min_blocksize;
+// m1.max_sites     = settings::strategy::dmrg_min_blocksize;
 // m1.subspace_tol  = settings::precision::target_subspace_error;
 // m1.eigs_nev      = 1;
 // m1.eigs_ncv      = settings::precision::eigs_ncv;
@@ -224,7 +224,7 @@ void fdmrg::run_algorithm() {
 //
 // if(status.iter < settings::strategy::iter_max_warmup) {
 //     // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
-//     m1.max_sites        = settings::strategy::multisite_site_max;
+//     m1.max_sites        = settings::strategy::dmrg_max_blocksize;
 //     m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead
 //     if(settings::fdmrg::bond_min > 0 and m1.svd_cfg->rank_max > settings::fdmrg::bond_min) {
 //         tools::log->debug("Bond dimension limit is kept back during warmup {} -> {}", m1.svd_cfg->rank_max, settings::fdmrg::bond_min);
@@ -239,9 +239,9 @@ void fdmrg::run_algorithm() {
 //     double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(iter_max_saturated);
 //     switch(multisite_policy) {
 //         case MultisitePolicy::NEVER: break;
-//         case MultisitePolicy::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_site_def, multisite_site_max, has_stuck_frac)); break;
-//         case MultisitePolicy::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(multisite_site_def, multisite_site_max, saturated_frac)); break;
-//         case MultisitePolicy::ALWAYS: m1.max_sites = multisite_site_max; break;
+//         case MultisitePolicy::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(dmrg_min_blocksize, dmrg_max_blocksize, has_stuck_frac)); break;
+//         case MultisitePolicy::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(dmrg_min_blocksize, dmrg_max_blocksize, saturated_frac)); break;
+//         case MultisitePolicy::ALWAYS: m1.max_sites = dmrg_max_blocksize; break;
 //     }
 // }
 // if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish

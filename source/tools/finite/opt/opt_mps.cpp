@@ -165,6 +165,13 @@ double opt_mps::get_time() const {
         return 0.0;
 }
 
+double opt_mps::get_time_mv() const {
+    if(time_mv)
+        return time_mv.value();
+    else
+        return get_time();
+}
+
 double opt_mps::get_delta_f() const {
     if(delta_f)
         return delta_f.value();
@@ -369,6 +376,7 @@ void opt_mps::set_op(size_t op_) { num_op = op_; }
 void opt_mps::set_mv(size_t mv_) { num_mv = mv_; }
 void opt_mps::set_pc(size_t pc_) { num_pc = pc_; }
 void opt_mps::set_time(double time_) { time = time_; }
+void opt_mps::set_time_mv(double time_mv_) { time_mv = time_mv_; }
 void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
 void opt_mps::set_grad_tol(double grad_tol_) { grad_tol = grad_tol_; }
 void opt_mps::set_grad_max(double grad_max_) { grad_max = grad_max_; }

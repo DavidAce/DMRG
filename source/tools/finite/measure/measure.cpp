@@ -193,7 +193,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies_log2(const St
 }
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state) {
-    if(state.get_length<long>() >= 12) {
+    if(state.get_length<long>() >= 10) {
         auto bond_lim = settings::storage::dataset::subsystem_entanglement_entropies::bond_lim;
         auto trnc_lim = settings::storage::dataset::subsystem_entanglement_entropies::trnc_lim;
         return subsystem_entanglement_entropies_swap_log2(state, svd::config(bond_lim, trnc_lim)); // trnc lim 1e-6 is 12 digits correct on SE
@@ -304,9 +304,9 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
                 // if(bond_new_R != sval_new.size())
                 // throw except::logic_error("bond dimension mismatch: bond_new_R {} != sval_new.size() {}", bond_new_R, sval_new.size());
                 // for(long sidx = 0; sidx < std::max(sval_old.size(), sval_new.size()); ++sidx) {
-                    // auto sold = sidx < sval_old.size() ? sval_old.coeff(sidx).real() : 0.0;
-                    // auto snew = sidx < sval_new.size() ? sval_new.coeff(sidx).real() : 0.0;
-                    // tools::log->info("idx {:>4}: {:>10.5e} --> {:>10.5e}", sidx, sold, snew);
+                // auto sold = sidx < sval_old.size() ? sval_old.coeff(sidx).real() : 0.0;
+                // auto snew = sidx < sval_new.size() ? sval_new.coeff(sidx).real() : 0.0;
+                // tools::log->info("idx {:>4}: {:>10.5e} --> {:>10.5e}", sidx, sold, snew);
                 // }
             }
         }
@@ -323,6 +323,60 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
     // tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
     state.measurements.subsystem_entanglement_entropies = see;
     return state.measurements.subsystem_entanglement_entropies.value();
+}
+
+Eigen::ArrayXXd tools::finite::measure::information_lattice(const StateFinite &state) {
+    if(state.measurements.information_lattice.has_value()) return state.measurements.information_lattice.value();
+    auto SEE  = subsystem_entanglement_entropies_log2(state);
+    auto Ldim = state.get_length<long>();
+
+    Eigen::ArrayXXd infolattice = Eigen::ArrayXXd::Zero(Ldim, Ldim);
+    for(long nidx = 0; nidx < Ldim; ++nidx) /* The offset */ {
+        for(long lidx = 0; lidx < Ldim; ++lidx) /* The extent, or "scale" */ {
+            if(lidx + nidx >= Ldim) continue;
+            if(lidx == 0) {
+                infolattice(lidx, nidx) = 1 - SEE(lidx, nidx);
+            } else if(lidx == 1) {
+                infolattice(lidx, nidx) = -SEE(lidx, nidx) + SEE(lidx - 1, nidx) + SEE(lidx - 1, nidx + 1);
+            } else {
+                infolattice(lidx, nidx) = -SEE(lidx, nidx) + SEE(lidx - 1, nidx) + SEE(lidx - 1, nidx + 1) - SEE(lidx - 2, nidx + 1);
+            }
+        }
+    }
+    state.measurements.information_lattice = infolattice;
+    return infolattice;
+}
+
+Eigen::ArrayXd tools::finite::measure::information_per_scale(const StateFinite &state) {
+    if(state.measurements.information_per_scale.has_value()) return state.measurements.information_per_scale.value();
+    state.measurements.information_per_scale = information_lattice(state).rowwise().sum();
+    // tools::log->info("info per scale: {::.3e}", state.measurements.information_per_scale.value());
+    return state.measurements.information_per_scale.value();
+}
+
+double tools::finite::measure::information_typ_scale(const StateFinite &state) {
+    if(state.measurements.information_typ_scale.has_value()) return state.measurements.information_typ_scale.value();
+    state.measurements.information_per_scale = information_per_scale(state);
+    auto L                                   = state.measurements.information_per_scale->size();
+    auto idx_interp                          = num::LinSpaced(1000, 0, L);
+    auto bit_interp                          = num::interp1_prev(num::range(0, L), state.measurements.information_per_scale.value(), idx_interp);
+    auto sum_interp                          = num::cumtrapz(idx_interp, bit_interp);
+
+    double bits_to_count  = 0.5 * static_cast<double>(L);
+    size_t idx_masscenter = 0;
+    for(long idx = 0; idx < sum_interp.size(); ++idx) {
+        if(sum_interp[idx] > bits_to_count) break;
+        idx_masscenter = idx;
+    }
+    // tools::log->info("infoperscale              : {::.4f}", state.measurements.information_per_scale.value());
+    // tools::log->info("idx_interp                : {::.4f}", idx_interp);
+    // tools::log->info("bit_interp                : {::.4f}", bit_interp);
+    // tools::log->info("sum_interp                : {::.4f}", sum_interp);
+    // tools::log->info("sum information_per_scale : {:.3f}", state.measurements.information_per_scale->sum());
+    // tools::log->info("sum bit_interp            : {:.3f}", num::trapz(idx_interp, bit_interp));
+    state.measurements.information_typ_scale = idx_interp[idx_masscenter] * std::log(2);
+    tools::log->info("info typ scale: {:.3f}", state.measurements.information_typ_scale.value());
+    return state.measurements.information_typ_scale.value();
 }
 
 std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &state, double q) {
@@ -724,7 +778,7 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
         const auto mpos = model.get_mpo_active();
         const auto envs = edges.get_var_active();
         tools::log->trace("Measuring energy variance: state dims {} | sites {}", multisite_mps.dimensions(), model.active_sites);
-        H2 = tools::finite::measure::expectation_value(multisite_mps, mpos, envs);
+        H2 = tools::finite::measure::expectation_value(multisite_mps, multisite_mps, mpos, envs, svd_cfg);
         if constexpr(settings::debug_expval) {
             const auto &mpo   = model.get_multisite_mpo_squared();
             const auto &env   = edges.get_multisite_env_var_blk();
@@ -1057,6 +1111,35 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFin
     Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
     return expectation_values(state, tensor_op);
 }
+
+template<typename EnvType>
+cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                               const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
+    /*!
+     * Calculates <mpsBra | mpos | mpsKet> by applying the mpos in series without splitting the mps first
+     */
+    auto t_expval = tid::tic_scope("expval", tid::level::highest);
+
+    // Extract the correct tensors depending on EnvType
+    const auto                         &envL = envs.L.get_block();
+    const auto                         &envR = envs.R.get_block();
+    std::vector<Eigen::Tensor<cplx, 4>> mpos_shf;
+    for(size_t pos = 0; pos < mpos.size(); ++pos) {
+        if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvEne>)
+            mpos_shf.emplace_back(mpos[pos].get().MPO().shuffle(tenx::array4{2, 3, 0, 1}));
+        else if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvVar>)
+            mpos_shf.emplace_back(mpos[pos].get().MPO2().shuffle(tenx::array4{2, 3, 0, 1}));
+        else
+            static_assert(h5pp::type::sfinae::invalid_type_v<EnvType>);
+    }
+    Eigen::Tensor<cplx, 3> mpoMpsKet = tools::common::contraction::matrix_vector_product(mpsKet, mpos_shf, envL, envR);
+    return tools::common::contraction::contract_mps_overlap(mpsBra, mpoMpsKet);
+}
+template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs);
+template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs);
+
 template<typename EnvType>
 cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
                                                const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
@@ -1126,6 +1209,8 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mps
      * To apply the mpo's one by one efficiently, we need to split the mps using SVD first
      * Here we make the assumption that bra and ket are not necessarily equal
      */
+    if(not svd_cfg) return expectation_value(mpsBra, mpsKet, mpos, envs);
+
     std::vector<long>   spin_dims_bra, spin_dims_ket;
     std::vector<size_t> positions;
     spin_dims_bra.reserve(mpos.size());
@@ -1172,6 +1257,8 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mul
      * To apply the mpo's one by one efficiently, we need to split the mps using SVD first
      * Here we make the assumption that bra and ket are not necessarily equal
      */
+    if(not svd_cfg) return expectation_value(multisite_mps, multisite_mps, mpos, envs);
+
     std::vector<long>   spin_dims_bra, spin_dims_ket;
     std::vector<size_t> positions;
     spin_dims_bra.reserve(mpos.size());
@@ -1194,6 +1281,10 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mul
         auto mps_refs = std::vector<std::reference_wrapper<const MpsSite>>{mps};
         return expectation_value(mps_refs, mps_refs, mpos, envs);
     } else {
+        // We can avoid splitting the mps by applying the mpos directly onto the mps in sequence
+        // auto mpo_mps = tools::common::contraction::matrix_vector_product(multisite_mps, mpos, envs);
+        // return tools::common::contraction::contract_mps_overlap(multisite_mps, mpo_mps);
+
         // Set the new center position in the interior of the set of positions, so we don't get stashes that need to be thrown away.
         auto mps_split = tools::common::split::split_mps(multisite_mps, spin_dims_bra, positions, safe_cast<long>(positions.front()), svd_cfg);
         // Put them into a vector of reference wrappers for compatibility with the other expectation_value function

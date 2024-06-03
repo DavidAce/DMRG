@@ -157,13 +157,6 @@ namespace tools::finite::opt {
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
 
         hamiltonian_squared.reset();
-        if constexpr(sfinae::is_any_v<MatVecType, MatVecZero<real>, MatVecZero<cplx>>) {
-            auto init = get_initial_guess_bond<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
-            for(auto &i : init) solver.config.initial_guess.push_back({i.bond.data(), i.idx});
-        } else {
-            auto init = get_initial_guess_mps<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
-            for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
-        }
 
         tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
@@ -182,8 +175,17 @@ namespace tools::finite::opt {
                           eig::RitzToString(solver.config.ritz), solver.config.primme_targetShifts, solver.config.maxIter.value(), solver.config.tol.value(),
                           hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.get_shape_mpo());
 
-        solver.eigs(hamiltonian_squared);
-        internal::extract_results(tensors, initial_mps, meta, solver, results, false);
+        if constexpr(sfinae::is_any_v<MatVecType, MatVecZero<real>, MatVecZero<cplx>>) {
+            auto init = get_initial_guess_bond<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
+            for(auto &i : init) solver.config.initial_guess.push_back({i.bond.data(), i.idx});
+            solver.eigs(hamiltonian_squared);
+            internal::extract_results(tensors, initial_mps, meta, solver, results, false);
+        } else {
+            auto init = get_initial_guess_mps<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
+            for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
+            solver.eigs(hamiltonian_squared);
+            internal::extract_results(tensors, initial_mps, meta, solver, results, false);
+        }
     }
 
     template<typename Scalar>
@@ -209,7 +211,7 @@ namespace tools::finite::opt {
                 cfg.ritz              = eig::Ritz::SA; // H² is positive semi-definite!
                 cfg.primme_projection = meta.primme_projection.value_or("primme_proj_refined");
                 if(cfg.primme_projection.value() != "primme_proj_default") {
-                    cfg.ritz = eig::Ritz::primme_closest_abs;
+                    cfg.ritz                = eig::Ritz::primme_closest_abs;
                     cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
                 }
                 break;
@@ -242,7 +244,6 @@ namespace tools::finite::opt {
             //     // if(std::abs(evals1[idx]) > 1.1) continue;
             //     fmt::print("idx {:2}: {:20.16f}\n", idx, eval[idx]);
             // }
-
 
             eigs_variance_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
         } else {

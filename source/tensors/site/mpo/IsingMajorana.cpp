@@ -91,7 +91,7 @@ Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(cplx energy_shift_per_site, std::o
 
 {
     using namespace qm::spin::half;
-    tools::log->debug("mpo({}): building ising-majorana mpo", get_position());
+    tools::log->trace("mpo({}): building ising-majorana mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
 

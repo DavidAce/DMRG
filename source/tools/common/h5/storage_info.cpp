@@ -36,6 +36,8 @@ StoragePolicy StorageInfo::get_table_storage_policy(std::string_view table_path)
     if(table_path.find("opdm_spectrum")               != std::string_view::npos) return opdm_spectrum::policy;
     if(table_path.find("expectation_values_s")        != std::string_view::npos) return expectation_values_spin_xyz::policy;
     if(table_path.find("random_unitary_circuit")      != std::string_view::npos) return random_unitary_circuit::policy;
+    if(table_path.find("information_per_scale")       != std::string_view::npos) return information_per_scale::policy;
+    if(table_path.find("information_typ_scale")       != std::string_view::npos) return information_typ_scale::policy;
     throw except::logic_error("Could not match storage policy for table: [{}]", table_path);
     /* clang-format on */
 }
@@ -45,6 +47,7 @@ StoragePolicy StorageInfo::get_dataset_storage_policy(std::string_view dset_path
     using namespace settings::storage::dataset;
     if(dset_path.find("lbit_analysis")                    != std::string_view::npos) return lbit_analysis::policy;
     if(dset_path.find("subsystem_entanglement_entropies") != std::string_view::npos) return subsystem_entanglement_entropies::policy;
+    if(dset_path.find("information_lattice")              != std::string_view::npos) return information_lattice::policy;
     if(dset_path.find("number_probabilities")             != std::string_view::npos) return number_probabilities::policy;
     if(dset_path.find("expectation_values_spin")          != std::string_view::npos) return expectation_values_spin_xyz::policy;
     if(dset_path.find("correlation_matrix_s")             != std::string_view::npos) return correlation_matrix_spin_xyz::policy;

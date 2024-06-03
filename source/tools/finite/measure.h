@@ -19,7 +19,6 @@ struct env_pair;
 class EnvEne;
 class EnvVar;
 
-
 namespace tools::finite::measure {
     struct LocalObservableOp {
         Eigen::Tensor<cplx, 2> op;
@@ -64,6 +63,9 @@ namespace tools::finite::measure {
     [[nodiscard]] extern std::vector<double> entanglement_entropies_log2            (const StateFinite & state);
     [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies_log2      (const StateFinite & state);
     [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies_swap_log2 (const StateFinite & state, const svd::config &svd_cfg);
+    [[nodiscard]] extern Eigen::ArrayXXd information_lattice                        (const StateFinite & state);
+    [[nodiscard]] extern Eigen::ArrayXd  information_per_scale                      (const StateFinite & state);
+    [[nodiscard]] extern double          information_typ_scale                      (const StateFinite & state);
     [[nodiscard]] extern double renyi_entropy_midchain                              (const StateFinite & state, double q);
     [[nodiscard]] extern std::vector<double> renyi_entropies                        (const StateFinite & state, double q);
     [[nodiscard]] extern double number_entropy_current                              (const StateFinite & state);
@@ -120,18 +122,26 @@ namespace tools::finite::measure {
                                                                           const Eigen::Tensor<cplx,1> & ledge,
                                                                           const Eigen::Tensor<cplx,1> & redge);
     template<typename EnvType>
+    cplx                                          expectation_value      (const Eigen::Tensor<cplx, 3> &mpsBra,
+                                                                          const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
+                                                                          const env_pair<EnvType> &envs);
+    template<typename EnvType>
     [[nodiscard]] extern cplx                     expectation_value      (const std::vector<std::reference_wrapper<const MpsSite>> & mpsBra,
                                                                           const std::vector<std::reference_wrapper<const MpsSite>> & mpsKet,
                                                                           const std::vector<std::reference_wrapper<const MpoSite>> & mpos,
                                                                           const env_pair<EnvType> & envs);
     template<typename EnvType>
-    [[nodiscard]] extern cplx                     expectation_value      (const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
-                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs,
-                                                                          std::optional<svd::config> svd_cfg = std::nullopt);
+    [[nodiscard]] extern cplx                     expectation_value      (const Eigen::Tensor<cplx, 3> &mpsBra,
+                                                                          const Eigen::Tensor<cplx, 3> &mpsKet,
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
+                                                                          const env_pair<EnvType> &envs,
+                                                                          std::optional<svd::config> svd_cfg);
     template<typename EnvType>
     [[nodiscard]] extern cplx                     expectation_value      (const Eigen::Tensor<cplx, 3> &multisite_mps,
-                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs,
-                                                                          std::optional<svd::config> svd_cfg = std::nullopt);
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
+                                                                          const env_pair<EnvType> &envs,
+                                                                          std::optional<svd::config> svd_cfg);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,4> &mpo);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Matrix2cd &op);

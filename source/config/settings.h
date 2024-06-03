@@ -147,6 +147,12 @@ namespace settings {
         namespace table::opdm_spectrum{
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
+        namespace table::information_per_scale{
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace table::information_typ_scale{
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
         namespace table::expectation_values_spin_xyz{
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
@@ -162,6 +168,11 @@ namespace settings {
             inline unsigned long chunksize = 10;
             inline long bond_lim = 2048l; /*!< Bond dimension limit during swap operations  */
             inline auto trnc_lim = 1e-8;  /*!< Truncation error limit during swap operations  */
+        }
+        namespace dataset::information_lattice{
+            /*! Information lattice built from subsystem_entanglement_entropies */
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+            inline unsigned long chunksize = 10;
         }
         namespace dataset::opdm{
             /*! One-particle density matrix */
@@ -210,9 +221,9 @@ namespace settings {
         inline size_t              iter_min_converged          = 1;                                      /*!< Require convergence at least this many iterations before success */
         inline double              max_env_expansion_alpha     = 1e-2;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
         inline MultisitePolicy     multisite_policy            = MultisitePolicy::DEFAULT;               /*!< Enum bitflag to control multisite dmrg {NEVER,+WARMUP,+STUCK,+CONVERGED,ALWAYS,GRADUAL,MOVEMID,MOVEMAX,DEFAULT} (+ are DEFAULT) */
-        inline size_t              multisite_site_def          = 1;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
-        inline size_t              multisite_site_max          = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
-        inline long                multisite_max_prob_size     = 1024*2*1024;                            /*!< Restricts the number of sites "l" to keep the problem size below this limit. Problem size = chiL * (spindim ** l) * chiR */
+        inline size_t              dmrg_min_blocksize          = 1;                                      /*!< Minimum number of sites in a dmrg optimization step. */
+        inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
+        inline long                dmrg_max_prob_size          = 1024*2*1024;                            /*!< Restricts the dmrg blocksize to keep the problem size below this limit. Problem size = chiL * (spindim ** blocksize) * chiR */
         inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */

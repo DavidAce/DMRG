@@ -216,7 +216,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
                            std::clamp(status.algorithm_has_stuck_for + 3, settings::strategy::iter_max_stuck, settings::strategy::iter_max_stuck + 1);
 
     // Copy settings
-    m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_def);
+    m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::dmrg_min_blocksize);
     m1.max_sites         = m1.min_sites;
     m1.subspace_tol      = settings::precision::target_subspace_error;
     m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
@@ -252,37 +252,18 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         }
     }
     if(status.iter < settings::strategy::iter_max_warmup) {
-        using namespace settings::strategy;
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
-        m1.max_sites        = has_flag(multisite_policy, MultisitePolicy::WARMUP) ? multisite_site_max : multisite_site_def;
         m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
+        m1.max_sites        = has_flag(settings::strategy::multisite_policy, MultisitePolicy::WARMUP) ? settings::strategy::dmrg_max_blocksize
+                                                                                                      : settings::strategy::dmrg_min_blocksize;
     } else {
-        m1.max_problem_size = settings::strategy::multisite_max_prob_size;
-        m1.max_sites        = settings::strategy::multisite_site_def;
-        if(status.algorithm_has_stuck_for > 0 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::STUCK)) {
-            m1.max_sites = settings::strategy::multisite_site_max;
-            if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::GRADUAL)) {
-                auto site_range = num::LinSpaced(std::max(1ul, settings::strategy::iter_max_stuck), settings::strategy::multisite_site_def,
-                                                 settings::strategy::multisite_site_max);
-                auto site_index = std::min({site_range.size() - 1, status.algorithm_has_stuck_for});
-                m1.max_sites    = static_cast<size_t>(site_range.at(site_index));
-            }
+        m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
+        m1.max_sites        = dmrg_blocksize;
+        if(status.algorithm_has_stuck_for > 2) {
+            auto dmrg_blocksize_larger = std::ceil(static_cast<double>(dmrg_blocksize) / std::log(2.0));
+            m1.max_sites =
+                std::clamp<size_t>(static_cast<size_t>(dmrg_blocksize_larger), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
         }
-        // if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS)) {
-        //     m1.max_sites     = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
-        //     m1.eigs_iter_max = 1;
-        //     m1.eigs_tol      = 1e-1;
-        // }
-    }
-    if(var_isconverged) {
-        // Run very careful steps when converged. Sometimes the solver realizes that the current eigenpair is not actually the most extremal.
-        // In that case, it will switch target state, and the residual norm will be poor for many steps.
-        // We want the solver to converge when this happens!
-        m1.eigs_tol      = settings::precision::eigs_tol_min;
-        m1.eigs_iter_max = status.algo_type == AlgorithmType::xDMRG ? std::max(1000000, m1.eigs_iter_max.value()) : m1.eigs_iter_max.value();
-        m1.eigs_time_max = 5.0 * 3600.0;
-        if(has_flag(settings::strategy::multisite_policy, MultisitePolicy::CONVERGED))
-            m1.max_sites = std::min(tensors.get_length<size_t>(), settings::strategy::multisite_site_max);
     }
 
     // Set up the problem size here
@@ -426,14 +407,14 @@ void AlgorithmFinite::try_moving_sites() {
     auto eigs_tol_min_backup               = settings::precision::eigs_tol_min;
     auto eigs_ncv_backup                   = settings::precision::eigs_ncv;
     auto multisite_opt_policy_backup       = settings::strategy::multisite_policy;
-    auto multisite_opt_site_max_backup     = settings::strategy::multisite_site_max;
-    auto multisite_opt_site_def_backup     = settings::strategy::multisite_site_def;
+    auto multisite_opt_site_max_backup     = settings::strategy::dmrg_max_blocksize;
+    auto multisite_opt_site_def_backup     = settings::strategy::dmrg_min_blocksize;
     settings::precision::eigs_iter_max     = 100;
     settings::precision::eigs_tol_min      = std::min(1e-14, settings::precision::eigs_tol_min);
     settings::precision::eigs_ncv          = std::max(35, settings::precision::eigs_ncv);
     settings::strategy::multisite_policy   = MultisitePolicy::ALWAYS;
-    settings::strategy::multisite_site_max = 2;
-    settings::strategy::multisite_site_def = 2;
+    settings::strategy::dmrg_max_blocksize = 2;
+    settings::strategy::dmrg_min_blocksize = 2;
 
     auto len      = tensors.get_length<long>();
     auto pos      = tensors.get_position<long>();
@@ -488,8 +469,8 @@ void AlgorithmFinite::try_moving_sites() {
     settings::precision::eigs_tol_min      = eigs_tol_min_backup;
     settings::precision::eigs_ncv          = eigs_ncv_backup;
     settings::strategy::multisite_policy   = multisite_opt_policy_backup;
-    settings::strategy::multisite_site_max = multisite_opt_site_max_backup;
-    settings::strategy::multisite_site_def = multisite_opt_site_def_backup;
+    settings::strategy::dmrg_max_blocksize = multisite_opt_site_max_backup;
+    settings::strategy::dmrg_min_blocksize = multisite_opt_site_def_backup;
 }
 
 void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_bound) {
@@ -581,7 +562,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
     // status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
@@ -685,14 +666,14 @@ void AlgorithmFinite::update_truncation_error_limit() {
     tools::log->info("Updated truncation error limit: {:8.2e} -> {:8.2e} | reasons: {}", status.trnc_lim, trnc_new, fmt::join(reason, " | "));
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
     // status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
 
 void AlgorithmFinite::update_environment_expansion_alpha() {
-    /* Update alpha
+    /*! Update alpha
            alpha  = factor * alpha,
            factor =  1.0/(q-bias)
            q      = Var(H)_after / Var(H)_before  (after/before expansion)
@@ -702,10 +683,31 @@ void AlgorithmFinite::update_environment_expansion_alpha() {
 
     double old_alpha           = status.env_expansion_alpha;
     double qexp                = std::sqrt(var_envexp / var_latest);
-    double bias                = 0.1;
+    double bias                = 1e-2;
     double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
     status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);
     tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f}", old_alpha, status.env_expansion_alpha, factor);
+}
+
+void AlgorithmFinite::update_dmrg_blocksize() {
+    dmrg_blocksize = std::clamp<size_t>(dmrg_blocksize, settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+    if(not tensors.position_is_inward_edge()) return;
+    /*! Update the number of sites used in dmrg updates.
+     *  We try to match the blocksize to the the "information typical scale", obtained from the information lattice.
+     *  This should be a good blocksize to the correlations that exist in the state.
+     */
+
+    bool update_for_free   = tensors.state->measurements.information_typ_scale.has_value();
+    bool update_always     = has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS);
+    bool update_when_stuck = has_flag(settings::strategy::multisite_policy, MultisitePolicy::STUCK) and status.algorithm_has_stuck_for > 0;
+    bool update_when_conv  = has_flag(settings::strategy::multisite_policy, MultisitePolicy::CONVERGED) and status.algorithm_converged_for > 0;
+    if(update_for_free or update_always or update_when_stuck or update_when_conv) {
+        auto old_bsize = dmrg_blocksize;
+        auto typ_scale = tools::finite::measure::information_typ_scale(*tensors.state);
+        dmrg_blocksize =
+            std::clamp<size_t>(static_cast<size_t>(std::ceil(typ_scale)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+        if(old_bsize != dmrg_blocksize) tools::log->debug("Updated blocksize {} -> {} | info typ. scale {:.3f}", old_bsize, dmrg_blocksize, typ_scale);
+    }
 }
 
 void AlgorithmFinite::initialize_model() {
@@ -1251,13 +1253,13 @@ void          AlgorithmFinite::print_status() {
     report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
-    if(settings::strategy::multisite_site_def == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
+    if(settings::strategy::dmrg_min_blocksize == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
     if(status.bond_max == status.bond_lim) {
         report += fmt::format("χ:{:<3}|", status.bond_max);
     } else {
         report += fmt::format("χ:{:<3}|{:<3}|", status.bond_max, status.bond_lim);
     }
-    auto bonds_msites = std::clamp(settings::strategy::multisite_site_def - 1, 1ul, tensors.get_length<size_t>());
+    auto bonds_msites = std::clamp(settings::strategy::dmrg_min_blocksize - 1, 1ul, tensors.get_length<size_t>());
     auto bonds_maxims = std::vector<long>(bonds_msites, status.bond_max);
     auto bonds_merged = tools::finite::measure::bond_dimensions_active(*tensors.state);
     auto bonds_padlen = fmt::format("{}", bonds_maxims).size();

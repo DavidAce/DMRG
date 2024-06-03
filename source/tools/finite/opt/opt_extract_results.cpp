@@ -55,6 +55,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));
                 mps.set_length(initial_mps.get_length());
                 mps.set_time(solver.result.meta.time_total);
+                mps.set_time_mv(solver.result.meta.time_mv);
                 mps.set_op(safe_cast<size_t>(solver.result.meta.num_op));
                 mps.set_mv(safe_cast<size_t>(solver.result.meta.num_mv));
                 mps.set_pc(safe_cast<size_t>(solver.result.meta.num_pc));
@@ -86,9 +87,9 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 } else
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
-                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
+                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, std::nullopt, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
-                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
+                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, std::nullopt, &measurements);
 
                 mps.set_energy(energy);
                 mps.set_eshift_eigval(eigval);
@@ -150,9 +151,9 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 else
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
-                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
+                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, std::nullopt, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
-                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, meta.svd_cfg, &measurements);
+                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, std::nullopt, &measurements);
 
                 mps.set_energy(energy);
                 mps.set_eshift_eigval(eigval);

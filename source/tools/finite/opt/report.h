@@ -20,7 +20,7 @@ namespace tools::finite::opt::reports {
         long                      size, idx, nev, ncv;
         double                    energy, eigval, variance, overlap, norm, rnorm, tol, grad;
         size_t                    iter, mv, pc;
-        double                    time;
+        double                    time, time_mv;
         spdlog::level::level_enum level = spdlog::level::debug;
     };
 
