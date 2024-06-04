@@ -17,16 +17,18 @@ enum class MpoCompress {
 };
 enum class MposWithEdges { OFF, ON };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
-enum class MultisitePolicy {
-    NEVER     = 0,              /*!< Never run multisite dmrg */
-    WARMUP    = 1,              /*!< Run multisite dmrg during warmup */
-    STUCK     = 2,              /*!< Run multisite dmrg when the algorithm is stuck */
-    CONVERGED = 8,              /*!< Run multisite dmrg when the algorithm has converged */
-    ALWAYS    = 16,             /*!< Always try running multisite dmrg */
-    GRADUAL   = 32,             /*!< When STUCK: Increase the number of sites gradually. Otherwise this is ignored */
-    MOVEMID   = 64,             /*!< Move m/2 sites after an m-site multisite dmrg step (instead of just 1) */
-    MOVEMAX   = 128,            /*!< Move m sites after an m-site multisite dmrg step (instead of just 1) */
-    DEFAULT   = WARMUP | STUCK, /*!< Default policy for multisite dmrg steps */
+
+
+/*! \brief Sets properties of the dmrg blocksize (number of sites in a dmrg optimization step).
+ *
+ *  This calculates the information typical scale from the information lattice, which can be numerically expensive.
+ */
+enum class BlockSizePolicy {
+    STATIC    = 0,              /*!< Never update dmrg blocksize (stays at dmrg_min_blocksize) */
+    STUCK     = 1,              /*!< Update blocksize when the dmrg energy variance or entanglement entropy has got stuck  */
+    ITER      = 2,              /*!< Update blocksize on every iteration */
+    MOVEMID   = 4,              /*!< Move blocksize/2 sites after a dmrg step (instead of just 1) */
+    MOVEMAX   = 8,              /*!< Move blocksize sites after a dmrg step (instead of just 1) */
     allow_bitops
 };
 enum class UpdatePolicy {
@@ -378,7 +380,7 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, MultisitePolicy, UpdatePolicy, ProjectionPolicy, EnvExpandMode>);
+    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, BlockSizePolicy, UpdatePolicy, ProjectionPolicy, EnvExpandMode>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -418,15 +420,12 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, StoragePolicy::RTES)) v.emplace_back("RTES");
         if(v.empty()) return "NONE";
     }
-    if constexpr(std::is_same_v<T, MultisitePolicy>) {
-        if(has_flag(item, MultisitePolicy::WARMUP)) v.emplace_back("WARMUP");
-        if(has_flag(item, MultisitePolicy::STUCK)) v.emplace_back("STUCK");
-        if(has_flag(item, MultisitePolicy::CONVERGED)) v.emplace_back("CONVERGED");
-        if(has_flag(item, MultisitePolicy::ALWAYS)) v.emplace_back("ALWAYS");
-        if(has_flag(item, MultisitePolicy::GRADUAL)) v.emplace_back("GRADUAL");
-        if(has_flag(item, MultisitePolicy::MOVEMID)) v.emplace_back("MOVEMID");
-        if(has_flag(item, MultisitePolicy::MOVEMAX)) v.emplace_back("MOVEMAX");
-        if(v.empty()) return "NEVER";
+    if constexpr(std::is_same_v<T, BlockSizePolicy>) {
+        if(has_flag(item, BlockSizePolicy::STUCK)) v.emplace_back("STUCK");
+        if(has_flag(item, BlockSizePolicy::ITER)) v.emplace_back("ITER");
+        if(has_flag(item, BlockSizePolicy::MOVEMID)) v.emplace_back("MOVEMID");
+        if(has_flag(item, BlockSizePolicy::MOVEMAX)) v.emplace_back("MOVEMAX");
+        if(v.empty()) return "STATIC";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
         if(has_flag(item, UpdatePolicy::WARMUP)) v.emplace_back("WARMUP");
@@ -466,7 +465,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         MpoCompress,
         MposWithEdges,
         MeanType,
-        MultisitePolicy,
+        BlockSizePolicy,
         SVDLibrary,
         UpdatePolicy,
         GateMove,
@@ -524,16 +523,12 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case MposWithEdges::ON:                                   return "ON";
         default: return "MposWithEdges::UNDEFINED";
     }
-    if constexpr(std::is_same_v<T, MultisitePolicy>) switch(item){
-        case MultisitePolicy::NEVER :                                   return "NEVER";
-        case MultisitePolicy::WARMUP :                                  return "WARMUP";
-        case MultisitePolicy::STUCK :                                   return "STUCK";
-        case MultisitePolicy::CONVERGED :                               return "CONVERGED";
-        case MultisitePolicy::ALWAYS :                                  return "ALWAYS";
-        case MultisitePolicy::GRADUAL :                                 return "GRADUAL";
-        case MultisitePolicy::MOVEMID :                                 return "MOVEMID";
-        case MultisitePolicy::MOVEMAX :                                 return "MOVEMAX";
-        case MultisitePolicy::DEFAULT :                                 return "DEFAULT";
+    if constexpr(std::is_same_v<T, BlockSizePolicy>) switch(item){
+        case BlockSizePolicy::STATIC :                                  return "STATIC";
+        case BlockSizePolicy::STUCK :                                   return "STUCK";
+        case BlockSizePolicy::ITER :                                    return "ITER";
+        case BlockSizePolicy::MOVEMID :                                 return "MOVEMID";
+        case BlockSizePolicy::MOVEMAX :                                 return "MOVEMAX";
         default: return "MultisitePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -841,7 +836,7 @@ constexpr auto sv2enum(std::string_view item) {
         MpoCompress,
         MposWithEdges,
         MeanType,
-        MultisitePolicy,
+        BlockSizePolicy,
         SVDLibrary,
         UpdatePolicy,
         GateMove,
@@ -897,16 +892,12 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "OFF")                                   return MposWithEdges::OFF;
         if(item == "ON")                                    return MposWithEdges::ON;
     }
-    if constexpr(std::is_same_v<T, MultisitePolicy>) {
-        auto policy = MultisitePolicy::NEVER;
-        if(item.find("WARMUP")    != std::string_view::npos)  policy |= MultisitePolicy::WARMUP;
-        if(item.find("STUCK")     != std::string_view::npos)  policy |= MultisitePolicy::STUCK;
-        if(item.find("CONVERGED") != std::string_view::npos)  policy |= MultisitePolicy::CONVERGED;
-        if(item.find("ALWAYS")    != std::string_view::npos)  policy |= MultisitePolicy::ALWAYS;
-        if(item.find("GRADUAL")   != std::string_view::npos)  policy |= MultisitePolicy::GRADUAL;
-        if(item.find("MOVEMID")   != std::string_view::npos)  policy |= MultisitePolicy::MOVEMID;
-        if(item.find("MOVEMAX")   != std::string_view::npos)  policy |= MultisitePolicy::MOVEMAX;
-        if(item.find("DEFAULT")   != std::string_view::npos)  policy |= MultisitePolicy::DEFAULT;
+    if constexpr(std::is_same_v<T, BlockSizePolicy>) {
+        auto policy = BlockSizePolicy::STATIC;
+        if(item.find("STUCK")     != std::string_view::npos)  policy |= BlockSizePolicy::STUCK;
+        if(item.find("ITER")      != std::string_view::npos)  policy |= BlockSizePolicy::ITER;
+        if(item.find("MOVEMID")   != std::string_view::npos)  policy |= BlockSizePolicy::MOVEMID;
+        if(item.find("MOVEMAX")   != std::string_view::npos)  policy |= BlockSizePolicy::MOVEMAX;
         return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {

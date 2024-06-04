@@ -169,11 +169,11 @@ namespace tools::finite::opt {
             if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->has_compressed_mpo_squared())
                 throw except::logic_error("optimize_variance_eigs with PRIMME with sigma requires non-compressed MPO²");
         }
-        tools::log->debug("Finding an eigenstate of [H²{}]{}{} | {} ritz {} | shifts: {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
+        tools::log->debug("Finding an eigenstate of [H²{}]{}{} | {} ritz {} | shifts: {} | maxIter {} | tol {:.2e} | init on | size {} | mps {}",
                           solver.config.sigma ? "-σ" : "", solver.config.shift_invert == eig::Shinv::ON ? "⁻¹" : "",
                           solver.config.sigma ? fmt::format(" | σ = {:.16f}", solver.config.sigma->real()) : "", eig::LibToString(solver.config.lib),
                           eig::RitzToString(solver.config.ritz), solver.config.primme_targetShifts, solver.config.maxIter.value(), solver.config.tol.value(),
-                          hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.get_shape_mpo());
+                          hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps());
 
         if constexpr(sfinae::is_any_v<MatVecType, MatVecZero<real>, MatVecZero<cplx>>) {
             auto init = get_initial_guess_bond<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope

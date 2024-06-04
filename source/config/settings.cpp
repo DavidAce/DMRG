@@ -192,10 +192,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::iter_max_saturated"                 , strategy::iter_max_saturated);
     dmrg_config.load_parameter("strategy::iter_min_converged"                 , strategy::iter_min_converged);
     dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
-    dmrg_config.load_parameter("strategy::multisite_policy"                   , strategy::multisite_policy);
+    dmrg_config.load_parameter("strategy::dmrg_blocksize_policy"              , strategy::dmrg_blocksize_policy);
     dmrg_config.load_parameter("strategy::dmrg_min_blocksize"                 , strategy::dmrg_min_blocksize);
     dmrg_config.load_parameter("strategy::dmrg_max_blocksize"                 , strategy::dmrg_max_blocksize);
-    dmrg_config.load_parameter("strategy::dmrg_max_prob_size"            , strategy::dmrg_max_prob_size);
+    dmrg_config.load_parameter("strategy::dmrg_max_prob_size"                 , strategy::dmrg_max_prob_size);
     dmrg_config.load_parameter("strategy::target_axis"                        , strategy::target_axis);
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);

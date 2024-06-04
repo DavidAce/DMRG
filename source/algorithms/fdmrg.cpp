@@ -237,11 +237,11 @@ void fdmrg::run_algorithm() {
 //     size_t saturated_for  = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
 //     double has_stuck_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(has_stuck_for) / safe_cast<double>(iter_max_stuck);
 //     double saturated_frac = multisite_opt_grow == MultisiteGrow::OFF ? 1.0 : safe_cast<double>(saturated_for) / safe_cast<double>(iter_max_saturated);
-//     switch(multisite_policy) {
-//         case MultisitePolicy::NEVER: break;
-//         case MultisitePolicy::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(dmrg_min_blocksize, dmrg_max_blocksize, has_stuck_frac)); break;
-//         case MultisitePolicy::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(dmrg_min_blocksize, dmrg_max_blocksize, saturated_frac)); break;
-//         case MultisitePolicy::ALWAYS: m1.max_sites = dmrg_max_blocksize; break;
+//     switch(dmrg_blocksize_policy) {
+//         case BlockSizePolicy::STATIC: break;
+//         case BlockSizePolicy::STUCK: m1.max_sites = safe_cast<size_t>(std::lerp(dmrg_min_blocksize, dmrg_max_blocksize, has_stuck_frac)); break;
+//         case BlockSizePolicy::SATURATED: m1.max_sites = safe_cast<size_t>(std::lerp(dmrg_min_blocksize, dmrg_max_blocksize, saturated_frac)); break;
+//         case BlockSizePolicy::ALWAYS: m1.max_sites = dmrg_max_blocksize; break;
 //     }
 // }
 // if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish

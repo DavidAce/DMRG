@@ -220,7 +220,7 @@ namespace settings {
         inline size_t              iter_max_saturated          = 5;                                      /*!< Saturation means that both variance and entanglement saturated. But if either saturates for this many iterations, then status.algorithm_saturated_for += 1 */
         inline size_t              iter_min_converged          = 1;                                      /*!< Require convergence at least this many iterations before success */
         inline double              max_env_expansion_alpha     = 1e-2;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
-        inline MultisitePolicy     multisite_policy            = MultisitePolicy::DEFAULT;               /*!< Enum bitflag to control multisite dmrg {NEVER,+WARMUP,+STUCK,+CONVERGED,ALWAYS,GRADUAL,MOVEMID,MOVEMAX,DEFAULT} (+ are DEFAULT) */
+        inline BlockSizePolicy     dmrg_blocksize_policy       = BlockSizePolicy::ITER;                  /*!< Bitflag to control the adaptive dmrg blocksize {NEVER,STUCK,ITER,MOVEMID,MOVEMAX} */
         inline size_t              dmrg_min_blocksize          = 1;                                      /*!< Minimum number of sites in a dmrg optimization step. */
         inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
         inline long                dmrg_max_prob_size          = 1024*2*1024;                            /*!< Restricts the dmrg blocksize to keep the problem size below this limit. Problem size = chiL * (spindim ** blocksize) * chiR */

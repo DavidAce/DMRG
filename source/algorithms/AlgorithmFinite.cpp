@@ -254,8 +254,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     if(status.iter < settings::strategy::iter_max_warmup) {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
-        m1.max_sites        = has_flag(settings::strategy::multisite_policy, MultisitePolicy::WARMUP) ? settings::strategy::dmrg_max_blocksize
-                                                                                                      : settings::strategy::dmrg_min_blocksize;
+        m1.max_sites        = settings::strategy::dmrg_max_blocksize;
     } else {
         m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
         m1.max_sites        = dmrg_blocksize;
@@ -337,10 +336,13 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
                 if(reached_edgeL) num_moves = num_moves.value() + 1; // , +1 to get pos == 0
             } else {
                 num_moves = 1;
-                if(num_active >= 2 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::MOVEMID)) {
+                if(num_active >= 2 and has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MOVEMID)) {
                     num_moves = num_active / 2; // We want the ceil of num_active/2 when odd
                 }
-                if(num_active >= 2 and has_flag(settings::strategy::multisite_policy, MultisitePolicy::MOVEMAX)) {
+                if(num_active >= 2 and has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MOVEMAX)) {
+                    num_moves = num_active - 1; // Move so that the center point moves out of the active region
+                }
+                if(num_active >= 2 and status.iter < settings::strategy::iter_max_warmup) {
                     num_moves = num_active - 1; // Move so that the center point moves out of the active region
                 }
             }
@@ -403,18 +405,13 @@ void AlgorithmFinite::try_moving_sites() {
     //  pos : the index of a slot on the lattice, which can not be moved. (long)
     //  site: the index of a particle on the lattice, which can be moved. (size_t)
     //  dir : Direction on which to move the position: +1l = right, -1l = left.
-    auto eigs_iter_max_backup              = settings::precision::eigs_iter_max;
-    auto eigs_tol_min_backup               = settings::precision::eigs_tol_min;
-    auto eigs_ncv_backup                   = settings::precision::eigs_ncv;
-    auto multisite_opt_policy_backup       = settings::strategy::multisite_policy;
-    auto multisite_opt_site_max_backup     = settings::strategy::dmrg_max_blocksize;
-    auto multisite_opt_site_def_backup     = settings::strategy::dmrg_min_blocksize;
-    settings::precision::eigs_iter_max     = 100;
-    settings::precision::eigs_tol_min      = std::min(1e-14, settings::precision::eigs_tol_min);
-    settings::precision::eigs_ncv          = std::max(35, settings::precision::eigs_ncv);
-    settings::strategy::multisite_policy   = MultisitePolicy::ALWAYS;
-    settings::strategy::dmrg_max_blocksize = 2;
-    settings::strategy::dmrg_min_blocksize = 2;
+    auto eigs_iter_max_backup          = settings::precision::eigs_iter_max;
+    auto eigs_tol_min_backup           = settings::precision::eigs_tol_min;
+    auto eigs_ncv_backup               = settings::precision::eigs_ncv;
+    auto dmrg_blocksize_backup         = dmrg_blocksize;
+    settings::precision::eigs_iter_max = 100;
+    settings::precision::eigs_tol_min  = std::min(1e-14, settings::precision::eigs_tol_min);
+    settings::precision::eigs_ncv      = std::max(35, settings::precision::eigs_ncv);
 
     auto len      = tensors.get_length<long>();
     auto pos      = tensors.get_position<long>();
@@ -465,12 +462,10 @@ void AlgorithmFinite::try_moving_sites() {
 
     if(not tensors.position_is_inward_edge())
         throw except::logic_error("Position {} and direction {} is not an inward edge", tensors.get_position(), tensors.state->get_direction());
-    settings::precision::eigs_iter_max     = eigs_iter_max_backup;
-    settings::precision::eigs_tol_min      = eigs_tol_min_backup;
-    settings::precision::eigs_ncv          = eigs_ncv_backup;
-    settings::strategy::multisite_policy   = multisite_opt_policy_backup;
-    settings::strategy::dmrg_max_blocksize = multisite_opt_site_max_backup;
-    settings::strategy::dmrg_min_blocksize = multisite_opt_site_def_backup;
+    settings::precision::eigs_iter_max = eigs_iter_max_backup;
+    settings::precision::eigs_tol_min  = eigs_tol_min_backup;
+    settings::precision::eigs_ncv      = eigs_ncv_backup;
+    dmrg_blocksize                     = dmrg_blocksize_backup;
 }
 
 void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_bound) {
@@ -698,10 +693,9 @@ void AlgorithmFinite::update_dmrg_blocksize() {
      */
 
     bool update_for_free   = tensors.state->measurements.information_typ_scale.has_value();
-    bool update_always     = has_flag(settings::strategy::multisite_policy, MultisitePolicy::ALWAYS);
-    bool update_when_stuck = has_flag(settings::strategy::multisite_policy, MultisitePolicy::STUCK) and status.algorithm_has_stuck_for > 0;
-    bool update_when_conv  = has_flag(settings::strategy::multisite_policy, MultisitePolicy::CONVERGED) and status.algorithm_converged_for > 0;
-    if(update_for_free or update_always or update_when_stuck or update_when_conv) {
+    bool update_when_stuck = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::STUCK) and status.algorithm_has_stuck_for > 0;
+    bool update_every_iter = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::ITER);
+    if(update_for_free or update_when_stuck or update_every_iter) {
         auto old_bsize = dmrg_blocksize;
         auto typ_scale = tools::finite::measure::information_typ_scale(*tensors.state);
         dmrg_blocksize =
