@@ -124,13 +124,13 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
             break;
         }
         if(size <= threshold and sites.size() <= max_sites) {
-            reason = fmt::format("good problem shape found");
+            reason = fmt::format("problem size <= {} and sites <= {}", threshold, max_sites);
             break;
         } else if(sites.size() <= min_sites) {
             reason = fmt::format("at least {} sites had to be kept", min_sites);
             break;
         } else if(allequal and sites.size() <= max_sites) {
-            reason = fmt::format("problem sizes are equal: {}", size);
+            reason = fmt::format("all problem sizes with fewer sites are equal: {}", size);
             break;
         } else if(sites.size() == 1) {
             throw except::logic_error("At least two sites required!");

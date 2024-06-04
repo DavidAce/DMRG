@@ -3,9 +3,9 @@ import os.path
 
 from batches import get_batches
 from src.database import *
-from meta_fdmrg4 import *
-from meta_fdmrg6 import *
-# from meta_xdmrg3 import *
+# from meta_fdmrg4 import *
+# from meta_fdmrg6 import *
+from meta_xdmrg3 import *
 from src.plots.multiplot import *
 
 
@@ -74,25 +74,42 @@ def dmrg_plot(args):
 
 
     # logging.basicConfig(level=logging.DEBUG)
+    # f = None
+    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
+    #     f = plot_infomasscenterdist_fig_sub_line(db=db, meta=meta['infomasscenterdist-dLg'], figs=f)
+    # save_figure(f)
 
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
-        f = plot_infotopobit_fig_sub_line(db=db, meta=meta['infotopobit-d'], figs=f)
+        f = plot_infomasscenter_fig_sub_line(db=db, meta=meta['infomasscenter-dLg'], figs=f)
     save_figure(f)
+    f = None
+    for idx, (db, meta) in enumerate(zip(dbs, metas)):
+        f = plot_infomasscenter_fig_sub_line(db=db, meta=meta['infomasscenter-gLd'], figs=f)
+    save_figure(f)
+    # f = None
+    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
+    #     f = plot_infomasscenter_fig_sub_line(db=db, meta=meta['infomasscenter-d'], figs=f)
+    # save_figure(f)
+    # f = None
+    # for idx, (db, meta) in enumerate(zip(dbs, metas)):
+    #     f = plot_infotopobit_fig_sub_line(db=db, meta=meta['infotopobit-d'], figs=f)
+    # save_figure(f)
 
+    plt.show()
+    exit(0)
 
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_infoperscale_fig_sub_line(db=db, meta=meta['infoperscale-Lgd'], figs=f)
     save_figure(f)
 
+
+
     f = None
     for idx, (db, meta) in enumerate(zip(dbs, metas)):
         f = plot_infoperscale_fig_sub_line(db=db, meta=meta['infoperscale-gdL'], figs=f)
     save_figure(f)
-
-    plt.show()
-    exit(0)
 
 
     f = None
@@ -147,8 +164,8 @@ def dmrg_plot(args):
 
 if __name__ == '__main__':
     # batch = get_batches('fDMRG', ['fdmrg-see-test3'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
-    batch = get_batches('fDMRG', ['fdmrg6-see'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
-    # batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    # batch = get_batches('fDMRG', ['fdmrg6-see'], states=['state_emin'], basedir='/mnt/WDB-AN1500/mbl_transition')
+    batch = get_batches('xDMRG', ['xdmrg3-letsgo'], states=['state_emid'], basedir='/mnt/WDB-AN1500/mbl_transition')
     dmrg_plot(batch)
 
 

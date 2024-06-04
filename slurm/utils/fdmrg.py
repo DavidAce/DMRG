@@ -55,7 +55,10 @@ def get_h5_status(filename, batch):
             '/common/finished_all',
             '/fDMRG/model/hamiltonian',
             '/fDMRG/state_emin/measurements',
+            '/fDMRG/state_emin/subsystem_entanglement_entropies',
             '/fDMRG/state_emin/status',
+            '/fDMRG/state_emin/rbds/status',
+            '/fDMRG/state_emin/rtes/status',
         ]
         expected_link_attrs = {
             'initial_pattern': '/fDMRG/state_emin',
@@ -68,6 +71,8 @@ def get_h5_status(filename, batch):
                 expected_attrs = [h5file.get(link).attrs.get(attr) for attr,link in expected_link_attrs.items() if link in h5file]
                 missing_dsets = [path for dset,path in zip(expected_dsets,expected_dset_paths) if dset is None]
                 missing_attrs = [path for link,path in zip(expected_attrs,expected_link_attrs) if link is None]
+                if h5file['/common/finished_all'][()] == 0:
+                    return f"FAILED|simulation has not finished"
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing datasets:{missing_dsets}"
                 if len(missing_dsets) > 0:

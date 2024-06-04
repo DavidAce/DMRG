@@ -67,7 +67,7 @@ void xdmrg::resume() {
         set_energy_shift_mpo();
         rebuild_tensors(); // Rebuilds and compresses mpos, then rebuilds the environments
         update_precision_limit();
-
+        update_dmrg_blocksize();
         // Initialize a custom task list
         std::deque<xdmrg_task> task_list;
 

@@ -278,6 +278,9 @@ namespace tools::finite::h5 {
         if(not should_save(sinfo, settings::storage::table::information_per_scale::policy)) return;
         auto information_per_scale = tools::finite::measure::information_per_scale(state);
         save::data_as_table(h5file, sinfo, information_per_scale, "information_per_scale", "Information per length scale", "scale");
+        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "information_per_scale");
+        auto information_typ_scale = tools::finite::measure::information_typ_scale(state);
+        h5file.writeAttribute(information_typ_scale, table_path, "information_typ_scale");
     }
 
     void save::information_typ_scale(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {

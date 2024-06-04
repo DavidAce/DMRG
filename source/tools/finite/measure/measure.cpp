@@ -375,7 +375,7 @@ double tools::finite::measure::information_typ_scale(const StateFinite &state) {
     // tools::log->info("sum information_per_scale : {:.3f}", state.measurements.information_per_scale->sum());
     // tools::log->info("sum bit_interp            : {:.3f}", num::trapz(idx_interp, bit_interp));
     state.measurements.information_typ_scale = idx_interp[idx_masscenter] * std::log(2);
-    tools::log->info("info typ scale: {:.3f}", state.measurements.information_typ_scale.value());
+    // tools::log->info("info typ scale: {:.3f}", state.measurements.information_typ_scale.value());
     return state.measurements.information_typ_scale.value();
 }
 

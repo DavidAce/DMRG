@@ -192,7 +192,8 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             'L': set(),
             'g': set(),
             'd': set(),
-            'ø': set()
+            'ø': set(),
+            'num': set(),
         },
         'nodes': {},
         'filename': h5_src.filename,
@@ -241,7 +242,6 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
         db['vals']['d'].add(d)
         db['vals']['ø'].add(None)
 
-
         if debug:
             print(' Looking for datasets in meta: {}'.format(meta.keys()))
         for nodekey, nodepath, node in h5py_node_iterator(node=algonode,
@@ -275,6 +275,9 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             # Keep this node!
             if not match:
                 continue
+            statenode = algonode['state_emin'] if 'state_emin' in algonode else algonode['state_emid']
+            num = get_num_info(statenode=statenode, datanode=node)
+
             print(f'Loading into database: {nodepath=}')
             db['nodes'][nodepath] = {}
             db['nodes'][nodepath]['version'] = db['version']
@@ -284,6 +287,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
             db['nodes'][nodepath]['vals']['g'] = g
             db['nodes'][nodepath]['vals']['d'] = d
             db['nodes'][nodepath]['vals']['ø'] = ø
+            db['nodes'][nodepath]['vals']['num'] = num
             db['nodes'][nodepath]['vals']['plotdir'] = meta['common']['plotdir']
             db['nodes'][nodepath]['vals']['cachedir'] = meta['common']['cachedir']
             db['nodes'][nodepath]['vals']['filename'] = h5_src.filename
@@ -298,6 +302,7 @@ def load_isingmajorana_database(h5_src, meta, algo_filter=None, model_filter=Non
                     'g': f'{g}',
                     'd': f'{d}',
                     'ø': f'{ø}',
+                    'num': f'{num}',
                     'algo': algokey,
                 },
                 'eqs': {

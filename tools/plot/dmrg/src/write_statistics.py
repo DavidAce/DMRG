@@ -234,15 +234,18 @@ def get_information_lattices(SEE # Subsystem entanglement entropies, L x L x rea
     Ldim = np.shape(SEE)[0]
     rdim = np.shape(SEE)[2] # Number of realizations
     infolattices = np.zeros(shape=(Ldim, Ldim,rdim))
-    for l in prange(Ldim):
-        if l == 0:
-            infolattices[l, :, :] = (l+1) - SEE[l, :, :]
-        elif l == 1:
-            infolattices[l, :-1, :] = 2 - (l+1) - SEE[l, :-1, :] + SEE[l - 1, :-1, :] + SEE[l - 1, 1:, :]
-        else:
-            infolattices[l, :-l, :] = -SEE[l, :-l, :] + SEE[l - 1, :-l, :] + SEE[l - 1, 1:-(l-1)] - SEE[l - 2, 1:-(l-1)]
-
-    return np.abs(infolattices)
+    for n in prange(Ldim):
+        for l in prange(Ldim):
+            if n+l >= Ldim:
+                continue
+            if l == 0:
+                infolattices[l, n, :] = 1 - SEE[l, n, :]
+            elif l == 1:
+                infolattices[l, n, :] = -SEE[l, n, :] + SEE[l - 1, n, :] + SEE[l - 1, n+1, :]
+            else:
+                infolattices[l, n, :] = -SEE[l, n, :] + SEE[l - 1,n, :] + SEE[l - 1, n+1, :] - SEE[l - 2, n+1,:]
+    # print(infolattices)
+    return infolattices
 
 def get_information_per_scale(infolattices # Information lattices, L x L x realizations
                              ):

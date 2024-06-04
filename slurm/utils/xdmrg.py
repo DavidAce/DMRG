@@ -52,9 +52,12 @@ def get_h5_status(filename, batch):
             raise AssertionError(f"Expected model_type==ising_majorana. Got: {model_type}")
 
         expected_dset_paths = [
+            '/common/finished_all',
             '/xDMRG/model/hamiltonian',
             '/xDMRG/state_emid/measurements',
             '/xDMRG/state_emid/status',
+            '/xDMRG/state_emid/subsystem_entanglement_entropies',
+
         ]
         expected_link_attrs = {
             'initial_pattern': '/xDMRG/state_emid',
@@ -67,6 +70,8 @@ def get_h5_status(filename, batch):
                 expected_attrs = [h5file.get(link).attrs.get(attr) for attr,link in expected_link_attrs.items() if link in h5file]
                 missing_dsets = [path for dset,path in zip(expected_dsets,expected_dset_paths) if dset is None]
                 missing_attrs = [path for link,path in zip(expected_attrs,expected_link_attrs) if link is None]
+                if h5file['/common/finished_all'][()] == 0:
+                    return f"FAILED|simulation has not finished"
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing datasets:{missing_dsets}"
                 if len(missing_dsets) > 0:

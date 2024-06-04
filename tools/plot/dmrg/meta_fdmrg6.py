@@ -238,6 +238,7 @@ def get_meta(plotdir, cachedir):
             'subspec': ['ø'],
             'linspec': ['g'],
             'xaxspec': ['d'],
+            'single-realizations': True,
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'filename': 'infotopobit_vs_d_foreach_g',
             'palettes': ["viridis_r", "autumn_r", "summer_r"],
@@ -312,7 +313,7 @@ def get_meta(plotdir, cachedir):
         'infoperscale-Lgd': {
             'default': default1x2_2col,
             'include': {
-                'L': [35],
+                'L': [35,36],
                 'g': [0.5],
                 'd': [3.0, 6.0, 9.0],
             },
@@ -334,7 +335,7 @@ def get_meta(plotdir, cachedir):
             # 'xnormalize': True,
             # 'ynormalize': True,
             'yscale': 'log',
-            'legendcols': ['g:.2f', 'd:.2f', 'L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'g:.2f', 'd:.2f', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': ['upper left',],
