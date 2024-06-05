@@ -258,11 +258,6 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     } else {
         m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
         m1.max_sites        = dmrg_blocksize;
-        if(status.algorithm_has_stuck_for > 2) {
-            auto dmrg_blocksize_larger = std::ceil(static_cast<double>(dmrg_blocksize) / std::log(2.0));
-            m1.max_sites =
-                std::clamp<size_t>(static_cast<size_t>(dmrg_blocksize_larger), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
-        }
     }
 
     // Set up the problem size here
@@ -336,12 +331,6 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
                 if(reached_edgeL) num_moves = num_moves.value() + 1; // , +1 to get pos == 0
             } else {
                 num_moves = 1;
-                if(num_active >= 2 and has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MOVEMID)) {
-                    num_moves = num_active / 2; // We want the ceil of num_active/2 when odd
-                }
-                if(num_active >= 2 and has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MOVEMAX)) {
-                    num_moves = num_active - 1; // Move so that the center point moves out of the active region
-                }
                 if(num_active >= 2 and status.iter < settings::strategy::iter_max_warmup) {
                     num_moves = num_active - 1; // Move so that the center point moves out of the active region
                 }
@@ -685,23 +674,49 @@ void AlgorithmFinite::update_environment_expansion_alpha() {
 }
 
 void AlgorithmFinite::update_dmrg_blocksize() {
-    dmrg_blocksize = std::clamp<size_t>(dmrg_blocksize, settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+    if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MINDEF) {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        return;
+    }
+    if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MAXDEF) {
+        dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
+        return;
+    }
     if(not tensors.position_is_inward_edge()) return;
     /*! Update the number of sites used in dmrg updates.
      *  We try to match the blocksize to the the "information typical scale", obtained from the information lattice.
      *  This should be a good blocksize to the correlations that exist in the state.
      */
+    bool has_converged = status.algorithm_converged_for > 0 or var_latest <= settings::precision::variance_convergence_threshold;
+    bool has_saturated = status.variance_mpo_saturated_for + status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0;
+    bool has_got_stuck = status.algorithm_has_stuck_for > 0 and not has_converged;
+    bool max_varsat    = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MAXVARSAT) and has_saturated;
+    bool max_stuck     = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MAXSTUCK) and has_got_stuck;
+    bool info_varsat   = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFOVARSAT) and has_saturated;
+    bool info_stuck    = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFOSTUCK) and has_got_stuck;
+    bool info_default  = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFODEF);
 
-    bool update_for_free   = tensors.state->measurements.information_typ_scale.has_value();
-    bool update_when_stuck = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::STUCK) and status.algorithm_has_stuck_for > 0;
-    bool update_every_iter = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::ITER);
-    if(update_for_free or update_when_stuck or update_every_iter) {
-        auto old_bsize = dmrg_blocksize;
+    auto        old_bsize = dmrg_blocksize;
+    std::string msg;
+    if(max_varsat or max_stuck) {
+        dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
+        msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
+    } else if(info_default or info_varsat or info_stuck) {
         auto typ_scale = tools::finite::measure::information_typ_scale(*tensors.state);
+        if(status.algorithm_has_stuck_for > settings::strategy::iter_max_stuck / 2) typ_scale /= std::log(2); // Take the mass center instead
         dmrg_blocksize =
             std::clamp<size_t>(static_cast<size_t>(std::ceil(typ_scale)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
-        if(old_bsize != dmrg_blocksize) tools::log->debug("Updated blocksize {} -> {} | info typ. scale {:.3f}", old_bsize, dmrg_blocksize, typ_scale);
+        if(info_default) {
+            msg += "set info typ. scale by default";
+        } else {
+            msg += info_varsat ? "set info typ. scale when saturated" : "set info typ. scale when stuck";
+        }
+    } else {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        msg += "set min by default";
     }
+
+    if(old_bsize != dmrg_blocksize) tools::log->info("Updated blocksize {} -> {} | {}", old_bsize, dmrg_blocksize, msg);
 }
 
 void AlgorithmFinite::initialize_model() {

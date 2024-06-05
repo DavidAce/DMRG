@@ -18,17 +18,18 @@ enum class MpoCompress {
 enum class MposWithEdges { OFF, ON };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
 
-
 /*! \brief Sets properties of the dmrg blocksize (number of sites in a dmrg optimization step).
  *
  *  This calculates the information typical scale from the information lattice, which can be numerically expensive.
  */
 enum class BlockSizePolicy {
-    STATIC    = 0,              /*!< Never update dmrg blocksize (stays at dmrg_min_blocksize) */
-    STUCK     = 1,              /*!< Update blocksize when the dmrg energy variance or entanglement entropy has got stuck  */
-    ITER      = 2,              /*!< Update blocksize on every iteration */
-    MOVEMID   = 4,              /*!< Move blocksize/2 sites after a dmrg step (instead of just 1) */
-    MOVEMAX   = 8,              /*!< Move blocksize sites after a dmrg step (instead of just 1) */
+    MINDEF     = 0,  /*!< Default to dmrg_min_blocksize */
+    MAXDEF     = 1,  /*!< Default to dmrg_max_blocksize */
+    MAXVARSAT  = 2,  /*!< Set dmrg_max_blocksize when the energy variance has saturated */
+    MAXSTUCK   = 4,  /*!< Set dmrg_max_blocksize when stuck */
+    INFODEF    = 8, /*!< Default to the ceil of "information_typ_scale" on every iteration  */
+    INFOVARSAT = 16, /*!< Default to the ceil of "information_typ_scale" when the energy variance has saturated */
+    INFOSTUCK  = 32, /*!< Default to the ceil of "information_typ_scale" when stuck  */
     allow_bitops
 };
 enum class UpdatePolicy {
@@ -421,11 +422,13 @@ std::string flag2str(const T &item) noexcept {
         if(v.empty()) return "NONE";
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) {
-        if(has_flag(item, BlockSizePolicy::STUCK)) v.emplace_back("STUCK");
-        if(has_flag(item, BlockSizePolicy::ITER)) v.emplace_back("ITER");
-        if(has_flag(item, BlockSizePolicy::MOVEMID)) v.emplace_back("MOVEMID");
-        if(has_flag(item, BlockSizePolicy::MOVEMAX)) v.emplace_back("MOVEMAX");
-        if(v.empty()) return "STATIC";
+        if(has_flag(item, BlockSizePolicy::MAXDEF))    v.emplace_back("MAXDEF");
+        if(has_flag(item, BlockSizePolicy::MAXVARSAT)) v.emplace_back("MAXVARSAT");
+        if(has_flag(item, BlockSizePolicy::MAXSTUCK))  v.emplace_back("MAXSTUCK");
+        if(has_flag(item, BlockSizePolicy::INFODEF))   v.emplace_back("INFODEF");
+        if(has_flag(item, BlockSizePolicy::INFOVARSAT))v.emplace_back("INFOVARSAT");
+        if(has_flag(item, BlockSizePolicy::INFOSTUCK)) v.emplace_back("INFOSTUCK");
+        if(v.empty()) return "MIN";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
         if(has_flag(item, UpdatePolicy::WARMUP)) v.emplace_back("WARMUP");
@@ -524,34 +527,36 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         default: return "MposWithEdges::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) switch(item){
-        case BlockSizePolicy::STATIC :                                  return "STATIC";
-        case BlockSizePolicy::STUCK :                                   return "STUCK";
-        case BlockSizePolicy::ITER :                                    return "ITER";
-        case BlockSizePolicy::MOVEMID :                                 return "MOVEMID";
-        case BlockSizePolicy::MOVEMAX :                                 return "MOVEMAX";
-        default: return "MultisitePolicy::BITFLAG";
+        case BlockSizePolicy::MINDEF :                           return "MINDEF";
+        case BlockSizePolicy::MAXDEF :                           return "MAXDEF";
+        case BlockSizePolicy::MAXVARSAT :                        return "MAXVARSAT";
+        case BlockSizePolicy::MAXSTUCK :                         return "MAXSTUCK";
+        case BlockSizePolicy::INFODEF :                          return "INFODEF";
+        case BlockSizePolicy::INFOVARSAT :                       return "INFOVARSAT";
+        case BlockSizePolicy::INFOSTUCK :                        return "INFOSTUCK";
+        default: return "BlockSizePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
-        if(item == OptRitz::NONE)                                       return "NONE";
-        if(item == OptRitz::SR)                                         return "SR";
-        if(item == OptRitz::LR)                                         return "LR";
-        if(item == OptRitz::SM)                                         return "SM";
-        if(item == OptRitz::IS)                                         return "IS";
-        if(item == OptRitz::TE)                                         return "TE";
+        if(item == OptRitz::NONE)                                return "NONE";
+        if(item == OptRitz::SR)                                  return "SR";
+        if(item == OptRitz::LR)                                  return "LR";
+        if(item == OptRitz::SM)                                  return "SM";
+        if(item == OptRitz::IS)                                  return "IS";
+        if(item == OptRitz::TE)                                  return "TE";
     }
     if constexpr(std::is_same_v<T, SVDLibrary>) {
-        if(item == SVDLibrary::EIGEN)                                   return "EIGEN";
-        if(item == SVDLibrary::LAPACKE)                                 return "LAPACKE";
-        if(item == SVDLibrary::RSVD)                                    return "RSVD";
+        if(item == SVDLibrary::EIGEN)                            return "EIGEN";
+        if(item == SVDLibrary::LAPACKE)                          return "LAPACKE";
+        if(item == SVDLibrary::RSVD)                             return "RSVD";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
-        if(item == UpdatePolicy::NEVER)                                 return "NEVER";
-        if(item == UpdatePolicy::WARMUP)                                return "WARMUP";
-        if(item == UpdatePolicy::ITERATION)                             return "ITERATION";
-        if(item == UpdatePolicy::FULLSWEEP)                            return "FULLSWEEP";
-        if(item == UpdatePolicy::TRUNCATED)                             return "TRUNCATED";
-        if(item == UpdatePolicy::SATURATED)                             return "SATURATED";
-        if(item == UpdatePolicy::STUCK)                                 return "STUCK";
+        if(item == UpdatePolicy::NEVER)                          return "NEVER";
+        if(item == UpdatePolicy::WARMUP)                         return "WARMUP";
+        if(item == UpdatePolicy::ITERATION)                      return "ITERATION";
+        if(item == UpdatePolicy::FULLSWEEP)                      return "FULLSWEEP";
+        if(item == UpdatePolicy::TRUNCATED)                      return "TRUNCATED";
+        if(item == UpdatePolicy::SATURATED)                      return "SATURATED";
+        if(item == UpdatePolicy::STUCK)                          return "STUCK";
     }
 
     if constexpr(std::is_same_v<T, GateMove>) {
@@ -893,12 +898,15 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ON")                                    return MposWithEdges::ON;
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) {
-        auto policy = BlockSizePolicy::STATIC;
-        if(item.find("STUCK")     != std::string_view::npos)  policy |= BlockSizePolicy::STUCK;
-        if(item.find("ITER")      != std::string_view::npos)  policy |= BlockSizePolicy::ITER;
-        if(item.find("MOVEMID")   != std::string_view::npos)  policy |= BlockSizePolicy::MOVEMID;
-        if(item.find("MOVEMAX")   != std::string_view::npos)  policy |= BlockSizePolicy::MOVEMAX;
+        auto policy = BlockSizePolicy::MINDEF;
+        if(item.find("MAXDEF")         != std::string_view::npos)  policy |= BlockSizePolicy::MAXDEF;
+        if(item.find("MAXVARSAT")      != std::string_view::npos)  policy |= BlockSizePolicy::MAXVARSAT;
+        if(item.find("MAXSTUCK")       != std::string_view::npos)  policy |= BlockSizePolicy::MAXSTUCK;
+        if(item.find("INFODEF")        != std::string_view::npos)  policy |= BlockSizePolicy::INFODEF;
+        if(item.find("INFOVARSAT")     != std::string_view::npos)  policy |= BlockSizePolicy::INFOVARSAT;
+        if(item.find("INFOSTUCK")      != std::string_view::npos)  policy |= BlockSizePolicy::INFOSTUCK;
         return policy;
+
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "NONE")                                  return OptRitz::NONE;

@@ -2,8 +2,8 @@
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_mpos.h"
-#include "../matvec/matvec_zero.h"
 #include "../matvec/matvec_sparse.h"
+#include "../matvec/matvec_zero.h"
 #include "../sfinae.h"
 #include "../solver.h"
 #include "debug/exceptions.h"
@@ -207,7 +207,7 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
 
         // Terminate if it's taking too long
         if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
-            eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
+            if(primme->maxMatvecs > 0 and primme->maxOuterIterations > 0) eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
             primme->maxMatvecs         = 0;
             primme->maxOuterIterations = 0;
 
