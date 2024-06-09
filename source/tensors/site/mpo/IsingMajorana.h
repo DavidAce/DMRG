@@ -25,7 +25,8 @@ class IsingMajorana : public MpoSite {
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
-    [[nodiscard]] std::any                 get_parameter(std::string_view name) const override;
+    [[nodiscard]] std::any                 get_parameter(std::string_view name) const final;
+    void                                   set_parameter(std::string_view name, std::any value) final;
     void                                   print_parameter_names() const final;
     void                                   print_parameter_values() const final;
     void                                   set_parameters(TableMap &parameters) final;

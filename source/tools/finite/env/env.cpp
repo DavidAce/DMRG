@@ -167,7 +167,7 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
     This is a modified (aka subspace) expansion technique, compared to the one explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     In this convention we expand/enrich the forward bond during a DMRG sweep, i.e. the bond one step ahead in the sweep direction.
 
-    Going left-to-right with active site == i, we update:
+    In 1-site DMRG going left-to-right with active site == i, we update:
 
         - AC(i), LC(i) -->      [AC(i)     ,  0 ]  * U, S(i)      : AC(i) is bare, without LC(i) (which is used below). Loses left-normalization due to U.
         - LC*B(i+1)    --> SVD( [LC*B(i+1) , PR(i+1) ]^T ) = U*S*V: update B(i+1) = V, LC(i) = S and U is contracted onto AC(i) above
@@ -175,7 +175,7 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
     where PR(i+1) = alpha * ENVR(i+1) * B(i+1) * MPO(i+1) (dimensions d(i-1), B(i+1).dimension(1), B(i+1).dimension(2) * MPO(i+1).dimension(0))
     Then, immediately after calling this function, we should optimize the current site AC(i) with a DMRG step.
 
-    Similarly, going right-to-left with active site == i, we update:
+    Similarly, in 1-site DMRG going right-to-left with active site == i, we update:
 
          - A(i-1)       --> SVD( [A(i-1), PL(i-1)] ) = U*S*V : update A(i-1) = U, L(i) = S and S*V is contracted onto A(i) below.
          - L(i), A(i)   --> S, S*V*[ A(i)    ,  0      ]^T     : A(i) (which is AC(i) bare), loses left-normalization due to SV.
@@ -201,10 +201,188 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
     - Therefore, the optimization step sees a much richer environment, which speeds up convergence.
     - Backwards expansion pushes a non-optimal/degraded site-tensor into the trailing environment. Forward expansion optimizes it first.
 
+    Note that this expansion works similarly for multisite dmrg, with the expanded site chosen accordingly.
+
+
 */
 
 std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, double alpha,
                                                                    EnvExpandMode envExpandMode, svd::config svd_cfg) {
+    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+        throw except::runtime_error("expand_environment_forward: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
+                                    edges.get_length());
+    if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        throw except::runtime_error("expand_environment_forward: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                    model.active_sites, edges.active_sites);
+    if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
+    // if(state.active_sites.front() != state.get_position()) {
+    //     tools::log->warn("expand_environment_forward: expected active_sites.front() == current position. Got: {} != {}", state.active_sites,
+    //                      state.get_position());
+    //     return {};
+    // }
+
+    // Determine which bond to expand
+    std::vector<size_t> pos_expanded;
+    if(state.get_direction() > 0) {
+        auto pos = state.active_sites.back();
+        if(pos == std::clamp<size_t>(pos, 0, state.get_length<size_t>() - 2)) pos_expanded = {pos, pos + 1};
+    }
+    if(state.get_direction() < 0) {
+        auto pos = state.active_sites.front();
+        if(pos == std::clamp<size_t>(pos, 1, state.get_length<size_t>() - 1)) pos_expanded = {pos - 1, pos};
+    }
+    if(pos_expanded.empty()) {
+        return {}; // No update
+    }
+
+    // Define the left and right mps that will get modified
+    state.clear_cache();
+    state.clear_measurements();
+    auto  posL     = pos_expanded.front();
+    auto  posR     = pos_expanded.back();
+    auto &mpsL     = state.get_mps_site(posL);
+    auto &mpsR     = state.get_mps_site(posR);
+    auto  dimL_old = mpsL.dimensions();
+    auto  dimR_old = mpsR.dimensions();
+    tools::log->debug("Expanding {}({}) - {}({})", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position());
+
+    // Set up the SVD
+    // Bond dimension can't grow faster than x spin_dim, but we can generate a highly enriched environment here for optimization,
+    // and let the proper truncation happen after optimization instead.
+    auto bond_lim            = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_lim);
+    svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
+    svd::solver svd;
+
+    if(state.get_direction() > 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
+        //      * mpsL is "AC(i)"  and is the active site (or B(i) if in the case of multisite dmrg)
+        //      * mpsR is "B(i+1)" and belongs in envR later in the optimization step
+        auto  oldS = tools::finite::measure::entanglement_entropy(mpsL.isCenter() ? mpsL.get_LC() : mpsL.get_L());
+        auto &mpoR = model.get_mpo(posR);
+        mpsR.set_M(state.get_multisite_mps({posR}));       // mpsR absorbs the LC(i) bond from the left so that the SVD makes sense later
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M_bare(); // mpsR is going into the environment, enriched with PR.
+        long                   PRdim1 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
+            Eigen::Tensor<cplx, 3> PR        = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
+            Eigen::Tensor<cplx, 3> PR        = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+        }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
+        Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
+
+        auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg);
+        mpsR.set_M(V);
+        mpsR.stash_U(U, posL);
+        if(mpsL.isCenter()) {
+            mpsR.stash_C(S, -1.0, posL); // Set a negative truncation error to ignore it.
+        } else {
+            mpsR.stash_S(S, -1.0, posL); // Set a negative truncation error to ignore it.
+        }
+        mpsL.set_M(ML_P0);
+        mpsL.take_stash(mpsR); // normalization of mpsL is lost here.
+
+        {
+            // Make mpsL normalized. This is strictly optional, but we do it so that normalization checks can succeed
+            cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsL.get_M());
+            Eigen::Tensor<cplx, 3> M_tmp    = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
+            mpsL.set_M(M_tmp);
+            if constexpr(settings::debug or settings::debug_expansion) {
+                auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
+                cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
+                tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), std::abs(norm_old),
+                                  std::abs(norm_new));
+            }
+        }
+        // if constexpr(settings::debug) {
+        state.clear_measurements();
+        auto newS = tools::finite::measure::entanglement_entropy(mpsL.isCenter() ? mpsL.get_LC() : mpsL.get_L());
+        if(std::abs(newS - oldS) > std::max(1e-4, alpha)) {
+            tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
+        }
+        // }
+
+        tools::log->debug("Environment expansion forward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2], ML_P0.dimension(2),
+                          mpsL.get_chiR());
+    }
+    if(state.get_direction() < 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is right-to-left:
+        //      * mpsL is "A(i-1)" and belongs in envL later in the optimization step
+        //      * mpsR is "A(i)" and is the active site
+        auto  oldS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
+        auto &mpoL = model.get_mpo(posL);
+        mpsL.set_M(state.get_multisite_mps({posL})); // mpsL absorbs the L(i) bond from the right so that the SVD makes sense later
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M_bare();
+        long                   PLdim2 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            ML_PL                            = std::move(ML_PL_tmp);
+            PLdim2 += PL.dimension(2);
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            ML_PL                            = std::move(ML_PL_tmp);
+            PLdim2 += PL.dimension(2);
+        }
+
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
+        Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
+
+        auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg);
+        mpsL.set_M(U);
+        mpsL.stash_S(S, -1.0, posR); // Set a negative truncation error to ignore it.
+        mpsL.stash_V(V, posR);
+        mpsR.set_M(MR_P0);
+        mpsR.take_stash(mpsL); // normalization of mpsR is lost here
+
+        {
+            // Make mpsR normalized. This is strictly optional, but we do it so that normalization checks can succeed
+            cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
+            Eigen::Tensor<cplx, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
+            mpsR.set_M(M_tmp);
+            if constexpr(settings::debug or settings::debug_expansion) {
+                auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
+                cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
+                tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), std::abs(norm_old),
+                                  std::abs(norm_new));
+            }
+        }
+
+        // if constexpr(settings::debug) {
+        state.clear_measurements();
+        auto newS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
+        if(std::abs(newS - oldS) > std::max(1e-4, alpha)) {
+            tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
+        }
+        // }
+
+        tools::log->debug("Environment expansion forward pos {} | {} | alpha {:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), alpha, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimR_old[1], MR_P0.dimension(1),
+                          mpsR.get_chiL());
+    }
+
+    if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
+    if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
+    if constexpr(settings::debug or settings::debug_expansion) mpsL.assert_normalized();
+    if constexpr(settings::debug or settings::debug_expansion) mpsR.assert_normalized();
+    state.clear_cache();
+    state.clear_measurements();
+    env::rebuild_edges(state, model, edges);
+    return pos_expanded;
+}
+
+std::vector<size_t> tools::finite::env::expand_environment_forward_1site(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, double alpha,
+                                                                         EnvExpandMode envExpandMode, svd::config svd_cfg) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("expand_environment_forward: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
                                     edges.get_length());
@@ -293,7 +471,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         // if constexpr(settings::debug) {
         state.clear_measurements();
         auto newS = tools::finite::measure::entanglement_entropy(mpsL.get_LC());
-        if(std::abs(newS - oldS) > std::max(1e-4,alpha)) {
+        if(std::abs(newS - oldS) > std::max(1e-4, alpha)) {
             tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
         }
         // }
@@ -350,7 +528,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         // if constexpr(settings::debug) {
         state.clear_measurements();
         auto newS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
-        if(std::abs(newS - oldS) > std::max(1e-4,alpha)) {
+        if(std::abs(newS - oldS) > std::max(1e-4, alpha)) {
             tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
         }
         // }

@@ -546,8 +546,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    // status.algorithm_has_stuck_for    = 0;
-    // status.algorithm_saturated_for    = 0;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
@@ -650,8 +650,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
     tools::log->info("Updated truncation error limit: {:8.2e} -> {:8.2e} | reasons: {}", status.trnc_lim, trnc_new, fmt::join(reason, " | "));
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    // status.algorithm_has_stuck_for    = 0;
-    // status.algorithm_saturated_for    = 0;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }

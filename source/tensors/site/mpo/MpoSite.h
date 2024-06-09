@@ -109,11 +109,11 @@ class MpoSite {
     template<typename Scalar = cplx>
     [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_right() const;
 
-    [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                              = 0;
-    [[nodiscard]] virtual long                     get_spin_dimension() const                 = 0;
-    [[nodiscard]] virtual TableMap                 get_parameters() const                     = 0;
-    [[nodiscard]] virtual std::any                 get_parameter(std::string_view name) const = 0;
-
+    [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                                        = 0;
+    [[nodiscard]] virtual long                     get_spin_dimension() const                           = 0;
+    [[nodiscard]] virtual TableMap                 get_parameters() const                               = 0;
+    [[nodiscard]] virtual std::any                 get_parameter(std::string_view name) const           = 0;
+    virtual void                                   set_parameter(std::string_view name, std::any value) = 0;
     virtual void print_parameter_names() const                                             = 0;
     virtual void print_parameter_values() const                                            = 0;
     virtual void set_parameters(TableMap &parameters)                                      = 0;

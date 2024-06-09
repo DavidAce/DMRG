@@ -42,13 +42,27 @@ XXZ::TableMap XXZ::get_parameters() const {
 
 std::any XXZ::get_parameter(const std::string_view name) const {
     /* clang-format off */
-    if(name == "delta")        return  h5tb.param.delta;
+    if(name      == "delta")        return  h5tb.param.delta;
     else if(name == "h_rand")       return  h5tb.param.h_rand;
     else if(name == "spin_dim")     return  h5tb.param.spin_dim;
     else if(name == "distribution") return  h5tb.param.distribution;
     /* clang-format on */
     throw except::logic_error("Invalid parameter name for XXZ model: {}", name);
 }
+
+void XXZ::set_parameter(const std::string_view name, std::any value) {
+    /* clang-format off */
+    if(name      == "delta")         h5tb.param.delta = std::any_cast<decltype(h5tb.param.delta)>(value);
+    else if(name == "h_rand")       h5tb.param.h_rand = std::any_cast<decltype(h5tb.param.h_rand)>(value);
+    else if(name == "spin_dim")     h5tb.param.spin_dim = std::any_cast<decltype(h5tb.param.spin_dim)>(value);
+    else if(name == "distribution") h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(value);
+    else
+        /* clang-format on */
+            throw except::logic_error("Invalid parameter name for the XXZ model: {}", name);
+    build_mpo();
+    build_mpo_squared();
+}
+
 
 /*! Builds the MPO hamiltonian as a rank 4 tensor.
  *

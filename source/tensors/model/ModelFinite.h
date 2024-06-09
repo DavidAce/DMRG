@@ -52,6 +52,7 @@ class ModelFinite {
 
     public:
                  ModelFinite();
+                 ModelFinite(ModelType model_type_, size_t model_size);
     ~            ModelFinite();                         // Read comment on implementation
                  ModelFinite(ModelFinite &&other);      // default move ctor
     ModelFinite &operator=(ModelFinite &&other);        // default move assign

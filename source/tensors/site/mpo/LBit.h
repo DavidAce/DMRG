@@ -6,21 +6,24 @@
 
 class LBit : public MpoSite {
     private:
-    h5tb_lbit h5tb;
-    Eigen::Tensor<cplx, 4> get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
-                                   std::optional<std::vector<size_t>> skip = std::nullopt) const final;
+    h5tb_lbit                h5tb;
+    Eigen::Tensor<cplx, 4>   get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+                                     std::optional<std::vector<size_t>> skip = std::nullopt) const final;
     Eigen::Tensor<cplx_t, 4> get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
-                                 std::optional<std::vector<size_t>> skip = std::nullopt) const final;
+                                       std::optional<std::vector<size_t>> skip = std::nullopt) const final;
+
     public:
                                            LBit(ModelType model_type_, size_t position_);
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const final;
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
     [[nodiscard]] std::any                 get_parameter(std::string_view name) const final;
+
     //    [[nodiscard]] Eigen::MatrixXcd single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd>
     //    &SY,
     //                                                           std::vector<Eigen::MatrixXcd> &SZ) const final;
     //
+    void set_parameter(std::string_view name, std::any value) final;
     void print_parameter_names() const final;
     void print_parameter_values() const final;
     void set_parameters(TableMap &parameters) final;

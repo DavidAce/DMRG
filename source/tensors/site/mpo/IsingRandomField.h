@@ -19,12 +19,12 @@ class IsingRandomField : public MpoSite {
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
     [[nodiscard]] std::any                 get_parameter(std::string_view name) const final;
-
-    void print_parameter_names() const final;
-    void print_parameter_values() const final;
-    void set_parameters(TableMap &parameters) final;
-    void randomize_hamiltonian() final;
-    void set_averages(std::vector<TableMap> all_parameters, bool infinite = false) final;
+    void                                   set_parameter(std::string_view name, std::any value) final;
+    void                                   print_parameter_names() const final;
+    void                                   print_parameter_values() const final;
+    void                                   set_parameters(TableMap &parameters) final;
+    void                                   randomize_hamiltonian() final;
+    void                                   set_averages(std::vector<TableMap> all_parameters, bool infinite = false) final;
 
     void save_hamiltonian(h5pp::File &file, std::string_view table_path) const final;
     void load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) final;

@@ -21,6 +21,7 @@ namespace settings {
 }
 
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
+ModelFinite::ModelFinite(ModelType model_type_, size_t model_size_) { initialize(model_type_, model_size_); }
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
@@ -827,10 +828,9 @@ std::array<long, 4> ModelFinite::active_dimensions_squared() const { return tool
 //     auto                   skip         = std::vector<size_t>{};
 //     auto                   keep_log     = std::vector<size_t>();
 //     auto                   skip_log     = std::vector<size_t>();
-//     bool                   do_cache     = !with_edgeL and !with_edgeR and nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
-//     auto                  &threads      = tenx::threads::get();
-//     Eigen::Tensor<cplx, 4> multisite_mpo_squared, mpo2L, mpo2R;
-//     Eigen::Tensor<cplx, 2> mpo2R_traced;
+//     bool                   do_cache     = !with_edgeL and !with_edgeR and nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody ==
+//     1 auto                  &threads      = tenx::threads::get(); Eigen::Tensor<cplx, 4> multisite_mpo_squared, mpo2L, mpo2R; Eigen::Tensor<cplx, 2>
+//     mpo2R_traced;
 //     // The hamiltonian is the lower left corner he full system mpo chain, which we can extract using edgeL and edgeR
 //     Eigen::Tensor<cplx, 1> edgeL = get_mpo(sites.front()).get_MPO2_edge_left();
 //     Eigen::Tensor<cplx, 1> edgeR = get_mpo(sites.back()).get_MPO2_edge_right();
@@ -1044,9 +1044,9 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham_squared(const std::vector<
         auto half   = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
         auto sitesL = std::vector<size_t>(sites.begin(), sites.begin() + half);
         auto sitesR = std::vector<size_t>(sites.begin() + half, sites.end());
-        auto mpo2L   = get_multisite_mpo_squared(sitesL, nbody);
-        auto mpo2R   = get_multisite_mpo_squared(sitesR, nbody);
-        auto mpo2LR  = tenx::gemm_mpo(mpo2L, mpo2R);
+        auto mpo2L  = get_multisite_mpo_squared(sitesL, nbody);
+        auto mpo2R  = get_multisite_mpo_squared(sitesR, nbody);
+        auto mpo2LR = tenx::gemm_mpo(mpo2L, mpo2R);
         return mpo2LR.reshape(tenx::array2{spin_dim, spin_dim});
     }
 }

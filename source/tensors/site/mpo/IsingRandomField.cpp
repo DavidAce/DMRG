@@ -73,6 +73,23 @@ std::any IsingRandomField::get_parameter(std::string_view name) const {
     throw except::logic_error("Invalid parameter name for IsingRandomField model: {}", name);
 }
 
+void IsingRandomField::set_parameter(const std::string_view name, std::any value) {
+    /* clang-format off */
+    if(name      == "J1")               h5tb.param.J1 = std::any_cast<decltype(h5tb.param.J1)>(value);
+    else if(name == "J2")               h5tb.param.J2 = std::any_cast<decltype(h5tb.param.J2)>(value);
+    else if(name == "h_tran")           h5tb.param.h_tran = std::any_cast<decltype(h5tb.param.h_tran)>(value);
+    else if(name == "h_mean")           h5tb.param.h_mean = std::any_cast<decltype(h5tb.param.h_mean)>(value);
+    else if(name == "h_wdth")           h5tb.param.h_wdth = std::any_cast<decltype(h5tb.param.h_wdth)>(value);
+    else if(name == "h_rand")           h5tb.param.h_rand = std::any_cast<decltype(h5tb.param.h_rand)>(value);
+    else if(name == "spin_dim")         h5tb.param.spin_dim = std::any_cast<decltype(h5tb.param.spin_dim)>(value);
+    else if(name == "distribution")     h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(value);
+    else
+        /* clang-format on */
+        throw except::logic_error("Invalid parameter name for the IsingRandomField model: {}", name);
+    build_mpo();
+    build_mpo_squared();
+}
+
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  * H = - Σ J sz_{i} sz_{i+1} +  g_{i} sx_{i}
  *

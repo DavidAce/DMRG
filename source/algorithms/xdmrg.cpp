@@ -313,7 +313,6 @@ void xdmrg::update_state() {
     auto opt_meta = get_opt_meta();
     tools::log->debug("Starting {} iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.algo_type_sv(), status.iter, status.step, status.position,
                       status.direction, enum2sv(settings::get_ritz(status.algo_type)), enum2sv(opt_meta.optType));
-    tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {}", status.iter, status.step, status.position, status.direction);
     // Try activating the sites asked for;
     tensors.activate_sites(opt_meta.chosen_sites);
     if(tensors.active_sites.empty()) {
@@ -325,7 +324,7 @@ void xdmrg::update_state() {
     tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
     auto bond_dims_old = tensors.state->get_mps_dims_active();
     // Expand the environment to grow the bond dimension in 1-site dmrg
-    if(tensors.active_sites.size() == 1 and opt_meta.expand_mode != EnvExpandMode::NONE) {
+    if(opt_meta.expand_mode != EnvExpandMode::NONE) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
         update_environment_expansion_alpha();
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);

@@ -78,6 +78,25 @@ std::any IsingSelfDual::get_parameter(std::string_view name) const {
     throw except::logic_error("Invalid parameter name for IsingSelfDual model: {}", name);
 }
 
+void IsingSelfDual::set_parameter(const std::string_view name, std::any value) {
+    /* clang-format off */
+    if(name      == "J_mean")           h5tb.param.J_mean = std::any_cast<decltype(h5tb.param.J_mean)>(value);
+    else if(name == "J_wdth")           h5tb.param.J_wdth = std::any_cast<decltype(h5tb.param.J_wdth)>(value);
+    else if(name == "J_rand")           h5tb.param.J_rand = std::any_cast<decltype(h5tb.param.J_rand)>(value);
+    else if(name == "h_mean")           h5tb.param.h_mean = std::any_cast<decltype(h5tb.param.h_mean)>(value);
+    else if(name == "h_wdth")           h5tb.param.h_wdth = std::any_cast<decltype(h5tb.param.h_wdth)>(value);
+    else if(name == "h_rand")           h5tb.param.h_rand = std::any_cast<decltype(h5tb.param.h_rand)>(value);
+    else if(name == "lambda")           h5tb.param.lambda = std::any_cast<decltype(h5tb.param.lambda)>(value);
+    else if(name == "delta")            h5tb.param.delta = std::any_cast<decltype(h5tb.param.delta)>(value);
+    else if(name == "spin_dim")         h5tb.param.spin_dim = std::any_cast<decltype(h5tb.param.spin_dim)>(value);
+    else if(name == "distribution")     h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(value);
+    else
+        /* clang-format on */
+            throw except::logic_error("Invalid parameter name for the IsingSelfDual model: {}", name);
+    build_mpo();
+    build_mpo_squared();
+}
+
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  *
  * H = Σ J_{i} σx_{i} σx_{i+1} +  h_{i} σz_{i} + λ (h_mean σz_i σz_{i+1} + J_mean σx_{i} σx_{i+2})

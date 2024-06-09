@@ -60,7 +60,22 @@ std::any IsingMajorana::get_parameter(const std::string_view name) const {
     else if(name == "spin_dim")     return  h5tb.param.spin_dim;
     else if(name == "distribution") return  h5tb.param.distribution;
     /* clang-format on */
-    throw except::logic_error("Invalid parameter name for IsingMajorana model: {}", name);
+    throw except::logic_error("Invalid parameter name for the IsingMajorana model: {}", name);
+}
+
+void IsingMajorana::set_parameter(const std::string_view name, std::any value) {
+    /* clang-format off */
+    if(name == "g")                 h5tb.param.g = std::any_cast<decltype(h5tb.param.g)>(value);
+    else if(name == "delta")        h5tb.param.delta = std::any_cast<decltype(h5tb.param.delta)>(value);
+    else if(name == "J_rand")       h5tb.param.J_rand = std::any_cast<decltype(h5tb.param.J_rand)>(value);
+    else if(name == "h_rand")       h5tb.param.h_rand = std::any_cast<decltype(h5tb.param.h_rand)>(value);
+    else if(name == "spin_dim")     h5tb.param.spin_dim = std::any_cast<decltype(h5tb.param.spin_dim)>(value);
+    else if(name == "distribution") h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(value);
+    else
+        /* clang-format on */
+        throw except::logic_error("Invalid parameter name for the IsingMajorana model: {}", name);
+    build_mpo();
+    build_mpo_squared();
 }
 
 /*! Builds the MPO hamiltonian as a rank 4 tensor.

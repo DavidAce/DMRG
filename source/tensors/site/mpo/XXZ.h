@@ -10,7 +10,7 @@ namespace h5pp::hid {
 
 class XXZ : public MpoSite {
     private:
-    h5tb_xxz    h5tb;
+    h5tb_xxz               h5tb;
     [[nodiscard]] double   get_coupling() const;
     [[nodiscard]] double   get_field() const;
     Eigen::Tensor<cplx, 4> get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
@@ -26,6 +26,7 @@ class XXZ : public MpoSite {
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
     [[nodiscard]] std::any                 get_parameter(std::string_view name) const override;
+    void                                   set_parameter(std::string_view name, std::any value) final;
     void                                   print_parameter_names() const final;
     void                                   print_parameter_values() const final;
     void                                   set_parameters(TableMap &parameters) final;

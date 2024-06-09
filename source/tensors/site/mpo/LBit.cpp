@@ -122,6 +122,27 @@ std::any LBit::get_parameter(std::string_view name) const {
     throw except::logic_error("Invalid parameter name for LBIT model: {}", name);
 }
 
+void LBit::set_parameter(const std::string_view name, std::any value) {
+    /* clang-format off */
+    if(name      == "J1_rand")     h5tb.param.J1_rand = std::any_cast<decltype(h5tb.param.J1_rand)>(value);
+    else if(name == "J2_rand")     h5tb.param.J2_rand = std::any_cast<decltype(h5tb.param.J2_rand)>(value);
+    else if(name == "J3_rand")     h5tb.param.J3_rand = std::any_cast<decltype(h5tb.param.J3_rand)>(value);
+    else if(name == "J1_wdth")     h5tb.param.J1_wdth = std::any_cast<decltype(h5tb.param.J1_wdth)>(value);
+    else if(name == "J2_wdth")     h5tb.param.J2_wdth = std::any_cast<decltype(h5tb.param.J2_wdth)>(value);
+    else if(name == "J3_wdth")     h5tb.param.J3_wdth = std::any_cast<decltype(h5tb.param.J3_wdth)>(value);
+    else if(name == "J2_span")     h5tb.param.J2_span = std::any_cast<decltype(h5tb.param.J2_span)>(value);
+    else if(name == "J2_ctof")     h5tb.param.J2_ctof = std::any_cast<decltype(h5tb.param.J2_ctof)>(value);
+    else if(name == "xi_Jcls")     h5tb.param.xi_Jcls = std::any_cast<decltype(h5tb.param.xi_Jcls)>(value);
+    else if(name == "spin_dim")    h5tb.param.spin_dim = std::any_cast<decltype(h5tb.param.spin_dim)>(value);
+    else if(name == "distribution")h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(value);
+    else
+        /* clang-format on */
+        throw except::logic_error("Invalid parameter name for the LBit model: {}", name);
+    build_mpo();
+    build_mpo_t();
+    build_mpo_squared();
+}
+
 /*
       Builds the MPO for the l-bit Hamiltonian as a rank-4 tensor.
 
@@ -531,7 +552,6 @@ void LBit::randomize_hamiltonian() {
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
 }
-
 
 // Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(energy_shift_mpo); }
 //
