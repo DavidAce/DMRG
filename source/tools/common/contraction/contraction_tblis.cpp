@@ -96,9 +96,18 @@ template cplx tools::common::contraction::expectation_value(const cplx * const m
                                                             const cplx * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
 #if defined(DMRG_ENABLE_TBLIS)
+std::string get_tblis_arch() {
+    #if defined(__GNUC__)
+    if(__builtin_cpu_supports("x86-64-v4")) return "skx2";
+    if(__builtin_cpu_is("znver3") or __builtin_cpu_is("znver2") or __builtin_cpu_is("znver1")) return "zen";
+    if(__builtin_cpu_supports("x86-64-v3")) return "haswell";
+    #endif
+    return "haswell";
+}
+
 template<typename ea_type, typename eb_type, typename ec_type>
 void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-                    const tblis::label_vector &lb, const tblis::label_vector &lc) {
+                    const tblis::label_vector &lb, const tblis::label_vector &lc, std::string_view arch) {
     const auto &ea_ref = static_cast<const ea_type &>(ea);
     const auto &eb_ref = static_cast<const eb_type &>(eb);
     auto       &ec_ref = static_cast<ec_type &>(ec);
@@ -117,7 +126,7 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     tblis::tblis_tensor          A_s(alpha, ta);
     tblis::tblis_tensor          B_s(tb);
     tblis::tblis_tensor          C_s(beta, tc);
-    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
+    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
     #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
     #endif
@@ -151,20 +160,20 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
 
 #if defined(DMRG_ENABLE_TBLIS)
     if constexpr(std::is_same_v<Scalar, real>){
-
+        auto arch =  get_tblis_arch();
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
-            contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd");
-            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl");
-            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk");
+            contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd", arch);
+            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl", arch);
+            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk", arch);
         }
         else{
             Eigen::Tensor<Scalar, 4> mpsenvR(mps.dimension(0), mps.dimension(1), envR.dimension(1), envR.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvRmpo(mps.dimension(1), envR.dimension(1), mpo.dimension(0), mpo.dimension(3));
-            contract_tblis(mps, envR, mpsenvR, "abf", "fcd", "abcd");
-            contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl");
-            contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk");
+            contract_tblis(mps, envR, mpsenvR, "abf", "fcd", "abcd", arch);
+            contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl", arch);
+            contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk", arch);
         }
     }else{
         auto &threads = tenx::threads::get();
@@ -373,7 +382,7 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     if constexpr(std::is_same_v<Scalar, real>){
         auto tmp = Eigen::Tensor<Scalar,4>(mpsL_dims[0], mpsL_dims[1], mpsR_dims[0], mpsR_dims[2]);
         #if defined(DMRG_ENABLE_TBLIS)
-        contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd");
+        contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd", get_tblis_arch());
         res.device(*threads->dev)  = tmp.shuffle(shuffle_idx).reshape(res_dims);
         #else
         res.device(*threads->dev) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);

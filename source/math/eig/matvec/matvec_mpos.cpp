@@ -61,10 +61,29 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     shape_mps = {spin_dim, envL.dimension(0), envR.dimension(0)};
     size_mps  = spin_dim * envL.dimension(0) * envR.dimension(0);
 
-    // Now pre-shuffle each mpo if we have more than one
-    if(mpos.size() >= 2) {
-        for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
+    // If we have 5 or fewer mpos, it is faster to just merge them once and apply them in one contraction.
+    if(mpos.size() <= 5
+        ) {
+        constexpr auto contract_idx    = tenx::idx({1}, {0});
+        constexpr auto shuffle_idx     = tenx::array6{0, 3, 1, 4, 2, 5};
+        auto          &threads         = tenx::threads::get();
+        auto           contracted_mpos = mpos.front();
+        for(size_t idx = 0; idx + 1 < mpos.size(); ++idx) {
+            const auto &mpoL = idx == 0 ? mpos[idx] : contracted_mpos;
+            const auto &mpoR = mpos[idx + 1];
+            auto new_dims = std::array{mpoL.dimension(0), mpoR.dimension(1), mpoL.dimension(2) * mpoR.dimension(2), mpoL.dimension(3) * mpoR.dimension(3)};
+            auto        temp = Eigen::Tensor<T, 4>(new_dims);
+            temp.device(*threads->dev) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            contracted_mpos = std::move(temp);
+        }
+        mpos = {contracted_mpos}; // Replace by a single pre-contracted mpo
+    }else {
+        // We pre-shuffle each mpo to speed up the sequential contraction
+        if(mpos.size() >= 2) {
+            for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
+        }
     }
+
 
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_genMat   = std::make_unique<tid::ur>("Time genMat");
@@ -138,7 +157,7 @@ void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
 }
 
 template<typename T>
-void        MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+void MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
     // tools::log->info("blocksize: {}", *blockSize);
     // #pragma omp parallel for
     for(int i = 0; i < *blockSize; i++) {

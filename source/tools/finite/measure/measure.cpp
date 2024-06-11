@@ -354,28 +354,28 @@ Eigen::ArrayXd tools::finite::measure::information_per_scale(const StateFinite &
     return state.measurements.information_per_scale.value();
 }
 
-double tools::finite::measure::information_typ_scale(const StateFinite &state) {
-    if(state.measurements.information_typ_scale.has_value()) return state.measurements.information_typ_scale.value();
+double tools::finite::measure::information_scale_by_frac(const StateFinite &state, double fraction) {
+    // fraction = 0.5 implies the scale at which we find half of the total information
+    assert(frac >= 0.0);
+    assert(frac <= 1.0);
     state.measurements.information_per_scale = information_per_scale(state);
     auto L                                   = state.measurements.information_per_scale->size();
     auto idx_interp                          = num::LinSpaced(1000, 0, L);
     auto bit_interp                          = num::interp1_prev(num::range(0, L), state.measurements.information_per_scale.value(), idx_interp);
     auto sum_interp                          = num::cumtrapz(idx_interp, bit_interp);
 
-    double bits_to_count  = 0.5 * static_cast<double>(L);
-    size_t idx_masscenter = 0;
+    double bits_to_count  = fraction * static_cast<double>(L);
+    size_t idx_infocenter = 0;
     for(long idx = 0; idx < sum_interp.size(); ++idx) {
         if(sum_interp[idx] > bits_to_count) break;
-        idx_masscenter = idx;
+        idx_infocenter = idx;
     }
-    // tools::log->info("infoperscale              : {::.4f}", state.measurements.information_per_scale.value());
-    // tools::log->info("idx_interp                : {::.4f}", idx_interp);
-    // tools::log->info("bit_interp                : {::.4f}", bit_interp);
-    // tools::log->info("sum_interp                : {::.4f}", sum_interp);
-    // tools::log->info("sum information_per_scale : {:.3f}", state.measurements.information_per_scale->sum());
-    // tools::log->info("sum bit_interp            : {:.3f}", num::trapz(idx_interp, bit_interp));
-    state.measurements.information_typ_scale = idx_interp[idx_masscenter] * std::log(2);
-    // tools::log->info("info typ scale: {:.3f}", state.measurements.information_typ_scale.value());
+    return idx_interp[idx_infocenter];
+}
+
+double tools::finite::measure::information_typ_scale(const StateFinite &state) {
+    if(state.measurements.information_typ_scale.has_value()) return state.measurements.information_typ_scale.value();
+    state.measurements.information_typ_scale = information_scale_by_frac(state, 0.5) * std::log(2);
     return state.measurements.information_typ_scale.value();
 }
 

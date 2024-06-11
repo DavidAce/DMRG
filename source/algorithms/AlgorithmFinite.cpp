@@ -231,10 +231,11 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         if(status.algo_type == AlgorithmType::xDMRG) m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
     }
     // Set up a multiplier for number of iterations
-    double iter_stuck_multiplier = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
-    double iter_max_has_stuck    = safe_cast<double>(settings::precision::eigs_iter_max) * iter_stuck_multiplier; // Run more when stuck
-    using iter_max_type          = decltype(m1.eigs_iter_max)::value_type;
-    m1.eigs_iter_max             = safe_cast<iter_max_type>(std::min<double>(iter_max_has_stuck, std::numeric_limits<iter_max_type>::max()));
+    size_t iter_no_progress = std::max({status.algorithm_has_stuck_for, status.algorithm_saturated_for});
+    double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_multiplier, iter_no_progress)));
+    double iter_max_extra   = safe_cast<double>(settings::precision::eigs_iter_max) * iter_multiplier; // Run more when stuck
+    using iter_max_type     = decltype(m1.eigs_iter_max)::value_type;
+    m1.eigs_iter_max        = safe_cast<iter_max_type>(std::min<double>(iter_max_extra, std::numeric_limits<iter_max_type>::max()));
 
     // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
     m1.eigs_tol = std::clamp(var_latest * 1e-1, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
@@ -702,20 +703,26 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        auto typ_scale = tools::finite::measure::information_typ_scale(*tensors.state);
-        if(status.algorithm_has_stuck_for > settings::strategy::iter_max_stuck / 2) typ_scale /= std::log(2); // Take the mass center instead
-        dmrg_blocksize =
-            std::clamp<size_t>(static_cast<size_t>(std::ceil(typ_scale)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
-        if(info_default) {
-            msg += "set info typ. scale by default";
+        double blocksize = tools::finite::measure::information_scale_by_frac(*tensors.state, 0.5) * std::log(2);
+
+        if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
+            blocksize = tools::finite::measure::information_scale_by_frac(*tensors.state, 0.75); // Scale to find 90% of all bits
+            msg += fmt::format(" | scale 75% ({:.1f}) when saturated >= {} iters", blocksize, settings::strategy::iter_max_stuck / 2);
+        } else if(status.algorithm_has_stuck_for > 0) {
+            blocksize = tools::finite::measure::information_scale_by_frac(*tensors.state, 0.5); // Scale to find 75% of all bits
+            msg += fmt::format(" | scale 50% ({:.1f}) when saturated >= {} iters", blocksize, settings::strategy::iter_max_saturated);
         } else {
-            msg += info_varsat ? "set info typ. scale when saturated" : "set info typ. scale when stuck";
+            // Same as the characteristic length scale "xi" when the info decay is exponential
+            msg += fmt::format(" | scale xi ({:.1f}) by default", blocksize);
         }
+
+        dmrg_blocksize =
+            std::clamp<size_t>(static_cast<size_t>(std::ceil(blocksize)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+
     } else {
         dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
         msg += "set min by default";
     }
-
     if(old_bsize != dmrg_blocksize) tools::log->info("Updated blocksize {} -> {} | {}", old_bsize, dmrg_blocksize, msg);
 }
 

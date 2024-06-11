@@ -65,6 +65,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies_swap_log2 (const StateFinite & state, const svd::config &svd_cfg);
     [[nodiscard]] extern Eigen::ArrayXXd information_lattice                        (const StateFinite & state);
     [[nodiscard]] extern Eigen::ArrayXd  information_per_scale                      (const StateFinite & state);
+    [[nodiscard]] extern double          information_scale_by_frac                  (const StateFinite & state, double fraction);
     [[nodiscard]] extern double          information_typ_scale                      (const StateFinite & state);
     [[nodiscard]] extern double renyi_entropy_midchain                              (const StateFinite & state, double q);
     [[nodiscard]] extern std::vector<double> renyi_entropies                        (const StateFinite & state, double q);
