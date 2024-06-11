@@ -37,7 +37,7 @@ config_ranges = {
     "precision::use_parity_shifted_mpo": ["true"],
     "precision::use_parity_shifted_mpo_squared": ["true"],
     "model::model_type": ['ising_majorana'],
-    "model::model_size": ['35', '36'],
+    "model::model_size": ['35'],
     "model::ising_majorana::g": ['0.500'],
     "model::ising_majorana::delta": ['+3.00', '+6.00','+9.00'],
     "fdmrg::ritz": ['SR'],
