@@ -207,10 +207,13 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
 
         // Terminate if it's taking too long
         if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
-            if(primme->maxMatvecs > 0 and primme->maxOuterIterations > 0) eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
+            if(config.timeLimitExceeded == false) {
+                eig::log->warn("primme: max time has been exceeded: {:.2f}", config.maxTime.value());
+                config.timeLimitExceeded = true;
+            }
             primme->maxMatvecs         = 0;
             primme->maxOuterIterations = 0;
-
+            primme->correctionParams.maxInnerIterations = 0;
             // *ierr = 60;
         }
         if(eig::log->level() <= level) {

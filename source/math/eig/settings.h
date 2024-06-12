@@ -38,20 +38,21 @@ namespace eig {
         std::vector<init_t> initial_guess =
             {};                    // Use these as initial guess. In arpack, the first element ptr can be used as the residual_norm pointer "residp".
         std::string           tag; // Handy when you are using many instances
-        std::optional<size_t> loglevel = std::nullopt;
-        std::optional<double> logTime  = std::nullopt;
-        std::optional<long>   logIter  = std::nullopt;
+        std::optional<size_t> loglevel          = std::nullopt;
+        std::optional<double> logTime           = std::nullopt;
+        std::optional<long>   logIter           = std::nullopt;
+        bool                  timeLimitExceeded = false;
 
         // Primme settings
-        std::optional<PrimmeMethod> primme_method             = std::nullopt;
-        std::optional<std::string>  primme_projection         = std::nullopt;
-        std::optional<int>          primme_locking            = std::nullopt;
-        std::optional<int>          primme_minRestartSize     = std::nullopt;
-        std::optional<int>          primme_maxBlockSize       = std::nullopt;
-        std::vector<double>         primme_targetShifts       = {};
-        void                       *primme_effective_ham      = nullptr;
-        void                       *primme_effective_ham_sq   = nullptr;
-        std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner = std::nullopt;
+        std::optional<PrimmeMethod>                                                                                     primme_method           = std::nullopt;
+        std::optional<std::string>                                                                                      primme_projection       = std::nullopt;
+        std::optional<int>                                                                                              primme_locking          = std::nullopt;
+        std::optional<int>                                                                                              primme_minRestartSize   = std::nullopt;
+        std::optional<int>                                                                                              primme_maxBlockSize     = std::nullopt;
+        std::vector<double>                                                                                             primme_targetShifts     = {};
+        void                                                                                                           *primme_effective_ham    = nullptr;
+        void                                                                                                           *primme_effective_ham_sq = nullptr;
+        std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner   = std::nullopt;
         std::optional<void (*)(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr)> primme_convTestFun =
             std::nullopt;
         // std::optional<primme_params> primme;

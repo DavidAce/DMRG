@@ -723,7 +723,9 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
         msg += "set min by default";
     }
-    if(old_bsize != dmrg_blocksize) tools::log->info("Updated blocksize {} -> {} | {}", old_bsize, dmrg_blocksize, msg);
+    if(old_bsize != dmrg_blocksize) {
+        tools::log->info("Updated blocksize {} -> {} | {} | policy: {}", old_bsize, dmrg_blocksize, msg, flag2str(settings::strategy::dmrg_blocksize_policy));
+    }
 }
 
 void AlgorithmFinite::initialize_model() {

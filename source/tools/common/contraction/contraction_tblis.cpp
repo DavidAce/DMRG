@@ -98,7 +98,7 @@ template cplx tools::common::contraction::expectation_value(const cplx * const m
 #if defined(DMRG_ENABLE_TBLIS)
 std::string get_tblis_arch() {
     #if defined(__GNUC__)
-    if(__builtin_cpu_supports("x86-64-v4")) return "skx2";
+    if(__builtin_cpu_supports("x86-64-v4")) return "skx";
     if(__builtin_cpu_is("znver3") or __builtin_cpu_is("znver2") or __builtin_cpu_is("znver1")) return "zen";
     if(__builtin_cpu_supports("x86-64-v3")) return "haswell";
     #endif
@@ -107,7 +107,7 @@ std::string get_tblis_arch() {
 
 template<typename ea_type, typename eb_type, typename ec_type>
 void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-                    const tblis::label_vector &lb, const tblis::label_vector &lc, std::string_view arch) {
+                    const tblis::label_vector &lb, const tblis::label_vector &lc, const tblis::tblis_config_s *tblis_config) {
     const auto &ea_ref = static_cast<const ea_type &>(ea);
     const auto &eb_ref = static_cast<const eb_type &>(eb);
     auto       &ec_ref = static_cast<ec_type &>(ec);
@@ -123,13 +123,10 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     typename ea_type::Scalar alpha = 1.0;
     typename ec_type::Scalar beta  = 0.0;
 
-    tblis::tblis_tensor          A_s(alpha, ta);
-    tblis::tblis_tensor          B_s(tb);
-    tblis::tblis_tensor          C_s(beta, tc);
-    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
-    #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
-    tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-    #endif
+    tblis::tblis_tensor A_s(alpha, ta);
+    tblis::tblis_tensor B_s(tb);
+    tblis::tblis_tensor C_s(beta, tc);
+
     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
 }
 #endif
@@ -161,19 +158,23 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
 #if defined(DMRG_ENABLE_TBLIS)
     if constexpr(std::is_same_v<Scalar, real>){
         auto arch =  get_tblis_arch();
+        const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+        #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+        tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+        #endif
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
-            contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd", arch);
-            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl", arch);
-            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk", arch);
+            contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd", tblis_config);
+            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl", tblis_config);
+            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk", tblis_config);
         }
         else{
             Eigen::Tensor<Scalar, 4> mpsenvR(mps.dimension(0), mps.dimension(1), envR.dimension(1), envR.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvRmpo(mps.dimension(1), envR.dimension(1), mpo.dimension(0), mpo.dimension(3));
-            contract_tblis(mps, envR, mpsenvR, "abf", "fcd", "abcd", arch);
-            contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl", arch);
-            contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk", arch);
+            contract_tblis(mps, envR, mpsenvR, "abf", "fcd", "abcd", tblis_config);
+            contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl", tblis_config);
+            contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk", tblis_config);
         }
     }else{
         auto &threads = tenx::threads::get();
@@ -278,6 +279,11 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
     mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
     mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
+    auto arch =  get_tblis_arch();
+    // const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+    // #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+    // tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+    // #endif
     for(size_t idx = 0; idx < L; ++idx) {
         const auto &mpo = mpos_shf[idx];
         // Set up the dimensions for the reshape after the contraction
@@ -287,18 +293,18 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
         d3       = mps_tmp1.dimension(3);
         d4       = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
         d5       = mpo.dimension(3);       // The virtual bond of the current mpo
-        // if constexpr(std::is_same_v<T, real>) {
+        // if constexpr(std::is_same_v<Scalar, real>) {
         //     auto md  = mps_tmp1.dimensions();
         //     new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
         //     mps_tmp2.resize(new_shp6);
-        //     contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg");
+        //     contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg", tblis_config);
         //     new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
         //     mps_tmp1 = mps_tmp2.reshape(new_shp6);
         // } else {
-        new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-        mps_tmp2.resize(new_shp6);
-        mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
-        mps_tmp1                       = std::move(mps_tmp2);
+            new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+            mps_tmp2.resize(new_shp6);
+            mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
+            mps_tmp1                       = std::move(mps_tmp2);
         // }
     }
     d0 = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
@@ -382,7 +388,9 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     if constexpr(std::is_same_v<Scalar, real>){
         auto tmp = Eigen::Tensor<Scalar,4>(mpsL_dims[0], mpsL_dims[1], mpsR_dims[0], mpsR_dims[2]);
         #if defined(DMRG_ENABLE_TBLIS)
-        contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd", get_tblis_arch());
+        auto arch =  get_tblis_arch();
+        const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+        contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd", tblis_config);
         res.device(*threads->dev)  = tmp.shuffle(shuffle_idx).reshape(res_dims);
         #else
         res.device(*threads->dev) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
