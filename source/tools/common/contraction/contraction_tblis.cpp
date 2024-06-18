@@ -250,8 +250,7 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     if(mps_in.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps_in.dimensions(), envL.dimensions());
     if(mps_in.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps_in.dimensions(), envR.dimensions());
 
-    auto  mps_tmp1 = Eigen::Tensor<Scalar, 6>();
-    auto  mps_tmp2 = Eigen::Tensor<Scalar, 6>();
+
     auto  L        = mpos_shf.size();
 
     auto mpodimprod = [&](size_t fr, size_t to) -> long {
@@ -269,7 +268,13 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     // Since the site indices are contracted left to right, we do not need any shuffles in this direction.
 
     // Contract left to right
-
+    #if defined(DMRG_ENABLE_TBLIS)
+    auto                         arch         = get_tblis_arch();
+    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+    #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+    tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+    #endif
+    #endif
     auto d0       = mpodimprod(0, 1); // Split 0 --> 0,1
     auto d1       = mpodimprod(1, L); // Split 0 --> 0,1
     auto d2       = mps_in.dimension(2);
@@ -277,13 +282,18 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     auto d4       = envL.dimension(2);
     auto d5       = 1l; // A new dummy index
     auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+    auto  mps_tmp1 = Eigen::Tensor<Scalar, 6>();
+    auto  mps_tmp2 = Eigen::Tensor<Scalar, 6>();
     mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
-    mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
-    auto arch =  get_tblis_arch();
-    // const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
-    // #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
-    // tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-    // #endif
+    #if defined(DMRG_ENABLE_TBLIS)
+    if constexpr(std::is_same_v<Scalar, real>) {
+        auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0 * d1, d2, d3, d4 * d5});
+        contract_tblis(mps_in, envL, mps_tmp1_map4, "afb", "fcd", "abcd", tblis_config);
+    } else
+    #endif
+    {
+        mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
+    }
     for(size_t idx = 0; idx < L; ++idx) {
         const auto &mpo = mpos_shf[idx];
         // Set up the dimensions for the reshape after the contraction
@@ -293,26 +303,36 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
         d3       = mps_tmp1.dimension(3);
         d4       = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
         d5       = mpo.dimension(3);       // The virtual bond of the current mpo
-        // if constexpr(std::is_same_v<Scalar, real>) {
-        //     auto md  = mps_tmp1.dimensions();
-        //     new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
-        //     mps_tmp2.resize(new_shp6);
-        //     contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg", tblis_config);
-        //     new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-        //     mps_tmp1 = mps_tmp2.reshape(new_shp6);
-        // } else {
+        #if defined(DMRG_ENABLE_TBLIS)
+        if constexpr(std::is_same_v<Scalar, real>) {
+            auto md  = mps_tmp1.dimensions();
+            new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
+            mps_tmp2.resize(new_shp6);
+            contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg", tblis_config);
+            new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
+            mps_tmp1 = mps_tmp2.reshape(new_shp6);
+        } else
+        #endif
+        {
             new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
             mps_tmp2.resize(new_shp6);
             mps_tmp2.device(*threads->dev) = mps_tmp1.contract(mpo, tenx::idx({0, 5}, {0, 2})).reshape(new_shp6);
             mps_tmp1                       = std::move(mps_tmp2);
-        // }
+        }
     }
     d0 = mps_tmp1.dimension(0) * mps_tmp1.dimension(1) * mps_tmp1.dimension(2); // idx 0 and 1 should have dim == 1
     d1 = mps_tmp1.dimension(3);
     d2 = mps_tmp1.dimension(4);
     d3 = mps_tmp1.dimension(5);
-    mps_out.device(*threads->dev) =
-        mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
+    #if defined(DMRG_ENABLE_TBLIS)
+    if constexpr(std::is_same_v<Scalar, real>) {
+        auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0, d1, d2, d3});
+        contract_tblis(mps_tmp1_map4, envR, mps_out, "qjir", "qkr", "ijk", tblis_config);
+    } else
+    #endif
+    {
+        mps_out.device(*threads->dev) = mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
+    }
 }
 
 using namespace tools::common::contraction;

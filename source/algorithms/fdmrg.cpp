@@ -171,6 +171,7 @@ void fdmrg::run_algorithm() {
         if(status.algo_stop != AlgorithmStop::NONE) break;
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
+        update_dmrg_blocksize();
         try_projection();
         set_energy_shift_mpo(); // Shift the energy in the mpos to get rid of critical cancellation (shifts by the current energy)
         rebuild_tensors();

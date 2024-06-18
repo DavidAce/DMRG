@@ -126,10 +126,10 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     auto t_split = tid::tic_scope("split", tid::level::highest);
 
     // Set up the svd settings if not given explicitly
-    if(not svd_cfg) svd_cfg = svd::config();
+    svd_cfg                   = svd_cfg.value_or(svd::config());
     svd_cfg->truncation_limit = svd_cfg->truncation_limit.value_or(settings::precision::svd_truncation_lim);
     svd_cfg->switchsize_gesdd = svd_cfg->switchsize_gesdd.value_or(settings::precision::svd_switchsize_bdc);
-    if(not svd_cfg->svd_save.has_value()) svd_cfg->svd_save = settings::precision::svd_save_fail ? svd::save::FAIL : svd::save::NONE;
+    svd_cfg->svd_save         = svd_cfg->svd_save.value_or(settings::precision::svd_save_fail ? svd::save::FAIL : svd::save::NONE);
 
     // Define dimensions and positions after the desired split
     long chiL = multisite_mps.dimension(1);

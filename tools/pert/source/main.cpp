@@ -15,6 +15,7 @@ struct PertData {
     long   seed            = 0;
     long   model_size      = 0;
     double delta           = 0.0;
+    double delta_avg       = 0.0;
     double g               = 0;
     double g_pert          = 0;
     double energy          = 0;
@@ -25,21 +26,22 @@ struct PertData {
     double variance_change = 0;
 };
 struct spins {
-    double x,y,z;
+    double x, y, z;
 };
 
 int main() {
     tools::log                       = tools::Logger::setLogger("pert", 2, true);
     settings::threading::num_threads = 8; // omp_get_max_threads();
     settings::configure_threads();
-    double         g_perturb = 1e-5;
-    h5pp::fs::path h5dir     = "/mnt/WDB-AN1500/mbl_transition/xdmrg3-letsgo/output/L12/g0.000";
-    auto           h5tgt     = h5pp::File("../../../../output/pert-L12-g1e-5.h5", h5pp::FileAccess::REPLACE);
+    double         g_perturb = 1e-6;
+    h5pp::fs::path h5dir     = "/mnt/WDB-AN1500/mbl_transition/xdmrg3-letsgo/output/L16/g0.000";
+    auto           h5tgt     = h5pp::File("../../../../output/pert-L16-g1e-6.h5", h5pp::FileAccess::REPLACE);
 
     h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, sizeof(PertData));
     H5Tinsert(h5_type, "seed", HOFFSET(PertData, seed), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "model_size", HOFFSET(PertData, model_size), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "delta", HOFFSET(PertData, delta), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "delta_avg", HOFFSET(PertData, delta_avg), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "g", HOFFSET(PertData, g), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "g_pert", HOFFSET(PertData, g_pert), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "energy", HOFFSET(PertData, energy), H5T_NATIVE_DOUBLE);
@@ -64,12 +66,15 @@ int main() {
         auto ene_old = h5src.readTableField<double>("xDMRG/state_emid/measurements", "energy", h5pp::TableSelection::LAST);
         auto spinZ   = h5src.readTableField<spins>("xDMRG/state_emid/measurements", "spin_global", h5pp::TableSelection::LAST).z;
 
-        auto seed        = h5src.readDataset<long>("common/seed");
-        auto model_size  = h5src.readAttribute<long>("xDMRG/model/hamiltonian", "model_size");
-        auto model_type  = h5src.readAttribute<ModelType>("xDMRG/model/hamiltonian", "model_type");
-        auto position    = h5src.readAttribute<long>("xDMRG/state_emid/mps", "position");
-        auto model_g     = h5src.readTableField<double>("xDMRG/model/hamiltonian", "g", h5pp::TableSelection::FIRST);
-        auto model_delta = h5src.readTableField<double>("xDMRG/model/hamiltonian", "delta", h5pp::TableSelection::FIRST);
+        auto seed            = h5src.readDataset<long>("common/seed");
+        auto model_size      = h5src.readAttribute<long>("xDMRG/model/hamiltonian", "model_size");
+        auto model_type      = h5src.readAttribute<ModelType>("xDMRG/model/hamiltonian", "model_type");
+        auto position        = h5src.readAttribute<long>("xDMRG/state_emid/mps", "position");
+        auto model_g         = h5src.readTableField<double>("xDMRG/model/hamiltonian", "g", h5pp::TableSelection::FIRST);
+        auto model_delta     = h5src.readTableField<double>("xDMRG/model/hamiltonian", "delta", h5pp::TableSelection::FIRST);
+        auto model_hrand     = h5src.readTableField<Eigen::VectorXd>("xDMRG/model/hamiltonian", "h_rand", 0, model_size);
+        auto model_Jrand     = h5src.readTableField<Eigen::VectorXd>("xDMRG/model/hamiltonian", "J_rand", 0, model_size - 1);
+        auto model_delta_avg = std::log(model_Jrand.mean()) - std::log(model_hrand.mean());
 
         settings::model::model_size            = model_size;
         settings::model::model_type            = model_type;
@@ -109,12 +114,14 @@ int main() {
         model.build_mpo_squared();
 
         auto mposVar_pert = model.get_compressed_mpos_squared(MposWithEdges::ON);
-        auto var_pert     = std::abs(tools::finite::measure::expectation_value(state, state, mposVar_pert)); // Has reduced energy so this is immediately the variance
+        auto var_pert =
+            std::abs(tools::finite::measure::expectation_value(state, state, mposVar_pert)); // Has reduced energy so this is immediately the variance
 
         auto ene_chn = std::real(ene_pert - ene_old);
         auto var_chn = std::abs(std::abs(var_pert) - std::abs(var_old));
 
-        tools::log->info("seed {} | change energy {:.3e} | variance {:.3e} -> {:.3e} change {:.3e}", seed, ene_chn, var_old, var_pert, var_chn);
+        tools::log->info("seed {} | delta {:.3e} -> {:.3e} | change energy {:.3e} | variance {:.3e} -> {:.3e} change {:.3e}", seed, model_delta,
+                         model_delta_avg, ene_chn, var_old, var_pert, var_chn);
 
         auto tablename = fmt::format("L{}-d{:.2f}-gpert{:.1e}", model_size, model_delta, g_perturb);
         if(not h5tgt.linkExists(tablename)) { h5tgt.createTable(h5_type, tablename, "PertData", 100, 3); }
@@ -122,6 +129,7 @@ int main() {
         pert.seed            = seed;
         pert.model_size      = model_size;
         pert.delta           = model_delta;
+        pert.delta_avg       = model_delta_avg;
         pert.g               = model_g;   // The perturbation
         pert.g_pert          = g_perturb; // The perturbation
         pert.energy          = std::real(ene_old);

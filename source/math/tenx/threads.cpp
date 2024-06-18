@@ -35,6 +35,7 @@ namespace tenx::threads {
 
     const std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept {
         if(not internal::singleThreadWrapper) internal::singleThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(1);
+        if(internal::num_threads == 1) return internal::singleThreadWrapper;
     #if defined(_OPENMP)
         if(omp_in_parallel()) { // Avoid simultaneous parallelization
             return internal::singleThreadWrapper;
@@ -43,18 +44,17 @@ namespace tenx::threads {
         if(not internal::multiThreadWrapper or //
            (internal::multiThreadWrapper and static_cast<int>(internal::num_threads) != internal::multiThreadWrapper->dev->numThreads()))
             internal::multiThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(internal::num_threads);
-          return internal::multiThreadWrapper;
-
+        return internal::multiThreadWrapper;
     }
 
 #else
-    internal::DefaultDeviceWrapper::DefaultDeviceWrapper(int nt) : dev(std::make_unique<Eigen::DefaultDevice>()) {}
+    internal::DefaultDeviceWrapper::DefaultDeviceWrapper() : dev(std::make_unique<Eigen::DefaultDevice>()) {}
 
     void                                  setNumThreads([[maybe_unused]] int num) {}
     std::unique_ptr<Eigen::DefaultDevice> dev;
-    Eigen::DefaultDevice                 &getDevice() {
-        if(not dev) dev = std::make_unique<Eigen::DefaultDevice>();
-        return *dev;
+    const std::unique_ptr<internal::DefaultDeviceWrapper>                 &get() noexcept {
+        if(not internal::defaultDeviceWrapper) internal::defaultDeviceWrapper = std::make_unique<internal::DefaultDeviceWrapper>();
+        return internal::defaultDeviceWrapper;
     }
 
 #endif

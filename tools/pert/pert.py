@@ -13,7 +13,8 @@ for h5file, marker, color, label in zip(h5files, ['o', 'v', 'x'], ['blue', 'gree
             var_old = np.abs(val['variance'][()])
             var_prt = np.abs(val['variance_pert'][()])
             varch_avg = np.median(np.abs(var_prt))
-            varch_ste = np.std(np.abs(var_prt))/np.sqrt(varch_num)
+            varch_std = np.std(np.abs(var_prt))
+            varch_ste = varch_std/np.sqrt(varch_num)
 
             enech_num = len(val['energy'][()])
             ene_old = np.abs(val['energy'][()])

@@ -697,27 +697,75 @@ void AlgorithmFinite::update_dmrg_blocksize() {
     bool info_stuck    = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFOSTUCK) and has_got_stuck;
     bool info_default  = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFODEF);
 
-    auto        old_bsize = dmrg_blocksize;
+    auto old_bsize = dmrg_blocksize;
+    // tensors.state->clear_measurements();
+    // auto infoperscale_16 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(16, 1e-8), UseCache::TRUE);
+    // auto centerofmass_16 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(16, 1e-8), UseCache::TRUE);
+    // tensors.state->clear_measurements();
+    //
+    // auto infoperscale_32 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(32, 1e-8), UseCache::TRUE);
+    // auto centerofmass_32 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(32, 1e-8), UseCache::TRUE);
+    // tensors.state->clear_measurements();
+    //
+    // auto infoperscale_64 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(64, 1e-8), UseCache::TRUE);
+    // auto centerofmass_64 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(64, 1e-8), UseCache::TRUE);
+    // tensors.state->clear_measurements();
+    //
+    // auto infoperscale_128 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(128, 1e-8), UseCache::TRUE);
+    // auto centerofmass_128 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(128, 1e-8), UseCache::TRUE);
+    // tensors.state->clear_measurements();
+    //
+    // auto infoperscale_256 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
+    // auto centerofmass_256 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
+    //
+    // auto infoperscale_512 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(512, 1e-8), UseCache::TRUE);
+    // auto centerofmass_512 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(512, 1e-8), UseCache::TRUE);
+    //
+    //
+    // auto info_xi_geom_512 = tools::finite::measure::information_xi_from_geometric_dist(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
+    // auto info_xi_expf_512 = tools::finite::measure::information_xi_from_exp_fit(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
+    // auto info_xi_avgs_512 = tools::finite::measure::information_xi_from_avg_log_slope(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
+    //
+    // tensors.state->clear_measurements();
+
+    // tools::log->info("info per scale svd 16     : {::.16f}", infoperscale_16);
+    // tools::log->info("info per scale svd 32     : {::.16f}", infoperscale_32);
+    // tools::log->info("info per scale svd 64     : {::.16f}", infoperscale_64);
+    // tools::log->info("info per scale svd 128    : {::.16f}", infoperscale_128);
+    // tools::log->info("info per scale svd 256    : {::.16f}", infoperscale_256);
+    // tools::log->info("info per scale svd 512    : {::.16f}", infoperscale_512);
+
+
+    // tools::log->info("info center of mass chi 16     : {:.16f}", centerofmass_16);
+    // tools::log->info("info center of mass chi 32     : {:.16f}", centerofmass_32);
+    // tools::log->info("info center of mass chi 64     : {:.16f}", centerofmass_64);
+    // tools::log->info("info center of mass chi 128    : {:.16f}", centerofmass_128);
+    // tools::log->info("info center of mass chi 256    : {:.16f}", centerofmass_256);
+    // tools::log->info("info center of mass chi 512    : {:.16f}", centerofmass_512);
+    // tools::log->info("info center of mass chi 512    : {:.16f}", centerofmass_512);
+    // tools::log->info("info xi    geom. dist   512    : {:.16f}", info_xi_geom_512);
+    // tools::log->info("info xi    exp.  fit    512    : {:.16f}", info_xi_expf_512);
+    // tools::log->info("info xi    avg.log.diff 512    : {:.16f}", info_xi_avgs_512);
+    auto see = tools::finite::measure::subsystem_entanglement_entropies_fast_log2(*tensors.state, 1e-1, svd::config(256, 1e-8), UseCache::FALSE);
     std::string msg;
     if(max_varsat or max_stuck) {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        double blocksize = tools::finite::measure::information_scale_by_frac(*tensors.state, 0.5) * std::log(2);
-
+        double icom = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(256,1e-8));
+        double blocksize = std::round(1+icom);
         if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-            blocksize = tools::finite::measure::information_scale_by_frac(*tensors.state, 0.75); // Scale to find 90% of all bits
-            msg += fmt::format(" | scale 75% ({:.1f}) when saturated >= {} iters", blocksize, settings::strategy::iter_max_stuck / 2);
+            blocksize += std::ceil(2+icom);
+            msg += fmt::format(" | center of mass + 2 when stuck >= {} iters", blocksize, settings::strategy::iter_max_stuck / 2);
         } else if(status.algorithm_has_stuck_for > 0) {
-            blocksize = tools::finite::measure::information_scale_by_frac(*tensors.state, 0.5); // Scale to find 75% of all bits
-            msg += fmt::format(" | scale 50% ({:.1f}) when saturated >= {} iters", blocksize, settings::strategy::iter_max_saturated);
+            blocksize += std::ceil(1+icom);
+            msg += fmt::format(" | center of mass + 1 when stuck", blocksize);
         } else {
             // Same as the characteristic length scale "xi" when the info decay is exponential
             msg += fmt::format(" | scale xi ({:.1f}) by default", blocksize);
         }
-
         dmrg_blocksize =
-            std::clamp<size_t>(static_cast<size_t>(std::ceil(blocksize)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+            std::clamp<size_t>(static_cast<size_t>(std::round(blocksize)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
 
     } else {
         dmrg_blocksize = settings::strategy::dmrg_min_blocksize;

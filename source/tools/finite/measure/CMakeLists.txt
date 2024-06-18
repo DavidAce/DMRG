@@ -3,6 +3,7 @@ add_source_target(dmrg-tools-finite-measure
         measure.cpp
         measure-parity-components.cpp
         entropy.cpp
+        information.cpp
         OBJECT_LINK_LIBRARIES
         dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES

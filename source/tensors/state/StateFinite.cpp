@@ -496,7 +496,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 bool        append_L  = mps.get_label() == "A" and site + 1 < length and site == sites.back();
                 if(prepend_L) {
                     // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
-                    tools::log->debug("Prepending L to B site {}", site);
+                    tools::log->trace("Prepending L to B site {}", site);
                     auto        t_prepend = tid::tic_scope("prepend", tid::level::higher);
                     const auto &mps_left  = get_mps_site(site - 1);
                     const auto  L         = Eigen::Tensor<real, 1>(mps_left.isCenter() ? mps_left.get_LC().real() : mps_left.get_L().real());
@@ -506,7 +506,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 }
                 if(append_L) {
                     // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
-                    tools::log->debug("Appending L to A site {}", site);
+                    tools::log->trace("Appending L to A site {}", site);
                     auto        t_append  = tid::tic_scope("append", tid::level::higher);
                     const auto &mps_right = get_mps_site(site + 1);
                     const auto &L         = Eigen::Tensor<real, 1>(mps_right.get_L().real());

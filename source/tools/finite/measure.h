@@ -19,6 +19,8 @@ struct env_pair;
 class EnvEne;
 class EnvVar;
 
+enum class UseCache { TRUE, FALSE };
+
 namespace tools::finite::measure {
     struct LocalObservableOp {
         Eigen::Tensor<cplx, 2> op;
@@ -54,27 +56,37 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double spin_alignment                              (const StateFinite & state, std::string_view axis);
     [[nodiscard]] extern int    spin_sign                                   (const StateFinite & state, std::string_view axis);
     template<typename Scalar = cplx>
-    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                           (const std::vector<std::unique_ptr<MpsSite>> & mps_sites, std::string_view name);
-    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                           (const StateFinite & state);
-    [[nodiscard]] extern double entanglement_entropy                                (const Eigen::Tensor<cplx,1> & bond);
-    [[nodiscard]] extern double entanglement_entropy_current                        (const StateFinite & state);
-    [[nodiscard]] extern double entanglement_entropy_midchain                       (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> entanglement_entropies                 (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> entanglement_entropies_log2            (const StateFinite & state);
-    [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies_log2      (const StateFinite & state);
-    [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies_swap_log2 (const StateFinite & state, const svd::config &svd_cfg);
-    [[nodiscard]] extern Eigen::ArrayXXd information_lattice                        (const StateFinite & state);
-    [[nodiscard]] extern Eigen::ArrayXd  information_per_scale                      (const StateFinite & state);
-    [[nodiscard]] extern double          information_scale_by_frac                  (const StateFinite & state, double fraction);
-    [[nodiscard]] extern double          information_typ_scale                      (const StateFinite & state);
-    [[nodiscard]] extern double renyi_entropy_midchain                              (const StateFinite & state, double q);
-    [[nodiscard]] extern std::vector<double> renyi_entropies                        (const StateFinite & state, double q);
-    [[nodiscard]] extern double number_entropy_current                              (const StateFinite & state);
-    [[nodiscard]] extern double number_entropy_midchain                             (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> number_entropies                       (const StateFinite & state);
-    [[nodiscard]] extern std::array<double,3> spin_components                       (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> truncation_errors                      (const StateFinite & state);
-    [[nodiscard]] extern std::vector<double> truncation_errors_active               (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                               (const std::vector<std::unique_ptr<MpsSite>> & mps_sites, std::string_view name);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                               (const StateFinite & state);
+    [[nodiscard]] extern double entanglement_entropy                                    (const Eigen::Tensor<cplx,1> & bond);
+    [[nodiscard]] extern double entanglement_entropy_current                            (const StateFinite & state);
+    [[nodiscard]] extern double entanglement_entropy_midchain                           (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> entanglement_entropies                     (const StateFinite & state);
+    [[nodiscard]] extern double              entanglement_entropy_log2                  (const StateFinite & state, size_t nsites);
+    [[nodiscard]] extern std::vector<double> entanglement_entropies_log2                (const StateFinite & state);
+    [[nodiscard]] extern double              subsystem_entanglement_entropy_log2        (const StateFinite & state, const std::vector<size_t> & sites);
+    [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_log2      (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_swap_log2 (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_fast_log2 (const StateFinite & state, double max_bit_error, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern Eigen::ArrayXXd     information_lattice                        (const Eigen::ArrayXXd & SEE);
+    [[nodiscard]] extern Eigen::ArrayXXd     information_lattice                        (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern Eigen::ArrayXd      information_per_scale                      (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              information_center_of_mass                 (const Eigen::ArrayXXd & information_lattice);
+    [[nodiscard]] extern double              information_center_of_mass                 (const Eigen::ArrayXd & information_per_scale);
+    [[nodiscard]] extern double              information_center_of_mass                 (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              information_xi_from_geometric_dist         (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              information_xi_from_avg_log_slope          (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              information_xi_from_exp_fit                (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              information_scale_by_frac                  (const StateFinite & state, double fraction, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              information_typ_scale                      (const StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, UseCache uc = UseCache::TRUE);
+    [[nodiscard]] extern double              renyi_entropy_midchain                     (const StateFinite & state, double q);
+    [[nodiscard]] extern std::vector<double> renyi_entropies                            (const StateFinite & state, double q);
+    [[nodiscard]] extern double              number_entropy_current                     (const StateFinite & state);
+    [[nodiscard]] extern double              number_entropy_midchain                    (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> number_entropies                           (const StateFinite & state);
+    [[nodiscard]] extern std::array<double,3> spin_components                           (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> truncation_errors                          (const StateFinite & state);
+    [[nodiscard]] extern std::vector<double> truncation_errors_active                   (const StateFinite & state);
 
     [[nodiscard]] double energy_minus_energy_shift               (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] double energy                                  (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);

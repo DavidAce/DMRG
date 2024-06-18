@@ -28,9 +28,17 @@ namespace tenx {
 //        internal::ThreadPoolWrapper &get() noexcept;
         const std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept;
 #else
-        extern std::unique_ptr<Eigen::DefaultDevice> dev;
+      namespace internal {
+        struct DefaultDeviceWrapper {
+          std::unique_ptr<Eigen::DefaultDevice> dev;
+          DefaultDeviceWrapper();
+        };
+        inline unsigned int num_threads = 1;
+        extern std::unique_ptr<DefaultDeviceWrapper> defaultDeviceWrapper;
+      }
+
         void                                         setNumThreads([[maybe_unused]] int num);
-        Eigen::DefaultDevice                        &getDevice();
+        const std::unique_ptr<internal::DefaultDeviceWrapper> &get() noexcept;
 #endif
 
     }
