@@ -133,7 +133,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::table::expectation_values_spin_xyz::policy"            , storage::table::expectation_values_spin_xyz::policy);
     dmrg_config.load_parameter("storage::table::random_unitary_circuit::policy"                 , storage::table::random_unitary_circuit::policy);
     dmrg_config.load_parameter("storage::table::information_per_scale::policy"                  , storage::table::information_per_scale::policy);
-    dmrg_config.load_parameter("storage::table::information_typ_scale::policy"                  , storage::table::information_typ_scale::policy);
+    dmrg_config.load_parameter("storage::table::information_center_of_mass::policy"             , storage::table::information_center_of_mass::policy);
     dmrg_config.load_parameter("storage::dataset::opdm::policy"                                 , storage::dataset::opdm::policy);
     dmrg_config.load_parameter("storage::dataset::opdm::chunksize"                              , storage::dataset::opdm::chunksize);
     dmrg_config.load_parameter("storage::dataset::information_lattice::policy"                  , storage::dataset::information_lattice::policy);
@@ -141,6 +141,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::dataset::lbit_analysis::policy"                        , storage::dataset::lbit_analysis::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::policy"     , storage::dataset::subsystem_entanglement_entropies::policy);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::chunksize"  , storage::dataset::subsystem_entanglement_entropies::chunksize);
+    dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::bits_err"   , storage::dataset::subsystem_entanglement_entropies::bits_err);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::bond_lim"   , storage::dataset::subsystem_entanglement_entropies::bond_lim);
     dmrg_config.load_parameter("storage::dataset::subsystem_entanglement_entropies::trnc_lim"   , storage::dataset::subsystem_entanglement_entropies::trnc_lim);
     dmrg_config.load_parameter("storage::dataset::number_probabilities::policy"                 , storage::dataset::number_probabilities::policy);

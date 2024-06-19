@@ -27,9 +27,9 @@ enum class BlockSizePolicy {
     MAXDEF     = 1,  /*!< Default to dmrg_max_blocksize */
     MAXVARSAT  = 2,  /*!< Set dmrg_max_blocksize when the energy variance has saturated */
     MAXSTUCK   = 4,  /*!< Set dmrg_max_blocksize when stuck */
-    INFODEF    = 8, /*!< Default to the ceil of "information_typ_scale" on every iteration  */
-    INFOVARSAT = 16, /*!< Default to the ceil of "information_typ_scale" when the energy variance has saturated */
-    INFOSTUCK  = 32, /*!< Default to the ceil of "information_typ_scale" when stuck  */
+    INFODEF    = 8, /*!< Default to the ceil of "information_center_of_mass" on every iteration  */
+    INFOVARSAT = 16, /*!< Default to the ceil of "information_center_of_mass" when the energy variance has saturated */
+    INFOSTUCK  = 32, /*!< Default to the ceil of "information_center_of_mass" when stuck  */
     allow_bitops
 };
 enum class UpdatePolicy {

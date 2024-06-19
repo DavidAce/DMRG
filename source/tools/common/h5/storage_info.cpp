@@ -37,7 +37,7 @@ StoragePolicy StorageInfo::get_table_storage_policy(std::string_view table_path)
     if(table_path.find("expectation_values_s")        != std::string_view::npos) return expectation_values_spin_xyz::policy;
     if(table_path.find("random_unitary_circuit")      != std::string_view::npos) return random_unitary_circuit::policy;
     if(table_path.find("information_per_scale")       != std::string_view::npos) return information_per_scale::policy;
-    if(table_path.find("information_typ_scale")       != std::string_view::npos) return information_typ_scale::policy;
+    if(table_path.find("information_center_of_mass")  != std::string_view::npos) return information_center_of_mass::policy;
     throw except::logic_error("Could not match storage policy for table: [{}]", table_path);
     /* clang-format on */
 }

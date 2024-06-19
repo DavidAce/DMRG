@@ -66,7 +66,7 @@ namespace tools::finite::h5 {
         extern void subsystem_entanglement_entropies(h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void information_lattice             (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void information_per_scale           (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
-        extern void information_typ_scale           (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
+        extern void information_center_of_mass      (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void renyi_entropies                 (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void number_entropies                (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void expectations                    (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);

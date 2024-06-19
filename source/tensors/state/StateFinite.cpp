@@ -141,12 +141,12 @@ template long               StateFinite::get_position<long>() const;
 template int                StateFinite::get_position<int>() const;
 template unsigned long long StateFinite::get_position<unsigned long long>() const; // hsize_t from hdf5
 
-long StateFinite::find_largest_bond() const {
+long StateFinite::get_largest_bond() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
 }
 
-double StateFinite::find_smallest_schmidt_value() const {
+double StateFinite::get_smallest_schmidt_value() const {
     double schmidt_min = 1;
     for(const auto &mps : mps_sites) {
         const auto &L = mps->get_L();
@@ -552,10 +552,58 @@ const Eigen::Tensor<cplx, 3> &StateFinite::get_multisite_mps() const {
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vector<size_t> &sites) const {
+    auto t_rho = tid::tic_scope("rho");
     auto asites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
-    if(sites != asites) throw except::logic_error("get_reduced_density_matrix expected contiguous sites. Got: {}", sites);
-    auto mps = get_multisite_mps<Scalar>(sites, true);
-    return tools::common::contraction::contract_mps_partial<std::array{1l, 2l}>(mps);
+    if(sites == asites) {
+        // We have a contiguous set
+        auto mps = get_multisite_mps<Scalar>(sites, true);
+        return tools::common::contraction::contract_mps_partial<std::array{1l, 2l}>(mps);
+    } else {
+        // Note that for discontiguous sets, we expect the front and back sites to be at the edges!
+        auto &threads   = tenx::threads::get();
+        auto  rho_temp  = Eigen::Tensor<Scalar, 4>(); // Will accumulate the sites
+        auto  rho_temp2 = Eigen::Tensor<Scalar, 4>();
+        auto  M         = Eigen::Tensor<Scalar, 3>();
+        for(size_t i = sites.front(); i <= sites.back(); ++i) {
+            const auto &mps = get_mps_site(i);
+            if(i == sites.front()) {
+                if constexpr(std::is_same_v<Scalar, real>) {
+                    M = mps.get_label() == "B" ? get_multisite_mps({sites.front()}).real()
+                                               : mps.get_M().real(); // Could be an A, AC or B. Either way we need it to include the left schmidt values
+                } else {
+                    M = mps.get_label() == "B" ? get_multisite_mps({sites.front()})
+                                               : mps.get_M(); // Could be an A, AC or B. Either way we need it to include the left schmidt values
+                }
+                auto dim = M.dimensions();
+                rho_temp.resize(std::array{dim[0], dim[0], dim[2], dim[2]});
+                rho_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({1}, {1})).shuffle(std::array{0, 2, 1, 3});
+            } else {
+                if constexpr(std::is_same_v<Scalar, real>) {
+                    M = (i == sites.back() and mps.get_label() == "A") ? get_multisite_mps({sites.back()}).real() : mps.get_M().real();
+                    M = mps.get_M().real();
+                } else {
+                    M = (i == sites.back() and mps.get_label() == "A") ? get_multisite_mps({sites.back()}) : mps.get_M();
+                }
+                auto mps_dim  = M.dimensions();
+                auto rho_dim  = rho_temp.dimensions();
+                bool do_trace = std::find(sites.begin(), sites.end(), i) == sites.end();
+                if(do_trace) {
+                    auto new_dim = std::array{rho_dim[0], rho_dim[1], mps_dim[2], mps_dim[2]};
+                    rho_temp2.resize(new_dim);
+                    rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {1})).contract(M, tenx::idx({2, 3}, {1, 0}));
+                } else {
+                    auto new_dim = std::array{rho_dim[0] * mps_dim[0], rho_dim[1] * mps_dim[0], mps_dim[2], mps_dim[2]};
+                    rho_temp2.resize(new_dim);
+                    rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {1}))
+                                                          .contract(M, tenx::idx({2}, {1}))
+                                                          .shuffle(std::array{0, 2, 1, 4, 3, 5})
+                                                          .reshape(new_dim);
+                }
+                rho_temp = std::move(rho_temp2);
+            }
+        }
+        return rho_temp.trace(std::array{2, 3});
+    }
 }
 
 template Eigen::Tensor<real, 2> StateFinite::get_reduced_density_matrix<real>(const std::vector<size_t> &sites) const;

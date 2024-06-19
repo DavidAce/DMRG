@@ -150,7 +150,7 @@ namespace settings {
         namespace table::information_per_scale{
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
-        namespace table::information_typ_scale{
+        namespace table::information_center_of_mass{
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
         namespace table::expectation_values_spin_xyz{
@@ -163,9 +163,10 @@ namespace settings {
             inline StoragePolicy policy = StoragePolicy::INIT;
         }
         namespace dataset::subsystem_entanglement_entropies{
-        /*! Entanglement entropy of all contiguous subsystems up to length L/2 + 1 */
+        /*! Entanglement entropy (log2) of all contiguous subsystems */
             inline StoragePolicy policy = StoragePolicy::FINISH;
             inline unsigned long chunksize = 10;
+            inline auto bits_err = 1e-10; /*! Positive for relative error = 1-bits_found/L, negative for absolute error = L-bits_found */
             inline long bond_lim = 2048l; /*!< Bond dimension limit during swap operations  */
             inline auto trnc_lim = 1e-8;  /*!< Truncation error limit during swap operations  */
         }

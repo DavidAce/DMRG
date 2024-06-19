@@ -1322,7 +1322,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
         lbit_corrmat.setZero();
         StateFinite state_ud = state;
         tools::finite::mps::apply_circuit(state_ud, unitary_circuit, CircuitOp::ADJ, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
-        bond_maxu = std::max<long>(bond_maxu, state_ud.find_largest_bond());
+        bond_maxu = std::max<long>(bond_maxu, state_ud.get_largest_bond());
         t_r.toc();
 
         for(long i = 0; i < ssites; i++) {
@@ -1332,7 +1332,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
             t_i_u.tic();
 
             tools::finite::mps::apply_circuit(state_i, unitary_circuit, CircuitOp::NONE, false, GateMove::ON, svd_cfg); // Apply U on state_i
-            bond_maxi = std::max<long>(bond_maxi, state_i.find_largest_bond());
+            bond_maxi = std::max<long>(bond_maxi, state_i.get_largest_bond());
             t_i_u.toc();
             t_i.toc();
             for(long j = 0; j < ssites; j++) {
@@ -1353,7 +1353,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
 
                 StateFinite state_j = state;
                 state_j.get_mps_site(j).apply_mpo(szj); // Apply σ^z_j on state j
-                bond_maxj          = std::max<long>(bond_maxj, state_j.find_largest_bond());
+                bond_maxj          = std::max<long>(bond_maxj, state_j.get_largest_bond());
                 auto sziszj_ev     = tools::finite::ops::overlap(state_i, state_j);
                 lbit_corrmat(i, j) = sziszj_ev;
                 t_j.toc();
@@ -1671,14 +1671,14 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
     state_real.set_name("state_real");
     state_real.clear_cache();
     state_real.clear_measurements();
-    svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
+    svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.get_largest_bond()) * 4);
     tools::log->debug("Transforming {} to {} using {} unitary mpo layers Ψ = U|Ψ'⟩", state_lbit.get_name(), state_real.get_name(),
                       unitary_gates_mpo_layers.size());
     for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
         tools::finite::ops::apply_mpos(state_real, mpo_layer, ledge, redge, true);
         if((idx_layer + 1) % 1 == 0) {
             tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::ALWAYS);
-            svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
+            svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.get_largest_bond()) * 4);
         }
     }
 
@@ -1695,7 +1695,7 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
             tools::finite::ops::apply_mpos(state_lbit_debug, mpo_layer, ledge, redge, false);
             if((idx_layer + 1) % 1 == 0) {
                 tools::finite::mps::normalize_state(state_lbit_debug, svd_cfg, NormPolicy::ALWAYS);
-                svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 2);
+                svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.get_largest_bond()) * 2);
             }
         }
         tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
@@ -1745,14 +1745,14 @@ StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, con
     state_lbit.set_name("state_lbit");
     state_lbit.clear_cache();
     state_lbit.clear_measurements();
-    svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
+    svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_lbit.get_largest_bond()) * 4);
     tools::log->info("Transforming {} to {} using {} unitary mpo layers", state_real.get_name(), state_lbit.get_name(), unitary_gates_mpo_layers.size());
     for(const auto &[idx_layer, mpo_layer] : iter::enumerate_reverse(unitary_gates_mpo_layers)) {
         tools::finite::ops::apply_mpos(state_lbit, mpo_layer, ledge, redge, false);
         if((idx_layer) % 1 == 0) {
-            tools::log->info("Normalizing with rank_max {} | max bond {}", svd_cfg.rank_max.value(), state_lbit.find_largest_bond());
+            tools::log->info("Normalizing with rank_max {} | max bond {}", svd_cfg.rank_max.value(), state_lbit.get_largest_bond());
             tools::finite::mps::normalize_state(state_lbit, svd_cfg, NormPolicy::ALWAYS);
-            svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
+            svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_lbit.get_largest_bond()) * 4);
         }
     }
 

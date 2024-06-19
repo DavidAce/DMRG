@@ -36,5 +36,5 @@ struct MeasurementsStateFinite {
     std::optional<Eigen::ArrayXXd>        subsystem_entanglement_entropies = std::nullopt;
     std::optional<Eigen::ArrayXXd>        information_lattice              = std::nullopt;
     std::optional<Eigen::ArrayXd>         information_per_scale            = std::nullopt;
-    std::optional<double>                 information_typ_scale            = std::nullopt;
+    std::optional<double>                 information_center_of_mass       = std::nullopt;
 };

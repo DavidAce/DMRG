@@ -85,8 +85,8 @@ class StateFinite {
     [[nodiscard]] long                          size_1site() const;
     [[nodiscard]] long                          size_2site() const;
     [[nodiscard]] long                          size_nsite() const;
-    [[nodiscard]] long                          find_largest_bond() const;
-    [[nodiscard]] double                        find_smallest_schmidt_value() const;
+    [[nodiscard]] long                          get_largest_bond() const;
+    [[nodiscard]] double                        get_smallest_schmidt_value() const;
 
     [[nodiscard]] bool position_is_the_middle() const;
     [[nodiscard]] bool position_is_the_middle_any_direction() const;

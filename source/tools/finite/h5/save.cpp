@@ -157,8 +157,6 @@ namespace tools::finite::h5 {
         save::data_as_table(h5file, sinfo, opdm_spectrum, "opdm_spectrum", "One-particle Density Matrix spectrum", "eigval");
     }
 
-
-
     template<typename T>
     void save::data_as_table(h5pp::File &h5file, const StorageInfo &sinfo, const T *const data, size_t size, std::string_view table_name,
                              std::string_view table_title, std::string_view fieldname) {
@@ -251,8 +249,7 @@ namespace tools::finite::h5 {
 
     void save::information_lattice(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::dataset::information_lattice::policy)) return;
-        if(not state.measurements.information_lattice)
-            state.measurements.information_lattice = tools::finite::measure::information_lattice(state);
+        if(not state.measurements.information_lattice) state.measurements.information_lattice = tools::finite::measure::information_lattice(state);
         auto t_hdf     = tid::tic_scope("information_lattice", tid::level::higher);
         auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "information_lattice");
         // Check if the current entry has already been appended
@@ -278,15 +275,16 @@ namespace tools::finite::h5 {
         if(not should_save(sinfo, settings::storage::table::information_per_scale::policy)) return;
         auto information_per_scale = tools::finite::measure::information_per_scale(state);
         save::data_as_table(h5file, sinfo, information_per_scale, "information_per_scale", "Information per length scale", "scale");
-        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "information_per_scale");
-        auto information_typ_scale = tools::finite::measure::information_typ_scale(state);
-        h5file.writeAttribute(information_typ_scale, table_path, "information_typ_scale");
+        auto table_path                 = fmt::format("{}/{}", sinfo.get_state_prefix(), "information_per_scale");
+        auto information_center_of_mass = tools::finite::measure::information_center_of_mass(state);
+        h5file.writeAttribute(information_center_of_mass, table_path, "information_center_of_mass");
     }
 
-    void save::information_typ_scale(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(not should_save(sinfo, settings::storage::table::information_typ_scale::policy)) return;
-        auto information_typ_scale = tools::finite::measure::information_typ_scale(state);
-        save::data_as_table(h5file, sinfo, information_typ_scale, "information_typ_scale", "Information typical scale", "scale");
+    void save::information_center_of_mass(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::table::information_center_of_mass::policy)) return;
+        auto information_center_of_mass = tools::finite::measure::information_center_of_mass(state);
+        tools::log->debug("save::information_center_of_mass: {:.16f}", information_center_of_mass);
+        save::data_as_table(h5file, sinfo, information_center_of_mass, "information_center_of_mass", "Information center of mass", "scale");
     }
 
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
@@ -517,7 +515,7 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::subsystem_entanglement_entropies(h5file, sinfo, state);
         tools::finite::h5::save::information_lattice(h5file, sinfo, state);
         tools::finite::h5::save::information_per_scale(h5file, sinfo, state);
-        tools::finite::h5::save::information_typ_scale(h5file, sinfo, state);
+        tools::finite::h5::save::information_center_of_mass(h5file, sinfo, state);
         tools::finite::h5::save::renyi_entropies(h5file, sinfo, state);
         tools::finite::h5::save::number_entropies(h5file, sinfo, state);
         tools::finite::h5::save::number_probabilities(h5file, sinfo, state);

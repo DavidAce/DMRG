@@ -118,7 +118,7 @@ void AlgorithmFinite::run_rbds_analysis() {
 
     for(const auto &bond_lim : bond_limits) {
         status.bond_lim = bond_lim;
-        if(bond_lim < tensors.state->find_largest_bond()) {
+        if(bond_lim < tensors.state->get_largest_bond()) {
             // Cut down the bond dimension with SVDs only
             tools::finite::mps::normalize_state(*tensors.state, svd::config(bond_lim, status.trnc_min), NormPolicy::ALWAYS);
             tensors.clear_cache();
@@ -160,7 +160,7 @@ void AlgorithmFinite::run_rtes_analysis() {
 
     for(const auto &trnc_lim : trnc_limits) {
         status.trnc_lim = trnc_lim;
-        if(trnc_lim > tensors.state->find_smallest_schmidt_value()) {
+        if(trnc_lim > tensors.state->get_smallest_schmidt_value()) {
             // Cut down the bond dimension with SVDs only
             tools::finite::mps::normalize_state(*tensors.state, svd::config(status.bond_max, trnc_lim), NormPolicy::ALWAYS);
             tensors.clear_cache();
@@ -698,22 +698,26 @@ void AlgorithmFinite::update_dmrg_blocksize() {
     bool info_default  = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFODEF);
 
     auto old_bsize = dmrg_blocksize;
-    // tensors.state->clear_measurements();
-    // auto infoperscale_16 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(16, 1e-8), UseCache::TRUE);
-    // auto centerofmass_16 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(16, 1e-8), UseCache::TRUE);
-    // tensors.state->clear_measurements();
-    //
-    // auto infoperscale_32 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(32, 1e-8), UseCache::TRUE);
-    // auto centerofmass_32 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(32, 1e-8), UseCache::TRUE);
-    // tensors.state->clear_measurements();
-    //
-    // auto infoperscale_64 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(64, 1e-8), UseCache::TRUE);
-    // auto centerofmass_64 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(64, 1e-8), UseCache::TRUE);
-    // tensors.state->clear_measurements();
-    //
-    // auto infoperscale_128 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(128, 1e-8), UseCache::TRUE);
-    // auto centerofmass_128 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(128, 1e-8), UseCache::TRUE);
-    // tensors.state->clear_measurements();
+
+    auto infoperscale_def = tools::finite::measure::information_per_scale(*tensors.state);
+    auto centerofmass_def = tools::finite::measure::information_center_of_mass(infoperscale_def);
+
+    tensors.state->clear_measurements();
+    auto infoperscale_16 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(16, 1e-8), UseCache::TRUE));
+    auto centerofmass_16 = tools::finite::measure::information_center_of_mass(infoperscale_16);
+    tensors.state->clear_measurements();
+
+    auto infoperscale_32 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(32, 1e-8), UseCache::TRUE));
+    auto centerofmass_32 = tools::finite::measure::information_center_of_mass(infoperscale_32);
+    tensors.state->clear_measurements();
+
+    auto infoperscale_64 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(64, 1e-8), UseCache::TRUE));
+    auto centerofmass_64 = tools::finite::measure::information_center_of_mass(infoperscale_64);
+    tensors.state->clear_measurements();
+
+    auto infoperscale_128 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(128, 1e-8), UseCache::TRUE));
+    auto centerofmass_128 = tools::finite::measure::information_center_of_mass(infoperscale_128);
+    tensors.state->clear_measurements();
     //
     // auto infoperscale_256 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
     // auto centerofmass_256 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
@@ -728,41 +732,43 @@ void AlgorithmFinite::update_dmrg_blocksize() {
     //
     // tensors.state->clear_measurements();
 
-    // tools::log->info("info per scale svd 16     : {::.16f}", infoperscale_16);
-    // tools::log->info("info per scale svd 32     : {::.16f}", infoperscale_32);
-    // tools::log->info("info per scale svd 64     : {::.16f}", infoperscale_64);
-    // tools::log->info("info per scale svd 128    : {::.16f}", infoperscale_128);
+    tools::log->info("info per scale svd 16     : {::.16f}", infoperscale_16);
+    tools::log->info("info per scale svd 32     : {::.16f}", infoperscale_32);
+    tools::log->info("info per scale svd 64     : {::.16f}", infoperscale_64);
+    tools::log->info("info per scale svd 128    : {::.16f}", infoperscale_128);
+    tools::log->info("info per scale svd def    : {::.16f}", infoperscale_def);
     // tools::log->info("info per scale svd 256    : {::.16f}", infoperscale_256);
     // tools::log->info("info per scale svd 512    : {::.16f}", infoperscale_512);
 
-
-    // tools::log->info("info center of mass chi 16     : {:.16f}", centerofmass_16);
-    // tools::log->info("info center of mass chi 32     : {:.16f}", centerofmass_32);
-    // tools::log->info("info center of mass chi 64     : {:.16f}", centerofmass_64);
-    // tools::log->info("info center of mass chi 128    : {:.16f}", centerofmass_128);
+    tools::log->info("info center of mass chi 16     : {:.16f}", centerofmass_16);
+    tools::log->info("info center of mass chi 32     : {:.16f}", centerofmass_32);
+    tools::log->info("info center of mass chi 64     : {:.16f}", centerofmass_64);
+    tools::log->info("info center of mass chi 128    : {:.16f}", centerofmass_128);
+    tools::log->info("info center of mass chi def    : {:.16f}", centerofmass_def);
     // tools::log->info("info center of mass chi 256    : {:.16f}", centerofmass_256);
     // tools::log->info("info center of mass chi 512    : {:.16f}", centerofmass_512);
     // tools::log->info("info center of mass chi 512    : {:.16f}", centerofmass_512);
     // tools::log->info("info xi    geom. dist   512    : {:.16f}", info_xi_geom_512);
     // tools::log->info("info xi    exp.  fit    512    : {:.16f}", info_xi_expf_512);
     // tools::log->info("info xi    avg.log.diff 512    : {:.16f}", info_xi_avgs_512);
-    auto see = tools::finite::measure::subsystem_entanglement_entropies_fast_log2(*tensors.state, 1e-1, svd::config(256, 1e-8), UseCache::FALSE);
+    // auto        see = tools::finite::measure::subsystem_entanglement_entropies_fast_log2(*tensors.state, 1e-1, svd::config(256, 1e-8), UseCache::FALSE);
     std::string msg;
     if(max_varsat or max_stuck) {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        double icom = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(256,1e-8));
-        double blocksize = std::round(1+icom);
+        auto   ip        = InfoPolicy(0.5, svd::config(512, 1e-8), UseCache::FALSE);
+        double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
+        double blocksize = std::ceil(icom);
         if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-            blocksize += std::ceil(2+icom);
+            blocksize += std::ceil(2 + icom);
             msg += fmt::format(" | center of mass + 2 when stuck >= {} iters", blocksize, settings::strategy::iter_max_stuck / 2);
         } else if(status.algorithm_has_stuck_for > 0) {
-            blocksize += std::ceil(1+icom);
+            blocksize += std::ceil(1 + icom);
             msg += fmt::format(" | center of mass + 1 when stuck", blocksize);
         } else {
             // Same as the characteristic length scale "xi" when the info decay is exponential
-            msg += fmt::format(" | scale xi ({:.1f}) by default", blocksize);
+            msg += fmt::format(" | scale icom ({:.1f}) by default", blocksize);
         }
         dmrg_blocksize =
             std::clamp<size_t>(static_cast<size_t>(std::round(blocksize)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
@@ -794,7 +800,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     if(not bond_lim) {
         bond_lim = settings::get_bond_min(status.algo_type);
         if(settings::strategy::bond_increase_when == UpdatePolicy::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
-            bond_lim = safe_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
+            bond_lim = safe_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->get_largest_bond())))); // Nearest power of two from below
     }
     if(not trnc_lim) {
         trnc_lim = settings::precision::svd_truncation_init;
@@ -820,11 +826,11 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     status.direction = tensors.state->get_direction();
     status.algo_stop = AlgorithmStop::NONE;
     if(settings::strategy::bond_increase_when != UpdatePolicy::NEVER) status.bond_lim = bond_lim.value();
-    if(tensors.state->find_largest_bond() > bond_lim.value())
-        //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
+    if(tensors.state->get_largest_bond() > bond_lim.value())
+        //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->get_largest_bond(),
         //        bond_lim.value());
         throw except::runtime_error("Faulty truncation after randomize. Max found bond dimension is {}, but bond limit is {}",
-                                    tensors.state->find_largest_bond(), bond_lim.value());
+                                    tensors.state->get_largest_bond(), bond_lim.value());
 
     tensors.rebuild_edges();
     tools::log->info("State initialization successful:");

@@ -367,7 +367,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
                                     tools::finite::measure::norm(state), settings::precision::max_norm_error, state.get_normalization_tags());
     }
 
-    if(svd_cfg and svd_cfg->rank_max and state.find_largest_bond() > svd_cfg->rank_max.value())
+    if(svd_cfg and svd_cfg->rank_max and state.get_largest_bond() > svd_cfg->rank_max.value())
         throw except::logic_error("normalize_state: a bond dimension exceeds bond limit: {} > {}", tools::finite::measure::bond_dimensions(state),
                                   svd_cfg->rank_max.value());
     if(tools::log->level() <= spdlog::level::debug)

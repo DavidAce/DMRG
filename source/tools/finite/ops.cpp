@@ -355,7 +355,7 @@ void tools::finite::ops::project_to_axis(StateFinite &state, const Eigen::Matrix
     bond_dimensions = tools::finite::measure::bond_dimensions(state);
     tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     tools::log->debug("Bond dimensions after  projection : {}", tools::finite::measure::bond_dimensions(state));
-    if(svd_cfg and svd_cfg->rank_max and state.find_largest_bond() > svd_cfg->rank_max.value())
+    if(svd_cfg and svd_cfg->rank_max and state.get_largest_bond() > svd_cfg->rank_max.value())
         throw except::logic_error("A bond dimension exceeds bond limit: {} > {}", svd_cfg->rank_max.value(), bond_dimensions);
     if constexpr(settings::debug) state.assert_validity();
 }
