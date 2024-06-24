@@ -30,7 +30,7 @@ config_ranges = {
     "storage::dataset::subsystem_entanglement_entropies::bits_err": ["1e-8"],
     "storage::dataset::subsystem_entanglement_entropies::eig_size": ["3200"],
     "storage::dataset::subsystem_entanglement_entropies::bond_lim": ["2048"],
-    "storage::dataset::subsystem_entanglement_entropies::trnc_lim": ["1e-6"],
+    "storage::dataset::subsystem_entanglement_entropies::trnc_lim": ["1e-8"],
     "precision::svd_truncation_lim": ['1e-9'],
     "precision::svd_truncation_init": ['1e-8'],
     "precision::variance_convergence_threshold": ['1e-12'],
