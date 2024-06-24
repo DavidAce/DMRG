@@ -698,80 +698,53 @@ void AlgorithmFinite::update_dmrg_blocksize() {
     bool info_default  = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFODEF);
 
     auto old_bsize = dmrg_blocksize;
+    // auto bond_top  = tensors.state->get_largest_bond();
 
-    auto infoperscale_def = tools::finite::measure::information_per_scale(*tensors.state);
-    auto centerofmass_def = tools::finite::measure::information_center_of_mass(infoperscale_def);
-
-    tensors.state->clear_measurements();
-    auto infoperscale_16 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(16, 1e-8), UseCache::TRUE));
-    auto centerofmass_16 = tools::finite::measure::information_center_of_mass(infoperscale_16);
-    tensors.state->clear_measurements();
-
-    auto infoperscale_32 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(32, 1e-8), UseCache::TRUE));
-    auto centerofmass_32 = tools::finite::measure::information_center_of_mass(infoperscale_32);
-    tensors.state->clear_measurements();
-
-    auto infoperscale_64 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(64, 1e-8), UseCache::TRUE));
-    auto centerofmass_64 = tools::finite::measure::information_center_of_mass(infoperscale_64);
-    tensors.state->clear_measurements();
-
-    auto infoperscale_128 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(0.5, svd::config(128, 1e-8), UseCache::TRUE));
-    auto centerofmass_128 = tools::finite::measure::information_center_of_mass(infoperscale_128);
-    tensors.state->clear_measurements();
-    //
-    // auto infoperscale_256 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
-    // auto centerofmass_256 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
-    //
-    // auto infoperscale_512 = tools::finite::measure::information_per_scale(*tensors.state, svd::config(512, 1e-8), UseCache::TRUE);
-    // auto centerofmass_512 = tools::finite::measure::information_center_of_mass(*tensors.state, svd::config(512, 1e-8), UseCache::TRUE);
-    //
-    //
-    // auto info_xi_geom_512 = tools::finite::measure::information_xi_from_geometric_dist(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
-    // auto info_xi_expf_512 = tools::finite::measure::information_xi_from_exp_fit(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
-    // auto info_xi_avgs_512 = tools::finite::measure::information_xi_from_avg_log_slope(*tensors.state, svd::config(256, 1e-8), UseCache::TRUE);
+    // auto infoperscale_def = tools::finite::measure::information_per_scale(*tensors.state);
+    // auto centerofmass_def = tools::finite::measure::information_center_of_mass(infoperscale_def);
     //
     // tensors.state->clear_measurements();
+    // auto t_2            = tid::tic_token("1e-2");
+    // auto infoperscale_2 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(-0.001, 3200, svd::config(2048, 1e-2), UseCache::FALSE));
+    // auto centerofmass_2 = tools::finite::measure::information_center_of_mass(infoperscale_2);
+    // t_2.toc();
 
-    tools::log->info("info per scale svd 16     : {::.16f}", infoperscale_16);
-    tools::log->info("info per scale svd 32     : {::.16f}", infoperscale_32);
-    tools::log->info("info per scale svd 64     : {::.16f}", infoperscale_64);
-    tools::log->info("info per scale svd 128    : {::.16f}", infoperscale_128);
-    tools::log->info("info per scale svd def    : {::.16f}", infoperscale_def);
-    // tools::log->info("info per scale svd 256    : {::.16f}", infoperscale_256);
-    // tools::log->info("info per scale svd 512    : {::.16f}", infoperscale_512);
+    // tensors.state->clear_measurements();
+    // auto t_4            = tid::tic_token("1e-4");
+    // auto infoperscale_4 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(-0.001, 3200, svd::config(2048, 1e-4), UseCache::FALSE));
+    // auto centerofmass_4 = tools::finite::measure::information_center_of_mass(infoperscale_4);
+    // t_4.toc();
 
-    tools::log->info("info center of mass chi 16     : {:.16f}", centerofmass_16);
-    tools::log->info("info center of mass chi 32     : {:.16f}", centerofmass_32);
-    tools::log->info("info center of mass chi 64     : {:.16f}", centerofmass_64);
-    tools::log->info("info center of mass chi 128    : {:.16f}", centerofmass_128);
-    tools::log->info("info center of mass chi def    : {:.16f}", centerofmass_def);
-    // tools::log->info("info center of mass chi 256    : {:.16f}", centerofmass_256);
-    // tools::log->info("info center of mass chi 512    : {:.16f}", centerofmass_512);
-    // tools::log->info("info center of mass chi 512    : {:.16f}", centerofmass_512);
-    // tools::log->info("info xi    geom. dist   512    : {:.16f}", info_xi_geom_512);
-    // tools::log->info("info xi    exp.  fit    512    : {:.16f}", info_xi_expf_512);
-    // tools::log->info("info xi    avg.log.diff 512    : {:.16f}", info_xi_avgs_512);
+
+    // tools::log->info("info per scale svd 1e-2 : {::.16f}", infoperscale_2);
+    // tools::log->info("info per scale svd 1e-4 : {::.16f}", infoperscale_4);
+    // tools::log->info("info per scale svd def  : {::.16f}", infoperscale_def);
+
+    // tools::log->info("info center of mass chi 1e-2 : {:.16f}| t = {:.3e} s", centerofmass_2, t_2->get_last_interval());
+    // tools::log->info("info center of mass chi 1e-4 : {:.16f}| t = {:.3e} s", centerofmass_4, t_4->get_last_interval());
+    // tools::log->info("info center of mass chi def  : {:.16f}", centerofmass_def);
+
     // auto        see = tools::finite::measure::subsystem_entanglement_entropies_fast_log2(*tensors.state, 1e-1, svd::config(256, 1e-8), UseCache::FALSE);
     std::string msg;
     if(max_varsat or max_stuck) {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        auto   ip        = InfoPolicy(0.5, svd::config(512, 1e-8), UseCache::FALSE);
+        auto   ip        = InfoPolicy(-1e-2, 3200);
         double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
         double blocksize = std::ceil(icom);
         if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-            blocksize += std::ceil(2 + icom);
-            msg += fmt::format(" | center of mass + 2 when stuck >= {} iters", blocksize, settings::strategy::iter_max_stuck / 2);
+            blocksize = std::ceil(2 + icom);
+            msg += fmt::format("center of mass {:.16f} + 2 when stuck >= {} iters", icom, settings::strategy::iter_max_stuck / 2);
         } else if(status.algorithm_has_stuck_for > 0) {
-            blocksize += std::ceil(1 + icom);
-            msg += fmt::format(" | center of mass + 1 when stuck", blocksize);
+            blocksize = std::ceil(1 + icom);
+            msg += fmt::format("center of mass ({:.16f}) + 1 when stuck", icom);
         } else {
             // Same as the characteristic length scale "xi" when the info decay is exponential
-            msg += fmt::format(" | scale icom ({:.1f}) by default", blocksize);
+            msg += fmt::format("scale icom ({:.16f}) by default", icom);
         }
         dmrg_blocksize =
-            std::clamp<size_t>(static_cast<size_t>(std::round(blocksize)), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+            std::clamp<size_t>(static_cast<size_t>(blocksize), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
 
     } else {
         dmrg_blocksize = settings::strategy::dmrg_min_blocksize;

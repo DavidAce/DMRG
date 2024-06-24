@@ -578,7 +578,7 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
     //        posR_active = edges.active_sites.back();
     //    }
 
-    if constexpr(settings::debug or settings::debug_edges)
+    if constexpr(settings::debug_edges)
         tools::log->trace("assert_edges_ene: pos {} | dir {} | "
                           "asserting edges eneL from [{} to {}]",
                           current_position, state.get_direction(), min_pos, posL_active);
@@ -592,7 +592,7 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
         auto &ene_next = edges.get_env_eneL(pos + 1);
         ene_next.assert_unique_id(ene, mps, mpo);
     }
-    if constexpr(settings::debug or settings::debug_edges)
+    if constexpr(settings::debug_edges)
         tools::log->trace("assert_edges_ene: pos {} | dir {} | "
                           "asserting edges eneR from [{} to {}]",
                           current_position, state.get_direction(), posR_active, max_pos);
@@ -638,7 +638,7 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
     //        posL_active = edges.active_sites.front();
     //        posR_active = edges.active_sites.back();
     //    }
-    if constexpr(settings::debug or settings::debug_edges)
+    if constexpr(settings::debug_edges)
         tools::log->trace("assert_edges_var: pos {} | dir {} | "
                           "asserting edges varL from [{} to {}]",
                           current_position, state.get_direction(), min_pos, posL_active);
@@ -651,7 +651,7 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
         auto &var_next = edges.get_env_varL(pos + 1);
         var_next.assert_unique_id(var, mps, mpo);
     }
-    if constexpr(settings::debug or settings::debug_edges)
+    if constexpr(settings::debug_edges)
         tools::log->trace("assert_edges_var: pos {} | dir {} | "
                           "asserting edges varR from [{} to {}]",
                           current_position, state.get_direction(), posR_active, max_pos);
@@ -718,7 +718,7 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     size_t posL_active      = edges.active_sites.front();
     size_t posR_active      = edges.active_sites.back();
 
-    if constexpr(settings::debug or settings::debug_edges)
+    if constexpr(settings::debug_edges)
         tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
                           "inspecting edges eneL from [{} to {}]",
                           current_position, state.get_direction(), min_pos, posL_active);
@@ -738,7 +738,7 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     if(not env_pos_log.empty()) tools::log->trace("rebuild_edges_ene: rebuilt eneL edges: {}", env_pos_log);
 
     env_pos_log.clear();
-    if constexpr(settings::debug or settings::debug_edges)
+    if constexpr(settings::debug_edges)
         tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
                           "inspecting edges eneR from [{} to {}]",
                           current_position, state.get_direction(), posR_active, max_pos);
@@ -791,7 +791,7 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     size_t posL_active      = edges.active_sites.front();
     size_t posR_active      = edges.active_sites.back();
 
-    if constexpr(settings::debug or settings::debug_edges) {
+    if constexpr(settings::debug_edges) {
         tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
                           "inspecting edges varL from [{} to {}]",
                           current_position, state.get_direction(), min_pos, posL_active);
@@ -813,7 +813,7 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
 
     if(not env_pos_log.empty()) tools::log->trace("rebuild_edges_var: rebuilt varL edges: {}", env_pos_log);
     env_pos_log.clear();
-    if constexpr(settings::debug or settings::debug_edges) {
+    if constexpr(settings::debug_edges) {
         tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
                           "inspecting edges varR from [{} to {}]",
                           current_position, state.get_direction(), posR_active, max_pos);

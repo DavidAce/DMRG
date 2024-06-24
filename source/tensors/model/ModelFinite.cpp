@@ -16,8 +16,9 @@
 #include "tools/finite/multisite.h"
 
 namespace settings {
-    inline constexpr bool debug_nbody_ham   = false;
-    inline constexpr bool verbose_nbody_ham = false;
+    inline constexpr bool debug_nbody   = false;
+    inline constexpr bool debug_cache   = false;
+    inline constexpr bool verbose_nbody = false;
 }
 
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
@@ -434,7 +435,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
     }
 
     for(const auto &pos : positions) {
-        if constexpr(settings::verbose_nbody_ham) tools::log->trace("contracting position {}", pos);
+        if constexpr(settings::verbose_nbody) tools::log->trace("contracting position {}", pos);
         // sites needs to be sorted, but may skip sites.
         // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
@@ -497,7 +498,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
             auto mpoR_edgeR = Eigen::Tensor<cplx, 4>(mpoR.contract(edgeR.reshape(std::array<long, 2>{edgeR.size(), 1}), tenx::idx({1}, {0})));
             mpoR            = mpoR_edgeR.shuffle(tenx::array4{0, 3, 1, 2});
         }
-        tools::log->trace("contracting position {} | mpoL {} | mpoR {}", pos, mpoL.dimensions(), mpoR.dimensions());
+        if constexpr(settings::verbose_nbody) tools::log->trace("contracting position {} | mpoL {} | mpoR {}", pos, mpoL.dimensions(), mpoR.dimensions());
 
         // Determine if this position adds to the physical dimension or if it will get traced over
         long dim0     = mpoL.dimension(0);
@@ -517,10 +518,10 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
         }
         auto new_cache_string = fmt::format("keep{}|skip{}|nbody{}|dims{}", keep_log, skip_log, nbody_str, new_dims);
         if(do_cache and cache.multisite_mpo_temps.find(new_cache_string) != cache.multisite_mpo_temps.end()) {
-            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache hit: {}", new_cache_string);
+            if constexpr(settings::debug_cache or settings::verbose_nbody) tools::log->trace("cache hit: {}", new_cache_string);
             multisite_mpo = cache.multisite_mpo_temps.at(new_cache_string);
         } else {
-            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache new: {}", new_cache_string);
+            if constexpr(settings::debug_cache or settings::verbose_nbody) tools::log->trace("cache new: {}", new_cache_string);
             if(do_trace) {
                 auto t_skip = tid::tic_scope("skipping", tid::level::highest);
                 // Trace the physical indices of this skipped mpo (this should trace an identity)
@@ -577,7 +578,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
     }
 
     for(const auto &pos : positions) {
-        if constexpr(settings::verbose_nbody_ham) tools::log->trace("contracting position {}", pos);
+        if constexpr(settings::verbose_nbody) tools::log->trace("contracting position {}", pos);
         // sites needs to be sorted, but may skip sites.
         // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
@@ -659,10 +660,10 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
         }
         auto new_cache_string = fmt::format("keep{}|skip{}|nbody{}|dims{}", keep_log, skip_log, nbody_str, new_dims);
         if(do_cache and cache.multisite_mpo_t_temps.find(new_cache_string) != cache.multisite_mpo_t_temps.end()) {
-            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache hit: {}", new_cache_string);
+            if constexpr(settings::debug_cache or settings::verbose_nbody) tools::log->trace("cache hit: {}", new_cache_string);
             multisite_mpo_t = cache.multisite_mpo_t_temps.at(new_cache_string);
         } else {
-            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache new: {}", new_cache_string);
+            if constexpr(settings::verbose_nbody) tools::log->trace("cache new: {}", new_cache_string);
             if(do_trace) {
                 auto t_skip = tid::tic_scope("skipping", tid::level::highest);
                 // Trace the physical indices of this skipped mpo (this should trace an identity)
@@ -689,7 +690,7 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
      */
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     if(sites == active_sites and cache.multisite_ham and not nbody) {
-        tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
+        if constexpr(settings::debug_cache) tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
         return cache.multisite_ham.value();
     }
     tools::log->trace("get_multisite_ham(): Contracting effective Hamiltonian");
@@ -713,7 +714,7 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
 Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     if(sites == active_sites and cache.multisite_ham_t and not nbody) {
-        tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
+        if constexpr(settings::debug_cache) tools::log->trace("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
         return cache.multisite_ham_t.value();
     }
     long spin_dim = 1;
@@ -735,7 +736,7 @@ Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size
 
 const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo() const {
     if(cache.multisite_mpo and cache.multisite_mpo_ids and not active_sites.empty()) {
-        if constexpr(settings::debug) tools::log->trace("get_multisite_mpo: cache hit");
+        if constexpr(settings::debug_cache) tools::log->trace("get_multisite_mpo: cache hit");
         // Check that the ids match
         auto active_ids = get_active_ids();
         if(active_ids != cache.multisite_mpo_ids)
@@ -750,7 +751,7 @@ const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo() const {
 
 const Eigen::Tensor<cplx_t, 4> &ModelFinite::get_multisite_mpo_t() const {
     if(cache.multisite_mpo_t and not active_sites.empty()) {
-        if constexpr(settings::debug) tools::log->trace("multisite_mpo_t: cache hit");
+        if constexpr(settings::debug_cache) tools::log->trace("multisite_mpo_t: cache hit");
         return cache.multisite_mpo_t.value();
     }
     cache.multisite_mpo_t = get_multisite_mpo_t(active_sites);
@@ -844,7 +845,7 @@ std::array<long, 4> ModelFinite::active_dimensions_squared() const { return tool
 //     }
 //
 //     for(const auto &pos : positions) {
-//         if constexpr(settings::verbose_nbody_ham) tools::log->trace("contracting position {}", pos);
+//         if constexpr(settings::verbose_nbody) tools::log->trace("contracting position {}", pos);
 //         // sites needs to be sorted, but may skip sites.
 //         // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
 //         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
@@ -927,10 +928,10 @@ std::array<long, 4> ModelFinite::active_dimensions_squared() const { return tool
 //         }
 //         auto new_cache_string = fmt::format("keep{}|skip{}|nbody{}|dims{}", keep_log, skip_log, nbody_str, new_dims);
 //         if(do_cache and cache.multisite_mpo_squared_temps.find(new_cache_string) != cache.multisite_mpo_squared_temps.end()) {
-//             if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache hit: {}", new_cache_string);
+//             if constexpr(settings::verbose_nbody) tools::log->trace("cache hit: {}", new_cache_string);
 //             multisite_mpo_squared = cache.multisite_mpo_squared_temps.at(new_cache_string);
 //         } else {
-//             if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache new: {}", new_cache_string);
+//             if constexpr(settings::verbose_nbody) tools::log->trace("cache new: {}", new_cache_string);
 //             if(do_trace) {
 //                 auto t_skip = tid::tic_scope("skipping", tid::level::highest);
 //                 // Trace the physical indices of this skipped mpo (this should trace an identity)
@@ -1080,7 +1081,7 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham_squared(const std::vector<
 
 const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo_squared() const {
     if(cache.multisite_mpo_squared and cache.multisite_mpo_squared_ids and not active_sites.empty()) {
-        if constexpr(settings::debug) tools::log->trace("get_multisite_mpo_squared: cache hit");
+        if constexpr(settings::debug_cache) tools::log->trace("get_multisite_mpo_squared: cache hit");
         // Check that the ids match
         auto active_ids_sq = get_active_ids_sq();
         if(active_ids_sq != cache.multisite_mpo_squared_ids)
@@ -1100,7 +1101,7 @@ const Eigen::Tensor<cplx, 2> &ModelFinite::get_multisite_ham_squared() const {
 }
 
 void ModelFinite::clear_cache(LogPolicy logPolicy) const {
-    if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing model cache");
+    if(logPolicy == LogPolicy::VERBOSE or (settings::debug and logPolicy == LogPolicy::DEBUG)) tools::log->trace("Clearing model cache");
     cache = Cache();
 }
 

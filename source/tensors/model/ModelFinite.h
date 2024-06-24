@@ -113,7 +113,7 @@ class ModelFinite {
                                                                             std::optional<std::vector<size_t>> nbody = std::nullopt) const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4>   &get_multisite_mpo_squared() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 2>   &get_multisite_ham_squared() const;
-    void                                          clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
+    void                                          clear_cache(LogPolicy logPolicy = LogPolicy::SILENT) const;
 
     [[nodiscard]] std::vector<size_t> get_active_ids() const;
     [[nodiscard]] std::vector<size_t> get_active_ids_sq() const;

@@ -27,7 +27,7 @@ enum class BlockSizePolicy {
     MAXDEF     = 1,  /*!< Default to dmrg_max_blocksize */
     MAXVARSAT  = 2,  /*!< Set dmrg_max_blocksize when the energy variance has saturated */
     MAXSTUCK   = 4,  /*!< Set dmrg_max_blocksize when stuck */
-    INFODEF    = 8, /*!< Default to the ceil of "information_center_of_mass" on every iteration  */
+    INFODEF    = 8,  /*!< Default to the ceil of "information_center_of_mass" on every iteration  */
     INFOVARSAT = 16, /*!< Default to the ceil of "information_center_of_mass" when the energy variance has saturated */
     INFOSTUCK  = 32, /*!< Default to the ceil of "information_center_of_mass" when stuck  */
     allow_bitops
@@ -160,7 +160,11 @@ enum class FileCollisionPolicy {
 };
 
 enum class FileResumePolicy { FULL, FAST };
-enum class LogPolicy { NORMAL, QUIET };
+enum class LogPolicy {
+    SILENT, /*!< Never log */
+    DEBUG,  /*!< Log on debug runs */
+    VERBOSE /*!< Always log */
+};
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
 enum class OptCost {
@@ -422,11 +426,11 @@ std::string flag2str(const T &item) noexcept {
         if(v.empty()) return "NONE";
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) {
-        if(has_flag(item, BlockSizePolicy::MAXDEF))    v.emplace_back("MAXDEF");
+        if(has_flag(item, BlockSizePolicy::MAXDEF)) v.emplace_back("MAXDEF");
         if(has_flag(item, BlockSizePolicy::MAXVARSAT)) v.emplace_back("MAXVARSAT");
-        if(has_flag(item, BlockSizePolicy::MAXSTUCK))  v.emplace_back("MAXSTUCK");
-        if(has_flag(item, BlockSizePolicy::INFODEF))   v.emplace_back("INFODEF");
-        if(has_flag(item, BlockSizePolicy::INFOVARSAT))v.emplace_back("INFOVARSAT");
+        if(has_flag(item, BlockSizePolicy::MAXSTUCK)) v.emplace_back("MAXSTUCK");
+        if(has_flag(item, BlockSizePolicy::INFODEF)) v.emplace_back("INFODEF");
+        if(has_flag(item, BlockSizePolicy::INFOVARSAT)) v.emplace_back("INFOVARSAT");
         if(has_flag(item, BlockSizePolicy::INFOSTUCK)) v.emplace_back("INFOSTUCK");
         if(v.empty()) return "MIN";
     }
@@ -640,8 +644,9 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == NormPolicy::IFNEEDED)                                return "IFNEEDED";
     }
     if constexpr(std::is_same_v<T, LogPolicy>) {
-        if(item == LogPolicy::NORMAL)                                   return "NORMAL";
-        if(item == LogPolicy::QUIET)                                    return "QUIET";
+        if(item == LogPolicy::SILENT)                                   return "SILENT";
+        if(item == LogPolicy::DEBUG)                                    return "DEBUG";
+        if(item == LogPolicy::VERBOSE)                                  return "VERBOSE";
     }
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == StorageEvent::NONE)                                  return "NONE";
@@ -1015,8 +1020,9 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "IFNEEDED")                              return NormPolicy::IFNEEDED;
     }
     if constexpr(std::is_same_v<T, LogPolicy>) {
-        if(item == "NORMAL")                                return LogPolicy::NORMAL;
-        if(item == "QUIET")                                 return LogPolicy::QUIET;
+        if(item == "SILENT")                                return LogPolicy::SILENT;
+        if(item == "DEBUG")                                 return LogPolicy::DEBUG;
+        if(item == "VERBOSE")                               return LogPolicy::VERBOSE;
     }
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == "NONE")                                  return  StorageEvent::NONE;

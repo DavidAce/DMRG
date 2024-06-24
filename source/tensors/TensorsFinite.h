@@ -113,7 +113,7 @@ class TensorsFinite {
     size_t              move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_middle(std::optional<svd::config> svd_cfg = std::nullopt);
     void                merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg = std::nullopt,
-                                            LogPolicy log_policy = LogPolicy::QUIET);
+                                            LogPolicy log_policy = LogPolicy::SILENT);
 
     void expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, double alpha, svd::config svd_cfg);
 
@@ -132,6 +132,6 @@ class TensorsFinite {
     void rebuild_edges();
     void rebuild_edges_ene();
     void rebuild_edges_var();
-    void clear_measurements(LogPolicy logPolicy = LogPolicy::QUIET) const;
-    void clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
+    void clear_measurements(LogPolicy logPolicy = LogPolicy::SILENT) const;
+    void clear_cache(LogPolicy logPolicy = LogPolicy::SILENT) const;
 };

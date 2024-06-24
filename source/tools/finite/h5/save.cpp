@@ -134,7 +134,6 @@ namespace tools::finite::h5 {
         if(attrs == sinfo) return;
         const auto &opdm = tools::finite::measure::opdm(state);
         if(opdm.size() == 0) return;
-        tools::log->trace("Appending to dataset: {}", dset_path);
         if(not attrs.link_exists) {
             auto                 rows = safe_cast<hsize_t>(opdm.dimension(0));
             auto                 cols = safe_cast<hsize_t>(opdm.dimension(1));
@@ -231,7 +230,6 @@ namespace tools::finite::h5 {
         // Check if the current entry has already been appended
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
         if(attrs == sinfo) return;
-        tools::log->trace("Appending to dataset: {}", dset_path);
         if(not attrs.link_exists) {
             auto                 rows = safe_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->rows());
             auto                 cols = safe_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->cols());
@@ -255,7 +253,6 @@ namespace tools::finite::h5 {
         // Check if the current entry has already been appended
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
         if(attrs == sinfo) return;
-        tools::log->trace("Appending to dataset: {}", dset_path);
         if(not attrs.link_exists) {
             auto                 rows = safe_cast<hsize_t>(state.measurements.information_lattice->rows());
             auto                 cols = safe_cast<hsize_t>(state.measurements.information_lattice->cols());
@@ -283,8 +280,10 @@ namespace tools::finite::h5 {
     void save::information_center_of_mass(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::table::information_center_of_mass::policy)) return;
         auto information_center_of_mass = tools::finite::measure::information_center_of_mass(state);
-        tools::log->debug("save::information_center_of_mass: {:.16f}", information_center_of_mass);
+        tools::log->info("information_center_of_mass: {:.16f} | t = {:.3e}", information_center_of_mass, state.measurements.see_time.value());
         save::data_as_table(h5file, sinfo, information_center_of_mass, "information_center_of_mass", "Information center of mass", "scale");
+        auto table_path                 = fmt::format("{}/{}", sinfo.get_state_prefix(), "information_center_of_mass");
+        h5file.writeAttribute(state.measurements.see_time.value(), table_path, "time_see");
     }
 
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {

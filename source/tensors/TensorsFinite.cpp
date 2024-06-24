@@ -390,7 +390,7 @@ void TensorsFinite::sync_active_sites() {
 }
 
 void TensorsFinite::clear_active_sites() {
-    tools::log->trace("Clearing active sites {}", active_sites);
+    if constexpr (settings::debug) tools::log->trace("Clearing active sites {}", active_sites);
     active_sites.clear();
     state->active_sites.clear();
     model->active_sites.clear();
@@ -404,8 +404,8 @@ void TensorsFinite::activate_sites(const std::vector<size_t> &sites) {
     state->active_sites = active_sites;
     model->active_sites = active_sites;
     edges->active_sites = active_sites;
-    clear_cache(LogPolicy::QUIET);
-    clear_measurements(LogPolicy::QUIET);
+    clear_cache();
+    clear_measurements();
 }
 
 void TensorsFinite::activate_sites() {
@@ -529,7 +529,7 @@ void TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSid
             break;
         }
     }
-    if(not pos_expanded.empty()) clear_measurements(LogPolicy::QUIET);
+    if(not pos_expanded.empty()) clear_measurements();
     if constexpr(settings::debug) assert_validity();
 }
 
@@ -688,12 +688,13 @@ void TensorsFinite::rebuild_edges_var() {
 }
 
 void TensorsFinite::clear_measurements(LogPolicy logPolicy) const {
+    if(logPolicy == LogPolicy::VERBOSE or (settings::debug and logPolicy == LogPolicy::DEBUG)) tools::log->trace("Clearing tensors measurements");
     measurements = MeasurementsTensorsFinite();
     state->clear_measurements(logPolicy);
 }
 
 void TensorsFinite::clear_cache(LogPolicy logPolicy) const {
-    if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing tensors cache");
+    if(logPolicy == LogPolicy::VERBOSE or (settings::debug and logPolicy == LogPolicy::DEBUG)) tools::log->trace("Clearing tensors cache");
     cache = Cache();
     model->clear_cache(logPolicy);
     state->clear_cache(logPolicy);

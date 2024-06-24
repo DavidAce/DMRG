@@ -40,7 +40,7 @@ void MpoSite::build_mpo_squared() {
     unique_id_sq = std::nullopt;
 }
 // Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
-//     tools::log->trace("mpo({}): building mpo²", get_position());
+//     if constexpr(settings::debug) tools::log->trace("mpo({}): building mpo²", get_position());
 // #pragma message "Testing (H-i1)(H+i1)"
 //     Eigen::Tensor<cplx, 4> mpo_m1 = get_mpo(cplx(0.0, 1.0)/ static_cast<real>(settings::model::model_size));
 //     Eigen::Tensor<cplx, 4> mpo_p1 = get_mpo(cplx(0.0, 1.0)/ static_cast<real>(settings::model::model_size));
@@ -55,7 +55,7 @@ void MpoSite::build_mpo_squared() {
 //     return mpo2;
 // }
 Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
-    tools::log->trace("mpo({}): building mpo²", get_position());
+    if constexpr(settings::debug) tools::log->trace("mpo({}): building mpo²", get_position());
     Eigen::Tensor<cplx, 4> mpo = get_mpo(energy_shift_mpo);
     Eigen::Tensor<cplx, 4> mpo2;
     {
@@ -415,7 +415,7 @@ void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
     }
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign != parity_shift_sign_mpo2 or axus != parity_shift_axus_mpo2) {
-        tools::log->trace("MpoSite[{}]::set_parity_shift_mpo_squared: {}{}", get_position(), fmt::format("{:+}", sign).front(), axus);
+        if constexpr(settings::debug) tools::log->trace("MpoSite[{}]::set_parity_shift_mpo_squared: {}{}", get_position(), fmt::format("{:+}", sign).front(), axus);
         parity_shift_sign_mpo2 = sign;
         parity_shift_axus_mpo2 = axus;
         clear_mpo_squared();

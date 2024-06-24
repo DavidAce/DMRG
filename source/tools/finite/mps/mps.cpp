@@ -66,21 +66,21 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
             auto  trnc    = mpsC.get_truncation_error(); // Truncation error of the old B/new AC, i.e. bond to the right of posC,
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
             auto onesite_tensor = tools::common::contraction::contract_bnd_mps_temp(LC, mpsC.get_M());
-            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, svd_cfg, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, svd_cfg, LogPolicy::SILENT);
             mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
         } else if(state.get_direction() == -1) {
             auto  pos_ul         = safe_cast<size_t>(pos);     // Cast to unsigned
             auto &mps            = state.get_mps_site(pos);    // This AC becomes the new B
             auto  trnc           = mps.get_truncation_error(); // Truncation error of old AC/new B, i.e. bond to the left of pos,
             auto  onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (LC is unset later)
-            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, svd_cfg, LogPolicy::QUIET);
+            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, svd_cfg, LogPolicy::SILENT);
             if(posC >= 0) {
                 auto &mpsC = state.get_mps_site(posC); // This old A is now an AC
                 mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
             }
         }
-        state.clear_cache(LogPolicy::QUIET);
-        state.clear_measurements(LogPolicy::QUIET);
+        state.clear_cache();
+        state.clear_measurements();
         return 1; // Moved once, so return 1
     }
 }
@@ -107,9 +107,9 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, std::optional<s
         double                 truncation_error_LC = mps.get_truncation_error_LC();
         auto                   twosite_tensor      = state.get_multisite_mps({posL_ul, posR_ul});
         tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, safe_cast<long>(posL), svd_cfg,
-                                                LogPolicy::QUIET);
-        state.clear_cache(LogPolicy::QUIET);
-        state.clear_measurements(LogPolicy::QUIET);
+                                                LogPolicy::SILENT);
+        state.clear_cache();
+        state.clear_measurements();
 
         // Put LC where it belongs.
         // Recall that mpsL, mpsR are on the new position, not the old one!
@@ -167,7 +167,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     auto current_position = state.get_position<long>();
     auto moves            = static_cast<size_t>(std::abs(center_position - current_position));
     if constexpr(settings::debug)
-        if(logPolicy == LogPolicy::NORMAL)
+        if(logPolicy == LogPolicy::VERBOSE)
             tools::log->trace("merge_multisite_mps: sites {} | dimensions {} | center {} -> {} | {}", sites, multisite_mps.dimensions(), current_position,
                               center_position, state.get_labels());
     if constexpr(settings::verbose_merge)
@@ -312,8 +312,8 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     current_position = state.get_position<long>();
     if(current_position != center_position)
         throw except::logic_error("Center position mismatch {} ! {}\nLabels: {}", current_position, center_position, state.get_labels());
-    state.clear_cache(LogPolicy::QUIET);
-    state.clear_measurements(LogPolicy::QUIET);
+    state.clear_cache();
+    state.clear_measurements();
     if constexpr(settings::debug or settings::debug_merge) {
         auto t_dbg = tid::tic_scope("debug");
         for(const auto &pos : sites) state.get_mps_site(pos).assert_validity();
@@ -350,7 +350,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
     if(pos >= 0) {
         auto &mps = state.get_mps_site(pos);
         // Make sure that the bond dimension does not increase faster than spin_dim per site
-        tools::finite::mps::merge_multisite_mps(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, svd_cfg, LogPolicy::QUIET);
+        tools::finite::mps::merge_multisite_mps(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, svd_cfg, LogPolicy::SILENT);
     }
     // Now we can move around the chain until we return to the original status
     while(steps++ < 2 or not state.position_is_at(pos, dir, cnt)) move_center_point_single_site(state, svd_cfg);
@@ -570,7 +570,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ga
                           svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front()));
 
     auto new_posC = gm == GateMove::ON ? safe_cast<long>(gate.pos.front()) : old_posC;
-    tools::finite::mps::merge_multisite_mps(state, tmp, gate.pos, new_posC, svd_cfg, LogPolicy::QUIET);
+    tools::finite::mps::merge_multisite_mps(state, tmp, gate.pos, new_posC, svd_cfg, LogPolicy::SILENT);
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: merged  pos {} | op {} | gm {} | center {} -> {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           old_posC, new_posC, svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(),
@@ -600,7 +600,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gates: current pos {} dir {} | gate_sequence {}", state.get_position<long>(), state.get_direction(), gate_sequence);
 
-    state.clear_cache(LogPolicy::QUIET);
+    state.clear_cache();
     GateOp gop = GateOp::NONE;
     switch(cop) {
         case CircuitOp::NONE: gop = GateOp::NONE; break;
@@ -765,8 +765,8 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
 //    }
 
     // This SVD shouldn't modify the current mps, so no truncation here (no svd config)
-    //    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::QUIET);
-    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::QUIET);
+    //    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::SILENT);
+    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::SILENT);
 
 //    double lastS_new = 0;
 //    long   bondd_new = 0;
@@ -880,7 +880,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, const qm::SwapGate 
     // It's best to do an AC-B type of SVD split, so we put the center position on the left-most site when GateMove::ON
     long new_posC = gm == GateMove::ON ? safe_cast<long>(pos_idxs.front()) : old_posC;
 
-    tools::finite::mps::merge_multisite_mps(state, tmp, pos_idxs, new_posC, svd_cfg, LogPolicy::QUIET);
+    tools::finite::mps::merge_multisite_mps(state, tmp, pos_idxs, new_posC, svd_cfg, LogPolicy::SILENT);
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::get_count());
@@ -899,7 +899,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
                                           std::optional<svd::config> svd_cfg) {
     auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
     if(gates.empty()) return;
-    state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
+    state.clear_cache(); // So that multisite_mps does not use cache
     // Sanity check
     if constexpr(settings::debug_gates) {
         for(const auto &mps : state.mps_sites) mps->assert_normalized();
@@ -953,7 +953,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, const std::vector<
                                           std::optional<svd::config> svd_cfg) {
     auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
     if(gates.empty()) return;
-    state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
+    state.clear_cache(); // So that multisite_mps does not use cache
     // Sanity check
     if constexpr(settings::debug_gates) {
         for(const auto &mps : state.mps_sites) mps->assert_normalized();

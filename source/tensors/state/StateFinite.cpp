@@ -6,6 +6,7 @@
 #include "general/iter.h"
 #include "math/cast.h"
 #include "math/num.h"
+#include "math/stat.h"
 #include "StateFinite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tid/tid.h"
@@ -16,7 +17,10 @@
 #include <fmt/ranges.h>
 
 namespace settings {
-    inline constexpr bool debug_state = false;
+    inline constexpr bool debug_state           = false;
+    inline constexpr bool debug_cache           = false;
+    inline constexpr bool debug_density_matrix  = false;
+    inline constexpr bool debug_transfer_matrix = false;
 }
 
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet
@@ -144,6 +148,18 @@ template unsigned long long StateFinite::get_position<unsigned long long>() cons
 long StateFinite::get_largest_bond() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
+}
+
+long StateFinite::get_largest_bond(const std::vector<size_t> &sites) const {
+    // Get the largest bond in the interior of sites
+    auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
+    long bond_max        = 0;
+    for(const auto &i : sites) {
+        if(i == sites.back() and sites.size() >= 2) continue;
+        const auto &mps = get_mps_site(i);
+        bond_max        = std::max(bond_max, mps.get_chiR());
+    }
+    return bond_max;
 }
 
 double StateFinite::get_smallest_schmidt_value() const {
@@ -427,7 +443,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
             csites.emplace_back(site);
             const auto mps_key = fmt::format("{}", csites);
             if(use_cache and cache.mps_cplx.find(mps_key) != cache.mps_cplx.end()) {
-                tools::log->debug("multisite_mps: cache_hit: {}", csites);
+                if constexpr(settings::debug_cache) tools::log->debug("multisite_mps: cache_hit: {}", csites);
                 multisite_mps = cache.mps_cplx.at(mps_key);
             } else {
                 const auto &mps       = get_mps_site(site);
@@ -487,7 +503,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
             csites.emplace_back(site);
             const auto mps_key = fmt::format("{}", csites);
             if(use_cache and cache.mps_real.find(mps_key) != cache.mps_real.end()) {
-                tools::log->trace("multisite_mps: cache_hit: {}", csites);
+                if constexpr(settings::debug_cache) tools::log->trace("multisite_mps: cache_hit: {}", csites);
                 multisite_mps = cache.mps_real.at(mps_key);
             } else {
                 const auto &mps       = get_mps_site(site);
@@ -496,7 +512,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 bool        append_L  = mps.get_label() == "A" and site + 1 < length and site == sites.back();
                 if(prepend_L) {
                     // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
-                    tools::log->trace("Prepending L to B site {}", site);
+                    if constexpr(settings::debug_state) tools::log->trace("Prepending L to B site {}", site);
                     auto        t_prepend = tid::tic_scope("prepend", tid::level::higher);
                     const auto &mps_left  = get_mps_site(site - 1);
                     const auto  L         = Eigen::Tensor<real, 1>(mps_left.isCenter() ? mps_left.get_LC().real() : mps_left.get_L().real());
@@ -506,7 +522,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 }
                 if(append_L) {
                     // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
-                    tools::log->trace("Appending L to A site {}", site);
+                    if constexpr(settings::debug_state) tools::log->trace("Appending L to A site {}", site);
                     auto        t_append  = tid::tic_scope("append", tid::level::higher);
                     const auto &mps_right = get_mps_site(site + 1);
                     const auto &L         = Eigen::Tensor<real, 1>(mps_right.get_L().real());
@@ -552,54 +568,119 @@ const Eigen::Tensor<cplx, 3> &StateFinite::get_multisite_mps() const {
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vector<size_t> &sites) const {
-    auto t_rho = tid::tic_scope("rho");
-    auto asites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
-    if(sites == asites) {
+    auto t_rho        = tid::tic_scope("rho");
+    auto cites        = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites E.g. [012|6789] -> [012|345|6789]
+    auto costs        = get_reduced_density_matrix_cost<Scalar>(sites);
+    auto min_cost_idx = std::distance(costs.begin(), std::min_element(costs.begin(), costs.end()));
+    if constexpr(settings::debug_density_matrix)
+        tools::log->trace("get_reduced_density_matrix: cost_t2b {} | cost_l2r {} | cost_r2l {}", costs[0], costs[1], costs[2]);
+
+    if(min_cost_idx == 0 /* top to bottom */) {
         // We have a contiguous set
         auto mps = get_multisite_mps<Scalar>(sites, true);
         return tools::common::contraction::contract_mps_partial<std::array{1l, 2l}>(mps);
     } else {
-        // Note that for discontiguous sets, we expect the front and back sites to be at the edges!
+        // We probably have a non-contiguous set like [0123]4567[89]
+        // Note that for non-contiguous sets, we expect the front and back sites to be at the edges!
+        // Therefore, it matters from which side we do the contraction: we want the smaller of the two non-contiguous parts to accumulate
+        // the middle part of the system. For instance, on [0123]4567[89] we want to contract from the right, so that [89] contracts 4567 and then [0123].
+        // The reason is that
+        // * [0123] with 8 free spin indices with dim (2**8)=256 when contracting the middle sites
+        // * [89] with 4 free spin indices with dim(2**4)=16
+        // So if subsystem A has N more spins than B, then A costs 2**(2*N) times more than B to compute.
         auto &threads   = tenx::threads::get();
         auto  rho_temp  = Eigen::Tensor<Scalar, 4>(); // Will accumulate the sites
         auto  rho_temp2 = Eigen::Tensor<Scalar, 4>();
         auto  M         = Eigen::Tensor<Scalar, 3>();
-        for(size_t i = sites.front(); i <= sites.back(); ++i) {
-            const auto &mps = get_mps_site(i);
-            if(i == sites.front()) {
-                if constexpr(std::is_same_v<Scalar, real>) {
-                    M = mps.get_label() == "B" ? get_multisite_mps({sites.front()}).real()
-                                               : mps.get_M().real(); // Could be an A, AC or B. Either way we need it to include the left schmidt values
+
+        // Decide to go from the left or from the right
+        // auto site_mean = std::accumulate(sites.begin(), sites.end(), 0.5) / static_cast<double>(sites.size());
+        // bool from_left = site_mean >= get_length<double>() / 2.0;
+        if(min_cost_idx == 1 /* left to right */) {
+            // tools::log->info("from left");
+            for(const auto &i : cites) {
+                // tools::log->info("contracting site {}", i);
+                const auto &mps = get_mps_site(i);
+                if(i == sites.front()) {
+                    // Could be an A, AC or B. Either way we need the first site to include the left schmidt values
+                    // If it is the only site, we also need it to include the right schmidt values.
+                    bool use_multisite = mps.get_label() == "B" or sites.size() == 1;
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}, true).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}, true) : mps.get_M();
+                    }
+                    auto dim = M.dimensions();
+                    rho_temp.resize(std::array{dim[0], dim[0], dim[2], dim[2]});
+                    rho_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({1}, {1})).shuffle(std::array{0, 2, 1, 3});
                 } else {
-                    M = mps.get_label() == "B" ? get_multisite_mps({sites.front()})
-                                               : mps.get_M(); // Could be an A, AC or B. Either way we need it to include the left schmidt values
+                    // This site could be A, AC or B. Only A lacks schmidt values on the right, so we use multisite when the last site is A.
+                    bool use_multisite = i == sites.back() and mps.get_label() == "A";
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}, true).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}, true) : mps.get_M();
+                    }
+                    auto mps_dim  = M.dimensions();
+                    auto rho_dim  = rho_temp.dimensions();
+                    bool do_trace = std::find(sites.begin(), sites.end(), i) == sites.end();
+                    if(do_trace) {
+                        auto new_dim = std::array{rho_dim[0], rho_dim[1], mps_dim[2], mps_dim[2]};
+                        rho_temp2.resize(new_dim);
+                        rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {1})).contract(M, tenx::idx({2, 3}, {1, 0}));
+                    } else {
+                        auto new_dim = std::array{rho_dim[0] * mps_dim[0], rho_dim[1] * mps_dim[0], mps_dim[2], mps_dim[2]};
+                        rho_temp2.resize(new_dim);
+                        rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {1}))
+                                                              .contract(M, tenx::idx({2}, {1}))
+                                                              .shuffle(std::array{0, 2, 1, 4, 3, 5})
+                                                              .reshape(new_dim);
+                    }
+                    rho_temp = std::move(rho_temp2);
                 }
-                auto dim = M.dimensions();
-                rho_temp.resize(std::array{dim[0], dim[0], dim[2], dim[2]});
-                rho_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({1}, {1})).shuffle(std::array{0, 2, 1, 3});
-            } else {
-                if constexpr(std::is_same_v<Scalar, real>) {
-                    M = (i == sites.back() and mps.get_label() == "A") ? get_multisite_mps({sites.back()}).real() : mps.get_M().real();
-                    M = mps.get_M().real();
+            }
+        } else if(min_cost_idx == 2 /* left to right */) {
+            // tools::log->info("from right");
+            for(const auto &i : iter::reverse(cites)) {
+                const auto &mps = get_mps_site(i);
+                // tools::log->info("contracting site {}", i);
+                if(i == sites.back()) {
+                    // Could be an A, AC or B. Either way we need the last site to include the right schmidt values
+                    // If it is the only site, we also need it to include the left schmidt values.
+                    bool use_multisite = mps.get_label() == "A" or sites.size() == 1;
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}, true).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}, true) : mps.get_M();
+                    }
+                    auto dim = M.dimensions();
+                    rho_temp.resize(std::array{dim[0], dim[0], dim[1], dim[1]});
+                    rho_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({2}, {2})).shuffle(std::array{0, 2, 1, 3});
                 } else {
-                    M = (i == sites.back() and mps.get_label() == "A") ? get_multisite_mps({sites.back()}) : mps.get_M();
+                    // This site could be A, AC or B. Only B lacks schmidt values on the left, so we use multisite when the first site is B.
+                    bool use_multisite = i == sites.front() and mps.get_label() == "B";
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}, true).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}, true) : mps.get_M();
+                    }
+                    auto mps_dim  = M.dimensions();
+                    auto rho_dim  = rho_temp.dimensions();
+                    bool do_trace = std::find(sites.begin(), sites.end(), i) == sites.end();
+                    if(do_trace) {
+                        auto new_dim = std::array{rho_dim[0], rho_dim[1], mps_dim[1], mps_dim[1]};
+                        rho_temp2.resize(new_dim);
+                        rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {2})).contract(M, tenx::idx({2, 3}, {2, 0}));
+                    } else {
+                        auto new_dim = std::array{rho_dim[0] * mps_dim[0], rho_dim[1] * mps_dim[0], mps_dim[1], mps_dim[1]};
+                        rho_temp2.resize(new_dim);
+                        rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {2}))
+                                                              .contract(M, tenx::idx({2}, {2}))
+                                                              .shuffle(std::array{2, 0, 4, 1, 3, 5})
+                                                              .reshape(new_dim);
+                    }
+                    rho_temp = std::move(rho_temp2);
                 }
-                auto mps_dim  = M.dimensions();
-                auto rho_dim  = rho_temp.dimensions();
-                bool do_trace = std::find(sites.begin(), sites.end(), i) == sites.end();
-                if(do_trace) {
-                    auto new_dim = std::array{rho_dim[0], rho_dim[1], mps_dim[2], mps_dim[2]};
-                    rho_temp2.resize(new_dim);
-                    rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {1})).contract(M, tenx::idx({2, 3}, {1, 0}));
-                } else {
-                    auto new_dim = std::array{rho_dim[0] * mps_dim[0], rho_dim[1] * mps_dim[0], mps_dim[2], mps_dim[2]};
-                    rho_temp2.resize(new_dim);
-                    rho_temp2.device(*threads->dev) = rho_temp.contract(M.conjugate(), tenx::idx({2}, {1}))
-                                                          .contract(M, tenx::idx({2}, {1}))
-                                                          .shuffle(std::array{0, 2, 1, 4, 3, 5})
-                                                          .reshape(new_dim);
-                }
-                rho_temp = std::move(rho_temp2);
             }
         }
         return rho_temp.trace(std::array{2, 3});
@@ -608,6 +689,385 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
 
 template Eigen::Tensor<real, 2> StateFinite::get_reduced_density_matrix<real>(const std::vector<size_t> &sites) const;
 template Eigen::Tensor<cplx, 2> StateFinite::get_reduced_density_matrix<cplx>(const std::vector<size_t> &sites) const;
+
+template<typename Scalar>
+std::array<double, 3> StateFinite::get_reduced_density_matrix_cost(const std::vector<size_t> &sites) const {
+    auto t_rho         = tid::tic_scope("rho");
+    auto cites         = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites E.g. [012|6789] -> [012|345|6789]
+    bool is_contiguous = sites == cites;
+    // We have a contiguous set
+    // Calculate the numerical cost for contracting top to bottom or side to side
+    auto cost_t2b = 0.0;
+    auto cost_l2r = 0.0;
+    auto cost_r2l = 0.0;
+
+    if(is_contiguous) {
+        auto bonds   = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
+        auto chiL    = get_mps_site(sites.front()).get_chiL();
+        auto chiR    = get_mps_site(sites.back()).get_chiR();
+        auto max_chi = std::max(chiR, chiL);
+        auto min_chi = std::min(chiR, chiL);
+        auto spindim = std::pow(2.0, sites.size());
+        cost_t2b =
+            spindim * spindim * static_cast<double>(max_chi * min_chi * min_chi + min_chi); // This is the last step, but we will add earlier steps below.
+        for(const auto &[i, pos] : iter::enumerate(sites)) {
+            auto key = fmt::format("{}", num::range(sites.front(), pos + 1));
+            if(has_mps_in_cache<Scalar>(key)) continue;
+            // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+            if(i == 0) { // It will append either chiL or chiR, but we take the worst case scanario here
+                if(sites.size() == 1) { cost_t2b += static_cast<double>(2l * chiL * chiR * std::max(chiL, chiR)); }
+            } else {
+                auto bondR = pos == sites.back() ? chiR : bonds[i];
+                cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i - 1] * bondR);
+            }
+        }
+    } else {
+        cost_t2b = std::numeric_limits<double>::infinity();
+    }
+
+    auto bonds   = get_bond_dims(cites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
+    auto chiL    = get_mps_site(cites.front()).get_chiL();
+    auto chiR    = get_mps_site(cites.back()).get_chiR();
+    auto spindim = 1.0;
+    for(const auto &[i, pos] : iter::enumerate(cites)) {
+        // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+        auto bondR = pos == sites.back() ? chiR : bonds.at(i);
+        if(pos == sites.front()) {
+            cost_l2r += static_cast<double>(4l * chiL * bondR * bondR);
+            spindim *= 2;
+        } else {
+            bool do_trace = std::find(sites.begin(), sites.end(), pos) == sites.end();
+            if(do_trace) {
+                cost_l2r += spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bonds[i - 1] * bondR); // Upper
+                cost_l2r += spindim * spindim * static_cast<double>(4l * bonds[i - 1] * bondR * bondR);        // Lower part 1 of 2
+                cost_l2r += spindim * spindim * static_cast<double>(2l * bondR * bondR);                       // Lower part 2 of 2
+            } else {
+                cost_l2r += spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bonds[i - 1] * bondR); // Upper
+                cost_l2r += spindim * spindim * static_cast<double>(4l * bonds[i - 1] * bondR * bondR);        // Lower part 1 of 2
+                spindim *= 2;
+            }
+        }
+    }
+    spindim = 1.0;
+    for(const auto &[i, pos] : iter::enumerate_reverse(cites)) {
+        // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+        auto bondL = pos == sites.front() ? chiL : bonds.at(i - 1);
+        if(pos == sites.back()) {
+            cost_r2l += static_cast<double>(4 * chiR * bondL * bondL);
+            spindim *= 2;
+        } else {
+            bool do_trace = std::find(sites.begin(), sites.end(), pos) == sites.end();
+            if(do_trace) {
+                cost_r2l += spindim * spindim * static_cast<double>(2l * bondL * bonds[i] * bonds[i]); // Upper
+                cost_r2l += spindim * spindim * static_cast<double>(4l * bondL * bondL * bonds[i]);    // Lower part 1 of 2
+                cost_r2l += spindim * spindim * static_cast<double>(2l * bondL * bondL);               // Lower part 2 of 2
+            } else {
+                cost_r2l += spindim * spindim * static_cast<double>(2l * bondL * bonds[i] * bonds[i]); // Upper
+                cost_r2l += spindim * spindim * static_cast<double>(4l * bondL * bondL * bonds[i]);    // Lower part 1 of 2
+                spindim *= 2;
+            }
+        }
+    }
+
+    return std::array{cost_t2b, cost_l2r, cost_r2l};
+}
+
+std::string StateFinite::generate_cache_key(const std::vector<size_t> sites, const size_t pos, std::string_view side) const {
+    if(sites.empty()) return {};
+    assert(pos >= sites.front());
+    assert(pos <= sites.back());
+    std::string key;
+    auto        nelems = 1 + pos - sites.front();
+    key.reserve(nelems * 8);
+    key += "[";
+    if(side == "left") {
+        for(const auto &i : sites) {
+            if(i == sites.front()) {
+                key += fmt::format("{}{}{}", mps_sites[i]->get_label() == "B" ? "LB" : "A", sites.size() == 1 ? "L" : "", i);
+                if(sites.size() == 1) key += "L";
+            } else if(i == sites.back()) {
+                key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "AL", i);
+            } else {
+                key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "A", i);
+            }
+            if(i == pos) break;
+            key += ",";
+        }
+    }
+    if(side == "right") {
+        for(const auto &i : sites) {
+            if(i < pos) continue;
+            if(i == sites.front()) {
+                key += fmt::format("{}{}{}", mps_sites[i]->get_label() == "B" ? "LB" : "A", sites.size() == 1 ? "L" : "", i);
+            } else if(i == sites.back()) {
+                key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "AL", i);
+            } else {
+                key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "A", i);
+            }
+            if(i != sites.back()) key += ",";
+        }
+    }
+    key += "]";
+    return std::string(key.begin(), key.end()); // Return only the relevant part.
+}
+
+template<typename Scalar>
+StateFinite::optional_tensorref<Scalar> StateFinite::load_trf_from_cache(const std::vector<size_t> sites, const size_t pos, std::string_view side) const {
+    if(sites.empty()) return {};
+    assert(pos >= sites.front());
+    assert(pos <= sites.back());
+    auto key = generate_cache_key(sites, pos, side);
+    if constexpr(std::is_same_v<Scalar, real>) {
+        auto it = cache.trf_real.find(key);
+        if(it != cache.trf_real.end()) {
+            if constexpr(settings::debug_cache) tools::log->trace("load_trf_from_cache: cache_hit: {} | {} | {}", key, it->second.dimensions(), side);
+            return std::cref(it->second);
+        }
+    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        auto it = cache.trf_cplx.find(key);
+        if(it != cache.trf_cplx.end()) {
+            if constexpr(settings::debug_cache) tools::log->trace("load_trf_from_cache: cache_hit: {} | {} | {}", key, it->second.dimensions(), side);
+            return std::cref(it->second);
+        }
+    }
+    return std::nullopt;
+}
+
+template<typename Scalar>
+void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::vector<size_t> &sites, size_t pos, std::string_view side) const {
+    if(sites.empty()) return;
+    assert(pos >= sites.front());
+    assert(pos <= sites.back());
+    // if constexpr(settings::debug_cache) {
+    //     auto trf_map = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(trf.data(), trf.dimension(0) * trf.dimension(1),
+    //     trf.dimension(2) * trf.dimension(3)); auto trf_trc = trf_map.trace(); if(std::abs(trf_trc - 1.0) > 1e-3) throw except::logic_error("trf trace is not
+    //     identity. Got {:.16f}", trf_trc);
+    // }
+
+    auto key = generate_cache_key(sites, pos, side);
+    if constexpr(settings::debug_cache) tools::log->trace("save_trf_into_cache: key: {} | {} | {}", key, trf.dimensions(), side);
+    if constexpr(std::is_same_v<Scalar, real>) { cache.trf_real[key] = trf; }
+    if constexpr(std::is_same_v<Scalar, cplx>) { cache.trf_cplx[key] = trf; }
+}
+
+template<typename Scalar>
+bool StateFinite::has_mps_in_cache(const std::string &key) const {
+    if constexpr(std::is_same_v<Scalar, real>) { return cache.mps_real.find(key) != cache.mps_real.end(); }
+    if constexpr(std::is_same_v<Scalar, cplx>) { return cache.mps_cplx.find(key) != cache.mps_cplx.end(); }
+    return false;
+}
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size_t> &sites) const {
+    auto t_trf        = tid::tic_scope("trf");
+    auto chiL         = get_mps_site(sites.front()).get_chiL();
+    auto chiR         = get_mps_site(sites.back()).get_chiR();
+    auto costs        = get_transfer_matrix_cost<Scalar>(sites);
+    auto min_cost_idx = std::distance(costs.begin(), std::min_element(costs.begin(), costs.end()));
+
+    auto &threads = tenx::threads::get();
+
+    if constexpr(settings::debug_transfer_matrix) tools::log->trace("cost_t2b {} | cost_l2r {} | cost_r2l {}", costs[0], costs[1], costs[2]);
+    if(min_cost_idx == 0 /* top to bottom */) {
+        if constexpr(settings::debug_transfer_matrix) tools::log->trace("from top");
+        auto mps                  = get_multisite_mps<Scalar>(sites, true);
+        auto dim                  = std::array{mps.dimension(1) * mps.dimension(2), mps.dimension(1) * mps.dimension(2)};
+        auto res                  = Eigen::Tensor<Scalar, 2>(dim);
+        res.device(*threads->dev) = mps.conjugate().contract(mps, tenx::idx({0}, {0})).reshape(dim);
+        return res;
+    } else {
+        auto trf_temp = Eigen::Tensor<Scalar, 4>(); // Will accumulate the sites
+        auto M        = Eigen::Tensor<Scalar, 3>();
+        auto trf_tmp4 = Eigen::Tensor<Scalar, 4>(); // Scratch space for contractions
+        auto trf_tmp5 = Eigen::Tensor<Scalar, 5>(); // Scratch space for contractions
+
+        /*
+         * We accumulate the transfer matrix such that it has the same index ordering going from left or right,
+         * so that the caches are compatible without having to transpose
+         *  left     right
+         * 0-----2  0-----2
+         *    |        |
+         * 1-----3  1-----3
+         *
+         */
+
+        if(min_cost_idx == 1 /* left to right */) {
+            if constexpr(settings::debug_transfer_matrix) tools::log->info("from left");
+            for(const auto &i : sites) {
+                if(auto trf_cache = load_trf_from_cache<Scalar>(sites, i, "left"); trf_cache.has_value()) {
+                    trf_temp = trf_cache->get();
+                    continue;
+                }
+                const auto &mps = get_mps_site(i);
+                if(i == sites.front()) {
+                    // Could be an A, AC or B. Either way we need the first site to include the left schmidt values
+                    // If it is the only site, we also need it to include the right schmidt values.
+                    bool use_multisite = mps.get_label() == "B" or sites.size() == 1;
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}) : mps.get_M();
+                    }
+                    auto dim = M.dimensions();
+                    trf_temp.resize(std::array{dim[1], dim[1], dim[2], dim[2]});
+                    trf_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({0}, {0})).shuffle(std::array{0, 2, 1, 3});
+                } else {
+                    // This site could be A, AC or B. Only A lacks schmidt values on the right, so we use multisite when the last site is A.
+                    bool use_multisite = i == sites.back() and mps.get_label() == "A";
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}) : mps.get_M();
+                    }
+                    auto mps_dim = M.dimensions();
+                    auto trf_dim = trf_temp.dimensions();
+                    auto new_dim = std::array{trf_dim[0], trf_dim[1], mps_dim[2], mps_dim[2]};
+                    trf_tmp4.resize(new_dim);
+                    trf_tmp4.device(*threads->dev) = trf_temp.contract(M.conjugate(), tenx::idx({2}, {1})).contract(M, tenx::idx({2, 3}, {1, 0}));
+                    trf_temp                       = std::move(trf_tmp4);
+                }
+                save_trf_into_cache<Scalar>(trf_temp, sites, i, "left");
+            }
+        } else if(min_cost_idx == 2 /* right to left */) {
+            if constexpr(settings::debug_transfer_matrix) tools::log->trace("from right");
+            for(const auto &i : iter::reverse(sites)) {
+                if(auto trf_cache = load_trf_from_cache<Scalar>(sites, i, "right"); trf_cache.has_value()) {
+                    trf_temp = trf_cache->get();
+                    continue;
+                }
+                const auto &mps = get_mps_site(i);
+                if(i == sites.back()) {
+                    // Could be an A, AC or B. Either way we need the last site to include the right schmidt values
+                    // If it is the only site, we also need it to include the left schmidt values.
+                    bool use_multisite = mps.get_label() == "A" or sites.size() == 1;
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}) : mps.get_M();
+                    }
+                    auto dim = M.dimensions();
+                    trf_temp.resize(std::array{dim[1], dim[1], dim[2], dim[2]});
+                    trf_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({0}, {0})).shuffle(std::array{0, 2, 1, 3});
+
+                    // auto dim = M.dimensions();
+                    // trf_temp.resize(std::array{dim[2], dim[2], dim[1], dim[1]});
+                    // trf_temp.device(*threads->dev) = M.conjugate().contract(M, tenx::idx({0}, {0})).shuffle(std::array{1, 3, 0, 2});
+
+                } else {
+                    // This site could be A, AC or B. Only B lacks schmidt values on the left, so we use multisite when the first site is B.
+                    bool use_multisite = i == sites.front() and mps.get_label() == "B";
+                    if constexpr(std::is_same_v<Scalar, real>) {
+                        M = use_multisite ? get_multisite_mps({i}).real() : mps.get_M().real();
+                    } else {
+                        M = use_multisite ? get_multisite_mps({i}) : mps.get_M();
+                    }
+                    auto mps_dim = M.dimensions();
+                    auto trf_dim = trf_temp.dimensions();
+                    auto tm5_dim = std::array{mps_dim[0], mps_dim[1], trf_dim[0], trf_dim[2], trf_dim[3]};
+                    auto new_dim = std::array{mps_dim[1], mps_dim[1], trf_dim[2], trf_dim[3]};
+                    trf_tmp5.resize(tm5_dim);
+                    trf_tmp5.device(*threads->dev) = M.contract(trf_temp, tenx::idx({2}, {1}));
+                    trf_temp.resize(new_dim);
+                    trf_temp.device(*threads->dev) = M.conjugate().contract(trf_tmp5, tenx::idx({0, 2}, {0, 2}));
+                }
+                save_trf_into_cache<Scalar>(trf_temp, sites, i, "right");
+            }
+        }
+        auto new_dim = std::array{chiL, chiR, chiL, chiR};
+        trf_tmp4.resize(new_dim);
+        trf_tmp4.device(*threads->dev) = trf_temp.shuffle(std::array{0, 2, 1, 3});
+        return trf_tmp4.reshape(std::array{chiL * chiR, chiL * chiR});
+    }
+}
+
+template<typename Scalar>
+std::array<double, 3> StateFinite::get_transfer_matrix_cost(const std::vector<size_t> &sites) const {
+    if(sites.empty()) throw except::logic_error("get_transfer_matrix_cost: sites is empty");
+    auto cites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
+    if(sites != cites) throw except::logic_error("get_transfer_matrix_cost: sites is not contiguous: {}", sites);
+    // We have a contiguous set
+    auto bonds = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
+    auto chiL  = get_mps_site(sites.front()).get_chiL();
+    auto chiR  = get_mps_site(sites.back()).get_chiR();
+    // Calculate the numerical cost for contracting top to bottom or side to side
+    auto cost_t2b = static_cast<double>(chiL * chiR * chiL * chiR) * std::pow(2.0, sites.size()); // This is the last step, but we will add earlier steps below.
+    auto cost_l2r = 0.0;
+    auto cost_r2l = 0.0;
+    //
+    for(size_t i = 0; i < sites.size(); ++i) {
+        auto key = fmt::format("{}", num::range(sites.front(), sites.front() + i + 1));
+        if(has_mps_in_cache<Scalar>(key)) continue;
+        if(i == 0 and sites.size() == 1) { // It will append either chiL or chiR but we take the worst case scanario here
+            cost_t2b += static_cast<double>(2l * chiL * chiR * std::max(chiL, chiR));
+        }
+        if(i + 1 < bonds.size()) { // TTT...T*T
+            cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i] * bonds[i + 1] * 2l);
+        } else if(i + 1 == sites.size() and i == bonds.size()) { // The last site
+            cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(2l * chiL * bonds[i - 1] * chiR);
+        }
+    }
+    for(const auto &[i, pos] : iter::enumerate(sites)) {
+        // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+        if(load_trf_from_cache<Scalar>(sites, pos, "left").has_value()) continue;
+        if(pos == sites.front() and i < bonds.size()) {
+            cost_l2r += static_cast<double>(chiL * chiL * bonds[i] * bonds[i] * 2); // The left-most site
+        } else {                                                                    // Appending sites in the interior
+            auto bondR = pos == sites.back() ? chiR : bonds.at(i);
+            cost_l2r += static_cast<double>(chiL * chiL * bonds[i - 1] * bonds[i - 1] * bondR * 2); // Upper mps
+            cost_l2r += static_cast<double>(chiL * chiL * bonds[i - 1] * bondR * bondR * 4);        // Lower mps part 1 of 2
+            cost_l2r += static_cast<double>(chiL * chiL * bondR * bondR * 2);                       // Lower mps part 2 of 2
+        }
+    }
+    for(const auto &[i, pos] : iter::enumerate_reverse(sites)) {
+        // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+        if(load_trf_from_cache<Scalar>(sites, pos, "right").has_value()) continue;
+        if(pos == sites.back() and i - 1 < bonds.size()) {
+            cost_r2l += static_cast<double>(chiR * chiR * bonds[i - 1] * bonds[i - 1] * 2); // The right-most site
+        } else {                                                                            // Appending sites in the interior
+            auto bondL = pos == sites.front() ? chiL : bonds.at(i - 1);
+            cost_r2l += static_cast<double>(chiR * chiR * bonds[i] * bonds[i] * bondL * 2); // Upper mps
+            cost_r2l += static_cast<double>(chiR * chiR * bonds[i] * bondL * bondL * 4);    // Lower mps part 1 of 2
+            cost_r2l += static_cast<double>(chiR * chiR * bondL * bondL * 2);               // Lower mps part 2 of 2
+        }
+    }
+
+    if(cost_l2r == 0) {
+        // This can only happen if the subsystem has the "LC" center bond to the left of the right-most site
+        auto pos = get_position<size_t>();
+        if(pos >= sites.back()) throw except::logic_error("get_transfer_matrix_cost: cost_l2r is zero, but pos {} is outside of the subsystem {}", pos, sites);
+    }
+    if(cost_r2l == 0) {
+        // This can only happen if the subsystem has the "LC" center bond to the right of the left-most site.
+        auto pos = get_position<size_t>();
+        if(pos < sites.front()) throw except::logic_error("get_transfer_matrix_cost: cost_r2l is zero, but pos {} is outside of the subsystem {}", pos, sites);
+    }
+    return std::array{cost_t2b, cost_l2r, cost_r2l};
+    // auto costs        = std::array{cost_t2b, cost_l2r, cost_r2l};
+    // auto min_cost_itr = std::min_element(costs.begin(), costs.end());
+    // auto min_cost_idx = std::distance(costs.begin(), min_cost_itr);
+}
+
+template Eigen::Tensor<real, 2> StateFinite::get_transfer_matrix<real>(const std::vector<size_t> &sites) const;
+template Eigen::Tensor<cplx, 2> StateFinite::get_transfer_matrix<cplx>(const std::vector<size_t> &sites) const;
+
+template<typename Scalar>
+std::array<double, 2> StateFinite::get_cache_sizes() const {
+    double size_mps = 0, size_trf = 0;
+    if constexpr(std::is_same_v<Scalar, real>) {
+        for(const auto &elem : cache.mps_real) size_mps += static_cast<double>(elem.second.size());
+        for(const auto &elem : cache.trf_real) size_trf += static_cast<double>(elem.second.size());
+        return std::array{size_mps * 8.0 / std::pow(1024.0, 3.0), size_trf * 8.0 / std::pow(1024.0, 3.0)};
+    }
+    if constexpr(std::is_same_v<Scalar, real>) {
+        for(const auto &elem : cache.mps_cplx) size_mps += static_cast<double>(elem.second.size());
+        for(const auto &elem : cache.trf_cplx) size_trf += static_cast<double>(elem.second.size());
+        return std::array{size_mps * 16.0 / std::pow(1024.0, 3.0), size_trf * 16.0 / std::pow(1024.0, 3.0)};
+    }
+    return {};
+}
+template std::array<double, 2> StateFinite::get_cache_sizes<real>() const;
+template std::array<double, 2> StateFinite::get_cache_sizes<cplx>() const;
 
 void StateFinite::set_truncation_error(size_t pos, double error) { get_mps_site(pos).set_truncation_error(error); }
 void StateFinite::set_truncation_error(double error) { set_truncation_error(get_position(), error); }
@@ -691,12 +1151,12 @@ bool StateFinite::is_truncated(double truncation_error_limit) const {
 }
 
 void StateFinite::clear_measurements(LogPolicy logPolicy) const {
-    if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing state measurements");
+    if(logPolicy == LogPolicy::VERBOSE or (settings::debug and logPolicy == LogPolicy::DEBUG)) { tools::log->trace("Clearing state measurements"); }
     measurements = MeasurementsStateFinite();
 }
 
 void StateFinite::clear_cache(LogPolicy logPolicy) const {
-    if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing state cache");
+    if(logPolicy == LogPolicy::VERBOSE or (settings::debug and logPolicy == LogPolicy::DEBUG)) { tools::log->trace("Clearing state cache"); }
     cache = Cache();
 }
 

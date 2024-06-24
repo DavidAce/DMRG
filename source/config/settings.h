@@ -166,7 +166,8 @@ namespace settings {
         /*! Entanglement entropy (log2) of all contiguous subsystems */
             inline StoragePolicy policy = StoragePolicy::FINISH;
             inline unsigned long chunksize = 10;
-            inline auto bits_err = 1e-10; /*! Positive for relative error = 1-bits_found/L, negative for absolute error = L-bits_found */
+            inline auto bits_err = 1e-8;  /*!< Positive for relative error = 1-bits_found/L, negative for absolute error = L-bits_found */
+            inline long eig_size = 4096l; /*!< Maximum matrix size to diagonalize */
             inline long bond_lim = 2048l; /*!< Bond dimension limit during swap operations  */
             inline auto trnc_lim = 1e-8;  /*!< Truncation error limit during swap operations  */
         }

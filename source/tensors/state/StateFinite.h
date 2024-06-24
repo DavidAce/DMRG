@@ -9,8 +9,11 @@
 #include <unordered_map>
 #include <unsupported/Eigen/CXX11/Tensor>
 
+class MpsSite;
+class TensorsFinite;
+// enum class RDM { AUTO, ZIP };
 /**
- * \class class_finite_state
+ * \class StateFinite
  *
  * \brief Stores the finite mps state and components to operate on it, such as environments and model mpo's.
  *
@@ -26,15 +29,15 @@
  *
  *  The numbers in parentheses denote the position in the chain, note that this isn't the same as the position in the corresponding containers.
  */
-class MpsSite;
-class TensorsFinite;
 
 class StateFinite {
     private:
     struct Cache {
         std::optional<Eigen::Tensor<cplx, 3>>                   multisite_mps = std::nullopt;
-        std::unordered_map<std::string, Eigen::Tensor<cplx, 3>> mps_cplx      = {};
         std::unordered_map<std::string, Eigen::Tensor<real, 3>> mps_real      = {};
+        std::unordered_map<std::string, Eigen::Tensor<cplx, 3>> mps_cplx      = {};
+        std::unordered_map<std::string, Eigen::Tensor<real, 4>> trf_real      = {};
+        std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> trf_cplx      = {};
         std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> temporary_rho = {};
     };
 
@@ -43,6 +46,15 @@ class StateFinite {
     mutable std::vector<bool> tag_normalized_sites;
     std::string               name;
     AlgorithmType             algo = AlgorithmType::ANY;
+    template<typename Scalar>
+    using optional_tensorref = std::optional<std::reference_wrapper<const Eigen::Tensor<Scalar, 4>>>;
+    template<typename Scalar>
+    optional_tensorref<Scalar> load_trf_from_cache(const std::vector<size_t> sites, const size_t pos, std::string_view side) const;
+    template<typename Scalar>
+    void save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::vector<size_t> &sites, size_t pos, std::string_view side) const;
+    template<typename Scalar>
+    bool        has_mps_in_cache(const std::string &key) const;
+    std::string generate_cache_key(const std::vector<size_t> sites, const size_t pos, std::string_view side) const;
 
     public:
     std::vector<std::unique_ptr<MpsSite>> mps_sites;
@@ -86,6 +98,7 @@ class StateFinite {
     [[nodiscard]] long                          size_2site() const;
     [[nodiscard]] long                          size_nsite() const;
     [[nodiscard]] long                          get_largest_bond() const;
+    [[nodiscard]] long                          get_largest_bond(const std::vector<size_t> &sites) const;
     [[nodiscard]] double                        get_smallest_schmidt_value() const;
 
     [[nodiscard]] bool position_is_the_middle() const;
@@ -122,7 +135,7 @@ class StateFinite {
     // For multisite
     std::array<long, 3>              active_dimensions() const;
     long                             active_problem_size() const;
-    std::vector<long>                get_bond_dims(const std::vector<size_t> & sites) const;
+    std::vector<long>                get_bond_dims(const std::vector<size_t> &sites) const;
     std::vector<long>                get_bond_dims_active() const;
     std::vector<long>                get_spin_dims(const std::vector<size_t> &sites) const;
     std::vector<long>                get_spin_dims() const;
@@ -132,11 +145,16 @@ class StateFinite {
     template<typename Scalar = cplx>
     Eigen::Tensor<Scalar, 3>      get_multisite_mps(const std::vector<size_t> &sites, bool use_cache = false) const;
     const Eigen::Tensor<cplx, 3> &get_multisite_mps() const;
-    template<typename Scalar = cplx>
+    template<typename Scalar>
     Eigen::Tensor<Scalar, 2> get_reduced_density_matrix(const std::vector<size_t> &sites) const;
-    //    Eigen::Tensor<cplx, 2>           get_reduced_density_matrix_l2r(const std::vector<size_t> &sites) const;
-    //    Eigen::Tensor<cplx, 2>           get_reduced_density_matrix_r2l(const std::vector<size_t> &sites) const;
-    //    Eigen::Tensor<cplx, 2>           get_reduced_density_matrix(const std::vector<size_t> &sites) const;
+    template<typename Scalar>
+    std::array<double, 3> get_reduced_density_matrix_cost(const std::vector<size_t> &sites) const;
+    template<typename Scalar>
+    Eigen::Tensor<Scalar, 2> get_transfer_matrix(const std::vector<size_t> &sites) const;
+    template<typename Scalar>
+    std::array<double, 3> get_transfer_matrix_cost(const std::vector<size_t> &sites) const;
+    template<typename Scalar>
+    std::array<double, 2> get_cache_sizes() const;
 
     public:
     void                set_truncation_error(size_t pos, double error);
@@ -155,8 +173,8 @@ class StateFinite {
     size_t num_bonds_at_limit(long bond_lim) const;
     bool   is_limited_by_bond(long bond_lim) const;
     bool   is_truncated(double truncation_error_limit) const;
-    void   clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
-    void   clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
+    void   clear_measurements(LogPolicy logPolicy = LogPolicy::SILENT) const;
+    void   clear_cache(LogPolicy logPolicy = LogPolicy::SILENT) const;
 
     void                     tag_active_sites_normalized(bool tag) const;
     void                     tag_all_sites_normalized(bool tag) const;

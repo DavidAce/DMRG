@@ -22,6 +22,7 @@
 #include "tools/common/split.h"
 #include "tools/finite/mps.h"
 #include <Eigen/src/Core/GlobalFunctions.h>
+#include <Eigen/SVD>
 
 template<typename ContainerType>
 double count_finite(const ContainerType &arr) {
@@ -60,6 +61,20 @@ double nanmean(const ContainerType &arr) {
     }
     if(count == 0) return std::numeric_limits<double>::quiet_NaN();
     return sum / count;
+}
+
+std::vector<size_t> get_subsystem_complement(size_t length, const std::vector<size_t> &subsystem) {
+    // Assume the subsystem is contiguous and sorted
+    if(subsystem.empty()) return num::range<size_t>(0, length);
+    std::vector<size_t> complement = num::range<size_t>(0, subsystem.front());
+    if(subsystem.back() + 1 != length) {
+        auto right = num::range<size_t>(subsystem.back() + 1, length);
+        complement.insert(complement.end(), right.begin(), right.end());
+    }
+    // for(size_t pos = 0; pos < length; ++pos) {
+    //     if(std::find(subsystem.begin(), subsystem.end(), pos) == subsystem.end()) complement.emplace_back(pos);
+    // }
+    return complement;
 }
 
 double tools::finite::measure::entanglement_entropy_log2(const StateFinite &state, size_t nsites /* sites to the left of the partition */) {
@@ -110,39 +125,110 @@ std::vector<double> tools::finite::measure::entanglement_entropies_log2(const St
     return entanglement_entropies;
 }
 
-double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFinite &state, const std::vector<size_t> &sites) {
+double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFinite &state, const std::vector<size_t> &sites, size_t eig_max_size) {
     if(sites.empty()) return 0;
+    bool sites_is_contiguous = sites == num::range<size_t>(sites.front(), sites.back() + 1);
+    if(not sites_is_contiguous) { throw except::logic_error("sites are not contiguous: {}", sites); }
     // If sites is contiguous starting at 0, then we can return a bipartite entropy
     if(sites == num::range<size_t>(0ul, sites.size())) { return tools::finite::measure::entanglement_entropy_log2(state, sites.size()); }
     // If sites is contiguous ending at L-1, then we can return a bipartite entropy
     auto L = state.get_length<size_t>();
     if(sites == num::range<size_t>(L - sites.size(), L)) { return tools::finite::measure::entanglement_entropy_log2(state, L - sites.size()); }
-    bool is_real = state.is_real();
-    auto solver  = eig::solver();
-    auto evs     = Eigen::ArrayXd();
-    if(is_real) {
-        auto rho = state.get_reduced_density_matrix<real>(sites);
-        tools::log->debug("rho: {:.2e} s | sites {}", tid::get("rho").get_last_interval(), sites);
-        // tools::log->trace("eig rho_real: {} ...", rho.dimensions());
-        if(rho.dimension(0) <= 8192) {
-            solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
-        } else {
-            solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), 'V', -1, -1, 1e-14, 1, eig::Vecs::OFF);
-        }
-        evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues of rho
-        tools::log->trace("eig rho_real: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total, solver.result.meta.time_prep);
-    } else {
-        auto rho = state.get_reduced_density_matrix<cplx>(sites);
-        // tools::log->debug("eig rho_cplx: {} ...", rho.dimensions());
 
-        solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
-        evs = eig::view::get_eigvals<real>(solver.result).real(); // Eigenvalues of rho
-        tools::log->trace("eig rho_cplx: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total, solver.result.meta.time_prep);
+    bool is_real = state.is_real();
+    auto cites   = get_subsystem_complement(L, sites); // Complement of sites
+
+    // Determine whether to use the density matrix, its complement or the transfer matrix approach
+    // Since the eigenvalue decomposition is the most limiting factor, we use an upper limit by setting its cost to infinity when above the threshold
+    auto chiL         = state.get_mps_site(sites.front()).get_chiL();
+    auto chiR         = state.get_mps_site(sites.back()).get_chiR();
+    auto eig_size_rho = static_cast<double>(std::pow(2.0, sites.size()));
+    auto eig_size_cmp = static_cast<double>(std::pow(2.0, cites.size())); // The complement of rho
+    auto eig_size_trf = static_cast<double>(chiL * chiR);
+    auto eig_cost_rho = eig_size_rho <= static_cast<double>(eig_max_size) ? std::pow(eig_size_rho, 3.0) : std::numeric_limits<double>::infinity();
+    auto eig_cost_cmp = eig_size_cmp <= static_cast<double>(eig_max_size) ? std::pow(eig_size_cmp, 3.0) : std::numeric_limits<double>::infinity();
+    auto eig_cost_trf = eig_size_trf <= static_cast<double>(eig_max_size) ? std::pow(eig_size_trf, 3.0) : std::numeric_limits<double>::infinity();
+
+    auto eig_sizes = std::array{eig_size_rho, eig_size_cmp, eig_size_trf};
+    // auto eig_costs = std::array{eig_cost_rho, eig_cost_cmp, eig_cost_trf};
+
+    auto mat_costs_rho = is_real ? state.get_reduced_density_matrix_cost<real>(sites) : state.get_reduced_density_matrix_cost<cplx>(sites);
+    auto mat_costs_cmp = is_real ? state.get_reduced_density_matrix_cost<real>(cites) : state.get_reduced_density_matrix_cost<cplx>(cites);
+    auto mat_costs_trf = is_real ? state.get_transfer_matrix_cost<real>(sites) : state.get_transfer_matrix_cost<cplx>(sites);
+
+    auto min_cost_rho_idx = std::distance(mat_costs_rho.begin(), std::min_element(mat_costs_rho.begin(), mat_costs_rho.end()));
+    auto min_cost_cmp_idx = std::distance(mat_costs_cmp.begin(), std::min_element(mat_costs_cmp.begin(), mat_costs_cmp.end()));
+    auto min_cost_trf_idx = std::distance(mat_costs_trf.begin(), std::min_element(mat_costs_trf.begin(), mat_costs_trf.end()));
+    auto mat_cost_rho     = mat_costs_rho[min_cost_rho_idx];
+    auto mat_cost_cmp     = mat_costs_cmp[min_cost_cmp_idx];
+    auto mat_cost_trf     = mat_costs_trf[min_cost_trf_idx];
+    auto mat_costs        = std::array{mat_cost_rho, mat_cost_cmp, mat_cost_trf};
+    auto tot_costs        = std::array{eig_cost_rho + mat_cost_rho, eig_cost_cmp + mat_cost_cmp, eig_cost_trf + mat_cost_trf};
+
+    // auto names        = std::array{"rho", "cmp", "trf"};
+    // auto min_eig_cost_itr = std::min_element(eig_costs.begin(), eig_costs.end());
+    // auto min_eig_cost_idx = std::distance(eig_costs.begin(), min_eig_cost_itr);
+    // auto min_eig_cost_val = eig_costs[min_eig_cost_idx];
+
+    // auto min_mat_cost_itr = std::min_element(mat_costs.begin(), mat_costs.end());
+    // auto min_mat_cost_idx = std::distance(mat_costs.begin(), min_mat_cost_itr);
+    // auto min_mat_cost_val = mat_costs[min_mat_cost_idx];
+
+    auto min_cost_itr = std::min_element(tot_costs.begin(), tot_costs.end());
+    auto min_cost_idx = std::distance(tot_costs.begin(), min_cost_itr);
+    auto min_cost_val = tot_costs[min_cost_idx];
+
+    if(std::isinf(min_cost_val)) {
+        tools::log->trace("mode ???: eig {} | mat {} | chi {} {} | sites {}", eig_sizes, mat_costs, chiL, chiR, sites);
+        return std::numeric_limits<double>::quiet_NaN(); // No cost is smaller than max mat size
     }
+
+    auto                  solver      = eig::solver();
+    auto                  evs         = Eigen::ArrayXd(); // Eigenvalues
+    [[maybe_unused]] auto mat_time    = 0.0;
+    [[maybe_unused]] auto eig_time    = 0.0;
+    [[maybe_unused]] auto cache_sizes = std::array<double, 2>{};
+    if(is_real) {
+        Eigen::Tensor<real, 2> mat;
+        if(min_cost_idx == 0) {
+            mat      = state.get_reduced_density_matrix<real>(sites);
+            mat_time = tid::get("rho").get_last_interval();
+        } else if(min_cost_idx == 1) {
+            mat      = state.get_reduced_density_matrix<real>(cites);
+            mat_time = tid::get("rho").get_last_interval();
+        } else if(min_cost_idx == 2) {
+            mat      = state.get_transfer_matrix<real>(sites);
+            mat_time = tid::get("trf").get_last_interval();
+        }
+        solver.eig<eig::Form::SYMM>(mat.data(), mat.dimension(0), eig::Vecs::OFF);
+        evs         = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
+        cache_sizes = state.get_cache_sizes<real>();
+    } else {
+        Eigen::Tensor<cplx, 2> mat;
+        if(min_cost_idx == 0) {
+            mat      = state.get_reduced_density_matrix<cplx>(sites);
+            mat_time = tid::get("rho").get_last_interval();
+        } else if(min_cost_idx == 1) {
+            mat      = state.get_reduced_density_matrix<cplx>(sites);
+            mat_time = tid::get("rho").get_last_interval();
+        } else if(min_cost_idx == 2) {
+            mat      = state.get_transfer_matrix<cplx>(sites);
+            mat_time = tid::get("trf").get_last_interval();
+        }
+        solver.eig<eig::Form::SYMM>(mat.data(), mat.dimension(0), eig::Vecs::OFF);
+        evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
+
+        cache_sizes = state.get_cache_sizes<cplx>();
+    }
+    eig_time                         = solver.result.meta.time_total;
     double entanglement_entropy_log2 = 0;
     for(const auto &e : evs) {
         if(e > 0) entanglement_entropy_log2 += -e * std::log2(e); // We use log base 2 for information
     }
+    // if(eig_time > 1.0)
+    // tools::log->trace("mode {}: eig {} mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}", min_cost_idx, eig_sizes,
+    // mat_costs, chiL, chiR, entanglement_entropy_log2, cache_sizes, mat_time, eig_time, sites);
+
     return entanglement_entropy_log2;
 }
 
@@ -174,7 +260,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_dens_lo
             } else {
                 auto sites        = num::range<size_t>(off, off + ext);
                 auto evs          = Eigen::ArrayXd();
-                see(ext - 1, off) = subsystem_entanglement_entropy_log2(state, sites);
+                see(ext - 1, off) = subsystem_entanglement_entropy_log2(state, sites, 1024);
             }
             tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
         }
@@ -250,83 +336,11 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_swap_lo
     return see;
 }
 
-std::vector<size_t> get_subsystem_complement(size_t length, const std::vector<size_t> &subsystem) {
-    // Assume the subsystem is contiguous and sorted
-    if(subsystem.empty()) return num::range<size_t>(0, length);
-    std::vector<size_t> complement = num::range<size_t>(0, subsystem.front());
-    if(subsystem.back() + 1 != length) {
-        auto right = num::range<size_t>(subsystem.back() + 1, length);
-        complement.insert(complement.end(), right.begin(), right.end());
-    }
-    // for(size_t pos = 0; pos < length; ++pos) {
-    //     if(std::find(subsystem.begin(), subsystem.end(), pos) == subsystem.end()) complement.emplace_back(pos);
-    // }
-    return complement;
-}
-
-/*! Calculates the subsystem entanglement entropies,
- * starting with the cheapest entries and progressively harder until a threshold number of bits have been found.
- * Use max_bit_error to set the threshold:
- *  - use a positive value to indicate relative error
- *  - use a negative value to indicate absolute error (i.e. how many missing bits you can accept)
- */
-Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state, InfoPolicy ip) {
-    if(ip.useCache == UseCache::TRUE and state.measurements.subsystem_entanglement_entropies.has_value())
-        return state.measurements.subsystem_entanglement_entropies.value();
-    ip.svd_cfg                   = ip.svd_cfg.value_or(svd::config());
-    ip.svd_cfg->svd_lib          = ip.svd_cfg->svd_lib.value_or(svd::lib::lapacke);
-    ip.svd_cfg->svd_rtn          = ip.svd_cfg->svd_rtn.value_or(svd::rtn::gesdd);
-    ip.svd_cfg->rank_max         = ip.svd_cfg->rank_max.value_or(settings::storage::dataset::subsystem_entanglement_entropies::bond_lim);
-    ip.svd_cfg->truncation_limit = ip.svd_cfg->truncation_limit.value_or(settings::storage::dataset::subsystem_entanglement_entropies::trnc_lim);
-    ip.bits_max_error            = ip.bits_max_error.value_or(settings::storage::dataset::subsystem_entanglement_entropies::bits_err);
-    auto t_see                   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
-    auto length                  = state.get_length<size_t>();
-    auto state_temp              = state;
-    auto sites_temp              = num::range<size_t>(0, length);
-    if(ip.svd_cfg->rank_max < state_temp.get_largest_bond() or ip.svd_cfg->truncation_limit > 10 * state_temp.get_smallest_schmidt_value()) {
-        // Truncate the state down to the bond and truncation limits asked for first
-        tools::log->info("subsystem_entanglement_entropies_swap_log2: Normalizing state | svd: {}", ip.svd_cfg->to_string());
-        finite::mps::normalize_state(state_temp, ip.svd_cfg, NormPolicy::ALWAYS);
-    }
-
-    finite::mps::move_center_point_to_pos_dir(state_temp, 0, 1, ip.svd_cfg);
-    tools::log->info("calculating subsystem entanglement entropies with the swap method | svd: {}", ip.svd_cfg->to_string());
-    constexpr auto  nan = std::numeric_limits<double>::quiet_NaN();
-    auto            len = state_temp.get_length<long>();
-    auto            bee = measure::entanglement_entropies_log2(state_temp); // bipartite entanglement entropies
-    Eigen::ArrayXXd see = Eigen::ArrayXXd::Zero(len, len) * nan;            // susbsystem entanglement entropies
-
-    // We begin with the low-hanging fruit (1): Bipartite entanglement entropies
-    for(long ext = 1; ext <= len; ++ext) { // Assume off == 0
-        auto idx                = safe_cast<size_t>(ext);
-        see(ext - 1, 0)         = bee[idx];
-        see(len - ext - 1, ext) = bee[idx];
-    }
-    // Next we take small subsystems
-    long max_ext = 10; // max rho size 1024x1024 takes ~0.1 s, whereas 2048x2048 takes 1-2 s
-    long max_chi = state_temp.get_largest_bond();
-    long max_off = std::clamp<long>(10l - static_cast<long>(std::log2(max_chi)), 1, 8); // Max offset for discontiguous subsystems
-    for(long off = 1; off < len; ++off) {
-        for(long ext = 1; off + ext < len; ++ext) { // // We can skip equality "<= len" because we got the diagonals in see for free
-            auto subsystem  = num::range<size_t>(off, off + ext);
-            auto complement = get_subsystem_complement(length, subsystem);
-            if(subsystem.size() > static_cast<size_t>(max_ext) and complement.size() > static_cast<size_t>(max_ext)) continue;
-            if(subsystem.size() <= complement.size() and subsystem.size() <= static_cast<size_t>(max_ext)) {
-                see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_temp, subsystem);
-            } else if(complement.size() <= static_cast<size_t>(max_ext) and off <= max_off) {
-                see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_temp, complement);
-            }
-        }
-    }
-
-    // Finally, we use the swap algorithm for missing entries, until we find most bits
-    // To take the cheapest entries first, we can alternate swaps towards the left and right and right.
-    auto offsets     = num::range<long>(1l, len - max_ext - 1); // Remaining offsets. The -1 because the diagonal in see is equal to its left-most column.
-    auto subsystemsL = std::deque<std::vector<size_t>>();       // list of missing subsystems closest to the left edge
-    auto subsystemsR = std::deque<std::vector<size_t>>();       // list of missing subsystems closest to the right edge
-    while(!offsets.empty()) {
-        auto off = offsets.front();
-        offsets.erase(offsets.begin()); // Pop front
+std::pair<std::deque<std::vector<size_t>>, std::deque<std::vector<size_t>>> get_missing_subsystems(const Eigen::ArrayXXd &see) {
+    auto subsystemsL = std::deque<std::vector<size_t>>(); // list of missing subsystems closest to the left edge
+    auto subsystemsR = std::deque<std::vector<size_t>>(); // list of missing subsystems closest to the right edge
+    auto len         = see.rows();
+    for(long off = 0; off < len; ++off) {
         for(long ext = 1; off + ext < len; ++ext) {
             if(std::isnan(see(ext - 1, off))) {
                 long pos_mid = off + ext / 2;
@@ -344,19 +358,112 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
         if(sa.back() == sb.back()) return sa.size() > sb.size();
         return sa.back() > sb.back();
     });
-    for(const auto &s : subsystemsL) tools::log->info("subsystemL {}", s);
-    for(const auto &s : subsystemsR) tools::log->info("subsystemR {}", s);
-    auto posL      = subsystemsL.front().front();
-    auto posR      = subsystemsR.front().back();
-    auto state_l2r = state_temp;
-    auto sites_l2r = sites_temp;
-    auto state_r2l = state_temp;
-    auto sites_r2l = sites_temp;
+    return {subsystemsL, subsystemsR};
+}
+
+/*! Calculates the subsystem entanglement entropies,
+ * starting with the cheapest entries and progressively harder until a threshold number of bits have been found.
+ * Use max_bit_error to set the threshold:
+ *  - use a positive value to indicate relative error
+ *  - use a negative value to indicate absolute error (i.e. how many missing bits you can accept)
+ */
+Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(const StateFinite &state, InfoPolicy ip) {
+    if(ip.useCache == UseCache::TRUE and state.measurements.subsystem_entanglement_entropies.has_value())
+        return state.measurements.subsystem_entanglement_entropies.value();
+    auto t_see                   = tid::tic_scope("see", tid::level::normal);
+    ip.bits_max_error            = ip.bits_max_error.value_or(settings::storage::dataset::subsystem_entanglement_entropies::bits_err);
+    ip.eig_max_size              = ip.eig_max_size.value_or(settings::storage::dataset::subsystem_entanglement_entropies::eig_size);
+    ip.svd_cfg                   = ip.svd_cfg.value_or(svd::config());
+    ip.svd_cfg->svd_lib          = ip.svd_cfg->svd_lib.value_or(svd::lib::lapacke);
+    ip.svd_cfg->svd_rtn          = ip.svd_cfg->svd_rtn.value_or(svd::rtn::gesdd);
+    ip.svd_cfg->rank_max         = ip.svd_cfg->rank_max.value_or(settings::storage::dataset::subsystem_entanglement_entropies::bond_lim);
+    ip.svd_cfg->truncation_limit = ip.svd_cfg->truncation_limit.value_or(settings::storage::dataset::subsystem_entanglement_entropies::trnc_lim);
+    auto length                  = state.get_length<size_t>();
+    auto state_temp              = state;
+    auto sites_temp              = num::range<size_t>(0, length);
+    // Truncate the state down to the bond and truncation limits asked for first.
+    // For some reason this step helps with the precision of entropies that we obtain later.
+    // If skipped, the entropy for a subsystem and its complement may differ up to 1e-3
+    tools::log->debug("subsystem_entanglement_entropies_log2: Normalizing state | svd: {}", ip.svd_cfg->to_string());
+    finite::mps::normalize_state(state_temp, svd::config(settings::xdmrg::bond_max, settings::precision::svd_truncation_lim), NormPolicy::ALWAYS);
+
+    // finite::mps::move_center_point_to_pos_dir(state_temp, 0, 1, ip.svd_cfg);
+    tools::log->info("subsystem_entanglement_entropies_log2: calculating | max bit err {:.2e} | max eig size {} | svd: {}", ip.bits_max_error.value(),
+                     ip.eig_max_size.value(), ip.svd_cfg->to_string());
+    constexpr auto  nan = std::numeric_limits<double>::quiet_NaN();
+    auto            len = state_temp.get_length<long>();
+    auto            bee = measure::entanglement_entropies_log2(state_temp); // bipartite entanglement entropies
+    Eigen::ArrayXXd see = Eigen::ArrayXXd::Zero(len, len) * nan;            // susbsystem entanglement entropies
+
+    // We begin with the low-hanging fruit (1): Bipartite entanglement entropies
+    for(long ext = 1; ext <= len; ++ext) { // Assume off == 0
+        auto idx        = safe_cast<size_t>(ext);
+        see(ext - 1, 0) = bee[idx];
+        if(len - ext >= 1) see(len - ext - 1, ext) = bee[idx];
+    }
+    // Next we take small subsystems
+    // max matrix size 1024x1024 takes ~0.1 s to diagonalize, 3000x3000 takes ~1.0 s
+    // We can take subsystems on the left side first and discard their caches before moving onto those on the right side.
+    auto [subsystemsL, subsystemsR] = get_missing_subsystems(see);
+    {
+        auto posL = subsystemsL.empty() ? -1 : subsystemsL.front().front();
+        for(const auto &subsystem : subsystemsL) {
+            auto off = subsystem.front();
+            auto ext = subsystem.size();
+            if(posL != off) { // New offset! Discard old caches
+                state_temp.clear_cache();
+                posL = off;
+            }
+            see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_temp, subsystem, ip.eig_max_size.value());
+            if(!std::isnan(see(ext - 1, off)) and see(ext - 1, off) < -1e-8) throw except::runtime_error("Negative entropy: {:.16f}", see(ext - 1, off));
+        }
+    }
+    {
+        auto posR = subsystemsR.empty() ? -1 : subsystemsR.front().back();
+        for(const auto &subsystem : subsystemsR) {
+            auto off = subsystem.front();
+            auto ext = subsystem.size();
+            if(posR != subsystem.back()) { // New offset! Discard old caches
+                state_temp.clear_cache();
+                posR = subsystem.back();
+            }
+            see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_temp, subsystem, ip.eig_max_size.value());
+            if(!std::isnan(see(ext - 1, off)) and see(ext - 1, off) < -1e-8) throw except::runtime_error("Negative entropy: {:.16f}", see(ext - 1, off));
+        }
+    }
+
+    // Refresh the missing subsystems
+    std::tie(subsystemsL, subsystemsR) = get_missing_subsystems(see);
+    for(const auto &s : subsystemsL) tools::log->info("subsystemL {} -> see({},{})", s, s.size() - 1, s.front());
+    for(const auto &s : subsystemsR) tools::log->info("subsystemR {} -> see({},{})", s, s.size() - 1, s.front());
+    auto posL           = subsystemsL.empty() ? -1 : subsystemsL.front().front();
+    auto posR           = subsystemsR.empty() ? -1 : subsystemsR.front().back();
+    auto state_l2r      = state_temp;
+    auto sites_l2r      = sites_temp;
+    auto state_r2l      = state_temp;
+    auto sites_r2l      = sites_temp;
+    long loop_min_count = 1; // We need at least the first two columns of see to avoid getting nans in the first column of info
+    long loop_counter   = 0;
     while(!subsystemsL.empty() or !subsystemsR.empty()) {
+        // Check the information lattice
+        auto info       = information_lattice(see);
+        auto bits_total = state_l2r.get_length<double>();
+        auto bits_found = info.isNaN().select(0, info).sum();
+        auto bits_error = 1 - bits_found / bits_total;
+        auto bits_minus = (info < 0).select(info, 0).sum();
+
+        tools::log->info("see: \n{}\n", linalg::matrix::to_string(see, 10));
+        tools::log->info("info: \n{}\n", linalg::matrix::to_string(info, 6));
+        tools::log->info("bits found {:.16f}/{:.16f} | error {:.16f} | neg {:.16f} | com {:.16f} | chi {} | trnc {:.2e}", bits_found, bits_total, bits_error,
+                         bits_minus, information_center_of_mass(info), ip.svd_cfg->rank_max.value(), ip.svd_cfg->truncation_limit.value());
+        if(loop_counter >= loop_min_count) {
+            if(ip.bits_max_error >= 0 and bits_error <= ip.bits_max_error) break;
+            if(ip.bits_max_error < 0 and std::abs(bits_total - bits_found) <= std::abs(ip.bits_max_error.value())) break;
+        }
+
         while(!subsystemsL.empty()) {
             // Starting from the original state, the idea is to move the subsystems to the left edge successively
             auto subsystem = subsystemsL.front();
-            subsystemsL.pop_front();
             if(posL != subsystem.front()) {
                 // Reset
                 state_l2r = state_temp;
@@ -370,16 +477,42 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
                 if(sites_l2r[idx] == pos) continue; // The site is already in place
                 for(long i = pos; i > static_cast<long>(idx); --i) { mps::swap_sites(state_l2r, i - 1, i, sites_l2r, GateMove::OFF, ip.svd_cfg); }
             }
-            tools::log->info("swap l2r subs [{}-{}] | pos {} | sites {::2} | bonds {::3}", subsystem.front(), subsystem.back(), state_l2r.get_position<long>(),
-                             sites_l2r, measure::bond_dimensions(state_l2r));
+
+            // Check that the subsystem is actually where we expect
+            auto sites_l2r_span = std::span(sites_l2r.begin(), subsystem.size());
+            bool subsystem_ok   = std::equal(sites_l2r_span.begin(), sites_l2r_span.end(), subsystem.begin(), subsystem.end());
+            if(!subsystem_ok)
+                throw except::logic_error("The subsystem was not moved to the edge:\n"
+                                          "\t sites_l2r: {::2}\n"
+                                          "\t subsystem: {::2}",
+                                          sites_l2r, subsystem);
+
             // Now we can read off the missing entropy
             long ext           = subsystem.size();
-            see(ext - 1, posL) = subsystem_entanglement_entropy_log2(state_l2r, num::range<size_t>(0, ext));
+            see(ext - 1, posL) = subsystem_entanglement_entropy_log2(state_l2r, num::range<size_t>(0, ext), 1024);
+            subsystemsL.pop_front();
+            tools::log->info("swap l2r subs [{}-{}] | see({},{})={:.6f} | sites {::2} | bonds {::3}", subsystem.front(), subsystem.back(), ext - 1, posL,
+                             see(ext - 1, posL), sites_l2r, measure::bond_dimensions(state_l2r));
+        }
+
+        // Check the information lattice
+        info       = information_lattice(see);
+        bits_total = state_l2r.get_length<double>();
+        bits_found = info.isNaN().select(0, info).sum();
+        bits_error = 1 - bits_found / bits_total;
+        bits_minus = (info < 0).select(info, 0).sum();
+
+        tools::log->info("see: \n{}\n", linalg::matrix::to_string(see, 10));
+        tools::log->info("info: \n{}\n", linalg::matrix::to_string(info, 10));
+        tools::log->info("bits found {:.16f}/{:.16f} | error {:.16f} | neg {:.16f} | com {:.16f} | chi {} | trnc {:.2e}", bits_found, bits_total, bits_error,
+                         bits_minus, information_center_of_mass(info), ip.svd_cfg->rank_max.value(), ip.svd_cfg->truncation_limit.value());
+        if(loop_counter >= loop_min_count) {
+            if(ip.bits_max_error >= 0 and bits_error <= ip.bits_max_error) break;
+            if(ip.bits_max_error < 0 and std::abs(bits_total - bits_found) <= std::abs(ip.bits_max_error.value())) break;
         }
         while(!subsystemsR.empty()) {
             // Starting from the original state, the idea is to move the subsystems to the right edge successively
             auto subsystem = subsystemsR.front();
-            subsystemsR.pop_front();
             if(posR != subsystem.back()) {
                 // Reset
                 state_r2l = state_temp;
@@ -391,190 +524,37 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
             // Repeatedly move the right-most site in the subsystem, posR steps to the right. E.g.:  012[34]5 --> 012[3]5[4] --> 0125[34]
             long nswap = len - posR - 1;
             for(const auto &[idx, pos] : iter::enumerate_reverse(subsystem)) {
-                auto rdx = len - pos - 1;           // Index of pos starting from the right edge
-                if(sites_r2l[rdx] == pos) continue; // The site is already in place
+                auto rdx = subsystem.size() - idx - 1; // 0,1,2... subsystem.size()-1
+                auto rof = len - rdx - 1;              // L-1, L-2, L-3...,  Index of pos starting from the right edge
+                if(sites_r2l[rof] == pos) continue;    // The site is already in place
                 for(long i = pos; i < static_cast<long>(pos) + nswap; ++i) { mps::swap_sites(state_r2l, i, i + 1, sites_r2l, GateMove::OFF, ip.svd_cfg); }
             }
-            tools::log->info("swap r2l subs [{}-{}] | pos {} | sites {::2} | bonds {::3}", subsystem.front(), subsystem.back(), state_r2l.get_position<long>(),
-                             sites_r2l, measure::bond_dimensions(state_r2l));
+            // Check that the subsystem is actually where we expect
+            auto sites_r2l_span = std::span(sites_r2l.begin() + (length - subsystem.size()), subsystem.size());
+            bool subsystem_ok   = std::equal(sites_r2l_span.begin(), sites_r2l_span.end(), subsystem.begin(), subsystem.end());
+            if(!subsystem_ok)
+                throw except::logic_error("The subsystem was not moved to the R edge:\n"
+                                          "\t sites_r2l: {::2}\n"
+                                          "\t subsystem: {::2}",
+                                          sites_r2l, subsystem);
             // Now we can read off the missing entropy
             long ext          = subsystem.size();
             long off          = subsystem.front();
-            see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_r2l, num::range<size_t>(length - ext, length));
+            see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_r2l, num::range<size_t>(length - ext, length), 1024);
+            subsystemsR.pop_front();
+            tools::log->info("swap r2l subs [{}-{}] | see({},{})={:.6f} | sites {::2} | bonds {::3}", subsystem.front(), subsystem.back(), ext - 1, off,
+                             see(ext - 1, off), sites_r2l, measure::bond_dimensions(state_r2l));
         }
+        loop_counter++;
     }
 
-    if(ip.useCache == UseCache::TRUE) state.measurements.subsystem_entanglement_entropies = see;
+    if(ip.useCache == UseCache::TRUE) {
+        state.measurements.see_time = t_see->get_last_interval();
+        state.measurements.subsystem_entanglement_entropies = see;
+    }
     return see;
 }
 
-Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2_old(const StateFinite &state, InfoPolicy ip) {
-    if(ip.useCache == UseCache::TRUE and state.measurements.subsystem_entanglement_entropies.has_value())
-        return state.measurements.subsystem_entanglement_entropies.value();
-    ip.svd_cfg                   = ip.svd_cfg.value_or(svd::config());
-    ip.svd_cfg->svd_lib          = ip.svd_cfg->svd_lib.value_or(svd::lib::lapacke);
-    ip.svd_cfg->svd_rtn          = ip.svd_cfg->svd_rtn.value_or(svd::rtn::gesdd);
-    ip.svd_cfg->rank_max         = ip.svd_cfg->rank_max.value_or(settings::storage::dataset::subsystem_entanglement_entropies::bond_lim);
-    ip.svd_cfg->truncation_limit = ip.svd_cfg->truncation_limit.value_or(settings::storage::dataset::subsystem_entanglement_entropies::trnc_lim);
-    ip.bits_max_error            = ip.bits_max_error.value_or(settings::storage::dataset::subsystem_entanglement_entropies::bits_err);
-    auto t_see                   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
-    auto length                  = state.get_length<size_t>();
-    auto state_l2r               = state;
-    auto sites_l2r               = num::range<size_t>(0, length);
-    if(ip.svd_cfg->rank_max < state_l2r.get_largest_bond() or ip.svd_cfg->truncation_limit > 10 * state_l2r.get_smallest_schmidt_value()) {
-        // Truncate the state down to the bond and truncation limits asked for first
-        tools::log->info("subsystem_entanglement_entropies_swap_log2: Normalizing state | svd: {}", ip.svd_cfg->to_string());
-        finite::mps::normalize_state(state_l2r, ip.svd_cfg, NormPolicy::ALWAYS);
-    }
-
-    finite::mps::move_center_point_to_pos_dir(state_l2r, 0, 1, ip.svd_cfg);
-    tools::log->info("calculating subsystem entanglement entropies with the swap method | svd: {}", ip.svd_cfg->to_string());
-    constexpr auto  nan = std::numeric_limits<double>::quiet_NaN();
-    auto            len = state_l2r.get_length<long>();
-    auto            bee = measure::entanglement_entropies_log2(state_l2r); // bipartite entanglement entropies
-    Eigen::ArrayXXd see = Eigen::ArrayXXd::Zero(len, len) * nan;           // susbsystem entanglement entropies
-
-    // We begin with the low-hanging fruit (1): Bipartite entanglement entropies
-    for(long ext = 1; ext <= len; ++ext) { // Assume off == 0
-        auto idx                = safe_cast<size_t>(ext);
-        see(ext - 1, 0)         = bee[idx];
-        see(len - ext - 1, ext) = bee[idx];
-    }
-    // Next we take small subsystems
-    long max_ext = 11; // max rho size 2048x2048
-    for(long off = 1; off < len; ++off) {
-        for(long ext = 1; off + ext < len; ++ext) { // // We can skip equality "<= len" because we got the diagonals in see for free
-            auto subsystem  = num::range<size_t>(off, off + ext);
-            auto complement = get_subsystem_complement(length, subsystem);
-            if(subsystem.size() <= complement.size()) {
-                if(subsystem.size() <= static_cast<size_t>(max_ext)) { see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_l2r, subsystem); }
-            } else {
-                if(complement.size() <= static_cast<size_t>(max_ext)) { see(ext - 1, off) = subsystem_entanglement_entropy_log2(state_l2r, complement); }
-            }
-        }
-    }
-
-    // Finally, we use the swap algorithm for the missing entries until we find most bits
-    // To take the cheapest entries first, we can alternate swaps from left->right and right->left.
-    auto state_r2l = state_l2r;
-    auto sites_r2l = sites_l2r;
-    auto offsets   = num::range<long>(1l, len - max_ext - 1); // Remaning offsets. The -1 because the diagonal in see is equal to its left-most column.
-    while(!offsets.empty()) {
-        auto off = offsets.front();
-        offsets.erase(offsets.begin()); // Pop front
-        {
-            // Move the left-most site to one site beyond the last site. E.g.:  012345 --> 123450 --> 234510
-            for(size_t i = 0; i < length - safe_cast<size_t>(off); ++i) { mps::swap_sites(state_l2r, i, i + 1, sites_l2r, GateMove::OFF, ip.svd_cfg); }
-            tools::log->info("swap l2r off {:2} | pos {} | sites {::2} | bonds {::3}", off, state_l2r.get_position<long>(), sites_l2r,
-                             measure::bond_dimensions(state_l2r));
-            auto bee_swap = measure::entanglement_entropies_log2(state_l2r); // bipartite entanglement entropies for the swapped state
-            // We get the entire column with index "off"
-            // Recall also that we got the diagonal for free already
-            for(size_t idx = 1; idx + off < sites_l2r.size(); ++idx) {
-                auto posL    = sites_l2r.front();
-                auto posR    = sites_l2r[idx];
-                auto ext_l2r = static_cast<long>(posR - posL) + 1l;
-                auto off_l2r = static_cast<long>(posL);
-                // if(ext_l2r - 1l + off_l2r >= len - off) continue; // Handled by r2l
-                // if(ext_l2r <= max_ext) continue;                  // Handled by density matrices earlier
-                if(!std::isnan(see(ext_l2r - 1, off_l2r))) {
-                    tools::log->info("l2r: see({},{}) was already computed: {:.16f} -> {:.16f}", ext_l2r - 1, off_l2r, see(ext_l2r - 1, off),
-                                     bee_swap[safe_cast<size_t>(ext_l2r)]);
-                    continue;
-                }
-                see(ext_l2r - 1, off) = bee_swap[safe_cast<size_t>(ext_l2r)];
-            }
-
-            // Check the information lattice
-            auto info       = information_lattice(see);
-            auto bits_total = state_l2r.get_length<double>();
-            auto bits_found = info.isNaN().select(0, info).sum();
-            auto bits_error = 1 - bits_found / bits_total;
-
-            tools::log->info("see: \n{}\n", linalg::matrix::to_string(see, 10));
-            tools::log->info("info: \n{}\n", linalg::matrix::to_string(info, 10));
-            tools::log->info("bits found {:.16f}/{:.16f} | error {:.16f} | com {:.16f}", bits_found, bits_total, bits_error, information_center_of_mass(info));
-            if(ip.bits_max_error >= 0 and bits_error <= ip.bits_max_error) break;
-            if(ip.bits_max_error < 0 and std::abs(bits_total - bits_found) <= std::abs(ip.bits_max_error.value())) break;
-        }
-        {
-            // Move the right-most site to one site before the first site. E.g.:  012345 --> 501234 --> 540123
-            // For a single swap sequence we swap (4,5), (3,4), (2,3), (1,2), (0,1)
-            // The next swap equence is (4,5), (3,4), (2,3), (1,2)
-            for(size_t i = length - 2ul; i < length and i + 1ul >= static_cast<size_t>(off); --i) {
-                mps::swap_sites(state_r2l, i, i + 1, sites_r2l, GateMove::OFF, ip.svd_cfg);
-            }
-            tools::log->info("swap r2l off {:2} | pos {} | sites {::2} | bonds {::3}", off, state_r2l.get_position<long>(), sites_r2l,
-                             measure::bond_dimensions(state_r2l));
-            auto bee_swap = measure::entanglement_entropies_log2(state_r2l); // bipartite entanglement entropies for the swapped state
-            // We get entries with distance "off" above the diagonal
-            for(size_t idx = static_cast<size_t>(off) + 2ul; idx < sites_r2l.size(); ++idx) { // +2 because +1 was taken care of in the l2r swap
-                auto posL    = sites_r2l[idx];
-                auto posR    = sites_r2l.back();
-                auto ext_r2l = static_cast<long>(posR - posL) + 1l;
-                auto off_r2l = posL;
-                // if(ext_r2l <= max_ext) continue;        // We got this from density matrices
-                // if(posL <= sites_l2r.front()) continue; // Already handled by l2r above
-                // if(posL > posR) throw except::logic_error("r2l posL {} >= posR {}", posL, posR);
-                if(!std::isnan(see(ext_r2l - 1, off_r2l))) {
-                    tools::log->info("r2l {:2}: see({},{}) for subsystem [{}-{}] was already computed: {:.16f} -> {:.16f}", idx, ext_r2l - 1, off_r2l, posL,
-                                     posR, see(ext_r2l - 1, off_r2l), bee_swap[idx]);
-                    continue;
-                }
-                see(ext_r2l - 1, off_r2l) = bee_swap[idx];
-            }
-            // Check the information lattice
-            auto info       = information_lattice(see);
-            auto bits_total = state_r2l.get_length<double>();
-            auto bits_found = info.isNaN().select(0, info).sum();
-            auto bits_error = 1 - bits_found / bits_total;
-
-            tools::log->info("see: \n{}\n", linalg::matrix::to_string(see, 10));
-            tools::log->info("info: \n{}\n", linalg::matrix::to_string(info, 10));
-            tools::log->info("bits found {:.16f}/{:.16f} | error {:.16f} | com {:.16f}", bits_found, bits_total, bits_error, information_center_of_mass(info));
-            if(ip.bits_max_error >= 0 and bits_error <= ip.bits_max_error) break;
-            if(ip.bits_max_error < 0 and std::abs(bits_total - bits_found) <= std::abs(ip.bits_max_error.value())) break;
-        }
-    }
-    // for(long off = 1; off < len - max_ext - 1; ++off) { // -1 because the diagonal in see is equal to its left-most column.
-    //     // if(off + max_ext > len) continue;
-    //
-    //     // Update the information lattice
-    //     auto info       = information_lattice(see);
-    //     auto bits_total = state_l2r.get_length<double>();
-    //     auto bits_found = info.isNaN().select(0, info).sum();
-    //     auto bits_error = 1 - bits_found / bits_total;
-    //
-    //     tools::log->info("see: \n{}\n", linalg::matrix::to_string(see, 10));
-    //     tools::log->info("info: \n{}\n", linalg::matrix::to_string(info, 10));
-    //     tools::log->info("bits found {:.16f}/{:.16f} | error {:.16f} | com {:.16f}", bits_found, bits_total, bits_error, information_center_of_mass(info));
-    //     if(ip.bits_max_error >= 0 and bits_error <= ip.bits_max_error) break;
-    //     if(ip.bits_max_error < 0 and std::abs(bits_total - bits_found) <= std::abs(ip.bits_max_error.value())) break;
-    //
-    //     // tools::log->debug("subsystem_entanglement_entropies_swap_log2: calculating offset {} ...", off);
-    //     // Move the left-most site to one site beyond the last site
-    //     // Example with 6 sites
-    //     //      012345 --> 123450
-    //     //      123450 --> 234510
-    //     for(size_t i = 0; i < length - safe_cast<size_t>(off); ++i) {
-    //         // auto [bond_old_L, bond_old_R] = measure::bond_dimensions(state_swap, i);
-    //         // auto trnc_old                 = measure::truncation_errors(state_swap);
-    //         // auto sval_old                 = state_swap.get_bond(i, i + 1);
-    //         mps::swap_sites(state_l2r, i, i + 1, sites_l2r, GateMove::OFF, ip.svd_cfg);
-    //     }
-    //     tools::log->info("swap off {:2} | pos {} | sites {::2} | bonds {::3}", off, state_l2r.get_position<long>(), sites_l2r,
-    //                      measure::bond_dimensions(state_l2r));
-    //     auto bee_swap = measure::entanglement_entropies_log2(state_l2r); // bipartite entanglement entropies for the swapped state
-    //     for(long ext = max_ext + 1; ext <= len; ++ext) {
-    //         if(off + ext > len) continue;
-    //         auto idx          = safe_cast<size_t>(ext);
-    //         see(ext - 1, off) = bee_swap[idx];
-    //     }
-    // }
-
-    if(ip.useCache == UseCache::TRUE) state.measurements.subsystem_entanglement_entropies = see;
-    return see;
-}
 
 Eigen::ArrayXXd tools::finite::measure::information_lattice(const Eigen::ArrayXXd &SEE) {
     auto            Ldim        = SEE.rows();

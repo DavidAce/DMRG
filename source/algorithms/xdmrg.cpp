@@ -372,8 +372,8 @@ void xdmrg::update_state() {
 
     // Do the truncation with SVD
     // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merge
-    auto logPolicy = LogPolicy::QUIET;
-    if constexpr(settings::debug) logPolicy = LogPolicy::NORMAL;
+    auto logPolicy = LogPolicy::SILENT;
+    if constexpr(settings::debug) logPolicy = LogPolicy::VERBOSE;
     tensors.merge_multisite_mps(opt_state.get_tensor(), opt_meta.svd_cfg, logPolicy);
     tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
     if constexpr(settings::debug) {

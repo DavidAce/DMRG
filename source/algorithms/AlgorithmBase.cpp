@@ -29,7 +29,10 @@ void AlgorithmBase::init_bond_dimension_limits() {
     status.bond_max = settings::get_bond_max(status.algo_type); // Bond max from the loaded config file
     if(has_any_flags(status.algo_type, AlgorithmType::fDMRG, AlgorithmType::xDMRG, AlgorithmType::fLBIT)) {
         // Finite systems have limited bond dimension!
-        status.bond_max = std::min(status.bond_max, safe_cast<long>(std::pow(2.0, settings::model::model_size / 2)));
+        // Be careful not to overflow long when the systems are very large (e.g. > 128 sites)
+        double long_max = static_cast<double>(std::numeric_limits<long>::max());
+        double bond_max = std::min(long_max, std::pow(2.0, settings::model::model_size / 2));
+        status.bond_max      = std::min(status.bond_max, safe_cast<long>(bond_max));
     }
     status.bond_lim = std::min(status.bond_max, settings::get_bond_min(status.algo_type));
     status.bond_min = std::min(status.bond_max, settings::get_bond_min(status.algo_type));
@@ -97,13 +100,13 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     report.Y_vec_std.resize(report.Y_vec.size());
     report.Y_min_std.resize(report.Y_min.size());
     report.Y_max_std.resize(report.Y_max.size());
-    for(size_t i = 0; i < report.Y_vec.size()-1; ++i) report.Y_vec_std[i] = stat::stdev(report.Y_vec, i);
-    for(size_t i = 0; i < report.Y_min.size()-1; ++i) report.Y_min_std[i] = stat::stdev(report.Y_min, i);
-    for(size_t i = 0; i < report.Y_max.size()-1; ++i) report.Y_max_std[i] = stat::stdev(report.Y_max, i);
+    for(size_t i = 0; i < report.Y_vec.size() - 1; ++i) report.Y_vec_std[i] = stat::stdev(report.Y_vec, i);
+    for(size_t i = 0; i < report.Y_min.size() - 1; ++i) report.Y_min_std[i] = stat::stdev(report.Y_min, i);
+    for(size_t i = 0; i < report.Y_max.size() - 1; ++i) report.Y_max_std[i] = stat::stdev(report.Y_max, i);
     report.Y_vec_std.back() = report.Y_vec_std.rbegin()[1]; // The last entry is always zero, so just reuse the penultimate entry
     report.Y_min_std.back() = report.Y_min_std.rbegin()[1]; // The last entry is always zero, so just reuse the penultimate entry
     report.Y_max_std.back() = report.Y_max_std.rbegin()[1]; // The last entry is always zero, so just reuse the penultimate entry
-    report.Y_mov_ste = stat::sterr_moving(report.Y_vec, 0.25);
+    report.Y_mov_ste        = stat::sterr_moving(report.Y_vec, 0.25);
 
     for(size_t i = 0; i < report.Y_sat.size(); ++i) {
         // Below sensitivity --> saturated

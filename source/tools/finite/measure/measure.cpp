@@ -88,7 +88,7 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
 
 std::pair<long, long> tools::finite::measure::bond_dimensions(const StateFinite &state, size_t pos) {
     auto t_bond = tid::tic_scope("bond_dimensions", tid::level::highest);
-    assert(pos < state.get_length<long>());
+    assert(pos < state.get_length<size_t>());
     return {state.mps_sites[pos]->get_chiL(), state.mps_sites[pos]->get_chiR()};
 }
 
@@ -364,7 +364,7 @@ double tools::finite::measure::energy_minus_energy_shift(const StateFinite &stat
                                                          MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_shift) {
         if constexpr(!settings::debug_expval) {
-            // Return the cache hit when not debugging. Otherwise check that it is correct!
+            // Return the cache hit when not debugging. Otherwise, check that it is correct!
             // tools::log->trace("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
             return measurements->energy_minus_energy_shift.value();
         }
@@ -415,7 +415,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
         // Contract directly
         const auto &mpo = model.get_multisite_mpo();
         const auto &env = edges.get_multisite_env_ene_blk();
-        if constexpr(settings::debug)
+        if constexpr(settings::debug_expval)
             tools::log->trace("Measuring energy: multisite_mps dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", multisite_mps.dimensions(),
                               model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
         e_minus_ered = tools::common::contraction::expectation_value(multisite_mps, mpo, env.L, env.R);
@@ -697,6 +697,7 @@ double tools::finite::measure::residual_norm_full(const StateFinite &state, cons
 cplx tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(ops.empty()) throw std::runtime_error("expectation_value: ops is empty");
+    if constexpr(settings::debug) tools::log->trace("Measuring expectation_value <ops>");
     auto d0    = state.mps_sites.front()->get_chiL();
     auto chain = tenx::TensorCast(Eigen::MatrixXcd::Identity(d0, d0));
     if constexpr(settings::debug) {
@@ -1150,7 +1151,7 @@ cplx tools::finite::measure::correlation(const StateFinite &state, const Eigen::
 
 Eigen::Tensor<cplx, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1,
                                                                   const Eigen::Tensor<cplx, 2> &op2) {
-    tools::log->trace("Measuring correlation matrix");
+    if constexpr(settings::debug) tools::log->trace("Measuring correlation matrix");
 
     long                   len = state.get_length<long>();
     bool                   eq  = tenx::MatrixMap(op1) == tenx::MatrixMap(op2);
@@ -1283,7 +1284,7 @@ std::array<Eigen::Tensor<double, 1>, 3> tools::finite::measure::expectation_valu
 }
 
 std::array<double, 3> tools::finite::measure::expectation_value_xyz(const StateFinite &state) {
-    tools::log->trace("Measuring local (midchain) spin expectation values");
+    if constexpr(settings::debug) tools::log->trace("Measuring spin expectation_value_xyz");
     Eigen::Tensor<cplx, 2> sx  = tenx::TensorMap(qm::spin::half::sx);
     Eigen::Tensor<cplx, 2> sy  = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz  = tenx::TensorMap(qm::spin::half::sz);
@@ -1293,6 +1294,7 @@ std::array<double, 3> tools::finite::measure::expectation_value_xyz(const StateF
 }
 
 std::array<Eigen::Tensor<double, 2>, 3> tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
+    if constexpr(settings::debug) tools::log->trace("Measuring spin correlation_matrix_xyz");
     Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
     Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);

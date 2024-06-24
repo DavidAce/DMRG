@@ -135,6 +135,19 @@ def get_fdmrg_batch_setup(projectname):
                 'd+9.00|g0.500': {'seed_extent': [100], 'seed_offset': [2_900_0500_000000], },
             }
         },
+        'fdmrg8-trf': {
+            'description': "Production run with L=35 to calculate subsystem entropies with truncation error 1e-8."
+                           "We use a new transfer-matrix approach to calculate subsystem entropies"
+                           "The seeds encode the Hamiltonian parameters"
+                           " Eg:  1|600|0000|00000"
+                           "     +-| d | g  | extra ",
+            'projectname': 'fdmrg8-trf',
+            'batch': {
+                'd+3.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_300_0500_000000], },
+                'd+6.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_600_0500_000000], },
+                'd+9.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_900_0500_000000], },
+            }
+        },
     }
 
     return batch_setup[projectname]
