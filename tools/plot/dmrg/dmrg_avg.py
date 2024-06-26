@@ -29,21 +29,27 @@ def dmrg_avg(args):
         data_props = {
             'dsets': {  # For time independent data (or at the last time step)
                 'model/hamiltonian': {'copy': True, },
-                'opdm' : {'copy': True, },
-                'subsystem_entanglement_entropies': {
+                'state_emid/opdm' : {'copy': True, },
+                'state_emid/information_per_scale': {
+                    'copy': True,
+                 },
+                'state_emid/information_lattice': {
+                    'copy': True,
+                 },
+                'state_emid/subsystem_entanglement_entropies': {
                     'copy': True,
                     'info-lattice': True,
                  },
             },
 
             'tables': {  # For data at the last time step
-                'status': ['iter', 'bond_lim', 'bond_max', 'trnc_lim','algo_time'],
-                # 'mem_usage': 'ALL',
-                'measurements': 'ALL',
-                'memory': 'ALL',
-                'bond_dimensions': 'ALL',
-                'opdm_spectrum': 'ALL',
-                'truncation_errors': 'ALL',
+                'state_emid/tables/status': ['iter', 'bond_lim', 'bond_max', 'trnc_lim','algo_time'],
+                # 'state_emid/mem_usage': 'ALL',
+                'state_emid/tables/measurements': 'ALL',
+                'state_emid/tables/memory': 'ALL',
+                'state_emid/tables/bond_dimensions': 'ALL',
+                'state_emid/tables/opdm_spectrum': 'ALL',
+                'state_emid/tables/truncation_errors': 'ALL',
                 # If the following tables exist, save it under <tablename>/data
                 '__save_data__': ['mem_usage', 'measurements', 'opdm_spectrum'],
             },

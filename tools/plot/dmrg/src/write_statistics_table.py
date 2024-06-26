@@ -288,6 +288,11 @@ def get_dtype(tablenode, req_columns, num=True):
                 formats.append(('<f8'))
     return np.dtype({"names": names, "formats": formats})
 
+def get_matching_reqs(reqs, dsetpath):
+    for req in reqs.keys():
+        if dsetpath.endswith(req):
+            return req
+    return None
 
 def write_statistics_table2(nodemeta, tablereqs, tgt):
     # Props contains the names of the tables as keys, and each value contains either "ALL" or a list of desired columns
@@ -302,6 +307,11 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
     tablename = nodemeta[0]  # The name of the table
     tablepath = nodemeta[1]  # The path of the table e.g. '...u_3/r_8/fLBIT/state_real/tables/iter_1'
     tablenode = nodemeta[2]  # The node of the table
+    tablepattern = None
+    for req in tablereqs:
+        if req in tablepath:
+            tablepattern=req
+            break
 
     if not isinstance(tablenode, h5py.Dataset):
         raise TypeError("write_statistics_table2: meta should point to a h5py.Dataset. Got: ", nodemeta)
@@ -319,7 +329,8 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
     with tb.File(tgt, 'a') as h5f:
         t_pre_start = timer()
         # We now have a source table. Let's get the final dtype
-        dt = get_dtype(tablenode=tablenode, req_columns=tablereqs[tablename])
+
+        dt = get_dtype(tablenode=tablenode, req_columns=tablereqs[tablepattern])
         t_pre = t_pre + timer() - t_pre_start
 
         statrows = {}

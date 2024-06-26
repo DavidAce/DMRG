@@ -3,6 +3,7 @@
 // -- (textra first)
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "debug/info.h"
 #include "general/iter.h"
 #include "math/cast.h"
 #include "math/num.h"
@@ -15,12 +16,11 @@
 #include "tools/finite/measure.h"
 #include "tools/finite/multisite.h"
 #include <fmt/ranges.h>
-
 namespace settings {
     inline constexpr bool debug_state           = false;
-    inline constexpr bool debug_cache           = false;
-    inline constexpr bool debug_density_matrix  = false;
-    inline constexpr bool debug_transfer_matrix = false;
+    inline constexpr bool debug_cache           = true;
+    inline constexpr bool debug_density_matrix  = true;
+    inline constexpr bool debug_transfer_matrix = true;
 }
 
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet
@@ -476,16 +476,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 if(use_cache and not append_L) {
                     // If it is the last site, we may have closed off by appending L
                     cache.mps_cplx.emplace_back(std::make_pair(mps_key, multisite_mps)); // We know it is not present already
-                    while(cache.mps_cplx.size() > max_mps_cache_size) {
-                        if constexpr(settings::debug_cache)
-                            tools::log->trace("multisite_mps cache: deleting due to size limit ({}): {}", max_mps_cache_size, cache.mps_cplx.front().first);
-                        cache.mps_cplx.pop_front();
-                    }
-                    while(get_mps_cache_gbts<Scalar>() > max_mps_cache_gbts and cache.mps_cplx.size() >= 2) {
-                        if constexpr(settings::debug_cache)
-                            tools::log->trace("multisite_mps cache: deleting due to gbts limit ({}): {}", max_mps_cache_gbts, cache.mps_cplx.front().first);
-                        cache.mps_cplx.pop_front();
-                    }
+                    shrink_cache();
                 }
             }
         }
@@ -550,16 +541,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 if(use_cache and not append_L) {
                     // If it is the last site, we may have closed off by appending L
                     cache.mps_real.emplace_back(std::make_pair(mps_key, multisite_mps)); // We know it is not present already
-                    while(cache.mps_real.size() > max_mps_cache_size) {
-                        if constexpr(settings::debug_cache)
-                            tools::log->trace("multisite_mps cache: deleting due to size limit ({}): {}", max_mps_cache_size, cache.mps_real.front().first);
-                        cache.mps_real.pop_front();
-                    }
-                    while(get_mps_cache_gbts<Scalar>() > max_mps_cache_gbts and cache.mps_real.size() >= 2) {
-                        if constexpr(settings::debug_cache)
-                            tools::log->trace("multisite_mps cache: deleting due to gbts limit ({}): {}", max_mps_cache_gbts, cache.mps_real.front().first);
-                        cache.mps_real.pop_front();
-                    }
+                    shrink_cache();
                 }
             }
         }
@@ -597,10 +579,12 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
     auto min_cost_idx = std::distance(costs.begin(), std::min_element(costs.begin(), costs.end()));
     if constexpr(settings::debug_density_matrix)
         tools::log->trace("get_reduced_density_matrix: cost_t2b {} | cost_l2r {} | cost_r2l {}", costs[0], costs[1], costs[2]);
-
+    if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after min_cost_idx");
+    // min_cost_idx = 0; // Disable side to side contractions for a while
     if(min_cost_idx == 0 /* top to bottom */) {
         // We have a contiguous set
         auto mps = get_multisite_mps<Scalar>(sites, true);
+        if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after multisite mps");
         return tools::common::contraction::contract_mps_partial<std::array{1l, 2l}>(mps);
     } else {
         // We probably have a non-contiguous set like [0123]4567[89]
@@ -660,6 +644,10 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
                                                               .reshape(new_dim);
                     }
                     rho_temp = std::move(rho_temp2);
+                    if(debug::mem_hwm_in_mb() > 10000) {
+                        for(const auto &elem : cache.mps_real) tools::log->info("{}", elem.first);
+                        throw except::runtime_error("Exceeded 5G high water mark after rho l2r site {} | sites", i, cites);
+                    }
                 }
             }
         } else if(min_cost_idx == 2 /* left to right */) {
@@ -703,6 +691,10 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
                                                               .reshape(new_dim);
                     }
                     rho_temp = std::move(rho_temp2);
+                    if(debug::mem_hwm_in_mb() > 10000) {
+                        for(const auto &elem : cache.mps_real) tools::log->info("{}", elem.first);
+                        throw except::runtime_error("Exceeded 5G high water mark after rho r2l site {} | sites", i, cites);
+                    }
                 }
             }
         }
@@ -719,11 +711,10 @@ std::array<double, 3> StateFinite::get_reduced_density_matrix_cost(const std::ve
     auto cites         = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites E.g. [012|6789] -> [012|345|6789]
     bool is_contiguous = sites == cites;
     // We have a contiguous set
-    // Calculate the numerical cost for contracting top to bottom or side to side
-    auto cost_t2b = 0.0;
-    auto cost_l2r = 0.0;
-    auto cost_r2l = 0.0;
-
+    // Calculate the numerical cost for contracting top to bottom or side to side. Account for both the number of operations and the memory size
+    auto ops_t2b = 0.0, mem_t2b = 0.0;
+    auto ops_l2r = 0.0, mem_l2r = 0.0;
+    auto ops_r2l = 0.0, mem_r2l = 0.0;
     if(is_contiguous) {
         auto bonds   = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
         auto chiL    = get_mps_site(sites.front()).get_chiL();
@@ -731,21 +722,26 @@ std::array<double, 3> StateFinite::get_reduced_density_matrix_cost(const std::ve
         auto max_chi = std::max(chiR, chiL);
         auto min_chi = std::min(chiR, chiL);
         auto spindim = std::pow(2.0, sites.size());
-        cost_t2b =
-            spindim * spindim * static_cast<double>(max_chi * min_chi * min_chi + min_chi); // This is the last step, but we will add earlier steps below.
+
+        mem_t2b = spindim * spindim; // The number of elements in the largest object that will be held in memory
+        ops_t2b = spindim * spindim * static_cast<double>(max_chi * min_chi * min_chi + min_chi); // This is the last step, but we will add earlier steps below.
         for(const auto &[i, pos] : iter::enumerate(sites)) {
-            auto key = fmt::format("{}", num::range(sites.front(), pos + 1));
+            auto key = generate_cache_key(sites, pos, "l2r");
             if(has_mps_in_cache<Scalar>(key)) continue;
             // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
-            if(i == 0) { // It will append either chiL or chiR, but we take the worst case scanario here
-                if(sites.size() == 1) { cost_t2b += static_cast<double>(2l * chiL * chiR * std::max(chiL, chiR)); }
+            if(i == 0) { // It will append either chiL or chiR, but we take the worst case scenario here
+                if(sites.size() == 1) { ops_t2b += static_cast<double>(2l * chiL * chiR * std::max(chiL, chiR)); }
             } else {
                 auto bondR = pos == sites.back() ? chiR : bonds[i];
-                cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i - 1] * bondR);
+                ops_t2b += std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i - 1] * bondR);
+                mem_t2b = std::max(mem_t2b, std::pow(2.0, i + 1) * static_cast<double>(chiL * bondR));
             }
         }
-    } else {
-        cost_t2b = std::numeric_limits<double>::infinity();
+    }
+
+    if(!is_contiguous or static_cast<double>(sizeof(Scalar)) * mem_t2b / std::pow(1024.0, 3.0) >= settings::precision::max_cache_gbts) {
+        mem_t2b = std::numeric_limits<double>::infinity();
+        ops_t2b = std::numeric_limits<double>::infinity();
     }
 
     auto bonds   = get_bond_dims(cites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
@@ -756,43 +752,72 @@ std::array<double, 3> StateFinite::get_reduced_density_matrix_cost(const std::ve
         // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
         auto bondR = pos == sites.back() ? chiR : bonds.at(i);
         if(pos == sites.front()) {
-            cost_l2r += static_cast<double>(4l * chiL * bondR * bondR);
             spindim *= 2;
+            ops_l2r += spindim * spindim * static_cast<double>(chiL * bondR * bondR);
+            mem_l2r = std::max(mem_l2r, spindim * spindim * static_cast<double>(bondR * bondR));
         } else {
             bool do_trace = std::find(sites.begin(), sites.end(), pos) == sites.end();
             if(do_trace) {
-                cost_l2r += spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bonds[i - 1] * bondR); // Upper
-                cost_l2r += spindim * spindim * static_cast<double>(4l * bonds[i - 1] * bondR * bondR);        // Lower part 1 of 2
-                cost_l2r += spindim * spindim * static_cast<double>(2l * bondR * bondR);                       // Lower part 2 of 2
+                ops_l2r += spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bonds[i - 1] * bondR); // Upper
+                ops_l2r += spindim * spindim * static_cast<double>(4l * bonds[i - 1] * bondR * bondR);        // Lower part 1 of 2
+                ops_l2r += spindim * spindim * static_cast<double>(2l * bondR * bondR);                       // Lower part 2 of 2
+                auto tmp1 = spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bondR);
+                auto tmp2 = spindim * spindim * static_cast<double>(bondR * bondR);
+                mem_l2r   = std::max(mem_l2r, tmp1 + tmp2);
+
             } else {
-                cost_l2r += spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bonds[i - 1] * bondR); // Upper
-                cost_l2r += spindim * spindim * static_cast<double>(4l * bonds[i - 1] * bondR * bondR);        // Lower part 1 of 2
+                ops_l2r += spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bonds[i - 1] * bondR); // Upper
+                ops_l2r += spindim * spindim * static_cast<double>(4l * bonds[i - 1] * bondR * bondR);        // Lower part
+                mem_l2r   = std::max(mem_l2r, spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bondR));
+                mem_l2r   = std::max(mem_l2r, spindim * spindim * static_cast<double>(4l * bondR * bondR));
+                auto tmp1 = spindim * spindim * static_cast<double>(2l * bonds[i - 1] * bondR);
+                auto tmp2 = spindim * spindim * static_cast<double>(4l * bondR * bondR);
+                mem_l2r   = std::max(mem_l2r, tmp1 + tmp2);
                 spindim *= 2;
             }
         }
     }
+    ops_l2r += spindim * spindim * static_cast<double>(chiR); // add the last contraction that closes the density matrix
+    mem_l2r = std::max(mem_l2r, spindim * spindim);
+    if(static_cast<double>(sizeof(Scalar)) * mem_l2r / std::pow(1024.0, 3.0) >= settings::precision::max_cache_gbts) {
+        mem_l2r = std::numeric_limits<double>::infinity();
+        ops_l2r = std::numeric_limits<double>::infinity();
+    }
+
     spindim = 1.0;
     for(const auto &[i, pos] : iter::enumerate_reverse(cites)) {
         // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
         auto bondL = pos == sites.front() ? chiL : bonds.at(i - 1);
         if(pos == sites.back()) {
-            cost_r2l += static_cast<double>(4 * chiR * bondL * bondL);
             spindim *= 2;
+            ops_r2l += spindim * spindim * static_cast<double>(chiR * bondL * bondL);
+            mem_r2l = std::max(mem_r2l, spindim * spindim * static_cast<double>(bondL * bondL));
         } else {
             bool do_trace = std::find(sites.begin(), sites.end(), pos) == sites.end();
             if(do_trace) {
-                cost_r2l += spindim * spindim * static_cast<double>(2l * bondL * bonds[i] * bonds[i]); // Upper
-                cost_r2l += spindim * spindim * static_cast<double>(4l * bondL * bondL * bonds[i]);    // Lower part 1 of 2
-                cost_r2l += spindim * spindim * static_cast<double>(2l * bondL * bondL);               // Lower part 2 of 2
+                ops_r2l += spindim * spindim * static_cast<double>(2l * bondL * bonds[i] * bonds[i]); // Upper
+                ops_r2l += spindim * spindim * static_cast<double>(4l * bondL * bondL * bonds[i]);    // Lower part 1 of 2
+                ops_r2l += spindim * spindim * static_cast<double>(2l * bondL * bondL);               // Lower part 2 of 2
+                auto tmp1 = spindim * spindim * static_cast<double>(2l * bondL * bonds[i]);
+                auto tmp2 = spindim * spindim * static_cast<double>(bondL * bondL);
+                mem_r2l   = std::max(mem_r2l, tmp1 + tmp2);
             } else {
-                cost_r2l += spindim * spindim * static_cast<double>(2l * bondL * bonds[i] * bonds[i]); // Upper
-                cost_r2l += spindim * spindim * static_cast<double>(4l * bondL * bondL * bonds[i]);    // Lower part 1 of 2
+                ops_r2l += spindim * spindim * static_cast<double>(2l * bondL * bonds[i] * bonds[i]); // Upper
+                ops_r2l += spindim * spindim * static_cast<double>(4l * bondL * bondL * bonds[i]);    // Lower part 1 of 2
+                auto tmp1 = spindim * spindim * static_cast<double>(2l * bondL * bonds[i]);
+                auto tmp2 = spindim * spindim * static_cast<double>(4l * bondL * bondL);
+                mem_r2l   = std::max(mem_r2l, tmp1 + tmp2);
                 spindim *= 2;
             }
         }
     }
-
-    return std::array{cost_t2b, cost_l2r, cost_r2l};
+    ops_r2l += spindim * spindim * static_cast<double>(chiL); // add the last contraction that closes the density matrix
+    mem_r2l = std::max(mem_r2l, spindim * spindim);
+    if(static_cast<double>(sizeof(Scalar)) * mem_r2l / std::pow(1024.0, 3.0) >= settings::precision::max_cache_gbts) {
+        mem_r2l = std::numeric_limits<double>::infinity();
+        ops_r2l = std::numeric_limits<double>::infinity();
+    }
+    return std::array{ops_t2b + mem_t2b, ops_l2r + mem_l2r, ops_r2l + mem_r2l};
 }
 
 std::string StateFinite::generate_cache_key(const std::vector<size_t> &sites, const size_t pos, std::string_view side) const {
@@ -876,16 +901,7 @@ void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const
         }
         // cache.trf_real[key] = trf;
         if(it == cache.trf_real.rend()) cache.trf_real.emplace_back(std::make_pair(key, trf));
-        while(cache.trf_real.size() > max_trf_cache_size) {
-            if constexpr(settings::debug_cache)
-                tools::log->trace("save_trf_into_cache: deleting due to size limit ({}): {}", max_trf_cache_size, cache.trf_real.front().first);
-            cache.trf_real.pop_front();
-        }
-        while(get_trf_cache_gbts<Scalar>() > max_trf_cache_gbts and cache.trf_real.size() >= 2) {
-            if constexpr(settings::debug_cache)
-                tools::log->trace("save_trf_into_cache: deleting due to gbts limit ({}): {}", max_trf_cache_gbts, cache.trf_real.front().first);
-            cache.trf_real.pop_front();
-        }
+        shrink_cache();
     }
     if constexpr(std::is_same_v<Scalar, cplx>) {
         auto it = std::find_if(cache.trf_cplx.rbegin(), cache.trf_cplx.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
@@ -895,8 +911,8 @@ void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const
         }
         // cache.trf_cplx[key] = trf;
         if(it == cache.trf_cplx.rend()) cache.trf_cplx.emplace_back(std::make_pair(key, trf));
-        while(cache.trf_cplx.size() > max_trf_cache_size) cache.trf_cplx.pop_front();
-        while(get_trf_cache_gbts<Scalar>() > max_trf_cache_gbts and cache.trf_cplx.size() >= 2) cache.trf_cplx.pop_front();
+        shrink_cache();
+
     }
 }
 
@@ -1041,10 +1057,14 @@ template<typename Scalar>
 bool StateFinite::has_mps_in_cache(const std::string &key) const {
     if constexpr(std::is_same_v<Scalar, real>) {
         auto it = std::find_if(cache.mps_real.rbegin(), cache.mps_real.rend(), [&](const auto &elem) -> bool { return elem.first == key; });
+        if constexpr(settings::debug_cache)
+            if(it != cache.mps_real.rend()) tools::log->trace("multisite_mps: cache_hit: {}", key);
         return it != cache.mps_real.rend();
     }
     if constexpr(std::is_same_v<Scalar, cplx>) {
         auto it = std::find_if(cache.mps_cplx.rbegin(), cache.mps_cplx.rend(), [&](const auto &elem) -> bool { return elem.first == key; });
+        if constexpr(settings::debug_cache)
+            if(it != cache.mps_cplx.rend()) tools::log->trace("multisite_mps: cache_hit: {}", key);
         return it != cache.mps_cplx.rend();
     }
     // if constexpr(std::is_same_v<Scalar, real>) { return cache.mps_real.find(key) != cache.mps_real.end(); }
@@ -1182,18 +1202,24 @@ double StateFinite::get_transfer_matrix_cost(const std::vector<size_t> &sites, s
     auto   bonds = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
     auto   chiL  = get_mps_site(sites.front()).get_chiL();
     auto   chiR  = get_mps_site(sites.back()).get_chiR();
-    double cost  = 0.0;
+    double ops   = 0.0;
+    double mem   = 0.0;
     if(side.starts_with('l')) {
         for(const auto &[i, pos] : iter::enumerate(sites)) {
             if(trf_cache.has_value() and side == trf_cache->side and pos <= trf_cache->pos) continue;
             // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
             if(pos == sites.front() and i < bonds.size()) {
-                cost += static_cast<double>(chiL * chiL * bonds[i] * bonds[i] * 2); // The left-most site
-            } else {                                                                // Appending sites in the interior
+                ops += static_cast<double>(chiL * chiL * bonds[i] * bonds[i] * 2); // The left-most site
+                mem = std::max(mem, static_cast<double>(chiL * chiL * bonds[i] * bonds[i]));
+            } else { // Appending sites in the interior
                 auto bondR = pos == sites.back() ? chiR : bonds.at(i);
-                cost += static_cast<double>(chiL * chiL * bonds[i - 1] * bonds[i - 1] * bondR * 2); // Upper mps
-                cost += static_cast<double>(chiL * chiL * bonds[i - 1] * bondR * bondR * 4);        // Lower mps part 1 of 2
-                cost += static_cast<double>(chiL * chiL * bondR * bondR * 2);                       // Lower mps part 2 of 2
+                ops += static_cast<double>(chiL * chiL * bonds[i - 1] * bonds[i - 1] * bondR * 2); // Upper mps
+                ops += static_cast<double>(chiL * chiL * bonds[i - 1] * bondR * bondR * 4);        // Lower mps part 1 of 2
+                ops += static_cast<double>(chiL * chiL * bondR * bondR * 2);                       // Lower mps part 2 of 2
+                auto tmp1 = static_cast<double>(chiL * chiL * bonds[i - 1] * bondR * 2);
+                auto tmp2 = std::max(tmp1, static_cast<double>(chiL * chiL * bondR * bondR * 4));
+                auto tmp3 = std::max(tmp2, static_cast<double>(chiL * chiL * bondR * bondR));
+                mem       = std::max(mem, tmp2 + tmp3);
             }
         }
     }
@@ -1202,16 +1228,25 @@ double StateFinite::get_transfer_matrix_cost(const std::vector<size_t> &sites, s
             if(trf_cache.has_value() and side == trf_cache->side and pos >= trf_cache->pos) continue;
             // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
             if(pos == sites.back() and i - 1 < bonds.size()) {
-                cost += static_cast<double>(chiR * chiR * bonds[i - 1] * bonds[i - 1] * 2); // The right-most site
-            } else {                                                                        // Appending sites in the interior
+                ops += static_cast<double>(chiR * chiR * bonds[i - 1] * bonds[i - 1] * 2); // The right-most site
+                mem = std::max(mem, static_cast<double>(chiR * chiR * bonds[i - 1] * bonds[i - 1]));
+            } else { // Appending sites in the interior
                 auto bondL = pos == sites.front() ? chiL : bonds.at(i - 1);
-                cost += static_cast<double>(chiR * chiR * bonds[i] * bonds[i] * bondL * 2); // Upper mps
-                cost += static_cast<double>(chiR * chiR * bonds[i] * bondL * bondL * 4);    // Lower mps part 1 of 2
-                cost += static_cast<double>(chiR * chiR * bondL * bondL * 2);               // Lower mps part 2 of 2
+                ops += static_cast<double>(chiR * chiR * bonds[i] * bonds[i] * bondL * 2); // Upper mps
+                ops += static_cast<double>(chiR * chiR * bonds[i] * bondL * bondL * 4);    // Lower mps part 1 of 2
+                ops += static_cast<double>(chiR * chiR * bondL * bondL * 2);               // Lower mps part 2 of 2
+                auto tmp1 = static_cast<double>(chiR * chiR * bonds[i] * bondL * 2);
+                auto tmp2 = std::max(tmp1, static_cast<double>(chiR * chiR * bondL * bondL * 4));
+                auto tmp3 = std::max(tmp2, static_cast<double>(chiR * chiR * bondL * bondL));
+                mem       = std::max(mem, tmp2 + tmp3);
             }
         }
     }
-    return cost;
+    if(static_cast<double>(sizeof(Scalar)) * mem / std::pow(1024.0, 3.0) >= settings::precision::max_cache_gbts) {
+        mem = std::numeric_limits<double>::infinity();
+        ops = std::numeric_limits<double>::infinity();
+    }
+    return ops + mem;
 }
 
 template<typename Scalar>
@@ -1220,24 +1255,31 @@ std::array<double, 2> StateFinite::get_transfer_matrix_costs(const std::vector<s
     auto cites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
     if(sites != cites) throw except::logic_error("get_transfer_matrix_cost: sites is not contiguous: {}", sites);
     // We have a contiguous set
-    auto bonds = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
-    auto chiL  = get_mps_site(sites.front()).get_chiL();
-    auto chiR  = get_mps_site(sites.back()).get_chiR();
+    auto bonds   = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
+    auto chiL    = get_mps_site(sites.front()).get_chiL();
+    auto chiR    = get_mps_site(sites.back()).get_chiR();
+    auto spindim = std::pow(2.0, sites.size());
     // Calculate the numerical cost for contracting top to bottom or side to side
-    auto cost_t2b = static_cast<double>(chiL * chiR * chiL * chiR) * std::pow(2.0, sites.size()); // This is the last step, but we will add earlier steps below.
-
+    auto ops_t2b = spindim * static_cast<double>(chiL * chiR * chiL * chiR); // This is the last step, but we will add earlier steps below.
+    auto mem_t2b =
+        static_cast<double>(chiL * chiR * chiL * chiR); // This is the number of elements in the last object we will compare with earlier steps below.
     for(size_t i = 0; i < sites.size(); ++i) {
-        auto key = fmt::format("{}", num::range(sites.front(), sites.front() + i + 1));
+        auto key = generate_cache_key(sites, sites.front() + i, "l2r");
         if(has_mps_in_cache<Scalar>(key)) continue;
-        if(i == 0 and sites.size() == 1) { // It will append either chiL or chiR but we take the worst case scanario here
-            cost_t2b += static_cast<double>(2l * chiL * chiR * std::max(chiL, chiR));
+        if(i == 0 and sites.size() == 1) { // It will append either chiL or chiR but we take the worst case scenario here
+            ops_t2b += static_cast<double>(2l * chiL * chiR * std::max(chiL, chiR));
+            mem_t2b = std::max(mem_t2b, static_cast<double>(2l * chiL * chiR));
         }
         if(i + 1 < bonds.size()) { // TTT...T*T
-            cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i] * bonds[i + 1] * 2l);
+            ops_t2b += std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i] * bonds[i + 1] * 2l);
+            mem_t2b = std::max(mem_t2b, std::pow(2.0, i + 1) * static_cast<double>(chiL * bonds[i + 1] * 2l));
         } else if(i + 1 == sites.size() and i == bonds.size()) { // The last site
-            cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(2l * chiL * bonds[i - 1] * chiR);
+            ops_t2b += std::pow(2.0, i + 1) * static_cast<double>(2l * chiL * bonds[i - 1] * chiR);
+            mem_t2b = std::max(mem_t2b, std::pow(2.0, i + 1) * static_cast<double>(2l * chiL * chiR));
         }
     }
+    auto cost_t2b = ops_t2b + mem_t2b;
+
     if(side.starts_with('l')) {
         auto trf_cacheL = get_optimal_trf_from_cache<Scalar>(sites, "l2r");
         auto cost_l2r   = get_transfer_matrix_cost(sites, "l2r", trf_cacheL);
@@ -1256,44 +1298,25 @@ std::array<double, 2> StateFinite::get_transfer_matrix_costs(const std::vector<s
 template Eigen::Tensor<real, 2> StateFinite::get_transfer_matrix<real>(const std::vector<size_t> &sites, std::string_view side) const;
 template Eigen::Tensor<cplx, 2> StateFinite::get_transfer_matrix<cplx>(const std::vector<size_t> &sites, std::string_view side) const;
 
-template<typename Scalar>
 double StateFinite::get_trf_cache_gbts() const {
-    double size_trf = 0;
-    if constexpr(std::is_same_v<Scalar, real>) {
-        for(const auto &elem : cache.trf_real) size_trf += static_cast<double>(elem.second.size());
-        return size_trf * 8.0 / std::pow(1024.0, 3.0);
-    }
-    if constexpr(std::is_same_v<Scalar, cplx>) {
-        for(const auto &elem : cache.trf_cplx) size_trf += static_cast<double>(elem.second.size());
-        return size_trf * 16.0 / std::pow(1024.0, 3.0);
-    }
-    return 0;
+    double size_trf_real = 0, size_trf_cplx = 0;
+    for(const auto &elem : cache.trf_real) size_trf_real += static_cast<double>(elem.second.size());
+    size_trf_real *= 8.0 / std::pow(1024.0, 3.0);
+    for(const auto &elem : cache.trf_cplx) size_trf_cplx += static_cast<double>(elem.second.size());
+    size_trf_cplx *= 16.0 / std::pow(1024.0, 3.0);
+    return size_trf_real + size_trf_cplx;
 }
-template double StateFinite::get_trf_cache_gbts<real>() const;
-template double StateFinite::get_trf_cache_gbts<cplx>() const;
 
-template<typename Scalar>
 double StateFinite::get_mps_cache_gbts() const {
-    double size_mps = 0;
-    if constexpr(std::is_same_v<Scalar, real>) {
-        for(const auto &elem : cache.mps_real) size_mps += static_cast<double>(elem.second.size());
-        return size_mps * 8.0 / std::pow(1024.0, 3.0);
-    }
-    if constexpr(std::is_same_v<Scalar, cplx>) {
-        for(const auto &elem : cache.mps_cplx) size_mps += static_cast<double>(elem.second.size());
-        return size_mps * 16.0 / std::pow(1024.0, 3.0);
-    }
-    return 0;
+    double size_mps_real = 0.0, size_mps_cplx = 0.0;
+    for(const auto &elem : cache.mps_real) size_mps_real += static_cast<double>(elem.second.size());
+    size_mps_real *= 8.0 / std::pow(1024.0, 3.0);
+    for(const auto &elem : cache.mps_cplx) size_mps_cplx += static_cast<double>(elem.second.size());
+    size_mps_cplx *= 16.0 / std::pow(1024.0, 3.0);
+    return size_mps_cplx + size_mps_real;
 }
-template double StateFinite::get_mps_cache_gbts<real>() const;
-template double StateFinite::get_mps_cache_gbts<cplx>() const;
 
-template<typename Scalar>
-std::array<double, 2> StateFinite::get_cache_sizes() const {
-    return {get_mps_cache_gbts<Scalar>(), get_trf_cache_gbts<Scalar>()};
-}
-template std::array<double, 2> StateFinite::get_cache_sizes<real>() const;
-template std::array<double, 2> StateFinite::get_cache_sizes<cplx>() const;
+std::array<double, 2> StateFinite::get_cache_sizes() const { return {get_mps_cache_gbts(), get_trf_cache_gbts()}; }
 
 void StateFinite::set_truncation_error(size_t pos, double error) { get_mps_site(pos).set_truncation_error(error); }
 void StateFinite::set_truncation_error(double error) { set_truncation_error(get_position(), error); }
@@ -1384,6 +1407,39 @@ void StateFinite::clear_measurements(LogPolicy logPolicy) const {
 void StateFinite::clear_cache(LogPolicy logPolicy) const {
     if(logPolicy == LogPolicy::VERBOSE or (settings::debug and logPolicy == LogPolicy::DEBUG)) { tools::log->trace("Clearing state cache"); }
     cache = Cache();
+}
+
+void StateFinite::shrink_cache() const {
+    while(cache.mps_real.size() > max_mps_cache_size) cache.mps_real.pop_front();
+    while(cache.mps_cplx.size() > max_mps_cache_size) cache.mps_cplx.pop_front();
+    while(cache.trf_real.size() > max_trf_cache_size) cache.trf_real.pop_front();
+    while(cache.trf_cplx.size() > max_trf_cache_size) cache.trf_cplx.pop_front();
+    while(get_mps_cache_gbts() + get_trf_cache_gbts() > std::max(0.0,settings::precision::max_cache_gbts)) {
+        if(!cache.mps_real.empty()) {
+            if constexpr(settings::debug_cache)
+                tools::log->trace("shrink_cache: deleting mps due to cache limit ({} GB): {}", settings::precision::max_cache_gbts,
+                                  cache.mps_real.front().first);
+            cache.mps_real.pop_front();
+        }
+        if(!cache.mps_cplx.empty()) {
+            if constexpr(settings::debug_cache)
+                tools::log->trace("shrink_cache: deleting mps due to cache limit ({} GB): {}", settings::precision::max_cache_gbts,
+                                  cache.mps_cplx.front().first);
+            cache.mps_cplx.pop_front();
+        }
+        if(!cache.trf_real.empty()) {
+            if constexpr(settings::debug_cache)
+                tools::log->trace("shrink_cache: deleting trf due to cache limit ({} GB): {}", settings::precision::max_cache_gbts,
+                                  cache.trf_real.front().first);
+            cache.trf_real.pop_front();
+        }
+        if(!cache.trf_cplx.empty()) {
+            if constexpr(settings::debug_cache)
+                tools::log->trace("shrink_cache: deleting trf due to cache limit ({} GB): {}", settings::precision::max_cache_gbts,
+                                  cache.trf_cplx.front().first);
+            cache.trf_cplx.pop_front();
+        }
+    }
 }
 
 void StateFinite::tag_active_sites_normalized(bool tag) const {

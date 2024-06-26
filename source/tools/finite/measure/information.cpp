@@ -188,22 +188,23 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
     auto                  evs         = Eigen::ArrayXd(); // Eigenvalues
     [[maybe_unused]] auto mat_time    = 0.0;
     [[maybe_unused]] auto eig_time    = 0.0;
-    [[maybe_unused]] auto cache_sizes = std::array<double, 2>{};
     if(is_real) {
         Eigen::Tensor<real, 2> mat;
         if(min_cost_idx == 0) {
             mat      = state.get_reduced_density_matrix<real>(sites);
             mat_time = tid::get("rho").get_last_interval();
+            if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after rho");
         } else if(min_cost_idx == 1) {
             mat      = state.get_reduced_density_matrix<real>(cites);
             mat_time = tid::get("rho").get_last_interval();
+            if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after cmp");
         } else if(min_cost_idx == 2) {
             mat      = state.get_transfer_matrix<real>(sites, side);
             mat_time = tid::get("trf").get_last_interval();
+            if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after trf");
         }
         solver.eig<eig::Form::SYMM>(mat.data(), mat.dimension(0), eig::Vecs::OFF);
         evs         = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
-        cache_sizes = state.get_cache_sizes<real>();
     } else {
         Eigen::Tensor<cplx, 2> mat;
         if(min_cost_idx == 0) {
@@ -218,8 +219,6 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
         }
         solver.eig<eig::Form::SYMM>(mat.data(), mat.dimension(0), eig::Vecs::OFF);
         evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
-
-        cache_sizes = state.get_cache_sizes<cplx>();
     }
     eig_time                         = solver.result.meta.time_total;
     double entanglement_entropy_log2 = 0;
@@ -227,8 +226,9 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
         if(e > 0) entanglement_entropy_log2 += -e * std::log2(e); // We use log base 2 for information
     }
     // if(eig_time > 1.0)
-    tools::log->trace("mode {} side {} | eig {} mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}", min_cost_idx, side,
-                      eig_sizes, mat_costs, chiL, chiR, entanglement_entropy_log2, cache_sizes, mat_time, eig_time, sites);
+    tools::log->trace("mode {} side {} | eig {} (max {}) | mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}", min_cost_idx, side,
+                      eig_sizes, eig_max_size, mat_costs, chiL, chiR, entanglement_entropy_log2, state.get_cache_sizes(), mat_time, eig_time, sites);
+    if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after eig");
 
     return entanglement_entropy_log2;
 }

@@ -715,7 +715,6 @@ void AlgorithmFinite::update_dmrg_blocksize() {
     // auto centerofmass_4 = tools::finite::measure::information_center_of_mass(infoperscale_4);
     // t_4.toc();
 
-
     // tools::log->info("info per scale svd 1e-2 : {::.16f}", infoperscale_2);
     // tools::log->info("info per scale svd 1e-4 : {::.16f}", infoperscale_4);
     // tools::log->info("info per scale svd def  : {::.16f}", infoperscale_def);
@@ -730,7 +729,7 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        auto   ip        = InfoPolicy(-1e-2, 3200);
+        auto   ip        = InfoPolicy{.bits_max_error = -1e-2, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = 1e-6};
         double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
         double blocksize = std::ceil(icom);
         if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
@@ -743,8 +742,7 @@ void AlgorithmFinite::update_dmrg_blocksize() {
             // Same as the characteristic length scale "xi" when the info decay is exponential
             msg += fmt::format("scale icom ({:.16f}) by default", icom);
         }
-        dmrg_blocksize =
-            std::clamp<size_t>(static_cast<size_t>(blocksize), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
+        dmrg_blocksize = std::clamp<size_t>(static_cast<size_t>(blocksize), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
 
     } else {
         dmrg_blocksize = settings::strategy::dmrg_min_blocksize;

@@ -267,6 +267,7 @@ namespace settings {
         inline size_t   max_subspace_size               = 256   ;                  /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
         inline double   max_norm_error                  = 1e-10 ;                  /*!< Maximum norm deviation from unity during integrity checks */
 
+        inline double   max_cache_gbts                  = 2.0   ;                  /*!< Maximum cache size (in GB) for temporary objects, e.g. density and transfer matrices used during subsystem entanglement entropy calculations. Increases the information lattice coverage. */
     }
 
 

@@ -231,6 +231,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::target_subspace_error"             , precision::target_subspace_error);
     dmrg_config.load_parameter("precision::max_subspace_size"                 , precision::max_subspace_size);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
+    dmrg_config.load_parameter("precision::max_cache_gbts"                    , precision::max_cache_gbts);
 
 
 

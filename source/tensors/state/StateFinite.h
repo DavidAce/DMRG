@@ -57,11 +57,9 @@ class StateFinite {
         trfref      trf;
         // std::vector<std::string> stale_keys; // Can be used to erase older cache entries
     };
-    static constexpr size_t   max_mps_cache_size = 10;  // Max transfer matrix cache size in units of elements
-    static constexpr double   max_mps_cache_gbts = 1.0; // Max transfer matrix cache size in units of gigabytes
-    static constexpr size_t   max_trf_cache_size = 10;  // Max transfer matrix cache size in units of elements
-    static constexpr double   max_trf_cache_gbts = 1.0; // Max transfer matrix cache size in units of gigabytes
-    int                       direction          = 1;
+    static constexpr size_t max_mps_cache_size = 20; // Max mps cache size in units of elements
+    static constexpr size_t max_trf_cache_size = 20; // Max transfer matrix cache size in units of elements
+    int                       direction = 1;
     mutable Cache             cache;
     mutable std::vector<bool> tag_normalized_sites;
     std::string               name;
@@ -187,11 +185,8 @@ class StateFinite {
     Eigen::Tensor<Scalar, 2> get_transfer_matrix(const std::vector<size_t> &sites, std::string_view side) const;
     template<typename Scalar>
     std::array<double, 2> get_transfer_matrix_costs(const std::vector<size_t> &sites, std::string_view side) const;
-    template<typename Scalar>
-    double get_trf_cache_gbts() const;
-    template<typename Scalar>
-    double get_mps_cache_gbts() const;
-    template<typename Scalar>
+    double                get_trf_cache_gbts() const;
+    double                get_mps_cache_gbts() const;
     std::array<double, 2> get_cache_sizes() const;
 
     public:
@@ -213,6 +208,7 @@ class StateFinite {
     bool   is_truncated(double truncation_error_limit) const;
     void   clear_measurements(LogPolicy logPolicy = LogPolicy::SILENT) const;
     void   clear_cache(LogPolicy logPolicy = LogPolicy::SILENT) const;
+    void   shrink_cache() const;
 
     void                     tag_active_sites_normalized(bool tag) const;
     void                     tag_all_sites_normalized(bool tag) const;
