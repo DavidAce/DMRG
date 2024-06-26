@@ -144,6 +144,8 @@ def get_fdmrg_batch_setup(projectname):
             'projectname': 'fdmrg8-trf',
             'batch': {
                 'd+3.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_300_0500_000000], },
+                'd+4.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_400_0500_000000], },
+                'd+5.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_500_0500_000000], },
                 'd+6.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_600_0500_000000], },
                 'd+9.00|g0.500': {'seed_extent': [10], 'seed_offset': [2_900_0500_000000], },
             }

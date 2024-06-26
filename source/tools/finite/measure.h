@@ -21,12 +21,12 @@ class EnvVar;
 enum class RDM;
 
 enum class UseCache { TRUE, FALSE };
-
 struct InfoPolicy {
-    std::optional<double>      bits_max_error = std::nullopt;   /*! Positive for relative error = 1-bits_found/L, negative for absolute error = L-bits_found */
-    std::optional<long>        eig_max_size   = std::nullopt;   /*! Maximum matrix size to diagonalize. Recommended <= 4096 */
-    std::optional<svd::config> svd_cfg        = std::nullopt;   /*! Truncate the state prior when calculating the subsystem entanglement entropies */
-    UseCache                   useCache       = UseCache::TRUE; /*! Consider (and save) intermediate results in the state cache */
+    std::optional<double> bits_max_error = std::nullopt;   /*!< Positive for relative error = 1-bits_found/L, negative for absolute error = L-bits_found */
+    std::optional<long>   eig_max_size   = std::nullopt;   /*!< Maximum matrix size to diagonalize (skip if larger). Recommend <= 8192 */
+    std::optional<double> svd_max_size   = std::nullopt;   /*!< Maximum matrix size for svd during swaps (skip if larger) Recommend <= 4096 */
+    std::optional<double> svd_trnc_lim   = std::nullopt;   /*!< Maximum discarded weight in the svd during swaps. Recommend <= 1e-6 */
+    UseCache              useCache       = UseCache::TRUE; /*!< Consider (and save) intermediate results in the state cache */
 };
 
 namespace tools::finite::measure {
@@ -73,10 +73,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double              entanglement_entropy_log2                  (const StateFinite & state, size_t nsites);
     [[nodiscard]] extern std::vector<double> entanglement_entropies_log2                (const StateFinite & state);
     [[nodiscard]] extern double              subsystem_entanglement_entropy_log2        (const StateFinite & state, const std::vector<size_t> & sites, size_t eig_max_size, std::string_view side);
-    [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_dens_log2 (const StateFinite & state, InfoPolicy ip = {});
-    [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_swap_log2 (const StateFinite & state, InfoPolicy ip = {});
     [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_log2      (const StateFinite & state, InfoPolicy ip = {});
-    [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_log2_old  (const StateFinite & state, InfoPolicy ip = {});
     [[nodiscard]] extern Eigen::ArrayXXd     information_lattice                        (const Eigen::ArrayXXd & SEE);
     [[nodiscard]] extern Eigen::ArrayXXd     information_lattice                        (const StateFinite & state, InfoPolicy ip = {});
     [[nodiscard]] extern Eigen::ArrayXd      information_per_scale                      (const StateFinite & state, InfoPolicy ip = {});
