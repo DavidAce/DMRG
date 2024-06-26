@@ -35,10 +35,12 @@ std::string tools::common::h5::tmp::internal::get_tmp_dir() {
 
 const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::register_paths(std::string_view filepath) {
     if(not fs::path(filepath).has_filename()) throw except::runtime_error("Given output file path has no filename: [{}]", filepath);
-    std::string filename = fs::path(filepath).filename();
+    std::string filename   = fs::path(filepath).filename();
+    std::string configname = fs::path(settings::input::config_filename).filename().replace_extension("");
     if(internal::file_register.find(filename) != internal::file_register.end()) return internal::file_register[filename];
-    std::string original_path         = fs::absolute(filepath);
-    std::string temporary_path        = fs::path(get_tmp_dir()) / fs::path(get_dirname()) / filename;
+    std::string original_path = fs::absolute(filepath);
+    // std::string temporary_path        = fs::path(get_tmp_dir()) / fs::path(get_dirname()) / filename;
+    std::string temporary_path        = fmt::format("{}/{}/{}/{}", get_tmp_dir(), get_dirname(), configname, filename);
     internal::file_register[filename] = {original_path, temporary_path};
     return internal::file_register[filename];
 }
