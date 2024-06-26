@@ -11,7 +11,6 @@
 
 class MpsSite;
 class TensorsFinite;
-// enum class RDM { AUTO, ZIP };
 /**
  * \class StateFinite
  *
@@ -33,28 +32,63 @@ class TensorsFinite;
 class StateFinite {
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<cplx, 3>>                   multisite_mps = std::nullopt;
-        std::unordered_map<std::string, Eigen::Tensor<real, 3>> mps_real      = {};
-        std::unordered_map<std::string, Eigen::Tensor<cplx, 3>> mps_cplx      = {};
-        std::unordered_map<std::string, Eigen::Tensor<real, 4>> trf_real      = {};
-        std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> trf_cplx      = {};
+        std::optional<Eigen::Tensor<cplx, 3>>                      multisite_mps = std::nullopt;
+        std::deque<std::pair<std::string, Eigen::Tensor<real, 3>>> mps_real      = {};
+        std::deque<std::pair<std::string, Eigen::Tensor<cplx, 3>>> mps_cplx      = {};
+        // std::unordered_map<std::string, Eigen::Tensor<real, 3>>    mps_real      = {};
+        // std::unordered_map<std::string, Eigen::Tensor<cplx, 3>>    mps_cplx      = {};
+        std::deque<std::pair<std::string, Eigen::Tensor<real, 4>>> trf_real = {};
+        std::deque<std::pair<std::string, Eigen::Tensor<cplx, 4>>> trf_cplx = {};
+        // std::unordered_map<std::string, Eigen::Tensor<real, 4>> trf_real      = {};
+        // std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> trf_cplx      = {};
         std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> temporary_rho = {};
     };
+    enum class FindStaleKeys { OFF, ON };
 
-    int                       direction = 1;
+    template<typename Scalar>
+    struct TrfCacheEntry {
+        using trfref    = std::reference_wrapper<const Eigen::Tensor<Scalar, 4>>;
+        size_t      pos = -1ul;
+        std::string side;
+        std::string key;
+        size_t      ncontained = -1ul;
+        size_t      nremaining = -1ul;
+        double      cost       = std::numeric_limits<double>::quiet_NaN();
+        trfref      trf;
+        // std::vector<std::string> stale_keys; // Can be used to erase older cache entries
+    };
+    static constexpr size_t   max_mps_cache_size = 10;  // Max transfer matrix cache size in units of elements
+    static constexpr double   max_mps_cache_gbts = 1.0; // Max transfer matrix cache size in units of gigabytes
+    static constexpr size_t   max_trf_cache_size = 10;  // Max transfer matrix cache size in units of elements
+    static constexpr double   max_trf_cache_gbts = 1.0; // Max transfer matrix cache size in units of gigabytes
+    int                       direction          = 1;
     mutable Cache             cache;
     mutable std::vector<bool> tag_normalized_sites;
     std::string               name;
     AlgorithmType             algo = AlgorithmType::ANY;
     template<typename Scalar>
-    using optional_tensorref = std::optional<std::reference_wrapper<const Eigen::Tensor<Scalar, 4>>>;
+    using optional_tensor4ref = std::optional<std::reference_wrapper<const Eigen::Tensor<Scalar, 4>>>;
     template<typename Scalar>
-    optional_tensorref<Scalar> load_trf_from_cache(const std::vector<size_t> sites, const size_t pos, std::string_view side) const;
+    using optional_tensor3ref = std::optional<std::reference_wrapper<const Eigen::Tensor<Scalar, 3>>>;
+    template<typename Scalar>
+    optional_tensor4ref<Scalar> load_trf_from_cache(const std::string &key) const;
+    template<typename Scalar>
+    optional_tensor4ref<Scalar> load_trf_from_cache(const std::vector<size_t> &sites, size_t pos, std::string_view side) const;
+    template<typename Scalar>
+    void save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::string &key) const;
     template<typename Scalar>
     void save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::vector<size_t> &sites, size_t pos, std::string_view side) const;
     template<typename Scalar>
+    std::optional<TrfCacheEntry<Scalar>> get_optimal_trf_from_cache(const std::vector<size_t> &sites, std::string_view side) const;
+    template<typename Scalar>
+    std::optional<TrfCacheEntry<Scalar>> get_optimal_trf_from_cache(const std::vector<size_t> &sites) const;
+    template<typename Scalar>
+    optional_tensor3ref<Scalar> get_mps_in_cache(const std::string &key) const;
+    template<typename Scalar>
     bool        has_mps_in_cache(const std::string &key) const;
-    std::string generate_cache_key(const std::vector<size_t> sites, const size_t pos, std::string_view side) const;
+    std::string generate_cache_key(const std::vector<size_t> &sites, const size_t pos, std::string_view side) const;
+    template<typename Scalar>
+    double get_transfer_matrix_cost(const std::vector<size_t> &sites, std::string_view side, const std::optional<TrfCacheEntry<Scalar>> &trf_cache) const;
 
     public:
     std::vector<std::unique_ptr<MpsSite>> mps_sites;
@@ -150,9 +184,13 @@ class StateFinite {
     template<typename Scalar>
     std::array<double, 3> get_reduced_density_matrix_cost(const std::vector<size_t> &sites) const;
     template<typename Scalar>
-    Eigen::Tensor<Scalar, 2> get_transfer_matrix(const std::vector<size_t> &sites) const;
+    Eigen::Tensor<Scalar, 2> get_transfer_matrix(const std::vector<size_t> &sites, std::string_view side) const;
     template<typename Scalar>
-    std::array<double, 3> get_transfer_matrix_cost(const std::vector<size_t> &sites) const;
+    std::array<double, 2> get_transfer_matrix_costs(const std::vector<size_t> &sites, std::string_view side) const;
+    template<typename Scalar>
+    double get_trf_cache_gbts() const;
+    template<typename Scalar>
+    double get_mps_cache_gbts() const;
     template<typename Scalar>
     std::array<double, 2> get_cache_sizes() const;
 

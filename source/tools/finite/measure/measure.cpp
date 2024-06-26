@@ -697,7 +697,7 @@ double tools::finite::measure::residual_norm_full(const StateFinite &state, cons
 cplx tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(ops.empty()) throw std::runtime_error("expectation_value: ops is empty");
-    if constexpr(settings::debug) tools::log->trace("Measuring expectation_value <ops>");
+    if constexpr(settings::debug_expval) tools::log->trace("Measuring expectation_value <ops>");
     auto d0    = state.mps_sites.front()->get_chiL();
     auto chain = tenx::TensorCast(Eigen::MatrixXcd::Identity(d0, d0));
     if constexpr(settings::debug) {

@@ -72,7 +72,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern std::vector<double> entanglement_entropies                     (const StateFinite & state);
     [[nodiscard]] extern double              entanglement_entropy_log2                  (const StateFinite & state, size_t nsites);
     [[nodiscard]] extern std::vector<double> entanglement_entropies_log2                (const StateFinite & state);
-    [[nodiscard]] extern double              subsystem_entanglement_entropy_log2        (const StateFinite & state, const std::vector<size_t> & sites, size_t eig_max_size);
+    [[nodiscard]] extern double              subsystem_entanglement_entropy_log2        (const StateFinite & state, const std::vector<size_t> & sites, size_t eig_max_size, std::string_view side);
     [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_dens_log2 (const StateFinite & state, InfoPolicy ip = {});
     [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_swap_log2 (const StateFinite & state, InfoPolicy ip = {});
     [[nodiscard]] extern Eigen::ArrayXXd     subsystem_entanglement_entropies_log2      (const StateFinite & state, InfoPolicy ip = {});

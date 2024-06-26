@@ -391,7 +391,6 @@ long StateFinite::active_problem_size() const { return tools::finite::multisite:
 std::vector<long> StateFinite::get_bond_dims(const std::vector<size_t> &sites) const {
     // If the sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
     // If sites is just {4}, it returns the bond between {4,5} when going left or right.
-    auto t_chi = tid::tic_scope("bond_merged", tid::level::highest);
     if(sites.empty()) return {};
     if(sites.size() == 1) {
         // In single-site DMRG the active site is a center "AC" site:
@@ -435,16 +434,15 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
     if constexpr(std::is_same_v<Scalar, cplx>) {
         if(sites == active_sites and cache.multisite_mps) { return cache.multisite_mps.value(); }
         auto                   t_mps  = tid::tic_scope("gen_mps", tid::level::highest);
-        auto                   csites = std::vector<size_t>{}; // Keeps track of the contracted sites
         auto                   length = get_length<size_t>();
         Eigen::Tensor<cplx, 3> multisite_mps;
         Eigen::Tensor<cplx, 3> temp;
         for(auto &site : sites) {
-            csites.emplace_back(site);
-            const auto mps_key = fmt::format("{}", csites);
-            if(use_cache and cache.mps_cplx.find(mps_key) != cache.mps_cplx.end()) {
-                if constexpr(settings::debug_cache) tools::log->debug("multisite_mps: cache_hit: {}", csites);
-                multisite_mps = cache.mps_cplx.at(mps_key);
+            const auto mps_key = use_cache ? generate_cache_key(sites, site, "l2r") : "";
+            const auto mps_cch = use_cache ? get_mps_in_cache<cplx>(mps_key) : std::nullopt;
+            if(mps_cch.has_value()) {
+                if constexpr(settings::debug_cache) tools::log->trace("multisite_mps: cache_hit: {}", mps_key);
+                multisite_mps = mps_cch->get();
             } else {
                 const auto &mps       = get_mps_site(site);
                 auto        M         = mps.get_M();
@@ -475,8 +473,20 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                     multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
                 }
 
-                if(use_cache and not append_L) // If it is the last site, we may have closed off by appending L
-                    cache.mps_cplx[mps_key] = multisite_mps;
+                if(use_cache and not append_L) {
+                    // If it is the last site, we may have closed off by appending L
+                    cache.mps_cplx.emplace_back(std::make_pair(mps_key, multisite_mps)); // We know it is not present already
+                    while(cache.mps_cplx.size() > max_mps_cache_size) {
+                        if constexpr(settings::debug_cache)
+                            tools::log->trace("multisite_mps cache: deleting due to size limit ({}): {}", max_mps_cache_size, cache.mps_cplx.front().first);
+                        cache.mps_cplx.pop_front();
+                    }
+                    while(get_mps_cache_gbts<Scalar>() > max_mps_cache_gbts and cache.mps_cplx.size() >= 2) {
+                        if constexpr(settings::debug_cache)
+                            tools::log->trace("multisite_mps cache: deleting due to gbts limit ({}): {}", max_mps_cache_gbts, cache.mps_cplx.front().first);
+                        cache.mps_cplx.pop_front();
+                    }
+                }
             }
         }
         if constexpr(settings::debug) {
@@ -494,17 +504,17 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
         }
         return multisite_mps;
     } else if constexpr(std::is_same_v<Scalar, real>) {
-        auto                   t_mps  = tid::tic_scope("gen_mps", tid::level::highest);
-        auto                   csites = std::vector<size_t>{}; // Keeps track of the contracted sites
+        auto t_mps = tid::tic_scope("gen_mps", tid::level::highest);
+        // auto                   csites = std::vector<size_t>{}; // Keeps track of the contracted sites
         auto                   length = get_length<size_t>();
         Eigen::Tensor<real, 3> multisite_mps;
         Eigen::Tensor<real, 3> temp;
         for(auto &site : sites) {
-            csites.emplace_back(site);
-            const auto mps_key = fmt::format("{}", csites);
-            if(use_cache and cache.mps_real.find(mps_key) != cache.mps_real.end()) {
-                if constexpr(settings::debug_cache) tools::log->trace("multisite_mps: cache_hit: {}", csites);
-                multisite_mps = cache.mps_real.at(mps_key);
+            const auto mps_key = use_cache ? generate_cache_key(sites, site, "l2r") : "";
+            const auto mps_cch = use_cache ? get_mps_in_cache<real>(mps_key) : std::nullopt;
+            if(mps_cch.has_value()) {
+                if constexpr(settings::debug_cache) tools::log->trace("multisite_mps: cache_hit: {}", mps_key);
+                multisite_mps = mps_cch->get();
             } else {
                 const auto &mps       = get_mps_site(site);
                 auto        M         = Eigen::Tensor<real, 3>(mps.get_M().real());
@@ -536,8 +546,21 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 } else { // Next sites
                     multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
                 }
-                if(use_cache and not append_L) // If it is the last site, we may have closed off by appending L
-                    cache.mps_real[mps_key] = multisite_mps;
+
+                if(use_cache and not append_L) {
+                    // If it is the last site, we may have closed off by appending L
+                    cache.mps_real.emplace_back(std::make_pair(mps_key, multisite_mps)); // We know it is not present already
+                    while(cache.mps_real.size() > max_mps_cache_size) {
+                        if constexpr(settings::debug_cache)
+                            tools::log->trace("multisite_mps cache: deleting due to size limit ({}): {}", max_mps_cache_size, cache.mps_real.front().first);
+                        cache.mps_real.pop_front();
+                    }
+                    while(get_mps_cache_gbts<Scalar>() > max_mps_cache_gbts and cache.mps_real.size() >= 2) {
+                        if constexpr(settings::debug_cache)
+                            tools::log->trace("multisite_mps cache: deleting due to gbts limit ({}): {}", max_mps_cache_gbts, cache.mps_real.front().first);
+                        cache.mps_real.pop_front();
+                    }
+                }
             }
         }
         if constexpr(settings::debug) {
@@ -772,7 +795,7 @@ std::array<double, 3> StateFinite::get_reduced_density_matrix_cost(const std::ve
     return std::array{cost_t2b, cost_l2r, cost_r2l};
 }
 
-std::string StateFinite::generate_cache_key(const std::vector<size_t> sites, const size_t pos, std::string_view side) const {
+std::string StateFinite::generate_cache_key(const std::vector<size_t> &sites, const size_t pos, std::string_view side) const {
     if(sites.empty()) return {};
     assert(pos >= sites.front());
     assert(pos <= sites.back());
@@ -780,13 +803,13 @@ std::string StateFinite::generate_cache_key(const std::vector<size_t> sites, con
     auto        nelems = 1 + pos - sites.front();
     key.reserve(nelems * 8);
     key += "[";
-    if(side == "left") {
+    if(side.starts_with('l')) {
         for(const auto &i : sites) {
             if(i == sites.front()) {
                 key += fmt::format("{}{}{}", mps_sites[i]->get_label() == "B" ? "LB" : "A", sites.size() == 1 ? "L" : "", i);
                 if(sites.size() == 1) key += "L";
             } else if(i == sites.back()) {
-                key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "AL", i);
+                key += fmt::format("{}{}L", mps_sites[i]->get_label() == "B" ? "B" : "A", i);
             } else {
                 key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "A", i);
             }
@@ -794,13 +817,13 @@ std::string StateFinite::generate_cache_key(const std::vector<size_t> sites, con
             key += ",";
         }
     }
-    if(side == "right") {
+    if(side.starts_with('r')) {
         for(const auto &i : sites) {
             if(i < pos) continue;
             if(i == sites.front()) {
                 key += fmt::format("{}{}{}", mps_sites[i]->get_label() == "B" ? "LB" : "A", sites.size() == 1 ? "L" : "", i);
             } else if(i == sites.back()) {
-                key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "AL", i);
+                key += fmt::format("{}{}L", mps_sites[i]->get_label() == "B" ? "B" : "A", i);
             } else {
                 key += fmt::format("{}{}", mps_sites[i]->get_label() == "B" ? "B" : "A", i);
             }
@@ -812,22 +835,21 @@ std::string StateFinite::generate_cache_key(const std::vector<size_t> sites, con
 }
 
 template<typename Scalar>
-StateFinite::optional_tensorref<Scalar> StateFinite::load_trf_from_cache(const std::vector<size_t> sites, const size_t pos, std::string_view side) const {
-    if(sites.empty()) return {};
-    assert(pos >= sites.front());
-    assert(pos <= sites.back());
-    auto key = generate_cache_key(sites, pos, side);
+StateFinite::optional_tensor4ref<Scalar> StateFinite::load_trf_from_cache(const std::string &key) const {
+    if(key.empty()) return {};
     if constexpr(std::is_same_v<Scalar, real>) {
-        auto it = cache.trf_real.find(key);
+        // auto it = cache.trf_real.find(key);
+        auto it = std::find_if(cache.trf_real.begin(), cache.trf_real.end(), [&key](const auto &elem) -> bool { return elem.first == key; });
         if(it != cache.trf_real.end()) {
-            if constexpr(settings::debug_cache) tools::log->trace("load_trf_from_cache: cache_hit: {} | {} | {}", key, it->second.dimensions(), side);
+            if constexpr(settings::debug_cache) tools::log->trace("load_trf_from_cache: cache_hit: {} | {} | {}", key, it->second.dimensions());
             return std::cref(it->second);
         }
     }
     if constexpr(std::is_same_v<Scalar, cplx>) {
-        auto it = cache.trf_cplx.find(key);
+        // auto it = cache.trf_cplx.find(key);
+        auto it = std::find_if(cache.trf_cplx.begin(), cache.trf_cplx.end(), [&key](const auto &elem) -> bool { return elem.first == key; });
         if(it != cache.trf_cplx.end()) {
-            if constexpr(settings::debug_cache) tools::log->trace("load_trf_from_cache: cache_hit: {} | {} | {}", key, it->second.dimensions(), side);
+            if constexpr(settings::debug_cache) tools::log->trace("load_trf_from_cache: cache_hit: {} | {} | {}", key, it->second.dimensions());
             return std::cref(it->second);
         }
     }
@@ -835,40 +857,210 @@ StateFinite::optional_tensorref<Scalar> StateFinite::load_trf_from_cache(const s
 }
 
 template<typename Scalar>
-void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::vector<size_t> &sites, size_t pos, std::string_view side) const {
-    if(sites.empty()) return;
+StateFinite::optional_tensor4ref<Scalar> StateFinite::load_trf_from_cache(const std::vector<size_t> &sites, const size_t pos, std::string_view side) const {
+    if(sites.empty()) return {};
     assert(pos >= sites.front());
     assert(pos <= sites.back());
-    // if constexpr(settings::debug_cache) {
-    //     auto trf_map = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(trf.data(), trf.dimension(0) * trf.dimension(1),
-    //     trf.dimension(2) * trf.dimension(3)); auto trf_trc = trf_map.trace(); if(std::abs(trf_trc - 1.0) > 1e-3) throw except::logic_error("trf trace is not
-    //     identity. Got {:.16f}", trf_trc);
-    // }
-
     auto key = generate_cache_key(sites, pos, side);
-    if constexpr(settings::debug_cache) tools::log->trace("save_trf_into_cache: key: {} | {} | {}", key, trf.dimensions(), side);
-    if constexpr(std::is_same_v<Scalar, real>) { cache.trf_real[key] = trf; }
-    if constexpr(std::is_same_v<Scalar, cplx>) { cache.trf_cplx[key] = trf; }
+    return load_trf_from_cache<Scalar>(key);
+}
+
+template<typename Scalar>
+void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::string &key) const {
+    if(key.empty()) return;
+    if constexpr(std::is_same_v<Scalar, real>) {
+        auto it = std::find_if(cache.trf_real.rbegin(), cache.trf_real.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
+        if constexpr(settings::debug_cache) {
+            // if(!cache.trf_real.contains(key)) tools::log->trace("save_trf_into_cache: key: {} | {}", key, trf.dimensions());
+            if(it == cache.trf_real.rend()) tools::log->trace("save_trf_into_cache: key: {} | {}", key, trf.dimensions());
+        }
+        // cache.trf_real[key] = trf;
+        if(it == cache.trf_real.rend()) cache.trf_real.emplace_back(std::make_pair(key, trf));
+        while(cache.trf_real.size() > max_trf_cache_size) {
+            if constexpr(settings::debug_cache)
+                tools::log->trace("save_trf_into_cache: deleting due to size limit ({}): {}", max_trf_cache_size, cache.trf_real.front().first);
+            cache.trf_real.pop_front();
+        }
+        while(get_trf_cache_gbts<Scalar>() > max_trf_cache_gbts and cache.trf_real.size() >= 2) {
+            if constexpr(settings::debug_cache)
+                tools::log->trace("save_trf_into_cache: deleting due to gbts limit ({}): {}", max_trf_cache_gbts, cache.trf_real.front().first);
+            cache.trf_real.pop_front();
+        }
+    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        auto it = std::find_if(cache.trf_cplx.rbegin(), cache.trf_cplx.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
+        if constexpr(settings::debug_cache) {
+            // if(!cache.trf_cplx.contains(key)) tools::log->trace("save_trf_into_cache: key: {} | {}", key, trf.dimensions());
+            if(it == cache.trf_cplx.rend()) tools::log->trace("save_trf_into_cache: key: {} | {}", key, trf.dimensions());
+        }
+        // cache.trf_cplx[key] = trf;
+        if(it == cache.trf_cplx.rend()) cache.trf_cplx.emplace_back(std::make_pair(key, trf));
+        while(cache.trf_cplx.size() > max_trf_cache_size) cache.trf_cplx.pop_front();
+        while(get_trf_cache_gbts<Scalar>() > max_trf_cache_gbts and cache.trf_cplx.size() >= 2) cache.trf_cplx.pop_front();
+    }
+}
+
+template<typename Scalar>
+void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const std::vector<size_t> &sites, size_t pos, std::string_view side) const {
+    if(sites.empty()) return;
+    if(side.empty()) return;
+    assert(pos >= sites.front());
+    assert(pos <= sites.back());
+    auto key = generate_cache_key(sites, pos, side);
+    if(side.starts_with('l') and key.ends_with("L]")) return;   // It cannot grow l2r any more
+    if(side.starts_with('r') and key.starts_with("[L")) return; // It cannot grow r2l any more
+    save_trf_into_cache<Scalar>(trf, key);
+}
+
+template<typename Scalar>
+std::optional<StateFinite::TrfCacheEntry<Scalar>> StateFinite::get_optimal_trf_from_cache(const std::vector<size_t> &sites, std::string_view side) const {
+    // We want to find the cheapest cache entry to start from, that has the most sites contracted into it already
+    std::optional<TrfCacheEntry<Scalar>> cacheEntry = std::nullopt;
+    if(side.starts_with('l')) {
+        for(const auto &posR : iter::reverse(sites)) { // posL is fixed, move the posR cursor towards posL
+            auto key        = generate_cache_key(sites, posR, "l2r");
+            auto nremaining = sites.back() - posR;
+            auto ncontained = sites.size() - nremaining;
+            if constexpr(std::is_same_v<Scalar, real>) {
+                // if(auto it = cache.trf_real.find(key); it != cache.trf_real.end()) {
+                auto it = std::find_if(cache.trf_real.rbegin(), cache.trf_real.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
+                if(it != cache.trf_real.rend()) {
+                    if constexpr(settings::debug_cache) tools::log->trace("get_optimal_trf_from_cache: cache hit: pos {} | {} | sites {}", posR, side, sites);
+                    cacheEntry = TrfCacheEntry<Scalar>{.pos        = posR,
+                                                       .side       = "l2r",
+                                                       .key        = key,
+                                                       .ncontained = ncontained,
+                                                       .nremaining = nremaining,
+                                                       .cost       = std::numeric_limits<double>::quiet_NaN(),
+                                                       .trf        = std::cref(it->second)};
+                    break;
+                }
+            }
+            if constexpr(std::is_same_v<Scalar, cplx>) {
+                // if(auto it = cache.trf_cplx.find(key); it != cache.trf_cplx.end()) {
+                auto it = std::find_if(cache.trf_cplx.rbegin(), cache.trf_cplx.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
+                if(it != cache.trf_cplx.rend()) {
+                    if constexpr(settings::debug_cache) tools::log->trace("get_optimal_trf_from_cache: cache hit: pos {} | {} | sites {}", posR, side, sites);
+                    cacheEntry = TrfCacheEntry<Scalar>{.pos        = posR,
+                                                       .side       = "l2r",
+                                                       .key        = key,
+                                                       .ncontained = ncontained,
+                                                       .nremaining = nremaining,
+                                                       .cost       = std::numeric_limits<double>::quiet_NaN(),
+                                                       .trf        = std::cref(it->second)};
+                    break;
+                }
+            }
+        }
+    }
+    if(side.starts_with('r')) {
+        for(const auto &posL : sites) { // posR is fixed, move the posL cursor towards posR
+            auto key        = generate_cache_key(sites, posL, "r2l");
+            auto ncontained = sites.back() - posL + 1;
+            auto nremaining = sites.size() - ncontained;
+            if constexpr(std::is_same_v<Scalar, real>) {
+                // if(auto it = cache.trf_real.find(key); it != cache.trf_real.end()) {
+                auto it = std::find_if(cache.trf_real.rbegin(), cache.trf_real.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
+                if(it != cache.trf_real.rend()) {
+                    if constexpr(settings::debug_cache) tools::log->trace("get_optimal_trf_from_cache: cache hit: pos {} | {} | sites {}", posL, side, sites);
+                    cacheEntry = TrfCacheEntry<Scalar>{.pos        = posL,
+                                                       .side       = "r2l",
+                                                       .key        = key,
+                                                       .ncontained = ncontained,
+                                                       .nremaining = nremaining,
+                                                       .cost       = std::numeric_limits<double>::quiet_NaN(),
+                                                       .trf        = std::cref(it->second)};
+                    break;
+                }
+            }
+            if constexpr(std::is_same_v<Scalar, cplx>) {
+                // if(auto it = cache.trf_cplx.find(key); it != cache.trf_cplx.end()) {
+                auto it = std::find_if(cache.trf_cplx.rbegin(), cache.trf_cplx.rend(), [&key](const auto &elem) -> bool { return elem.first == key; });
+                if(it != cache.trf_cplx.rend()) {
+                    if constexpr(settings::debug_cache) tools::log->trace("get_optimal_trf_from_cache: cache hit: pos {} | {} | sites {}", posL, side, sites);
+                    cacheEntry = TrfCacheEntry<Scalar>{.pos        = posL,
+                                                       .side       = "r2l",
+                                                       .key        = key,
+                                                       .ncontained = ncontained,
+                                                       .nremaining = nremaining,
+                                                       .cost       = std::numeric_limits<double>::quiet_NaN(),
+                                                       .trf        = std::cref(it->second)};
+                    break;
+                }
+            }
+        }
+    }
+    cacheEntry->cost = get_transfer_matrix_cost(sites, side, cacheEntry);
+    return cacheEntry;
+}
+
+template<typename Scalar>
+std::optional<StateFinite::TrfCacheEntry<Scalar>> StateFinite::get_optimal_trf_from_cache(const std::vector<size_t> &sites) const {
+    // We want to inspect the cache to find out which is the cheapest cache entry to start from.
+    // We are looking for the longest cache entry (in number of sites) .
+    std::optional<TrfCacheEntry<Scalar>> cacheL = get_optimal_trf_from_cache<Scalar>(sites, "l2r");
+    std::optional<TrfCacheEntry<Scalar>> cacheR = get_optimal_trf_from_cache<Scalar>(sites, "r2l");
+
+    // Return the cache entry that would be cheapest to complete
+    if(cacheL.has_value() and cacheR.has_value()) {
+        if constexpr(settings::debug_cache) tools::log->trace("get_optimal_trf_from_cache: comparing cacheL {} | cacheR {}", cacheL->key, cacheR->key);
+        if(cacheL->cost < cacheR->cost) { return cacheL; }
+        if(cacheR->cost < cacheL->cost) { return cacheR; }
+
+        // Compare the number of sites remaining
+        if(cacheL->nremaining < cacheR->nremaining) { return cacheL; }
+        if(cacheR->nremaining < cacheL->nremaining) { return cacheR; }
+        // In this case there are an equal number of remaining sites to contract.
+        // The cheapest is the one with the smallest static dimension on the respective sides.
+        if(cacheL->trf.get().dimension(0) < cacheR->trf.get().dimension(2)) { return cacheL; }
+        if(cacheR->trf.get().dimension(2) < cacheL->trf.get().dimension(0)) { return cacheR; }
+        // If those are also equal, then take the one with the smallest dynamic dimension.
+        // If those are equal too... then it doesn't matter
+        if(cacheL->trf.get().dimension(2) <= cacheR->trf.get().dimension(0)) { return cacheL; }
+        if(cacheR->trf.get().dimension(0) <= cacheL->trf.get().dimension(2)) { return cacheR; }
+    }
+    if(cacheL.has_value()) return cacheL;
+    if(cacheR.has_value()) return cacheR;
+    return std::nullopt;
+}
+
+template<typename Scalar>
+StateFinite::optional_tensor3ref<Scalar> StateFinite::get_mps_in_cache(const std::string &key) const {
+    if constexpr(std::is_same_v<Scalar, real>) {
+        auto it = std::find_if(cache.mps_real.begin(), cache.mps_real.end(), [&](const auto &elem) -> bool { return elem.first == key; });
+        if(it != cache.mps_real.end()) return std::cref(it->second);
+    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        auto it = std::find_if(cache.mps_cplx.begin(), cache.mps_cplx.end(), [&](const auto &elem) -> bool { return elem.first == key; });
+        if(it != cache.mps_cplx.end()) return std::cref(it->second);
+    }
+    return std::nullopt;
 }
 
 template<typename Scalar>
 bool StateFinite::has_mps_in_cache(const std::string &key) const {
-    if constexpr(std::is_same_v<Scalar, real>) { return cache.mps_real.find(key) != cache.mps_real.end(); }
-    if constexpr(std::is_same_v<Scalar, cplx>) { return cache.mps_cplx.find(key) != cache.mps_cplx.end(); }
+    if constexpr(std::is_same_v<Scalar, real>) {
+        auto it = std::find_if(cache.mps_real.rbegin(), cache.mps_real.rend(), [&](const auto &elem) -> bool { return elem.first == key; });
+        return it != cache.mps_real.rend();
+    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        auto it = std::find_if(cache.mps_cplx.rbegin(), cache.mps_cplx.rend(), [&](const auto &elem) -> bool { return elem.first == key; });
+        return it != cache.mps_cplx.rend();
+    }
+    // if constexpr(std::is_same_v<Scalar, real>) { return cache.mps_real.find(key) != cache.mps_real.end(); }
+    // if constexpr(std::is_same_v<Scalar, cplx>) { return cache.mps_cplx.find(key) != cache.mps_cplx.end(); }
     return false;
 }
 
 template<typename Scalar>
-Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size_t> &sites) const {
-    auto t_trf        = tid::tic_scope("trf");
-    auto chiL         = get_mps_site(sites.front()).get_chiL();
-    auto chiR         = get_mps_site(sites.back()).get_chiR();
-    auto costs        = get_transfer_matrix_cost<Scalar>(sites);
-    auto min_cost_idx = std::distance(costs.begin(), std::min_element(costs.begin(), costs.end()));
-
-    auto &threads = tenx::threads::get();
-
-    if constexpr(settings::debug_transfer_matrix) tools::log->trace("cost_t2b {} | cost_l2r {} | cost_r2l {}", costs[0], costs[1], costs[2]);
+Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size_t> &sites, std::string_view side) const {
+    auto  t_trf        = tid::tic_scope("trf");
+    auto  chiL         = get_mps_site(sites.front()).get_chiL();
+    auto  chiR         = get_mps_site(sites.back()).get_chiR();
+    auto  costs        = get_transfer_matrix_costs<Scalar>(sites, side);
+    auto  min_cost_idx = std::distance(costs.begin(), std::min_element(costs.begin(), costs.end()));
+    auto &threads      = tenx::threads::get();
+    if constexpr(settings::debug_transfer_matrix) tools::log->trace("cost_t2b {} | cost_s2s {} ({})", costs[0], costs[1], side);
     if(min_cost_idx == 0 /* top to bottom */) {
         if constexpr(settings::debug_transfer_matrix) tools::log->trace("from top");
         auto mps                  = get_multisite_mps<Scalar>(sites, true);
@@ -891,12 +1083,14 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size
          * 1-----3  1-----3
          *
          */
+        auto trf_cache = get_optimal_trf_from_cache<Scalar>(sites, side);
+        // auto side      = trf_cache.has_value() ? trf_cache->side : (min_cost_idx == 1 ? "l2r" : "r2l");
 
-        if(min_cost_idx == 1 /* left to right */) {
-            if constexpr(settings::debug_transfer_matrix) tools::log->info("from left");
+        if(side.starts_with('l') /* left to right */) {
+            if constexpr(settings::debug_transfer_matrix) tools::log->trace("from left");
             for(const auto &i : sites) {
-                if(auto trf_cache = load_trf_from_cache<Scalar>(sites, i, "left"); trf_cache.has_value()) {
-                    trf_temp = trf_cache->get();
+                if(trf_cache.has_value() and i <= trf_cache->pos) {
+                    if(i == trf_cache->pos) trf_temp = trf_cache->trf.get();
                     continue;
                 }
                 const auto &mps = get_mps_site(i);
@@ -927,13 +1121,13 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size
                     trf_tmp4.device(*threads->dev) = trf_temp.contract(M.conjugate(), tenx::idx({2}, {1})).contract(M, tenx::idx({2, 3}, {1, 0}));
                     trf_temp                       = std::move(trf_tmp4);
                 }
-                save_trf_into_cache<Scalar>(trf_temp, sites, i, "left");
+                save_trf_into_cache<Scalar>(trf_temp, sites, i, "l2r");
             }
-        } else if(min_cost_idx == 2 /* right to left */) {
+        } else if(side.starts_with('r') /* right to left */) {
             if constexpr(settings::debug_transfer_matrix) tools::log->trace("from right");
             for(const auto &i : iter::reverse(sites)) {
-                if(auto trf_cache = load_trf_from_cache<Scalar>(sites, i, "right"); trf_cache.has_value()) {
-                    trf_temp = trf_cache->get();
+                if(trf_cache.has_value() and i >= trf_cache->pos) {
+                    if(i == trf_cache->pos) trf_temp = trf_cache->trf.get();
                     continue;
                 }
                 const auto &mps = get_mps_site(i);
@@ -971,9 +1165,10 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size
                     trf_temp.resize(new_dim);
                     trf_temp.device(*threads->dev) = M.conjugate().contract(trf_tmp5, tenx::idx({0, 2}, {0, 2}));
                 }
-                save_trf_into_cache<Scalar>(trf_temp, sites, i, "right");
+                save_trf_into_cache<Scalar>(trf_temp, sites, i, "r2l");
             }
         }
+
         auto new_dim = std::array{chiL, chiR, chiL, chiR};
         trf_tmp4.resize(new_dim);
         trf_tmp4.device(*threads->dev) = trf_temp.shuffle(std::array{0, 2, 1, 3});
@@ -982,7 +1177,45 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_transfer_matrix(const std::vector<size
 }
 
 template<typename Scalar>
-std::array<double, 3> StateFinite::get_transfer_matrix_cost(const std::vector<size_t> &sites) const {
+double StateFinite::get_transfer_matrix_cost(const std::vector<size_t> &sites, std::string_view side,
+                                             const std::optional<TrfCacheEntry<Scalar>> &trf_cache) const {
+    auto   bonds = get_bond_dims(sites); // One fewer than sites, unless there is only one site, and then this is the bond to the right of that site.
+    auto   chiL  = get_mps_site(sites.front()).get_chiL();
+    auto   chiR  = get_mps_site(sites.back()).get_chiR();
+    double cost  = 0.0;
+    if(side.starts_with('l')) {
+        for(const auto &[i, pos] : iter::enumerate(sites)) {
+            if(trf_cache.has_value() and side == trf_cache->side and pos <= trf_cache->pos) continue;
+            // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+            if(pos == sites.front() and i < bonds.size()) {
+                cost += static_cast<double>(chiL * chiL * bonds[i] * bonds[i] * 2); // The left-most site
+            } else {                                                                // Appending sites in the interior
+                auto bondR = pos == sites.back() ? chiR : bonds.at(i);
+                cost += static_cast<double>(chiL * chiL * bonds[i - 1] * bonds[i - 1] * bondR * 2); // Upper mps
+                cost += static_cast<double>(chiL * chiL * bonds[i - 1] * bondR * bondR * 4);        // Lower mps part 1 of 2
+                cost += static_cast<double>(chiL * chiL * bondR * bondR * 2);                       // Lower mps part 2 of 2
+            }
+        }
+    }
+    if(side.starts_with('r')) {
+        for(const auto &[i, pos] : iter::enumerate_reverse(sites)) {
+            if(trf_cache.has_value() and side == trf_cache->side and pos >= trf_cache->pos) continue;
+            // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
+            if(pos == sites.back() and i - 1 < bonds.size()) {
+                cost += static_cast<double>(chiR * chiR * bonds[i - 1] * bonds[i - 1] * 2); // The right-most site
+            } else {                                                                        // Appending sites in the interior
+                auto bondL = pos == sites.front() ? chiL : bonds.at(i - 1);
+                cost += static_cast<double>(chiR * chiR * bonds[i] * bonds[i] * bondL * 2); // Upper mps
+                cost += static_cast<double>(chiR * chiR * bonds[i] * bondL * bondL * 4);    // Lower mps part 1 of 2
+                cost += static_cast<double>(chiR * chiR * bondL * bondL * 2);               // Lower mps part 2 of 2
+            }
+        }
+    }
+    return cost;
+}
+
+template<typename Scalar>
+std::array<double, 2> StateFinite::get_transfer_matrix_costs(const std::vector<size_t> &sites, std::string_view side) const {
     if(sites.empty()) throw except::logic_error("get_transfer_matrix_cost: sites is empty");
     auto cites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
     if(sites != cites) throw except::logic_error("get_transfer_matrix_cost: sites is not contiguous: {}", sites);
@@ -992,9 +1225,7 @@ std::array<double, 3> StateFinite::get_transfer_matrix_cost(const std::vector<si
     auto chiR  = get_mps_site(sites.back()).get_chiR();
     // Calculate the numerical cost for contracting top to bottom or side to side
     auto cost_t2b = static_cast<double>(chiL * chiR * chiL * chiR) * std::pow(2.0, sites.size()); // This is the last step, but we will add earlier steps below.
-    auto cost_l2r = 0.0;
-    auto cost_r2l = 0.0;
-    //
+
     for(size_t i = 0; i < sites.size(); ++i) {
         auto key = fmt::format("{}", num::range(sites.front(), sites.front() + i + 1));
         if(has_mps_in_cache<Scalar>(key)) continue;
@@ -1007,64 +1238,59 @@ std::array<double, 3> StateFinite::get_transfer_matrix_cost(const std::vector<si
             cost_t2b += std::pow(2.0, i + 1) * static_cast<double>(2l * chiL * bonds[i - 1] * chiR);
         }
     }
-    for(const auto &[i, pos] : iter::enumerate(sites)) {
-        // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
-        if(load_trf_from_cache<Scalar>(sites, pos, "left").has_value()) continue;
-        if(pos == sites.front() and i < bonds.size()) {
-            cost_l2r += static_cast<double>(chiL * chiL * bonds[i] * bonds[i] * 2); // The left-most site
-        } else {                                                                    // Appending sites in the interior
-            auto bondR = pos == sites.back() ? chiR : bonds.at(i);
-            cost_l2r += static_cast<double>(chiL * chiL * bonds[i - 1] * bonds[i - 1] * bondR * 2); // Upper mps
-            cost_l2r += static_cast<double>(chiL * chiL * bonds[i - 1] * bondR * bondR * 4);        // Lower mps part 1 of 2
-            cost_l2r += static_cast<double>(chiL * chiL * bondR * bondR * 2);                       // Lower mps part 2 of 2
-        }
+    if(side.starts_with('l')) {
+        auto trf_cacheL = get_optimal_trf_from_cache<Scalar>(sites, "l2r");
+        auto cost_l2r   = get_transfer_matrix_cost(sites, "l2r", trf_cacheL);
+        if(trf_cacheL.has_value()) trf_cacheL->cost = cost_l2r;
+        return std::array{cost_t2b, cost_l2r};
+    } else if(side.starts_with('r')) {
+        auto trf_cacheR = get_optimal_trf_from_cache<Scalar>(sites, "r2l");
+        auto cost_r2l   = get_transfer_matrix_cost(sites, "r2l", trf_cacheR);
+        if(trf_cacheR.has_value()) trf_cacheR->cost = cost_r2l;
+        return std::array{cost_t2b, cost_r2l};
+    } else {
+        throw except::logic_error("get_transfer_matrix_costs: invalid side: {}", side);
     }
-    for(const auto &[i, pos] : iter::enumerate_reverse(sites)) {
-        // bonds[i] is always a bond directly to the right of pos, except for the last pos, where we use chiR instead
-        if(load_trf_from_cache<Scalar>(sites, pos, "right").has_value()) continue;
-        if(pos == sites.back() and i - 1 < bonds.size()) {
-            cost_r2l += static_cast<double>(chiR * chiR * bonds[i - 1] * bonds[i - 1] * 2); // The right-most site
-        } else {                                                                            // Appending sites in the interior
-            auto bondL = pos == sites.front() ? chiL : bonds.at(i - 1);
-            cost_r2l += static_cast<double>(chiR * chiR * bonds[i] * bonds[i] * bondL * 2); // Upper mps
-            cost_r2l += static_cast<double>(chiR * chiR * bonds[i] * bondL * bondL * 4);    // Lower mps part 1 of 2
-            cost_r2l += static_cast<double>(chiR * chiR * bondL * bondL * 2);               // Lower mps part 2 of 2
-        }
-    }
-
-    if(cost_l2r == 0) {
-        // This can only happen if the subsystem has the "LC" center bond to the left of the right-most site
-        auto pos = get_position<size_t>();
-        if(pos >= sites.back()) throw except::logic_error("get_transfer_matrix_cost: cost_l2r is zero, but pos {} is outside of the subsystem {}", pos, sites);
-    }
-    if(cost_r2l == 0) {
-        // This can only happen if the subsystem has the "LC" center bond to the right of the left-most site.
-        auto pos = get_position<size_t>();
-        if(pos < sites.front()) throw except::logic_error("get_transfer_matrix_cost: cost_r2l is zero, but pos {} is outside of the subsystem {}", pos, sites);
-    }
-    return std::array{cost_t2b, cost_l2r, cost_r2l};
-    // auto costs        = std::array{cost_t2b, cost_l2r, cost_r2l};
-    // auto min_cost_itr = std::min_element(costs.begin(), costs.end());
-    // auto min_cost_idx = std::distance(costs.begin(), min_cost_itr);
 }
 
-template Eigen::Tensor<real, 2> StateFinite::get_transfer_matrix<real>(const std::vector<size_t> &sites) const;
-template Eigen::Tensor<cplx, 2> StateFinite::get_transfer_matrix<cplx>(const std::vector<size_t> &sites) const;
+template Eigen::Tensor<real, 2> StateFinite::get_transfer_matrix<real>(const std::vector<size_t> &sites, std::string_view side) const;
+template Eigen::Tensor<cplx, 2> StateFinite::get_transfer_matrix<cplx>(const std::vector<size_t> &sites, std::string_view side) const;
+
+template<typename Scalar>
+double StateFinite::get_trf_cache_gbts() const {
+    double size_trf = 0;
+    if constexpr(std::is_same_v<Scalar, real>) {
+        for(const auto &elem : cache.trf_real) size_trf += static_cast<double>(elem.second.size());
+        return size_trf * 8.0 / std::pow(1024.0, 3.0);
+    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        for(const auto &elem : cache.trf_cplx) size_trf += static_cast<double>(elem.second.size());
+        return size_trf * 16.0 / std::pow(1024.0, 3.0);
+    }
+    return 0;
+}
+template double StateFinite::get_trf_cache_gbts<real>() const;
+template double StateFinite::get_trf_cache_gbts<cplx>() const;
+
+template<typename Scalar>
+double StateFinite::get_mps_cache_gbts() const {
+    double size_mps = 0;
+    if constexpr(std::is_same_v<Scalar, real>) {
+        for(const auto &elem : cache.mps_real) size_mps += static_cast<double>(elem.second.size());
+        return size_mps * 8.0 / std::pow(1024.0, 3.0);
+    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        for(const auto &elem : cache.mps_cplx) size_mps += static_cast<double>(elem.second.size());
+        return size_mps * 16.0 / std::pow(1024.0, 3.0);
+    }
+    return 0;
+}
+template double StateFinite::get_mps_cache_gbts<real>() const;
+template double StateFinite::get_mps_cache_gbts<cplx>() const;
 
 template<typename Scalar>
 std::array<double, 2> StateFinite::get_cache_sizes() const {
-    double size_mps = 0, size_trf = 0;
-    if constexpr(std::is_same_v<Scalar, real>) {
-        for(const auto &elem : cache.mps_real) size_mps += static_cast<double>(elem.second.size());
-        for(const auto &elem : cache.trf_real) size_trf += static_cast<double>(elem.second.size());
-        return std::array{size_mps * 8.0 / std::pow(1024.0, 3.0), size_trf * 8.0 / std::pow(1024.0, 3.0)};
-    }
-    if constexpr(std::is_same_v<Scalar, real>) {
-        for(const auto &elem : cache.mps_cplx) size_mps += static_cast<double>(elem.second.size());
-        for(const auto &elem : cache.trf_cplx) size_trf += static_cast<double>(elem.second.size());
-        return std::array{size_mps * 16.0 / std::pow(1024.0, 3.0), size_trf * 16.0 / std::pow(1024.0, 3.0)};
-    }
-    return {};
+    return {get_mps_cache_gbts<Scalar>(), get_trf_cache_gbts<Scalar>()};
 }
 template std::array<double, 2> StateFinite::get_cache_sizes<real>() const;
 template std::array<double, 2> StateFinite::get_cache_sizes<cplx>() const;
