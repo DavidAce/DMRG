@@ -18,9 +18,9 @@
 #include <fmt/ranges.h>
 namespace settings {
     inline constexpr bool debug_state           = false;
-    inline constexpr bool debug_cache           = true;
-    inline constexpr bool debug_density_matrix  = true;
-    inline constexpr bool debug_transfer_matrix = true;
+    inline constexpr bool debug_cache           = false;
+    inline constexpr bool debug_density_matrix  = false;
+    inline constexpr bool debug_transfer_matrix = false;
 }
 
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet

@@ -184,10 +184,10 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
         return std::numeric_limits<double>::quiet_NaN(); // No cost is smaller than max mat size
     }
 
-    auto                  solver      = eig::solver();
-    auto                  evs         = Eigen::ArrayXd(); // Eigenvalues
-    [[maybe_unused]] auto mat_time    = 0.0;
-    [[maybe_unused]] auto eig_time    = 0.0;
+    auto                  solver   = eig::solver();
+    auto                  evs      = Eigen::ArrayXd(); // Eigenvalues
+    [[maybe_unused]] auto mat_time = 0.0;
+    [[maybe_unused]] auto eig_time = 0.0;
     if(is_real) {
         Eigen::Tensor<real, 2> mat;
         if(min_cost_idx == 0) {
@@ -204,7 +204,7 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
             if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after trf");
         }
         solver.eig<eig::Form::SYMM>(mat.data(), mat.dimension(0), eig::Vecs::OFF);
-        evs         = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
+        evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
     } else {
         Eigen::Tensor<cplx, 2> mat;
         if(min_cost_idx == 0) {
@@ -226,8 +226,9 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
         if(e > 0) entanglement_entropy_log2 += -e * std::log2(e); // We use log base 2 for information
     }
     // if(eig_time > 1.0)
-    tools::log->trace("mode {} side {} | eig {} (max {}) | mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}", min_cost_idx, side,
-                      eig_sizes, eig_max_size, mat_costs, chiL, chiR, entanglement_entropy_log2, state.get_cache_sizes(), mat_time, eig_time, sites);
+    tools::log->trace("mode {} side {} | eig {} (max {}) | mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}",
+                      min_cost_idx, side, eig_sizes, eig_max_size, mat_costs, chiL, chiR, entanglement_entropy_log2, state.get_cache_sizes(), mat_time,
+                      eig_time, sites);
     if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after eig");
 
     return entanglement_entropy_log2;
@@ -278,14 +279,15 @@ SeeProgress check_see_progress(const Eigen::ArrayXXd &see, LogPolicy log_policy 
     sp.bits_found = sp.info.isNaN().select(0, sp.info).sum();
     sp.bits_error = 1 - sp.bits_found / sp.bits_total;
     sp.bits_minus = (sp.info < 0).select(sp.info, 0).sum();
-    sp.progress   = (see.isNaN()).select(0.0, Eigen::ArrayXXd::Ones(see.rows(), see.cols())).sum() / (L * (L + 1.0) / 2.0); // Found entries in the top left triangle
+    sp.progress =
+        (see.isNaN()).select(0.0, Eigen::ArrayXXd::Ones(see.rows(), see.cols())).sum() / (L * (L + 1.0) / 2.0); // Found entries in the top left triangle
     if(log_policy == LogPolicy::VERBOSE or settings::debug) {
         tools::log->debug("see: \n{}\n", linalg::matrix::to_string(see, 10));
         tools::log->debug("info: \n{}\n", linalg::matrix::to_string(sp.info, 6));
     }
     if(log_policy != LogPolicy::SILENT) {
-        tools::log->info(" -- progress {:<6.2f}% bits {:<20.16f}/{} err {:.2e} icom {:.16f} neg {:.1e} mem[rss {:<.1f} hwm {:<.1f}]MB", sp.progress * 100, sp.bits_found,
-                         sp.bits_total, sp.bits_error, sp.icom, sp.bits_minus, debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
+        tools::log->info(" -- progress {:<6.2f}% bits {:<20.16f}/{} err {:.2e} icom {:.16f} neg {:.1e} mem[rss {:<.1f} hwm {:<.1f}]MB", sp.progress * 100,
+                         sp.bits_found, sp.bits_total, sp.bits_error, sp.icom, sp.bits_minus, debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
     }
     return sp;
 }
@@ -334,8 +336,9 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
         see(ext - 1, 0) = bee[idx];
         if(len - ext >= 1) see(len - ext - 1, ext) = bee[idx];
     }
+    check_see_progress(see, LogPolicy::DEBUG);
+
     // Next we take small subsystems
-    // max matrix size 1024x1024 takes ~0.1 s to diagonalize, 3000x3000 takes ~1.0 s
     // We can take subsystems on the left side first and discard their caches before moving onto those on the right side.
     auto [subsystemsL, subsystemsR] = get_missing_subsystems(see);
     {
@@ -377,13 +380,12 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
     auto sites_r2l    = sites_temp;
     long loop_counter = 0;
     while(!subsystemsL.empty() or !subsystemsR.empty()) {
-        if(loop_counter > 1) {
+        if(posL > 2) {
             // We need at least the first two columns of see to avoid getting nans in the first column of info
             auto sp = check_see_progress(see, LogPolicy::DEBUG);
             if(ip.bits_max_error >= 0 and sp.bits_error <= ip.bits_max_error) break;
             if(ip.bits_max_error < 0 and std::abs(sp.bits_total - sp.bits_found) <= std::abs(ip.bits_max_error.value())) break;
         }
-
         while(!subsystemsL.empty()) {
             // Starting from the original state, the idea is to move the subsystems to the left edge successively
             auto subsystem = subsystemsL.front();
@@ -441,7 +443,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
             }
         }
 
-        if(loop_counter > 1) {
+        if(posL > 2) {
             // We need at least the first two columns of see to avoid getting nans in the first column of info
             auto sp = check_see_progress(see, LogPolicy::DEBUG);
             if(ip.bits_max_error >= 0 and sp.bits_error <= ip.bits_max_error) break;

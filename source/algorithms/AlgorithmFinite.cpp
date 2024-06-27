@@ -547,8 +547,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
@@ -651,8 +651,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
     tools::log->info("Updated truncation error limit: {:8.2e} -> {:8.2e} | reasons: {}", status.trnc_lim, trnc_new, fmt::join(reason, " | "));
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
@@ -729,18 +729,15 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        auto   ip        = InfoPolicy{.bits_max_error = -1e-2, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = 1e-6};
+        auto   ip        = InfoPolicy{.bits_max_error = -1e-2, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = std::max(status.trnc_lim, 1e-6)};
         double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
-        double blocksize = std::ceil(icom);
-        if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-            blocksize = std::ceil(2 + icom);
-            msg += fmt::format("center of mass {:.16f} + 2 when stuck >= {} iters", icom, settings::strategy::iter_max_stuck / 2);
-        } else if(status.algorithm_has_stuck_for > 0) {
-            blocksize = std::ceil(1 + icom);
-            msg += fmt::format("center of mass ({:.16f}) + 1 when stuck", icom);
+        double blocksize = std::round(icom);
+        if(status.algorithm_has_stuck_for > 0) {
+            blocksize = std::ceil(icom);
+            msg += fmt::format("center of mass (ceil({:.16f})) when stuck", icom);
         } else {
             // Same as the characteristic length scale "xi" when the info decay is exponential
-            msg += fmt::format("scale icom ({:.16f}) by default", icom);
+            msg += fmt::format("center of mass ({:.16f}) by default", icom);
         }
         dmrg_blocksize = std::clamp<size_t>(static_cast<size_t>(blocksize), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
 
@@ -999,7 +996,7 @@ void AlgorithmFinite::check_convergence() {
     else
         status.algorithm_converged_for = 0;
 
-    if(status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0)
+    if(status.algorithm_saturated_for > 1 and status.algorithm_converged_for == 0)
         status.algorithm_has_stuck_for++;
     else
         status.algorithm_has_stuck_for = 0;
@@ -1010,7 +1007,8 @@ void AlgorithmFinite::check_convergence() {
     }
 
     status.algorithm_has_succeeded = status.algorithm_converged_for > settings::strategy::iter_min_converged;
-    status.algorithm_has_to_stop   = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck;
+    status.algorithm_has_to_stop =
+        status.bond_limit_has_reached_max and status.trnc_limit_has_reached_min and status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck;
 
     tools::log->info(
         "Algorithm report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
