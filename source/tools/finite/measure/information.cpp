@@ -23,6 +23,7 @@
 #include "tools/finite/mps.h"
 #include <Eigen/src/Core/GlobalFunctions.h>
 #include <Eigen/SVD>
+#include <span>
 
 template<typename ContainerType>
 double count_finite(const ContainerType &arr) {
@@ -193,15 +194,15 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
         if(min_cost_idx == 0) {
             mat      = state.get_reduced_density_matrix<real>(sites);
             mat_time = tid::get("rho").get_last_interval();
-            if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after rho");
+            // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after rho");
         } else if(min_cost_idx == 1) {
             mat      = state.get_reduced_density_matrix<real>(cites);
             mat_time = tid::get("rho").get_last_interval();
-            if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after cmp");
+            // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after cmp");
         } else if(min_cost_idx == 2) {
             mat      = state.get_transfer_matrix<real>(sites, side);
             mat_time = tid::get("trf").get_last_interval();
-            if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after trf");
+            // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after trf");
         }
         solver.eig<eig::Form::SYMM>(mat.data(), mat.dimension(0), eig::Vecs::OFF);
         evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues
@@ -229,7 +230,7 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
     tools::log->trace("mode {} side {} | eig {} (max {}) | mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}",
                       min_cost_idx, side, eig_sizes, eig_max_size, mat_costs, chiL, chiR, entanglement_entropy_log2, state.get_cache_sizes(), mat_time,
                       eig_time, sites);
-    if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after eig");
+    // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after eig");
 
     return entanglement_entropy_log2;
 }

@@ -10,7 +10,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                       dmrg-tools-common-contraction
                       )
 if (DMRG_ENABLE_TBLIS)
-    target_compile_definitions(dmrg-bench-matvec PRIVATE DMRG_ENABLE_TBLIS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE DMRG_ENABLE_TBLIS)
 endif ()
 
 target_link_precompiled_headers(${PROJECT_NAME})

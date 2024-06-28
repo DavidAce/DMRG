@@ -58,11 +58,10 @@ void XXZ::set_parameter(const std::string_view name, std::any value) {
     else if(name == "distribution") h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(value);
     else
         /* clang-format on */
-            throw except::logic_error("Invalid parameter name for the XXZ model: {}", name);
+        throw except::logic_error("Invalid parameter name for the XXZ model: {}", name);
     build_mpo();
     build_mpo_squared();
 }
-
 
 /*! Builds the MPO hamiltonian as a rank 4 tensor.
  *
@@ -153,9 +152,9 @@ long XXZ::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void XXZ::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
     set_parameters(all_parameters[get_position()]);
-    double delta            = h5tb.param.delta;
-    double h                = settings::model::xxz::h_wdth;
-    double L                = safe_cast<double>(all_parameters.size());
+    double delta              = h5tb.param.delta;
+    double h                  = settings::model::xxz::h_wdth;
+    double L                  = safe_cast<double>(all_parameters.size());
     global_energy_upper_bound = (2 + delta) * (L - 1) + h * L;
 }
 
@@ -174,6 +173,17 @@ void XXZ::load_hamiltonian(const h5pp::File &file, std::string_view model_path) 
 
     using namespace settings::model::xxz;
     if(std::abs(h5tb.param.delta - delta) > 1e-6) throw except::runtime_error("delta  {:.16f} != {:.16f} xxz::delta", h5tb.param.delta, delta);
+
+    local_energy_upper_bound = 2 + h5tb.param.delta + h5tb.param.delta;
+
+    // Calculate the global upper bound
+    auto all_param            = file.readTableRecords<std::vector<h5tb_xxz::table>>(ham_table, h5pp::TableSelection::ALL);
+    global_energy_upper_bound = 0;
+    for(const auto &param : all_param) {
+        global_energy_upper_bound += std::abs(param.h_rand);
+        global_energy_upper_bound += 2 + std::abs(param.delta);
+    }
+
 
     build_mpo();
 }

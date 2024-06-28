@@ -188,6 +188,18 @@ void IsingMajorana::load_hamiltonian(const h5pp::File &file, std::string_view mo
     using namespace settings::model::ising_majorana;
     if(std::abs(h5tb.param.g - g) > 1e-6) throw except::runtime_error("g {:.16f} != {:.16f} ising_majorana::g", h5tb.param.g, g);
     if(std::abs(h5tb.param.delta - delta) > 1e-6) throw except::runtime_error("delta  {:.16f} != {:.16f} ising_majorana::delta", h5tb.param.delta, delta);
+    // Estimate the maximum energy contribution from this site
+    local_energy_upper_bound = std::abs(h5tb.param.h_rand) + 2 * std::abs(h5tb.param.g);
+    if(get_position() + 1 < settings::model::model_size) local_energy_upper_bound += std::abs(h5tb.param.J_rand) + std::abs(h5tb.param.g);
+    if(get_position() + 2 < settings::model::model_size) local_energy_upper_bound += std::abs(h5tb.param.g);
 
+    // Calculate the global upper bound
+    auto all_param            = file.readTableRecords<std::vector<h5tb_ising_majorana::table>>(ham_table, h5pp::TableSelection::ALL);
+    global_energy_upper_bound = 0;
+    for(const auto &param : all_param) {
+        global_energy_upper_bound += std::abs(param.h_rand) + 2 * std::abs(param.g);
+        global_energy_upper_bound += std::abs(h5tb.param.J_rand) + std::abs(h5tb.param.g);
+        global_energy_upper_bound += std::abs(h5tb.param.g);
+    }
     build_mpo();
 }

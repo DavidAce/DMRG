@@ -454,7 +454,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
             //      * Q(σ) = 0.5 * ( I - q*prod(σ) )
             //      * σ is a pauli matrix (usually σ^z)
             //      * 0.5 is a scalar that we multiply on the left edge as well.
-            //      * r is the the shift direction depending on the ritz (target energy): ground state energy (r = -1, SR) or maximum energy state (r = +1, LR).
+            //      * r is the shift direction depending on the ritz (target energy): ground state energy (r = -1, SR) or maximum energy state (r = +1, LR).
             //        We multiply r just once on the left edge.
             //      * q == parity_shift_sign_mpo is the sign of the parity sector we want to shift away from the target sector we are interested in.
             //        Often this is done to resolve a degeneracy. We multiply q just once on the left edge.

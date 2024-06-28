@@ -818,6 +818,8 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
     Eigen::Tensor<cplx, 4> result, tmp;
     auto                  &threads = tenx::threads::get();
+    #pragma message "tools::finite::measure::expectation_value: check if state1, state2 and mpos are real and contract real objects instead"
+
     for(size_t pos = 0; pos < L; ++pos) {
         Eigen::Tensor<cplx, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
         const auto            &mps2 = state2.get_mps_site(pos).get_M();

@@ -62,7 +62,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     size_mps  = spin_dim * envL.dimension(0) * envR.dimension(0);
 
     // If we have 5 or fewer mpos, it is faster to just merge them once and apply them in one contraction.
-    if(mpos.size() <= 5
+    if(mpos.size() <= 2
         ) {
         constexpr auto contract_idx    = tenx::idx({1}, {0});
         constexpr auto shuffle_idx     = tenx::array6{0, 3, 1, 4, 2, 5};

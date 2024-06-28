@@ -33,12 +33,18 @@
         "CMAKE_CXX_EXTENSIONS": "FALSE",
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always",
-        "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g3 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Og -g3 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always",
-        "CMAKE_C_FLAGS_DEBUG": "-O0 -g3 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_RELEASE_INIT": "-g -fdiagnostics-color=always",
+        "CMAKE_CXX_FLAGS_RELEASE_INIT": "-g -fdiagnostics-color=always",
+        "CMAKE_CUDA_FLAGS_RELEASE_INIT": "-g -fdiagnostics-color=always",
+        "CMAKE_Fortran_FLAGS_RELEASE_INIT": "-g -fdiagnostics-color=always",
+        "CMAKE_C_FLAGS_DEBUG_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_CXX_FLAGS_DEBUG_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_CUDA_FLAGS_DEBUG_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_Fortran_FLAGS_DEBUG_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_CUDA_FLAGS_RELWITHDEBINFO_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_Fortran_FLAGS_RELWITHDEBINFO_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
         "CMAKE_EXE_LINKER_FLAGS": "-Wl,--enable-new-dtags",
         "CMAKE_SKIP_BUILD_RPATH": "FALSE",
@@ -117,7 +123,11 @@
         "CMAKE_BUILD_TYPE": "Release",
         "COMPILER_ENABLE_PCH": "TRUE",
         "COMPILER_ENABLE_CCACHE": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
+        "CMAKE_C_FLAGS_RELEASE_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_CXX_FLAGS_RELEASE_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_CUDA_FLAGS_RELEASE_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
+        "CMAKE_Fortran_FLAGS_RELEASE_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always"
       }
     },
     {
@@ -142,18 +152,20 @@
       "name": "native",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
-        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
-        "CMAKE_CUDA_FLAGS_RELEASE": "-O3 -DNDEBUG -g -Xcompiler -march=native -Xcompiler -mtune=native"
+        "CMAKE_C_FLAGS": "-march=native -mtune=native",
+        "CMAKE_CXX_FLAGS": "-march=native -mtune=native",
+        "CMAKE_CUDA_FLAGS": "-Xcompiler -march=native -Xcompiler -mtune=native",
+        "CMAKE_Fortran_FLAGS": "-Xcompiler -march=native -Xcompiler -mtune=native"
       }
     },
     {
       "name": "haswell",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
-        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
-        "CMAKE_CUDA_FLAGS_RELEASE": "-O3 -DNDEBUG -g -Xcompiler -march=haswell -Xcompiler -mtune=haswell"
+        "CMAKE_C_FLAGS": "-march=haswell -mtune=haswell",
+        "CMAKE_CXX_FLAGS": "-march=haswell -mtune=haswell",
+        "CMAKE_CUDA_FLAGS": "-Xcompiler -march=haswell -Xcompiler -mtune=haswell",
+        "CMAKE_Fortran_FLAGS": "-Xcompiler -march=haswell -Xcompiler -mtune=haswelle"
       }
     },
     {

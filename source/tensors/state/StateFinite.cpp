@@ -579,12 +579,12 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
     auto min_cost_idx = std::distance(costs.begin(), std::min_element(costs.begin(), costs.end()));
     if constexpr(settings::debug_density_matrix)
         tools::log->trace("get_reduced_density_matrix: cost_t2b {} | cost_l2r {} | cost_r2l {}", costs[0], costs[1], costs[2]);
-    if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after min_cost_idx");
+    // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after min_cost_idx");
     // min_cost_idx = 0; // Disable side to side contractions for a while
     if(min_cost_idx == 0 /* top to bottom */) {
         // We have a contiguous set
         auto mps = get_multisite_mps<Scalar>(sites, true);
-        if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after multisite mps");
+        // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after multisite mps");
         return tools::common::contraction::contract_mps_partial<std::array{1l, 2l}>(mps);
     } else {
         // We probably have a non-contiguous set like [0123]4567[89]
@@ -646,7 +646,7 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
                     rho_temp = std::move(rho_temp2);
                     if(debug::mem_hwm_in_mb() > 10000) {
                         for(const auto &elem : cache.mps_real) tools::log->info("{}", elem.first);
-                        throw except::runtime_error("Exceeded 5G high water mark after rho l2r site {} | sites", i, cites);
+                        // throw except::runtime_error("Exceeded 5G high water mark after rho l2r site {} | sites", i, cites);
                     }
                 }
             }
@@ -693,7 +693,7 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
                     rho_temp = std::move(rho_temp2);
                     if(debug::mem_hwm_in_mb() > 10000) {
                         for(const auto &elem : cache.mps_real) tools::log->info("{}", elem.first);
-                        throw except::runtime_error("Exceeded 5G high water mark after rho r2l site {} | sites", i, cites);
+                        // throw except::runtime_error("Exceeded 5G high water mark after rho r2l site {} | sites", i, cites);
                     }
                 }
             }
