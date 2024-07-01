@@ -40,8 +40,8 @@ int main() {
                               7.94328235e-03, 6.30957344e-03, 5.01187234e-03, 3.98107171e-03, 3.16227766e-03, 2.51188643e-03, 1.99526231e-03,
                               1.58489319e-03, 1.25892541e-03, 1.00000000e-03, 7.94328235e-04, 6.30957344e-04, 5.01187234e-04, 3.98107171e-04,
                               3.16227766e-04, 2.51188643e-04, 1.99526231e-04, 1.58489319e-04, 1.25892541e-04, 1.00000000e-04};
-    h5pp::fs::path h5dir   = "/mnt/WDB-AN1500/mbl_transition/xdmrg3-letsgo/output/L32/g0.000";
-    auto           h5tgt   = h5pp::File("../../../../output/pert-L32-new.h5", h5pp::FileAccess::REPLACE);
+    h5pp::fs::path h5dir   = "/mnt/WDB-AN1500/mbl_transition/xdmrg3-letsgo/output/L48/g0.000";
+    auto           h5tgt   = h5pp::File("../../../../output/pert-L48-new.h5", h5pp::FileAccess::REPLACE);
     h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, sizeof(PertData));
     H5Tinsert(h5_type, "seed", HOFFSET(PertData, seed), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "model_size", HOFFSET(PertData, model_size), H5T_NATIVE_LONG);
