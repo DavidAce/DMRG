@@ -8,6 +8,7 @@
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 #include <string_view>
+#include <tid/tid.h>
 #include <tools/common/contraction.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
@@ -42,6 +43,7 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     tblis::tblis_tensor B_s(tb);
     tblis::tblis_tensor C_s(beta, tc);
 
+    // tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
 }
 
@@ -54,7 +56,13 @@ void mps_enL_tblis(TensorWrite<res_type> &res_, const TensorRead<mps_type> &mps_
     #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
     #endif
-    contract_tblis(mps, enL, res_, "afb", "fcd", "abcd", tblis_config);
+    if(mps.dimension(1) == enL.dimension(0)) {
+        contract_tblis(mps, enL, res_, "afb", "fcd", "abcd", tblis_config);
+    }
+    else {
+        contract_tblis(mps, enL, res_, "fab", "fcd", "abcd", tblis_config);
+    }
+
 }
 
 template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
@@ -91,32 +99,118 @@ std::string get_arch() {
     return "haswell";
 }
 #endif
+
+template<typename Scalar>
+void matrix_vector_product(Scalar *res_ptr, const Scalar *const mps_ptr, std::array<long, 3> mps_dims, const Scalar *const mpo_ptr,
+                           std::array<long, 4> mpo_dims, const Scalar *const envL_ptr, std::array<long, 3> envL_dims, const Scalar *const envR_ptr,
+                           std::array<long, 3> envR_dims) {
+    //    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::extra);
+
+    // This applies the mpo's with corresponding environments to local multisite mps
+    // This is usually the operation H|psi>  or H²|psi>
+    auto res  = Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(res_ptr, mps_dims);
+    auto mps  = Eigen::TensorMap<const Eigen::Tensor<Scalar, 3>>(mps_ptr, mps_dims);
+    auto mpo  = Eigen::TensorMap<const Eigen::Tensor<Scalar, 4>>(mpo_ptr, mpo_dims);
+    auto envL = Eigen::TensorMap<const Eigen::Tensor<Scalar, 3>>(envL_ptr, envL_dims);
+    auto envR = Eigen::TensorMap<const Eigen::Tensor<Scalar, 3>>(envR_ptr, envR_dims);
+
+    if(mps.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
+    if(mps.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
+    if(mps.dimension(0) != mpo.dimension(2)) throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
+    if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
+    if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
+
+#if defined(DMRG_ENABLE_TBLIS)
+    if constexpr(std::is_same_v<Scalar, real>) {
+        // auto                         arch         = get_arch();
+        const tblis::tblis_config_s *tblis_config = nullptr;//tblis::tblis_get_config(arch.data());
+    // #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+        // tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+    // #endif
+        if(mps.dimension(1)+1 >= mps.dimension(2)) {
+            Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
+            Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
+            contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd", tblis_config);
+            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl", tblis_config);
+            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk", tblis_config);
+            // contract_tblis(mpo, mpsenvL, mpsenvLmpo, "rkql", "qijr", "lkij", tblis_config);
+            // contract_tblis(mpsenvLmpo, envR, res, "qirj", "rkq", "ijk", tblis_config);
+        } else {
+            Eigen::Tensor<Scalar, 4> mpsenvR(mps.dimension(0), mps.dimension(1), envR.dimension(1), envR.dimension(2));
+            Eigen::Tensor<Scalar, 4> mpsenvRmpo(mps.dimension(1), envR.dimension(1), mpo.dimension(0), mpo.dimension(3));
+            contract_tblis(mps, envR, mpsenvR, "abf", "fcd", "abcd", tblis_config);
+            contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl", tblis_config);
+            contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk", tblis_config);
+            // contract_tblis(mpo, mpsenvR, mpsenvRmpo, "qklr", "qijr", "lkij", tblis_config);
+            // contract_tblis(mpsenvRmpo, envL, res, "qirk", "rjq", "ijk", tblis_config);
+        }
+    } else {
+        auto &threads = tenx::threads::get();
+        if(mps.dimension(1) >= mps.dimension(2)) {
+            res.device(*threads->dev) = mps.contract(envL, tenx::idx({1}, {0}))
+                                            .contract(mpo, tenx::idx({3, 0}, {0, 2}))
+                                            .contract(envR, tenx::idx({0, 2}, {0, 2}))
+                                            .shuffle(tenx::array3{1, 0, 2});
+        } else {
+            res.device(*threads->dev) = mps.contract(envR, tenx::idx({2}, {0}))
+                                            .contract(mpo, tenx::idx({3, 0}, {1, 2}))
+                                            .contract(envL, tenx::idx({0, 2}, {0, 2}))
+                                            .shuffle(tenx::array3{1, 2, 0});
+        }
+    }
+#else
+    auto &threads = tenx::threads::get();
+    if(mps.dimension(1) >= mps.dimension(2)) {
+        res.device(*threads->dev) = mps.contract(envL, tenx::idx({1}, {0}))
+                                        .contract(mpo, tenx::idx({3, 0}, {0, 2}))
+                                        .contract(envR, tenx::idx({0, 2}, {0, 2}))
+                                        .shuffle(tenx::array3{1, 0, 2});
+    } else {
+        res.device(*threads->dev) = mps.contract(envR, tenx::idx({2}, {0}))
+                                        .contract(mpo, tenx::idx({3, 0}, {1, 2}))
+                                        .contract(envL, tenx::idx({0, 2}, {0, 2}))
+                                        .shuffle(tenx::array3{1, 2, 0});
+    }
+#endif
+}
+
+template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
+void matrix_vector_product(TensorWrite<res_type> &res, const TensorRead<mps_type> &mps, TensorRead<mpo_type> &mpo, const TensorRead<env_type> &envL,
+                           const TensorRead<env_type> &envR) {
+    static_assert(res_type::NumIndices == 3 and "Wrong res tensor rank != 3 passed to calculation of matrix_vector_product");
+    static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3 passed to calculation of matrix_vector_product");
+    static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of matrix_vector_product");
+    auto &res_ref   = static_cast<res_type &>(res);
+    auto  mps_eval  = tenx::asEval(mps);
+    auto  mpo_eval  = tenx::asEval(mpo);
+    auto  envL_eval = tenx::asEval(envL);
+    auto  envR_eval = tenx::asEval(envR);
+    matrix_vector_produc(res_ref.data(), mps_eval.data(), mps_eval.dimensions(), mpo_eval.data(), envL_eval.data(), envL_eval.dimensions(), envR_eval.data(),
+                         envR_eval.dimensions());
+}
+
 template<typename Scalar, typename mpo_type>
 void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, std::array<long, 3> mps_dims, const std::vector<mpo_type> &mpos_shf,
                                   const Scalar *const envL_ptr, std::array<long, 3> envL_dims, const Scalar *const envR_ptr, std::array<long, 3> envR_dims) {
-     // Make sure the mpos are pre-shuffled. If not, shuffle and call this function again
+    // Make sure the mpos are pre-shuffled. If not, shuffle and call this function again
     bool is_shuffled = mpos_shf.front().dimension(2) == envL_dims[2] and mpos_shf.back().dimension(3) == envR_dims[2];
-    if(not is_shuffled){
+    if(not is_shuffled) {
         // mpos_shf are not actually shuffled. Let's shuffle.
         std::vector<Eigen::Tensor<Scalar, 4>> mpos_really_shuffled;
-        for (const auto & mpo : mpos_shf) {
-            mpos_really_shuffled.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
-        }
-        return matrix_vector_product(res_ptr, mps_ptr, mps_dims, mpos_really_shuffled, envL_ptr, envL_dims, envR_ptr, envR_dims);
+        for(const auto &mpo : mpos_shf) { mpos_really_shuffled.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1})); }
+        return matrix_vector_product_custom(res_ptr, mps_ptr, mps_dims, mpos_really_shuffled, envL_ptr, envL_dims, envR_ptr, envR_dims);
     }
 
-
-    auto &threads  = tenx::threads::get();
-    auto mps_out = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,mps_dims);
-    auto mps_in  = Eigen::TensorMap<const  Eigen::Tensor<Scalar,3>>(mps_ptr,mps_dims);
-    auto envL = Eigen::TensorMap<const Eigen::Tensor<Scalar,3>>(envL_ptr,envL_dims);
-    auto envR = Eigen::TensorMap<const Eigen::Tensor<Scalar,3>>(envR_ptr,envR_dims);
+    auto &threads = tenx::threads::get();
+    auto  mps_out = Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(res_ptr, mps_dims);
+    auto  mps_in  = Eigen::TensorMap<const Eigen::Tensor<Scalar, 3>>(mps_ptr, mps_dims);
+    auto  envL    = Eigen::TensorMap<const Eigen::Tensor<Scalar, 3>>(envL_ptr, envL_dims);
+    auto  envR    = Eigen::TensorMap<const Eigen::Tensor<Scalar, 3>>(envR_ptr, envR_dims);
 
     if(mps_in.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps_in.dimensions(), envL.dimensions());
     if(mps_in.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps_in.dimensions(), envR.dimensions());
 
-
-    auto  L        = mpos_shf.size();
+    auto L = mpos_shf.size();
 
     auto mpodimprod = [&](size_t fr, size_t to) -> long {
         long prod = 1;
@@ -129,17 +223,16 @@ void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, 
         return prod;
     };
 
-    // At best, the number of operations for contracting left-to-right and right-to-left are equal.
-    // Since the site indices are contracted left to right, we do not need any shuffles in this direction.
+// At best, the number of operations for contracting left-to-right and right-to-left are equal.
+// Since the site indices are contracted left to right, we do not need any shuffles in this direction.
 
-    // Contract left to right
-    #if defined(DMRG_ENABLE_TBLIS)
-    auto                         arch         = get_arch();
-    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+// Contract left to right
+#if defined(DMRG_ENABLE_TBLIS)
+    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(get_arch().data());
     #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
     #endif
-    #endif
+#endif
     auto d0       = mpodimprod(0, 1); // Split 0 --> 0,1
     auto d1       = mpodimprod(1, L); // Split 0 --> 0,1
     auto d2       = mps_in.dimension(2);
@@ -147,37 +240,44 @@ void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, 
     auto d4       = envL.dimension(2);
     auto d5       = 1l; // A new dummy index
     auto new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-    auto  mps_tmp1 = Eigen::Tensor<Scalar, 6>();
-    auto  mps_tmp2 = Eigen::Tensor<Scalar, 6>();
+    auto mps_tmp1 = Eigen::Tensor<Scalar, 6>();
+    auto mps_tmp2 = Eigen::Tensor<Scalar, 6>();
+    auto t_mv     = tid::tic_token("mv");
+    t_mv->start_lap();
     mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
-    #if defined(DMRG_ENABLE_TBLIS)
+    // tools::log->info("mps_tmp1.resize({} = {}) | t = {:.3e} | tot = {:.3e}", new_shp6, Eigen::internal::array_prod(new_shp6), t_mv->restart_lap(),
+    // t_mv->get_last_interval());
+#if defined(DMRG_ENABLE_TBLIS)
     if constexpr(std::is_same_v<Scalar, real>) {
         auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0 * d1, d2, d3, d4 * d5});
         contract_tblis(mps_in, envL, mps_tmp1_map4, "afb", "fcd", "abcd", tblis_config);
     } else
-    #endif
+#endif
     {
         mps_tmp1.device(*threads->dev) = mps_in.contract(envL, tenx::idx({1}, {0})).reshape(new_shp6).shuffle(tenx::array6{0, 1, 2, 3, 5, 4});
     }
+    tools::log->info("prepended envL | t = {:.3e} | tot = {:.3e}", t_mv->restart_lap(), t_mv->get_last_interval());
     for(size_t idx = 0; idx < L; ++idx) {
         const auto &mpo = mpos_shf[idx];
         // Set up the dimensions for the reshape after the contraction
-        d0       = mpodimprod(idx + 1, idx + 2); // if idx == k, this has the mpo at idx == k+1
-        d1       = mpodimprod(idx + 2, L);       // if idx == 0,  this has the mpos at idx == k+2...L-1
-        d2       = mps_tmp1.dimension(2);
-        d3       = mps_tmp1.dimension(3);
-        d4       = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
-        d5       = mpo.dimension(3);       // The virtual bond of the current mpo
-        #if defined(DMRG_ENABLE_TBLIS)
+        d0 = mpodimprod(idx + 1, idx + 2); // if idx == k, this has the mpo at idx == k+1
+        d1 = mpodimprod(idx + 2, L);       // if idx == 0,  this has the mpos at idx == k+2...L-1
+        d2 = mps_tmp1.dimension(2);
+        d3 = mps_tmp1.dimension(3);
+        d4 = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
+        d5 = mpo.dimension(3);       // The virtual bond of the current mpo
+#if defined(DMRG_ENABLE_TBLIS)
         if constexpr(std::is_same_v<Scalar, real>) {
             auto md  = mps_tmp1.dimensions();
-            new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
-            mps_tmp2.resize(new_shp6);
-            contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg", tblis_config);
             new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-            mps_tmp1 = mps_tmp2.reshape(new_shp6);
+            mps_tmp2.resize(new_shp6);
+            auto map_shp6     = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
+            auto mps_tmp2_map = Eigen::TensorMap<Eigen::Tensor<Scalar, 6>>(mps_tmp2.data(), map_shp6);
+            contract_tblis(mps_tmp1, mpo, mps_tmp2_map, "qbcder", "qfrg", "bcdefg", tblis_config);
+            tools::log->info("contracted {} | t = {:.3e} | tot = {:.3e} ", idx, t_mv->restart_lap(), t_mv->get_last_interval());
+            mps_tmp1 = std::move(mps_tmp2);
         } else
-        #endif
+#endif
         {
             new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
             mps_tmp2.resize(new_shp6);
@@ -189,15 +289,16 @@ void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, 
     d1 = mps_tmp1.dimension(3);
     d2 = mps_tmp1.dimension(4);
     d3 = mps_tmp1.dimension(5);
-    #if defined(DMRG_ENABLE_TBLIS)
+#if defined(DMRG_ENABLE_TBLIS)
     if constexpr(std::is_same_v<Scalar, real>) {
         auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0, d1, d2, d3});
         contract_tblis(mps_tmp1_map4, envR, mps_out, "qjir", "qkr", "ijk", tblis_config);
     } else
-    #endif
+#endif
     {
         mps_out.device(*threads->dev) = mps_tmp1.reshape(tenx::array4{d0, d1, d2, d3}).contract(envR, tenx::idx({0, 3}, {0, 2})).shuffle(tenx::array3{1, 0, 2});
     }
+    tools::log->info("appended envR | t = {:.3e} | tot = {:.3e} ", t_mv->restart_lap(), t_mv->get_last_interval());
 }
 
 template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
@@ -216,16 +317,16 @@ void matrix_vector_product_custom(TensorWrite<res_type> &res, const TensorRead<m
 
 int main() {
     tools::log = tools::Logger::setLogger("matvec", 2, true);
-    fmt::print("Compiler flags {}", env::build::compiler_flags);
+    fmt::print("Compiler flags {}\n", env::build::compiler_flags);
     settings::threading::num_threads = 8;
     settings::configure_threads();
     using real = double;
     using cplx = std::complex<double>;
-    long sites = 4;
+    long sites = 18;
     long d     = 2 << (sites - 1);
     long m     = 12;
-    long chiL  = 128;
-    long chiR  = 82;
+    long chiL  = 1;
+    long chiR  = 1;
 
     tools::log->info("__builtin_cpu_supports(avx512f)    : {}", __builtin_cpu_supports("avx512f"));
     tools::log->info("__builtin_cpu_supports(x86-64-v4)  : {}", __builtin_cpu_supports("x86-64-v4"));
@@ -241,27 +342,30 @@ int main() {
     auto mps_enL = Eigen::Tensor<real, 4>(d, chiR, chiR, m);
     auto res     = Eigen::Tensor<real, 3>(d, chiL, chiR);
     auto mps     = Eigen::Tensor<real, 3>(d, chiL, chiR);
-    auto mpo     = Eigen::Tensor<real, 4>(m, m, d, d);
+    auto mps_shf = Eigen::Tensor<real, 3>(chiR, d, chiL);
+    // auto mpo     = Eigen::Tensor<real, 4>(m, m, d, d);
     auto enL     = Eigen::Tensor<real, 3>(chiL, chiL, m);
     auto enR     = Eigen::Tensor<real, 3>(chiR, chiR, m);
     auto mpo_shf = Eigen::Tensor<real, 4>(2, 2, m, m);
     mps.setRandom();
-    mpo.setRandom();
+    mps_shf.setRandom();
+    // mpo.setRandom();
     enL.setRandom();
     enR.setRandom();
     mpo_shf.setRandom();
     tools::log->info("mps dims: {} | size: {}", mps.dimensions(), mps.size());
-    tools::log->info("mpo dims: {}", mpo.dimensions());
+    // tools::log->info("mpo dims: {}", mpo.dimensions());
     auto mpos_shf = std::vector<Eigen::Tensor<real, 4>>(sites, mpo_shf);
 
     {
         // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(100).run("matvec original", [&] {
-        //     tools::common::contraction::matrix_vector_product(res, mps, mpos_shf, enL, enR);
+        //     tools::common::contraction::matrix_vector_product(res, mps, mpo, enL, enR);
         //     ankerl::nanobench::doNotOptimizeAway(res);
         //     ankerl::nanobench::doNotOptimizeAway(mps);
         // });
-        ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(100).run("matvec custom", [&] {
+        ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("matvec custom", [&] {
             matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
+            // matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
             ankerl::nanobench::doNotOptimizeAway(res);
             ankerl::nanobench::doNotOptimizeAway(mps);
         });
@@ -280,17 +384,21 @@ int main() {
         //     ankerl::nanobench::doNotOptimizeAway(res);
         //     ankerl::nanobench::doNotOptimizeAway(mps);
         // });
-        ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(100).run("tblis auto", [&] {
-            tools::common::contraction::matrix_vector_product(res, mps, mpo, enL, enR);
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
+        // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(100).run("tblis auto", [&] {
+        //     tools::common::contraction::matrix_vector_product(res, mps, mpo, enL, enR);
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
         // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("mps enL tblis haswell", [&] {
         //     mps_enL_tblis(mps_enL, mps, enL, "haswell");
         //     ankerl::nanobench::doNotOptimizeAway(mps_enL);
         // });
         // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("mps enL tblis zen", [&] {
         //     mps_enL_tblis(mps_enL, mps, enL, "zen");
+        //     ankerl::nanobench::doNotOptimizeAway(mps_enL);
+        // });
+        // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("mps enL tblis zen", [&] {
+        //     mps_enL_tblis(mps_enL, mps_shf, enL, "zen");
         //     ankerl::nanobench::doNotOptimizeAway(mps_enL);
         // });
 

@@ -34,9 +34,9 @@ config_ranges = {
     "precision::variance_convergence_threshold": ['1e-12'],
     "strategy::iter_max_warmup": ['4'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
-    "strategy::dmrg_blocksize_policy": ["INFOVARSAT"],
+    "strategy::dmrg_blocksize_policy": ["INFOSTUCK"],
     "strategy::dmrg_min_blocksize": ["1"],
-    "strategy::dmrg_max_blocksize": ["8"],
+    "strategy::dmrg_max_blocksize": ["5"],
     "strategy::trnc_decrease_when": ["STUCK"],
     "strategy::trnc_decrease_rate": ["1e-1"],
     "precision::use_energy_shifted_mpo": ["false"],
@@ -53,6 +53,7 @@ config_ranges = {
     "xdmrg::bond_init": ['32'],
     "xdmrg::print_freq": ['1'],
     "xdmrg::try_directx2_when_stuck": ['false'],
+    "xdmrg::try_shifting_when_degen": ['25000'],
 }
 
 configs = get_config_product(config_ranges, config_paths)
