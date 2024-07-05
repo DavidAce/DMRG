@@ -7,6 +7,15 @@
 
 using namespace tools::finite::opt;
 
+opt_mps::NextEv::NextEv(const opt_mps &res) {
+    eigs_idx    = res.get_eigs_idx();
+    eigs_eigval = res.get_eigs_eigval();
+    eigs_rnorm  = res.get_rnorm();
+    energy      = res.get_energy();
+    variance    = res.get_variance();
+    overlap     = res.get_overlap();
+}
+
 opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double eshift_eigval_,
                  std::optional<double> variance_, double overlap_, size_t length_)
     : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_), eshift_eigval(eshift_eigval_), energy(eshift_eigval_ + eshift_), variance(variance_),

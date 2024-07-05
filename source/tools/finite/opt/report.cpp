@@ -48,7 +48,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
         eigs_log.clear();
         return;
     }
-    tools::log->log(level, "{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}",
+    tools::log->log(level, "{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<22} {:<22} {:<10} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}",
                       "Optimization report",
                       "size",
                       "ritz",
@@ -70,7 +70,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
 
     for(const auto &[idx,entry] : iter::enumerate(eigs_log)){
         if(max_entries and max_entries.value() <= idx) break;
-        tools::log->log(level, "- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}",
+        tools::log->log(level, "- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<10.4e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}",
                           entry.description,
                           entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol,
                           entry.energy,entry.eigval,

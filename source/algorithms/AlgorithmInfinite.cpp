@@ -123,7 +123,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
 
 void AlgorithmInfinite::update_truncation_error_limit() {
     if(status.trnc_lim == 0.0) throw std::runtime_error("trnc_lim is zero!");
-    status.trnc_min                   = settings::precision::svd_truncation_lim;
+    status.trnc_min                   = settings::precision::svd_truncation_min;
     status.trnc_limit_has_reached_min = status.trnc_lim <= status.trnc_min;
     if(settings::strategy::trnc_decrease_when == UpdatePolicy::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
         status.trnc_lim                   = status.trnc_min;

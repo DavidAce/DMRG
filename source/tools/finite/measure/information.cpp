@@ -285,6 +285,7 @@ SeeProgress check_see_progress(const Eigen::ArrayXXd &see, LogPolicy log_policy 
     if(log_policy == LogPolicy::VERBOSE or settings::debug) {
         tools::log->debug("see: \n{}\n", linalg::matrix::to_string(see, 10));
         tools::log->debug("info: \n{}\n", linalg::matrix::to_string(sp.info, 6));
+        tools::log->debug("il: \n{}\n", linalg::matrix::to_string(tools::finite::measure::information_per_scale(sp.info), 6));
     }
     if(log_policy != LogPolicy::SILENT) {
         tools::log->info(" -- progress {:<6.2f}% bits {:<20.16f}/{} err {:.2e} icom {:.16f} neg {:.1e} mem[rss {:<.1f} hwm {:<.1f}]MB", sp.progress * 100,
@@ -368,6 +369,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
             }
         }
     }
+    check_see_progress(see, LogPolicy::DEBUG);
 
     // Refresh the missing subsystems
     std::tie(subsystemsL, subsystemsR) = get_missing_subsystems(see);
@@ -544,11 +546,14 @@ Eigen::ArrayXXd tools::finite::measure::information_lattice(const StateFinite &s
     if(ip.useCache == UseCache::TRUE) state.measurements.information_lattice = infolattice;
     return infolattice;
 }
+Eigen::ArrayXd tools::finite::measure::information_per_scale(const Eigen::ArrayXXd &information_lattice) {
+    return information_lattice.isNaN().select(0.0, information_lattice).rowwise().sum(); // Does not have NaN
+}
 
 Eigen::ArrayXd tools::finite::measure::information_per_scale(const StateFinite &state, InfoPolicy ip) {
     if(ip.useCache == UseCache::TRUE and state.measurements.information_per_scale.has_value()) return state.measurements.information_per_scale.value();
-    auto           infolattice    = information_lattice(state, ip);                               // May have NaN
-    Eigen::ArrayXd info_per_scale = infolattice.isNaN().select(0.0, infolattice).rowwise().sum(); // Does not have NaN
+    auto           infolattice    = information_lattice(state, ip); // May have NaN
+    Eigen::ArrayXd info_per_scale = information_per_scale(infolattice);
     if(ip.useCache == UseCache::TRUE) state.measurements.information_per_scale = info_per_scale;
     // tools::log->info("info per scale: {::.3e}", state.measurements.information_per_scale.value());
     return info_per_scale;

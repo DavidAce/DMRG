@@ -18,8 +18,8 @@ class TensorsFinite;
  *
  * The finite state mps is always partitioned into two lists, corresponding to the two sides left and right of the current position.
  * Each site contains a "Vidal" site, i.e., a bond matrix \f$ \Lambda \f$ and an mps tensor \f$\Gamma \f$ in Vidal's notation.
- * In the left side the sites are left normalized, with the bond matrix on the left \f$ \Lambda \Gamma \ = A\f$.
- * In the right side the sites are right normalized, with the bond matrix on the right \f$ \Gamma \Lambda = B\f$.
+ * In the left side, the sites are left normalized, with the bond matrix on the left \f$ \Lambda \Gamma \ = A\f$.
+ * In the right side, the sites are right normalized, with the bond matrix on the right \f$ \Gamma \Lambda = B\f$.
  * At the center is the center bond matrix MPS_C, a.k.a. \f$ \Lambda^C \f$. For a state with 10 sites the layout is seen below
  *
  * \code
@@ -57,13 +57,15 @@ class StateFinite {
         trfref      trf;
         // std::vector<std::string> stale_keys; // Can be used to erase older cache entries
     };
-    static constexpr size_t max_mps_cache_size = 20; // Max mps cache size in units of elements
-    static constexpr size_t max_trf_cache_size = 20; // Max transfer matrix cache size in units of elements
-    int                       direction = 1;
+    static constexpr size_t   max_mps_cache_size = 20; // Max mps cache size in units of elements
+    static constexpr size_t   max_trf_cache_size = 20; // Max transfer matrix cache size in units of elements
+    int                       direction          = 1;
     mutable Cache             cache;
     mutable std::vector<bool> tag_normalized_sites;
     std::string               name;
     AlgorithmType             algo = AlgorithmType::ANY;
+    std::vector<double>       convrates;
+
     template<typename Scalar>
     using optional_tensor4ref = std::optional<std::reference_wrapper<const Eigen::Tensor<Scalar, 4>>>;
     template<typename Scalar>

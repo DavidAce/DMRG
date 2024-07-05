@@ -62,7 +62,7 @@ std::vector<size_t> tools::finite::env::expand_environment_backward(StateFinite 
 
     // Set up the SVD
     auto bond_lim = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
-    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_lim);
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
     svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
     svd::solver svd(svd_cfg);
 
@@ -250,7 +250,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
     // Bond dimension can't grow faster than x spin_dim, but we can generate a highly enriched environment here for optimization,
     // and let the proper truncation happen after optimization instead.
     auto bond_lim            = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
-    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_lim);
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
     svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
     svd::solver svd;
 
@@ -291,8 +291,9 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
 
         {
             // Make mpsL normalized. This is strictly optional, but we do it so that normalization checks can succeed
-            cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsL.get_M());
-            Eigen::Tensor<cplx, 3> M_tmp    = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
+            auto                   multisite_mpsL = state.get_multisite_mps({posL});
+            cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsL);
+            Eigen::Tensor<cplx, 3> M_tmp          = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
             mpsL.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
                 auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
@@ -347,8 +348,9 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
 
         {
             // Make mpsR normalized. This is strictly optional, but we do it so that normalization checks can succeed
-            cplx                   norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
-            Eigen::Tensor<cplx, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
+            auto                   multisite_mpsR = state.get_multisite_mps({posR});
+            cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsR);
+            Eigen::Tensor<cplx, 3> M_tmp          = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
             mpsR.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
                 auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
@@ -421,7 +423,7 @@ std::vector<size_t> tools::finite::env::expand_environment_forward_1site(StateFi
     // Bond dimension can't grow faster than x spin_dim, but we can generate a highly enriched environment here for optimization,
     // and let the proper truncation happen after optimization instead.
     auto bond_lim            = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
-    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_lim);
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
     svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
     svd::solver svd;
 

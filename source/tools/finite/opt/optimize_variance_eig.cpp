@@ -2,6 +2,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "math/eig.h"
+#include "math/num.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
@@ -16,21 +17,40 @@ namespace tools::finite::opt::internal {
     void optimize_variance_eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
         auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
-        solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, 1, 0.0, 1.0);
+        int         nev    = meta.eigs_nev.value_or(1);
+        solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, nev, 0.0, 1.0);
         extract_results(tensors, initial_mps, meta, solver, results, false);
-        // if(meta.chosen_sites.size() <= 4) {
-        //     // Print the whole spectrum
-        //     eig::solver solver1, solver2;
-        //     auto        H1 = tensors.get_effective_hamiltonian<Scalar>();
-        //     auto        H2 = tensors.get_effective_hamiltonian_squared<Scalar>();
-        //     solver1.eig<eig::Form::SYMM>(H1.data(), H1.dimension(0));
-        //     solver2.eig<eig::Form::SYMM>(H2.data(), H2.dimension(0));
-        //     auto evals1 = eig::view::get_eigvals<real>(solver1.result);
-        //     auto evals2 = eig::view::get_eigvals<real>(solver2.result);
-        //     for(long idx = 0; idx < std::min(evals1.size(), evals2.size()); ++idx) {
-        //         fmt::print("idx {:2}: H {:20.16f}  H² {:20.16f}\n",idx, evals1[idx], evals2[idx]);
-        //     }
-        //     fmt::print("\n");
+        // if(meta.chosen_sites.size() <= 4 and matrix.dimension(0) <= 8192) {
+        //     // Find all eigenvalues within a thin band
+        //     auto eigval = initial_mps.get_energy(); // The current energy
+        //     auto eigvar = initial_mps.get_variance();
+        //     auto eshift = initial_mps.get_energy_shift();                    // The energy shift is our target energy for excited states
+        //     auto vl     = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+        //     auto vu     = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+        //     solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
+
+        // if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
+        // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
+        // tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
+        // auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+        // auto indices = num::range<long>(0l, eigvals.size());
+        // auto eigComp = EigIdxComparator(meta.optRitz, eigval, eigvals.data(), eigvals.size());
+        // std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
+        // indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
+        // for(auto idx : indices) { tools::log->info(" -- idx {}: {:.16f}", idx, eigvals(idx)); }
+        // }
+
+        // eig::solver solver1, solver2;
+        // auto        H1 = tensors.get_effective_hamiltonian<Scalar>();
+        // auto        H2 = tensors.get_effective_hamiltonian_squared<Scalar>();
+        // solver1.eig<eig::Form::SYMM>(H1.data(), H1.dimension(0));
+        // solver2.eig<eig::Form::SYMM>(H2.data(), H2.dimension(0));
+        // auto evals1 = eig::view::get_eigvals<real>(solver1.result);
+        // auto evals2 = eig::view::get_eigvals<real>(solver2.result);
+        // for(long idx = 0; idx < std::min(evals1.size(), evals2.size()); ++idx) {
+        // fmt::print("idx {:2}: H {:20.16f}  H² {:20.16f}\n", idx, evals1[idx], evals2[idx]);
+        // }
+        // fmt::print("\n");
         // }
     }
 
@@ -63,6 +83,9 @@ namespace tools::finite::opt::internal {
 
         if(results.size() >= 2) {
             std::sort(results.begin(), results.end(), Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
+            // Add some information about the other eigensolutions to the winner
+            // We can use that to later calculate the gap and the approximate convergence rate
+            for(size_t idx = 1; idx < results.size(); ++idx) { results.front().next_evs.emplace_back(results[idx]); }
         }
 
         for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);

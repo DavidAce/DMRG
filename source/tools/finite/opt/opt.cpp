@@ -17,6 +17,10 @@
 #include "tools/finite/opt_mps.h"
 #include <string>
 
+//
+#include "math/eig.h"
+#include <h5pp/details/h5ppEigen.h>
+
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors, const OptMeta &meta) {
     auto    t_init = tid::tic_scope("initial_mps", tid::level::higher);
     opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
@@ -65,11 +69,46 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     break;
                 }
                 case OptAlgo::DIRECTX2: {
+                    if(meta.problem_size <= 8192) {
+                        // Find all eigenvalues within a thin band
+                        eig::solver solver_ene, solver_var;
+                        tools::log->info("effective ham...");
+                        auto        matrix_ene = tensors.get_effective_hamiltonian<real>();
+                        tools::log->info("effective ham²...");
+                        auto        matrix_var = tensors.get_effective_hamiltonian_squared<real>();
+                        auto        eigval     = initial_mps.get_energy(); // The current energy
+                        auto        eigvar     = initial_mps.get_variance();
+                        auto        eshift     = initial_mps.get_energy_shift();                    // The energy shift is our target energy for excited states
+                        auto        vl         = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+                        auto        vu         = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+                        tools::log->info("diagonalizing ham...");
+                        solver_ene.eig(matrix_ene.data(), matrix_ene.dimension(0), 'V', 1, 1, vl, vu, eig::Vecs::ON);
+                        tools::log->info("diagonalizing ham²...");
+                        solver_var.eig(matrix_var.data(), matrix_var.dimension(0), 'V', 1, 1, 0.0, std::sqrt(eigvar), eig::Vecs::ON);
+                        auto results_ene = std::vector<opt_mps>();
+                        auto results_var = std::vector<opt_mps>();
+                        tools::log->info("extracting results ham...");
+
+                        extract_results(tensors, initial_mps, meta, solver_ene, results_ene, false);
+                        tools::log->info("extracting results ham²...");
+                        extract_results(tensors, initial_mps, meta, solver_var, results_var, false);
+                        tools::log->info("vl {:.3e} | vu {:.3e}", vl, vu);
+                        for(size_t idx = 0; idx < results_ene.size(); ++idx)
+                            tools::log->info(" -- H¹: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_ene[idx].get_energy(), results_ene[idx].get_variance(),
+                                             results_ene[idx].get_eigs_eigval());
+                        for(size_t idx = 0; idx < results_var.size(); ++idx)
+                            tools::log->info(" -- H²: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_var[idx].get_energy(), results_var[idx].get_variance(),
+                                             results_var[idx].get_eigs_eigval());
+
+
+                        // }
+                    }
+
                     auto metax2          = meta;
                     metax2.optCost       = OptCost::ENERGY;
-                    metax2.eigs_tol      = std::max(1e-12, meta.eigs_tol.value_or(1e-12));
+                    metax2.eigs_tol      = std::max(1e-9, meta.eigs_tol.value_or(1e-9));
                     metax2.eigs_ncv      = std::max(128, meta.eigs_ncv.value_or(128));
-                    metax2.primme_method = "PRIMME_DEFAULT_MIN_MATVECS";
+                    metax2.primme_method = "PRIMME_DYNAMIC";
                     result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
                     if(meta.optRitz == OptRitz::SM) {
@@ -81,14 +120,21 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         // bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
                         bool ene_ok   = std::abs(result.get_energy()) <= std::abs(initial_mps.get_energy());
                         bool var_ok   = result.get_variance() <= initial_mps.get_variance();
-                        bool rnorm_ok = result.get_rnorm() <= 1e-10;
+                        bool rnorm_ok = result.get_rnorm() <= 1e-8;
                         // bool rnorm_nice = result.get_rnorm() <= 1e-12;
                         // if(rnorm_nice) break;
+                        tools::log->info("ene opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result.get_rnorm(),
+                                         result.get_variance(), result.get_energy(), result.get_eigs_eigval(), result.get_eigs_shift());
                         if(rnorm_ok and (var_ok or ene_ok)) break;
 
                         // The result is not good enough. But we could use it as initial guess
-                        meta.optCost = OptCost::VARIANCE;
-                        result       = internal::optimize_variance_eigs(tensors, result, status, meta);
+                        // meta.optCost    = OptCost::VARIANCE;
+                        // auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
+                        // ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
+                        // rnorm_ok = result_var.get_rnorm() <= meta.eigs_tol.value_or(1e-10);
+                        // tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_rnorm(),
+                                         // result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
+                        // if(rnorm_ok and ene_ok) { result = result_var; }
                     }
                     break;
                 }
@@ -228,7 +274,7 @@ namespace tools::finite::opt::internal {
         if(not meta) throw except::logic_error("No opt_meta given to comparator");
         // The variance case first
         if(meta->optCost == OptCost::VARIANCE) {
-            return comparator::eigval_and_overlap(lhs, rhs);
+            return comparator::eigval(lhs, rhs);
         } else {
             auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
             if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();

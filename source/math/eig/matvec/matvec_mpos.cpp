@@ -1,3 +1,4 @@
+#define DMRG_ENABLE_TBLIS
 #include "matvec_mpos.h"
 #include "../log.h"
 #include "general/sfinae.h"
@@ -12,10 +13,12 @@
 #include "tools/common/contraction.h"
 #include <Eigen/Cholesky>
 #include <primme/primme.h>
-// #include <tblis/tblis.h>
-// #include <tblis/util/thread.h>
-// #include <tci/tci_config.h>
 
+#if defined(DMRG_ENABLE_TBLIS)
+    #include <tblis/tblis.h>
+    #include <tblis/util/thread.h>
+    #include <tci/tci_config.h>
+#endif
 namespace eig {
 
 #ifdef NDEBUG
@@ -62,8 +65,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     size_mps  = spin_dim * envL.dimension(0) * envR.dimension(0);
 
     // If we have 5 or fewer mpos, it is faster to just merge them once and apply them in one contraction.
-    if(mpos.size() <= 2
-        ) {
+    if(mpos.size() <= 2) {
         constexpr auto contract_idx    = tenx::idx({1}, {0});
         constexpr auto shuffle_idx     = tenx::array6{0, 3, 1, 4, 2, 5};
         auto          &threads         = tenx::threads::get();
@@ -71,19 +73,18 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
         for(size_t idx = 0; idx + 1 < mpos.size(); ++idx) {
             const auto &mpoL = idx == 0 ? mpos[idx] : contracted_mpos;
             const auto &mpoR = mpos[idx + 1];
-            auto new_dims = std::array{mpoL.dimension(0), mpoR.dimension(1), mpoL.dimension(2) * mpoR.dimension(2), mpoL.dimension(3) * mpoR.dimension(3)};
-            auto        temp = Eigen::Tensor<T, 4>(new_dims);
+            auto new_dims    = std::array{mpoL.dimension(0), mpoR.dimension(1), mpoL.dimension(2) * mpoR.dimension(2), mpoL.dimension(3) * mpoR.dimension(3)};
+            auto temp        = Eigen::Tensor<T, 4>(new_dims);
             temp.device(*threads->dev) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-            contracted_mpos = std::move(temp);
+            contracted_mpos            = std::move(temp);
         }
         mpos = {contracted_mpos}; // Replace by a single pre-contracted mpo
-    }else {
+    } else {
         // We pre-shuffle each mpo to speed up the sequential contraction
         if(mpos.size() >= 2) {
             for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
         }
     }
-
 
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_genMat   = std::make_unique<tid::ur>("Time genMat");
@@ -111,37 +112,45 @@ void MatVecMPOS<T>::FactorOP() {
     throw std::runtime_error("template<typename T> void MatVecMPOS<T>::FactorOP(): Not implemented");
 }
 
-// template<typename T>
-// using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
-// template<typename T>
-// using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
-// template<typename ea_type, typename eb_type, typename ec_type>
-// void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-//                     const tblis::label_vector &lb, const tblis::label_vector &lc) {
-//     const auto &ea_ref = static_cast<const ea_type &>(ea);
-//     const auto &eb_ref = static_cast<const eb_type &>(eb);
-//     auto       &ec_ref = static_cast<ec_type &>(ec);
-//
-//     tblis::len_vector da, db, dc;
-//     da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
-//     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
-//     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
-//
-//     auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-//     typename ea_type::Scalar alpha = 1.0;
-//     typename ec_type::Scalar beta  = 0.0;
-//
-//     tblis::tblis_tensor          A_s(alpha, ta);
-//     tblis::tblis_tensor          B_s(tb);
-//     tblis::tblis_tensor          C_s(beta, tc);
-//     const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
-// #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
-//     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-// #endif
-//     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-// }
+template<typename T>
+using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
+template<typename T>
+using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
+
+template<typename ea_type, typename eb_type, typename ec_type>
+void contract_tblis_local(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
+                          const tblis::label_vector &lb, const tblis::label_vector &lc, const tblis::tblis_config_s *tblis_config) {
+    const auto &ea_ref = static_cast<const ea_type &>(ea);
+    const auto &eb_ref = static_cast<const eb_type &>(eb);
+    auto       &ec_ref = static_cast<ec_type &>(ec);
+
+    tblis::len_vector da, db, dc;
+    da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
+    db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
+    dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
+
+    auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
+    typename ea_type::Scalar alpha = 1.0;
+    typename ec_type::Scalar beta  = 0.0;
+
+    tblis::tblis_tensor A_s(alpha, ta);
+    tblis::tblis_tensor B_s(tb);
+    tblis::tblis_tensor C_s(beta, tc);
+
+    tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
+}
+std::string get_tblis_arch_local() {
+#if defined(__GNUC__)
+    if(__builtin_cpu_supports("x86-64-v4")) return "skx";
+    if(__builtin_cpu_is("znver3") or __builtin_cpu_is("znver2") or __builtin_cpu_is("znver1")) return "zen";
+    if(__builtin_cpu_supports("x86-64-v3")) return "haswell";
+#endif
+    return "haswell";
+}
+
+
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
@@ -152,6 +161,8 @@ void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos.front(), envL, envR);
     } else {
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos_shf, envL, envR);
+        // tools::common::contraction::matrix_vector_product(mps_out.data(), mps_in.data(), mps_in.dimensions(), mpos_shf, envL.data(), envL.dimensions(),
+        // envR.data(), envR.dimensions());
     }
     num_mv++;
 }

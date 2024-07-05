@@ -157,8 +157,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
 
 #if defined(DMRG_ENABLE_TBLIS)
     if constexpr(std::is_same_v<Scalar, real>){
-        auto arch =  get_tblis_arch();
-        const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+        static const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(get_tblis_arch().data());
         #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
         tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
         #endif
@@ -269,10 +268,12 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
 
     // Contract left to right
     #if defined(DMRG_ENABLE_TBLIS)
-    auto                         arch         = get_tblis_arch();
-    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(arch.data());
+    static const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(get_tblis_arch().data());
     #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+    // if(omp_get_max_active_levels() <= 1) omp_set_max_active_levels(2);
+    // printf("tblis: %d | omp_get_num_threads: %d / %d | omp_get_active_level %d | omp_in_parallel %d\n",
+            // tblis_get_num_threads(), omp_get_num_threads(), omp_get_max_threads(), omp_get_active_level(), omp_in_parallel());
     #endif
     #endif
     auto d0       = mpodimprod(0, 1); // Split 0 --> 0,1
@@ -306,11 +307,12 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
         #if defined(DMRG_ENABLE_TBLIS)
         if constexpr(std::is_same_v<Scalar, real>) {
             auto md  = mps_tmp1.dimensions();
-            new_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
-            mps_tmp2.resize(new_shp6);
-            contract_tblis(mps_tmp1, mpo, mps_tmp2, "qbcder", "qfrg", "bcdefg", tblis_config);
             new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
-            mps_tmp1 = mps_tmp2.reshape(new_shp6);
+            mps_tmp2.resize(new_shp6);
+            auto map_shp6 = tenx::array6{md[1], md[2], md[3], md[4], mpo.dimension(1), mpo.dimension(3)};
+            auto mps_tmp2_map = Eigen::TensorMap<Eigen::Tensor<Scalar,6>>(mps_tmp2.data(), map_shp6);
+            contract_tblis(mps_tmp1, mpo, mps_tmp2_map, "qbcder", "qfrg", "bcdefg", tblis_config);
+            mps_tmp1 = std::move(mps_tmp2);
         } else
         #endif
         {

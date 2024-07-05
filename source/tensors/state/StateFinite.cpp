@@ -912,7 +912,6 @@ void StateFinite::save_trf_into_cache(const Eigen::Tensor<Scalar, 4> &trf, const
         // cache.trf_cplx[key] = trf;
         if(it == cache.trf_cplx.rend()) cache.trf_cplx.emplace_back(std::make_pair(key, trf));
         shrink_cache();
-
     }
 }
 
@@ -1414,7 +1413,7 @@ void StateFinite::shrink_cache() const {
     while(cache.mps_cplx.size() > max_mps_cache_size) cache.mps_cplx.pop_front();
     while(cache.trf_real.size() > max_trf_cache_size) cache.trf_real.pop_front();
     while(cache.trf_cplx.size() > max_trf_cache_size) cache.trf_cplx.pop_front();
-    while(get_mps_cache_gbts() + get_trf_cache_gbts() > std::max(0.0,settings::precision::max_cache_gbts)) {
+    while(get_mps_cache_gbts() + get_trf_cache_gbts() > std::max(0.0, settings::precision::max_cache_gbts)) {
         if(!cache.mps_real.empty()) {
             if constexpr(settings::debug_cache)
                 tools::log->trace("shrink_cache: deleting mps due to cache limit ({} GB): {}", settings::precision::max_cache_gbts,

@@ -51,7 +51,16 @@ void fdmrg::resume() {
         // The simplest is to inferr it from the state prefix itself
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);
 
+        // Reload the bond and truncation error limits (could be different in the config compared to the status we just loaded)
+        status.trnc_min = settings::precision::svd_truncation_min;
+        status.trnc_max = settings::precision::svd_truncation_max;
+        status.bond_min = settings::get_bond_min(status.algo_type);
+        status.bond_max = settings::get_bond_max(status.algo_type);
+        status.trnc_limit_has_reached_min = false;
+        status.bond_limit_has_reached_max = false;
+
         // Apply shifts and compress the model
+        tensors.move_center_point_to_inward_edge();
         set_parity_shift_mpo();
         set_parity_shift_mpo_squared();
         set_energy_shift_mpo();
@@ -202,8 +211,8 @@ void fdmrg::run_algorithm() {
 // m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
 //
 // // Set up a multiplier for number of iterations
-// size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::precision::eigs_iter_multiplier, status.algorithm_has_stuck_for)));
-// // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::precision::eigs_iter_multiplier : 1;
+// size_t iter_stuck_multiplier = std::max(1ul, safe_cast<size_t>(std::pow(settings::precision::eigs_iter_gain, status.algorithm_has_stuck_for)));
+// // size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::precision::eigs_iter_gain : 1;
 //
 // // Copy settings
 // m1.min_sites     = settings::strategy::dmrg_min_blocksize;

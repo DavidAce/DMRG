@@ -221,7 +221,10 @@ namespace settings {
         inline size_t              iter_max_stuck              = 5;                                      /*!< If status.algorithm_saturated_for > 0 then status.algorithm_has_stuck_for +=1. If stuck for this many iterations, we stop. */
         inline size_t              iter_max_saturated          = 5;                                      /*!< Saturation means that both variance and entanglement saturated. But if either saturates for this many iterations, then status.algorithm_saturated_for += 1 */
         inline size_t              iter_min_converged          = 1;                                      /*!< Require convergence at least this many iterations before success */
-        inline double              max_env_expansion_alpha     = 1e-2;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
+        inline double              env_expansion_alpha_max     = 1e-2;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
+        inline double              env_expansion_bias_min      = 0.01;                                   /*!< Sets the lower bound on the bias used when updating alpha *= sqrt(var/var_expn)+bias  */
+        inline double              env_expansion_bias_max      = 0.3;                                    /*!< Sets the lower bound on the bias used when updating alpha *= sqrt(var/var_expn)+bias  */
+        inline double              env_expansion_bias_gain     = 2.0;                                    /*!< Increase the bias successively as bias = min(bias_max,  bias_min * gain^(iters without progress)  */
         inline BlockSizePolicy     dmrg_blocksize_policy       = BlockSizePolicy::MINDEF;                /*!< Bitflag to control the adaptive dmrg blocksize {MINDEF, MAXDEF, MAXVARSAT, MAXSTUCK, INFODEF, INFOVARSAT, INFOSTUCK} */
         inline size_t              dmrg_min_blocksize          = 1;                                      /*!< Minimum number of sites in a dmrg optimization step. */
         inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
@@ -244,14 +247,14 @@ namespace settings {
     namespace precision {
         inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
         inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
-        inline size_t   eigs_iter_multiplier            = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
+        inline double   eigs_iter_gain                  = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress */
         inline double   eigs_tol_max                    = 1e-10 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline int      eigs_ncv                        = 0     ;                  /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
         inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
 
-        inline double   svd_truncation_lim              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
-        inline double   svd_truncation_init             = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
+        inline double   svd_truncation_min              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
+        inline double   svd_truncation_max              = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
 
@@ -417,7 +420,8 @@ namespace settings {
         inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline size_t     max_states                    = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool       store_wavefn                  = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool       try_directx2_when_stuck       = true;                    /*!< Try OptAlgo::DIRECTX2: find ritz SM for H instead of H² in the last stuck step. Keep if good, else  use as an initial guess for OptAlgo::DIRECT. */
+        inline bool       try_directx2_when_stuck       = false;                   /*!< Try OptAlgo::DIRECTX2: find ritz SM for H instead of H² in the last stuck step. Keep if good, else  use as an initial guess for OptAlgo::DIRECT. */
+        inline double     try_shifting_when_degen       = 0;
     }
 }
 /* clang-format on */

@@ -21,16 +21,18 @@
 #include "tools/finite/h5.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/mpo.h"
+#include "tools/finite/mps.h"
+#include "tools/finite/multisite.h"
 #include "tools/finite/opt.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
 #include <h5pp/details/h5ppFile.h>
-#include <tools/finite/multisite.h>
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
     tensors.state->set_name("state_emid");
+    convrates.resize(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
 }
 
 void xdmrg::resume() {
@@ -61,7 +63,19 @@ void xdmrg::resume() {
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);
         tensors.state->set_name(name);
 
+        // Set a possibly new energy target
+        // status.energy_tgt = settings::xdmrg::energy_spectrum_shift;
+
+        // Reload the bond and truncation error limits (could be different in the config compared to the status we just loaded)
+        status.trnc_min                   = settings::precision::svd_truncation_min;
+        status.trnc_max                   = settings::precision::svd_truncation_max;
+        status.bond_min                   = settings::get_bond_min(status.algo_type);
+        status.bond_max                   = settings::get_bond_max(status.algo_type);
+        status.trnc_limit_has_reached_min = false;
+        status.bond_limit_has_reached_max = false;
+
         // Apply shifts and compress the model
+        tensors.move_center_point_to_inward_edge();
         set_parity_shift_mpo();
         set_parity_shift_mpo_squared();
         set_energy_shift_mpo();
@@ -293,8 +307,10 @@ void xdmrg::run_algorithm() {
         update_bond_dimension_limit();   // Updates the bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
         update_dmrg_blocksize();         // Updates the number sites used in dmrg steps using the information typical scale
-        try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
-        try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+        try_retargeting();
+        try_projection();   // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
+        try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+
         // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);
         // update_environment_expansion_alpha();
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
@@ -355,16 +371,27 @@ void xdmrg::update_state() {
     opt_state.set_optexit(opt_meta.optExit);
     /* clang-format on */
 
+    // Estimate the convergence rate (requires nev > 1)
+    double convr = std::numeric_limits<double>::quiet_NaN();
+    if(!opt_state.next_evs.empty() and opt_state.get_optcost() == OptCost::VARIANCE) {
+        auto ev0   = opt_state.get_eigs_eigval();
+        auto ev1   = opt_state.next_evs.front().eigs_eigval;
+        auto evn   = std::pow(tensors.model->get_energy_upper_bound(), 2.0);
+        auto kappa = (evn - ev0) / (ev1 - ev0);
+        auto gamma = (std::sqrt(kappa) - 1) / (std::sqrt(kappa) + 1);
+        convr      = std::log(0.5) / std::log(gamma);
+    }
+    for(auto site : opt_state.get_sites()) convrates.at(site) = convr;
+
     tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optCost), enum2sv(opt_meta.optSolver),
                       flag2str(opt_meta.optExit), var_latest, opt_state.get_variance(), opt_state.get_relchange() * 100);
     if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
-                          "sites {} |"
-                          "{:20} | {} | time {:.2e} s",
+                          "sites {} | conv {:.2f} | {:20} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
-                          opt_state.get_sites(), fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())),
+                          opt_state.get_sites(), convr, fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())),
                           flag2str(opt_state.get_optexit()), opt_state.get_time());
     }
 
@@ -475,6 +502,25 @@ void xdmrg::set_energy_shift_mpo() {
     if constexpr(settings::debug) tensors.assert_validity();
     if(tensors.model->get_energy_shift_mpo() != status.energy_tgt)
         throw except::runtime_error("Energy shift mismatch: {:.16f} != {:.16f}", tensors.model->get_energy_shift_mpo(), status.energy_tgt);
+}
+
+void xdmrg::try_retargeting() {
+    if(not tensors.position_is_inward_edge()) return;
+    if(not status.algorithm_has_stuck_for > 0) return;
+    if(settings::xdmrg::try_shifting_when_degen <= 0) return;
+    auto maxconv = num::nanmax(convrates);
+    tools::log->info("maxconv: {:.1f} | {::.1f}", maxconv, convrates);
+    if(maxconv > 20000) {
+        auto L                                 = tensors.get_length<double>();
+        auto mu                                = 0.0;
+        auto sig                               = tensors.model->get_energy_upper_bound() / 100.0;
+        settings::xdmrg::energy_spectrum_shift = rnd::normal(mu, sig);
+        status.energy_tgt                      = settings::xdmrg::energy_spectrum_shift;
+        convrates                              = std::vector<double>(L, std::numeric_limits<double>::quiet_NaN());
+        tools::finite::mps::normalize_state(*tensors.state, svd::config(settings::xdmrg::bond_min, status.trnc_max), NormPolicy::ALWAYS);
+        clear_convergence_status();
+        set_energy_shift_mpo();
+    }
 }
 
 void xdmrg::update_time_step() {

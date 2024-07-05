@@ -14,11 +14,12 @@ namespace eig {
         // Solver library
         std::optional<Lib> lib = std::nullopt;
         // Precision
-        std::optional<double> tol     = std::nullopt;
-        std::optional<double> maxTime = std::nullopt;
-        std::optional<int>    maxIter = std::nullopt;
-        std::optional<int>    maxNev  = std::nullopt;
-        std::optional<int>    maxNcv  = std::nullopt;
+        std::optional<double> tol       = std::nullopt;
+        std::optional<double> tol_other = std::nullopt; // For subsequent eigenpairs
+        std::optional<double> maxTime   = std::nullopt;
+        std::optional<int>    maxIter   = std::nullopt;
+        std::optional<int>    maxNev    = std::nullopt;
+        std::optional<int>    maxNcv    = std::nullopt;
 
         // Solver properties
         std::optional<Form>    form            = std::nullopt;

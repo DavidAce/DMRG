@@ -27,4 +27,6 @@ class xdmrg : public AlgorithmFinite {
     void     resume() final;
     void     update_time_step();
     void     set_energy_shift_mpo() final;
+    void     try_retargeting();
+    std::vector<double> convrates;
 };

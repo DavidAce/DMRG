@@ -253,6 +253,53 @@ namespace num {
         return xs;
     }
 
+    /*! \brief MAX operator that ignores NaN for containers such as vector
+     */
+    template<typename Input>
+    [[nodiscard]] auto nanmax(const Input &in, size_t from = 0, size_t num = -1ul) {
+        if(num == -1ul) num = in.size();
+        num                = std::min<size_t>(num, static_cast<size_t>(in.size()) - from);
+        using Scalar       = typename Input::value_type;
+        constexpr auto nan = std::numeric_limits<Scalar>::quiet_NaN();
+        bool           allnan =
+            std::all_of(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), [](auto val) -> bool { return std::isnan(val); });
+        if(allnan) return nan;
+
+        auto val = nan;
+
+        for(size_t idx = from; idx < from + num; ++idx) {
+            if(std::isnan(in[idx])) continue;
+            if(std::isnan(val))
+                val = in[idx];
+            else
+                val = std::max(val, in[idx]);
+        }
+        return val;
+    }
+    /*! \brief MAX operator that ignores NaN for containers such as vector
+     */
+    template<typename Input>
+    [[nodiscard]] auto nanmin(const Input &in, size_t from = 0, size_t num = -1ul) {
+        if(num == -1ul) num = in.size();
+        num                = std::min<size_t>(num, static_cast<size_t>(in.size()) - from);
+        using Scalar       = typename Input::value_type;
+        constexpr auto nan = std::numeric_limits<Scalar>::quiet_NaN();
+        bool           allnan =
+            std::all_of(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), [](auto val) -> bool { return std::isnan(val); });
+        if(allnan) return nan;
+
+        auto val = nan;
+
+        for(size_t idx = from; idx < from + num; ++idx) {
+            if(std::isnan(in[idx])) continue;
+            if(std::isnan(val))
+                val = in[idx];
+            else
+                val = std::min(val, in[idx]);
+        }
+        return val;
+    }
+
     /*! \brief Sum operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
      *   \param from first element to add (default == 0)
@@ -355,11 +402,9 @@ namespace num {
         template<typename ContainerType, typename Scalar>
         requires floating_point<Scalar>
         size_t previousNeighbourIndex(const ContainerType &x, Scalar value) {
-            size_t idx     = 0;
+            size_t idx = 0;
             for(size_t i = 0; i < x.size(); ++i) {
-                if(x[i] >= value) {
-                    return idx;
-                }
+                if(x[i] >= value) { return idx; }
                 idx = i;
             }
             return idx;
@@ -397,7 +442,7 @@ namespace num {
         ContainerTypeY y_new(x_new.size());
         for(size_t i = 0; i < x_new.size(); ++i) {
             size_t idx = internal::previousNeighbourIndex(x, x_new[i]);
-            y_new[i] = y[idx];
+            y_new[i]   = y[idx];
         }
         return y_new;
     }

@@ -123,13 +123,13 @@ namespace tools::finite::opt {
         solver.config.tol             = meta.eigs_tol.value_or(settings::precision::eigs_tol_min);
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.primme_method   = eig::stringToMethod(meta.primme_method.value_or("PRIMME_DYNAMIC"));
+        solver.config.primme_method   = eig::stringToMethod(meta.primme_method.value_or("PRIMME_DEFAULT_MIN_MATVECS"));
         solver.config.maxIter         = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
         solver.config.maxTime         = 2 * 60 * 60;
         solver.config.maxNev          = meta.eigs_nev.value_or(1);
         solver.config.maxNcv          = meta.eigs_ncv.value_or(settings::precision::eigs_ncv); // arpack needs ncv ~512. Primme seems happy with 4-32.
         solver.config.primme_locking  = true;
-        solver.config.loglevel        = 2;
+        solver.config.loglevel        = 1;
 
         Eigen::Tensor<Scalar, 3> init;
         if constexpr(std::is_same_v<Scalar, double>) {

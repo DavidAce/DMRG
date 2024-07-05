@@ -77,6 +77,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern Eigen::ArrayXXd     information_lattice                        (const Eigen::ArrayXXd & SEE);
     [[nodiscard]] extern Eigen::ArrayXXd     information_lattice                        (const StateFinite & state, InfoPolicy ip = {});
     [[nodiscard]] extern Eigen::ArrayXd      information_per_scale                      (const StateFinite & state, InfoPolicy ip = {});
+    [[nodiscard]] extern Eigen::ArrayXd      information_per_scale                      (const Eigen::ArrayXXd & information_lattice);
     [[nodiscard]] extern double              information_center_of_mass                 (const Eigen::ArrayXXd & information_lattice);
     [[nodiscard]] extern double              information_center_of_mass                 (const Eigen::ArrayXd & information_per_scale);
     [[nodiscard]] extern double              information_center_of_mass                 (const StateFinite & state, InfoPolicy ip = {});

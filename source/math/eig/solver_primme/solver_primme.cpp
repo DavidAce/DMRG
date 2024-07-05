@@ -135,7 +135,9 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
     matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
 }
 
-std::string getLogMessage(struct primme_params *primme) {
+std::string getLogMessage(struct primme_params *primme, [[maybe_unused]] int *basisSize = 0, [[maybe_unused]] void *basisFlags = nullptr,
+                          [[maybe_unused]] void *basisEvals = nullptr, [[maybe_unused]] void *basisNorms = nullptr, [[maybe_unused]] int *numLocked = 0,
+                          [[maybe_unused]] void *lockedEvals = nullptr, [[maybe_unused]] void *lockedNorms = nullptr) {
     if(primme->monitor == nullptr) {
         return fmt::format("iter {:>6} | mv {:>6} | size {} | λ {:19.16f} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s", primme->stats.numOuterIterations,
                            primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
@@ -145,29 +147,41 @@ std::string getLogMessage(struct primme_params *primme) {
     auto &result     = solver.result;
     auto &eigvals    = result.get_eigvals<eig::Form::SYMM>();
     auto  get_eigval = [&](long idx) -> double {
+        // double eigval      = std::numeric_limits<double>::quiet_NaN();
+        bool lockedValid = numLocked != nullptr and *numLocked > 0 and lockedEvals != nullptr;
+        bool basisValid  = basisSize != nullptr and *basisSize > 0 and basisEvals != nullptr;
+        if(lockedValid) {
+            if(idx < *numLocked)
+                return static_cast<double *>(lockedEvals)[idx];
+            else if(basisValid and idx - *numLocked < *basisSize)
+                return static_cast<double *>(basisEvals)[idx - *numLocked];
+        }
+        if(basisValid) { return static_cast<double *>(basisEvals)[idx]; }
         auto eigvmap = Eigen::Map<const Eigen::VectorXd>(eigvals.data(), eigvals.size());
-        // auto basismap = Eigen::Map<const Eigen::VectorXd>(primme->stats.data(), eigvals.size());
         if(solver.config.shift_invert == eig::Shinv::ON) {
-            return 1.0 / (eigvmap[idx]) + std::real(solver.config.sigma.value_or(0.0));
+            if(idx < eigvmap.size()) return 1.0 / (eigvmap[idx]) + std::real(solver.config.sigma.value_or(0.0));
+            return 0.0;
         } else {
+            if(idx < eigvmap.size() and eigvmap[idx] != 0.0) return eigvmap[idx];
             switch(primme->target) {
                 case primme_target::primme_closest_abs: [[fallthrough]];
                 case primme_target::primme_closest_geq: [[fallthrough]];
                 case primme_target::primme_closest_leq: return result.meta.last_basis_eval;
                 case primme_target::primme_smallest: return primme->stats.estimateMinEVal;
                 case primme_target::primme_largest: return primme->stats.estimateMaxEVal;
-                case primme_target::primme_largest_abs: return std::max(std::abs(primme->stats.estimateMaxEVal), std::abs(primme->stats.estimateMaxEVal));
+                case primme_target::primme_largest_abs: return std::max(std::abs(primme->stats.estimateMinEVal), std::abs(primme->stats.estimateMaxEVal));
                 default: return primme->stats.estimateMinEVal;
             }
         }
     };
-    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | λ1-λ0 {:19.16f}", std::abs(get_eigval(0) - get_eigval(1))) : "";
+    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | Δλ {:7.4e}", std::abs(get_eigval(0) - get_eigval(1))) : "";
+    auto        eigidx   = numLocked != nullptr ? *numLocked : 0;
     return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:19.16f}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
                        "it/s | {:8.2e} mv/s | {} | {}",
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, get_eigval(0), msg_diff,
-                       std::max(primme->stats.maxConvTol, solver.result.meta.last_res_norm), primme->stats.elapsedTime,
-                       primme->stats.numOuterIterations / primme->stats.elapsedTime, static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec,
-                       eig::TypeToString(solver.config.type), eig::MethodToString(solver.config.primme_method));
+                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, solver.result.meta.last_basis_eval, msg_diff,
+                       solver.result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
+                       static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::TypeToString(solver.config.type),
+                       eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -202,8 +216,51 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
         if(*event == primme_event_outer_iteration or *event == primme_event_inner_iteration) {
             if(config.logTime and config.logTime.value() <= time_since_last_log) level = eig::log->level();
             if(config.logIter and config.logIter.value() <= nmvs_since_last_log) level = eig::log->level();
-        } else if(*event == primme_event_converged)
+        } else if(*event == primme_event_converged and nmvs_since_last_log > 1) {
             level = spdlog::level::debug;
+        }
+
+        bool lockedValid = numLocked != nullptr and *numLocked > 0 and lockedEvals != nullptr and lockedNorms != nullptr;
+        bool basisValid  = basisSize != nullptr and *basisSize > 0 and basisEvals != nullptr and basisNorms != nullptr;
+        if(lockedValid) {
+            auto &eigvals = result.get_eigvals<eig::Form::SYMM>();
+            for(size_t idx = 0; idx < static_cast<size_t>(*numLocked); ++idx) {
+                if(idx < result.meta.residual_norms.size()) result.meta.residual_norms[idx] = static_cast<double *>(lockedNorms)[idx];
+                if(idx < eigvals.size()) eigvals[idx] = static_cast<double *>(lockedEvals)[idx];
+            }
+        }
+        if(basisValid) {
+            size_t lockOffset = lockedValid ? static_cast<size_t>(*numLocked) : 0ul;
+            auto  &eigvals    = result.get_eigvals<eig::Form::SYMM>();
+            for(size_t idx = 0; idx < static_cast<size_t>(*basisSize); ++idx) {
+                if(idx + lockOffset < result.meta.residual_norms.size()) result.meta.residual_norms[idx + lockOffset] = static_cast<double *>(basisNorms)[idx];
+                if(idx + lockOffset < eigvals.size()) eigvals[idx + lockOffset] = static_cast<double *>(basisEvals)[idx];
+            }
+            result.meta.last_res_norm   = static_cast<double *>(basisNorms)[0];
+            result.meta.last_basis_eval = static_cast<double *>(basisEvals)[0];
+        }
+
+        // Terminate if the residual norm is good enough
+        if(primme->numEvals == 2                              //
+           and basisNorms != nullptr                          //
+           and numConverged != nullptr and *numConverged >= 1 //
+           and basisSize != nullptr and *basisSize > 0        //
+           and config.tol_other.has_value()) {
+            double problemNorm;
+            if(not primme->massMatrixMatvec) {
+                problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
+            } else {
+                problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
+            }
+            auto eps_target = std::max(primme->eps, config.tol_other.value_or(primme->eps));
+            bool isconv     = result.meta.last_res_norm < eps_target * problemNorm;
+            if(isconv) {
+                eig::log->debug("Next eigenpair has converged | rnorm <= {:.3e}", result.meta.last_res_norm);
+                primme->maxMatvecs                          = 0;
+                primme->maxOuterIterations                  = 0;
+                primme->correctionParams.maxInnerIterations = 0;
+            }
+        }
 
         // Terminate if it's taking too long
         if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
@@ -211,25 +268,20 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
                 eig::log->warn("primme: max time has been exceeded: {:.2f}", config.maxTime.value());
                 config.timeLimitExceeded = true;
             }
-            primme->maxMatvecs         = 0;
-            primme->maxOuterIterations = 0;
+            primme->maxMatvecs                          = 0;
+            primme->maxOuterIterations                  = 0;
             primme->correctionParams.maxInnerIterations = 0;
             // *ierr = 60;
         }
+
         if(eig::log->level() <= level) {
-            // double mineval = 0;
-            if(basisNorms != nullptr and basisSize != nullptr) {
-                auto norms                  = Eigen::Map<const Eigen::VectorXd>(static_cast<double *>(basisNorms), *basisSize);
-                auto evals                  = Eigen::Map<const Eigen::VectorXd>(static_cast<double *>(basisEvals), *basisSize);
-                result.meta.last_res_norm   = norms.maxCoeff();
-                result.meta.last_basis_eval = evals[0];
-            }
-            eig::log->log(level, "{}{}{} | {}", getLogMessage(primme), basisMessage, nlockMessage, eventMessage);
+            eig::log->log(level, "{}{}{} | {}", getLogMessage(primme, basisSize, basisFlags, basisEvals, basisNorms, numLocked, lockedEvals, lockedNorms),
+                          basisMessage, nlockMessage, eventMessage);
             result.meta.last_log_time = primme->stats.elapsedTime;
             result.meta.last_log_iter = primme->stats.numMatvecs;
         }
     } else {
-        eig::log->trace("{} | {}", getLogMessage(primme), eventMessage);
+        eig::log->trace("{} | {}", getLogMessage(primme, basisSize, basisFlags, basisEvals, basisNorms, numLocked, lockedEvals, lockedNorms), eventMessage);
     }
 }
 
@@ -290,6 +342,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.n                           = matrix.rows();                                                                /*!< set problem dimension */
     primme.numEvals                    = config.maxNev.value_or(1);                                                    /*!<  Number of desired eigenpairs */
     primme.eps                         = std::max(config.tol.value_or(1e-12), std::numeric_limits<double>::epsilon()); /*!< 1e-12 is good, see link above. */
+    primme.locking                     = config.primme_locking.value_or(1);                                            // Use locking by default
     primme.target                      = RitzToTarget(config.ritz.value_or(Ritz::primme_smallest));
     primme.projectionParams.projection = stringToProj(config.primme_projection.value_or("primme_proj_default"));
     primme.maxOuterIterations          = config.maxIter.value_or(primme.maxOuterIterations);

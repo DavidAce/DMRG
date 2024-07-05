@@ -193,7 +193,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::iter_max_stuck"                     , strategy::iter_max_stuck);
     dmrg_config.load_parameter("strategy::iter_max_saturated"                 , strategy::iter_max_saturated);
     dmrg_config.load_parameter("strategy::iter_min_converged"                 , strategy::iter_min_converged);
-    dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
+    dmrg_config.load_parameter("strategy::env_expansion_alpha_max"            , strategy::env_expansion_alpha_max);
+    dmrg_config.load_parameter("strategy::env_expansion_bias_min"             , strategy::env_expansion_bias_min);
+    dmrg_config.load_parameter("strategy::env_expansion_bias_max"             , strategy::env_expansion_bias_max);
+    dmrg_config.load_parameter("strategy::env_expansion_bias_gain"            , strategy::env_expansion_bias_gain);
     dmrg_config.load_parameter("strategy::dmrg_blocksize_policy"              , strategy::dmrg_blocksize_policy);
     dmrg_config.load_parameter("strategy::dmrg_min_blocksize"                 , strategy::dmrg_min_blocksize);
     dmrg_config.load_parameter("strategy::dmrg_max_blocksize"                 , strategy::dmrg_max_blocksize);
@@ -214,10 +217,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eigs_tol_min"                      , precision::eigs_tol_min);
     dmrg_config.load_parameter("precision::eigs_tol_max"                      , precision::eigs_tol_max);
     dmrg_config.load_parameter("precision::eigs_ncv"                          , precision::eigs_ncv);
-    dmrg_config.load_parameter("precision::eigs_iter_multiplier"              , precision::eigs_iter_multiplier);
+    dmrg_config.load_parameter("precision::eigs_iter_gain"                    , precision::eigs_iter_gain);
     dmrg_config.load_parameter("precision::eigs_max_size_shift_invert"        , precision::eigs_max_size_shift_invert);
-    dmrg_config.load_parameter("precision::svd_truncation_lim"                , precision::svd_truncation_lim);
-    dmrg_config.load_parameter("precision::svd_truncation_init"               , precision::svd_truncation_init);
+    dmrg_config.load_parameter("precision::svd_truncation_min"                , precision::svd_truncation_min);
+    dmrg_config.load_parameter("precision::svd_truncation_max"                , precision::svd_truncation_max);
     dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);
     dmrg_config.load_parameter("precision::svd_save_fail"                     , precision::svd_save_fail);
     dmrg_config.load_parameter("precision::use_compressed_mpo"                , precision::use_compressed_mpo);
@@ -307,6 +310,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::store_wavefn"                          , xdmrg::store_wavefn);
     dmrg_config.load_parameter("xdmrg::max_states"                            , xdmrg::max_states);
     dmrg_config.load_parameter("xdmrg::try_directx2_when_stuck"               , xdmrg::try_directx2_when_stuck);
+    dmrg_config.load_parameter("xdmrg::try_shifting_when_degen"               , xdmrg::try_shifting_when_degen);
 
     //Timers
     dmrg_config.load_parameter("timer::level"      , timer::level     );

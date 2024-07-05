@@ -9,6 +9,18 @@
 namespace tools::finite::opt {
     class opt_mps {
         private:
+        struct NextEv {
+            // If the eigenvalues are  x_0, x_1, x_2 ... x_n, this struct saves
+            // information about the eigensolution x_1,x_2..., when nev > 1
+            // We save information about the next neighboring eigensolution
+            long   eigs_idx;
+            double eigs_eigval;
+            double eigs_rnorm;
+            double energy;
+            double variance;
+            double overlap;
+                   NextEv(const opt_mps &res);
+        };
         // All of these values are supposed to be for the full system size
         std::optional<std::string>            name             = std::nullopt;
         std::optional<Eigen::Tensor<cplx, 3>> tensor           = std::nullopt;
@@ -25,9 +37,9 @@ namespace tools::finite::opt {
         std::optional<double>                 norm             = std::nullopt;
         std::optional<size_t>                 length           = std::nullopt;
         std::optional<size_t>                 iter             = std::nullopt;
-        std::optional<size_t>                 num_op           = std::nullopt; // Number of inverse-matrix-vector products
-        std::optional<size_t>                 num_mv           = std::nullopt; // Number of matrix-vector products
-        std::optional<size_t>                 num_pc           = std::nullopt; // Number of preconditioner calls
+        std::optional<size_t>                 num_op           = std::nullopt; /*!< Number of inverse-matrix-vector products */
+        std::optional<size_t>                 num_mv           = std::nullopt; /*!< Number of matrix-vector products */
+        std::optional<size_t>                 num_pc           = std::nullopt; /*!< Number of preconditioner calls */
         std::optional<double>                 time             = std::nullopt;
         std::optional<double>                 time_mv          = std::nullopt;
         std::optional<double>                 delta_f          = std::nullopt;
@@ -52,6 +64,7 @@ namespace tools::finite::opt {
         public:
         bool                 is_basis_vector = false;
         std::vector<MpsSite> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
+        std::vector<NextEv>  next_evs;
 
         opt_mps() = default;
         // Constructor used for candidates
@@ -109,6 +122,7 @@ namespace tools::finite::opt {
         [[nodiscard]] OptExit                    get_optexit() const;
         [[nodiscard]] long                       get_bond_lim() const;
         [[nodiscard]] double                     get_trnc_lim() const;
+        [[nodiscard]] std::vector<NextEv>        get_next_evs() const;
 
         void clear();
         void normalize();

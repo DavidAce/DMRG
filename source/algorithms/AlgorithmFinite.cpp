@@ -154,7 +154,7 @@ void AlgorithmFinite::run_rtes_analysis() {
     tensors.activate_sites({tensors.get_position()});
     tensors.rebuild_edges();
     // Generate a list of truncation error limits
-    auto trnc_min    = std::min(1e-1, settings::precision::svd_truncation_lim);
+    auto trnc_min    = std::min(1e-1, settings::precision::svd_truncation_min);
     auto trnc_limits = std::vector<double>();
     for(double t = trnc_min; t < 1e-1 + 1e-8; t *= settings::strategy::rtes_rate) trnc_limits.emplace_back(t);
 
@@ -220,19 +220,23 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.max_sites         = m1.min_sites;
     m1.subspace_tol      = settings::precision::target_subspace_error;
     m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
+    m1.primme_method     = "PRIMME_DYNAMIC";
     m1.eigs_nev          = 1;
     m1.eigv_target       = 0.0;                           // We always target 0 when OptCost::VARIANCE
     m1.eigs_ncv          = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
 
+    if(settings::xdmrg::try_shifting_when_degen > 0 and status.algo_type == AlgorithmType::xDMRG and status.algorithm_has_stuck_for > 0) { m1.eigs_nev = 2; }
+
     // Set up the subspace (environent) expansion
     m1.expand_side = EnvExpandSide::FORWARD;
+    // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
     m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
-    if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-        if(status.algo_type == AlgorithmType::xDMRG) m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
-    }
+    // if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
+    //     if(status.algo_type == AlgorithmType::xDMRG) m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
+    // }
     // Set up a multiplier for number of iterations
     size_t iter_no_progress = std::max({status.algorithm_has_stuck_for, status.algorithm_saturated_for});
-    double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_multiplier, iter_no_progress)));
+    double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_gain, iter_no_progress)));
     double iter_max_extra   = safe_cast<double>(settings::precision::eigs_iter_max) * iter_multiplier; // Run more when stuck
     using iter_max_type     = decltype(m1.eigs_iter_max)::value_type;
     m1.eigs_iter_max        = safe_cast<iter_max_type>(std::min<double>(iter_max_extra, std::numeric_limits<iter_max_type>::max()));
@@ -246,12 +250,6 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 
     m1.optSolver = OptSolver::EIGS;
 
-    if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
-        if(algo_stuck_long and not var_isconverged and var_latest < 1e-2) {
-            // Try this desperate measure for one iteration...
-            m1.optAlgo = OptAlgo::DIRECTX2;
-        }
-    }
     if(status.iter < settings::strategy::iter_max_warmup) {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
@@ -260,7 +258,14 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
         m1.max_sites        = dmrg_blocksize;
     }
-
+    if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
+        if(status.algorithm_has_stuck_for > 0 and not var_isconverged and var_latest < 1e-6) {
+            // Try this desperate measure for one iteration...
+            m1.max_sites        = tensors.get_length<size_t>();
+            m1.max_problem_size = 2 << (m1.max_sites - 1);
+            m1.optAlgo          = OptAlgo::DIRECTX2;
+        }
+    }
     // Set up the problem size here
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
@@ -275,7 +280,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     //         m1.eigs_tol = 1e-12;
     //         m1.optAlgo  = OptAlgo::DIRECTZ;
     //     }
-    if(m1.chosen_sites.size() > 1 or var_isconverged) {
+    if(var_isconverged) {
         m1.expand_mode = EnvExpandMode::NONE; // No need to expand
     }
     m1.validate();
@@ -284,11 +289,11 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 }
 
 void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, std::optional<double> alpha, std::optional<svd::config> svd_cfg) {
-    if(settings::strategy::max_env_expansion_alpha <= 0) return;
+    if(settings::strategy::env_expansion_alpha_max <= 0) return;
     // Set a good initial value to start with
     // if(status.step == 65) return;
 
-    if(status.env_expansion_alpha == 0.0) status.env_expansion_alpha = settings::strategy::max_env_expansion_alpha;
+    if(status.env_expansion_alpha == 0.0) status.env_expansion_alpha = std::min(settings::strategy::env_expansion_alpha_max, status.energy_variance_lowest);
     alpha = alpha.value_or(status.env_expansion_alpha);
     if(alpha.value() <= 0) return;
     auto var_before_exp = tools::finite::measure::energy_variance(tensors);
@@ -297,6 +302,38 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide
         auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
+    // using namespace settings::strategy;
+    // size_t iter_no_progress = std::max({status.algorithm_has_stuck_for, status.algorithm_saturated_for});
+    // double bias_multiplier  = std::max(1.0, std::pow(env_expansion_bias_gain, iter_no_progress));
+    // double bias             = std::clamp(env_expansion_bias_min * bias_multiplier, env_expansion_bias_min, env_expansion_bias_max);
+    // double qexp_tgt         = 1 - bias;
+    // double qexp_tol         = 0.05;
+    // size_t increases        = 0;
+    // size_t decreases        = 0;
+    // auto   tensors_original = tensors;
+    // for(size_t trial = 0; trial < 10; ++trial) {
+    //     tensors = tensors_original; // Reset
+    //     tensors.expand_environment(envexpMode, envexpSide, alpha.value(), svd_cfg.value());
+    //     var_envexp      = tools::finite::measure::energy_variance(tensors);
+    //     double qexp     = std::abs(var_before_exp / var_envexp); // Equal to 1 if there is no enrichment. Smaller than 1 if there was enrichment.
+    //     double qexp_err = 1 - qexp / qexp_tgt;
+    //     tools::log->debug("Expanded environment {} {} | alpha {:.3e} | q {:.3f} tgt {:.3f} tol {:.1f}% err {:.3f}% | var {:.3e} -> {:.3e}",
+    //                       flag2str(envexpMode), enum2sv(envexpSide), alpha.value(), qexp, qexp_tgt, 100 * qexp_tol, 100 * qexp_err, var_before_exp,
+    //                       var_envexp);
+    //     if(qexp_err == std::clamp(qexp_err, -1e-2, qexp_tol)) { break; }
+    //     if(qexp_err > qexp_tol) {
+    //         // Decrease the enrichment factor
+    //         alpha.value() *= std::clamp(qexp, 0.1, 0.9);
+    //         decreases++;
+    //     } else {
+    //         // Increase the enrichment factor
+    //         auto alpha_new = alpha.value() * std::clamp(1 + (qexp - qexp_tgt) / (1.0 - qexp_tgt), 1.1, 2.0);
+    //         if(alpha_new > settings::strategy::env_expansion_alpha_max) break;
+    //         alpha.value() = alpha_new;
+    //         increases++;
+    //     }
+    // }
+    // status.env_expansion_alpha = alpha.value();
 
     tensors.expand_environment(envexpMode, envexpSide, alpha.value(), svd_cfg.value());
     var_envexp = tools::finite::measure::energy_variance(tensors);
@@ -470,7 +507,8 @@ void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_
     double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
     status.energy_variance_max_digits = safe_cast<size_t>(max_digits);
     status.energy_variance_prec_limit = std::pow(10.0, -max_digits);
-    tools::log->info("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
+    tools::log->info("Estimated limit on energy variance precision: {:.3e} | energy upper bound {:.3f}", status.energy_variance_prec_limit,
+                     energy_upper_bound.value());
 }
 
 void AlgorithmFinite::update_bond_dimension_limit() {
@@ -492,7 +530,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
-            double truncation_threshold = 2 * settings::precision::svd_truncation_lim;
+            double truncation_threshold = 2 * settings::precision::svd_truncation_min;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
             size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_lim);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
@@ -606,7 +644,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
-            double truncation_threshold = 2 * settings::precision::svd_truncation_lim;
+            double truncation_threshold = 2 * settings::precision::svd_truncation_min;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
             tools::log->trace("Truncation errors     : {}", tensors.state->get_truncation_errors());
@@ -659,19 +697,20 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
 void AlgorithmFinite::update_environment_expansion_alpha() {
     /*! Update alpha
-           alpha  = factor * alpha,
-           factor =  1.0/(q-bias)
-           q      = Var(H)_after / Var(H)_before  (after/before expansion)
-           bias   = 1e-2 seems good, larger (e.g 1e-1) introduces too much noise
+           alpha  = (q + bias) * alpha,
+           q      = sqrt(Var(H)_before_expn /Var(H)_after_expn)  (before/after expansion)
+           bias   = bias_min * gain^{iter_no_progress}.  1e-2 is soft, and larger (e.g > 1e-1) introduces a lot of noise
       This makes alpha dynamically adjust to make a meaningful (but not too disruptive) enrichment.
    */
-
+    using namespace settings::strategy;
+    size_t iter_no_progress    = std::max({status.algorithm_has_stuck_for, status.algorithm_saturated_for});
+    double bias_multiplier     = std::max(1.0, std::pow(env_expansion_bias_gain, iter_no_progress));
     double old_alpha           = status.env_expansion_alpha;
-    double qexp                = std::sqrt(var_envexp / var_latest);
-    double bias                = 1e-2;
-    double factor              = std::clamp(bias + std::abs(1.0 / qexp), 1e-2, 1e+1);
-    status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, settings::strategy::max_env_expansion_alpha);
-    tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f}", old_alpha, status.env_expansion_alpha, factor);
+    double qexp                = std::sqrt(std::abs(var_latest / var_envexp));
+    double bias                = std::clamp(env_expansion_bias_min * bias_multiplier, env_expansion_bias_min, env_expansion_bias_max);
+    double factor              = std::clamp(qexp + bias, 1e-2, 1e+1);
+    status.env_expansion_alpha = std::clamp(factor * old_alpha, 1e-20, env_expansion_alpha_max);
+    tools::log->debug("Updated alpha {:8.2e} -> {:8.2e} | factor {:.8f} | bias {:.3f}", old_alpha, status.env_expansion_alpha, factor, bias);
 }
 
 void AlgorithmFinite::update_dmrg_blocksize() {
@@ -771,7 +810,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
             bond_lim = safe_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->get_largest_bond())))); // Nearest power of two from below
     }
     if(not trnc_lim) {
-        trnc_lim = settings::precision::svd_truncation_init;
+        trnc_lim = settings::precision::svd_truncation_max;
         if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) trnc_lim = 1e-2;
     }
 
@@ -1227,8 +1266,8 @@ void AlgorithmFinite::clear_convergence_status() {
     status.bond_limit_has_reached_max = false;
     status.trnc_limit_has_reached_min = false;
     status.spin_parity_has_converged  = false;
-    status.energy_variance_lowest     = 1.0;
-    status.env_expansion_alpha        = 0.0;
+    // status.energy_variance_lowest     = 1.0;
+    // status.env_expansion_alpha        = 0.0;
 }
 
 void AlgorithmFinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {

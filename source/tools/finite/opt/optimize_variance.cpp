@@ -195,12 +195,14 @@ namespace tools::finite::opt {
         cfg.loglevel              = 2;
         cfg.compute_eigvecs       = eig::Vecs::ON;
         cfg.tol                   = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
+        cfg.tol_other             = std::max(1e-10, cfg.tol.value());         // We do not need high precision on subsequent solutions
         cfg.maxIter               = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
         cfg.maxNev                = meta.eigs_nev.value_or(1);
         cfg.maxNcv                = meta.eigs_ncv.value_or(settings::precision::eigs_ncv);
         cfg.maxTime               = meta.eigs_time_max.value_or(2 * 60 * 60); // Two hours default
         cfg.primme_minRestartSize = meta.primme_minRestartSize;
         cfg.primme_maxBlockSize   = meta.primme_maxBlockSize;
+        cfg.primme_locking        = 1;
         cfg.lib                   = eig::Lib::PRIMME;
         cfg.primme_method         = eig::stringToMethod(meta.primme_method);
         cfg.tag += meta.label;
@@ -286,6 +288,9 @@ namespace tools::finite::opt {
 
         if(results.size() >= 2) {
             std::sort(results.begin(), results.end(), internal::Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
+            // Add some information about the other eigensolutions to the winner
+            // We can use that to later calculate the gap and the approximate convergence rate
+            for(size_t idx = 1; idx < results.size(); ++idx) { results.front().next_evs.emplace_back(results[idx]); }
         }
 
         for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
