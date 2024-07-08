@@ -225,8 +225,6 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.eigv_target       = 0.0;                           // We always target 0 when OptCost::VARIANCE
     m1.eigs_ncv          = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
 
-    if(settings::xdmrg::try_shifting_when_degen > 0 and status.algo_type == AlgorithmType::xDMRG and status.algorithm_has_stuck_for > 0) { m1.eigs_nev = 2; }
-
     // Set up the subspace (environent) expansion
     m1.expand_side = EnvExpandSide::FORWARD;
     // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
@@ -273,6 +271,14 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
+    if(status.algo_type == AlgorithmType::xDMRG and                                   //
+       status.algorithm_has_stuck_for > 1 and                                         //
+       status.variance_mpo_saturated_for > settings::strategy::iter_max_saturated and //
+       settings::xdmrg::try_shifting_when_degen > 0 and                               //
+       m1.problem_size > settings::precision::eig_max_size                            //
+    ) {
+        m1.eigs_nev = 2;
+    }
 
     // if(m1.optSolver == OptSolver::EIGS and m1.chosen_sites.size() == 1 and tensors.state->get_direction() < 0) {
     // #pragma message "testing DIRECTZ"
@@ -1030,7 +1036,9 @@ void AlgorithmFinite::check_convergence() {
     else
         status.algorithm_saturated_for = 0;
 
-    if(status.variance_mpo_converged_for > 0 and status.entanglement_converged_for > 0 and status.spin_parity_has_converged)
+    bool variance_mpo_converged = settings::precision::variance_saturation_sensitivity > 0 ? status.variance_mpo_converged_for > 0 : true;
+    bool entanglement_converged = settings::precision::entropy_saturation_sensitivity > 0 ? status.entanglement_converged_for > 0 : true;
+    if(variance_mpo_converged and entanglement_converged and status.spin_parity_has_converged)
         status.algorithm_converged_for++;
     else
         status.algorithm_converged_for = 0;
@@ -1070,6 +1078,7 @@ AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFin
 void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
+    if(saturation_sensitivity <= 0) return;
     if(not threshold) {
         if(status.iter < settings::strategy::iter_max_warmup) {
             threshold = settings::precision::variance_convergence_threshold;
@@ -1125,7 +1134,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     if(not tensors.position_is_inward_edge()) return;
     tools::log->trace("Checking convergence of entanglement");
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::entropy_saturation_sensitivity;
-
+    if(saturation_sensitivity <= 0) return;
     if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
         algorithm_history.emplace_back(status, tensors);
     else
@@ -1365,11 +1374,20 @@ void          AlgorithmFinite::print_status() {
         }
         report += fmt::format("opt:[{}|{}|{}] ", short_optcost, short_optalgo, enum2sv(last_optsolver.value()));
     }
+    std::string stat;
+    if(status.algorithm_saturated_for > 0) { stat = fmt::format("sat:{:<1}", status.algorithm_saturated_for); }
+    if(status.algorithm_has_stuck_for > 0) { stat = fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for); }
+    if(status.algorithm_converged_for > 0) { stat = fmt::format("con:{:<1} ", status.algorithm_converged_for); }
+    report += stat;
+    if(settings::precision::variance_saturation_sensitivity > 0 or settings::precision::entropy_saturation_sensitivity > 0) {
+        report += "[";
+        if(settings::precision::variance_saturation_sensitivity > 0) report += fmt::format("σ²H:{:<1}", status.variance_mpo_saturated_for);
+        if(settings::precision::entropy_saturation_sensitivity > 0) report += fmt::format("Sₑ {:<1}", status.entanglement_saturated_for);
+        report += "] ";
+    } else {
+        report += " ";
+    }
 
-    report += fmt::format("con:{:<1} ", status.algorithm_converged_for);
-    report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
-    report +=
-        fmt::format("sat:{:<1}[σ² {:<1} Sₑ {:<1}] ", status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("time:{:<9} ", fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);

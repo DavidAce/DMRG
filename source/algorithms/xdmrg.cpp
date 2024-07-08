@@ -500,17 +500,18 @@ void xdmrg::set_energy_shift_mpo() {
     tensors.compress_mpo_squared(); // Compress the mpo's if compression is enabled
     tensors.rebuild_edges();        // The shift modified all our mpo's. So we have to rebuild all the edges.
     if constexpr(settings::debug) tensors.assert_validity();
-    if(tensors.model->get_energy_shift_mpo() != status.energy_tgt)
+    if(std::abs(tensors.model->get_energy_shift_mpo() - status.energy_tgt) > 1e-15)
         throw except::runtime_error("Energy shift mismatch: {:.16f} != {:.16f}", tensors.model->get_energy_shift_mpo(), status.energy_tgt);
 }
 
 void xdmrg::try_retargeting() {
     if(not tensors.position_is_inward_edge()) return;
-    if(not status.algorithm_has_stuck_for > 0) return;
+    if(status.algorithm_has_stuck_for == 0) return;
     if(settings::xdmrg::try_shifting_when_degen <= 0) return;
-    auto maxconv = num::nanmax(convrates);
-    tools::log->info("maxconv: {:.1f} | {::.1f}", maxconv, convrates);
-    if(maxconv > 20000) {
+    auto convmax = num::nanmax(convrates);
+    if(std::isnan(convmax)) return;
+    tools::log->info("convergence difficulty score: {:.1f} (limit {:.1f}) | {::.1f}", convmax, settings::xdmrg::try_shifting_when_degen, convrates);
+    if(convmax > settings::xdmrg::try_shifting_when_degen) {
         auto L                                 = tensors.get_length<double>();
         auto mu                                = 0.0;
         auto sig                               = tensors.model->get_energy_upper_bound() / 100.0;
