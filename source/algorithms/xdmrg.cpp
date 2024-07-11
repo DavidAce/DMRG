@@ -66,12 +66,16 @@ void xdmrg::resume() {
         // status.energy_tgt = settings::xdmrg::energy_spectrum_shift;
 
         // Reload the bond and truncation error limits (could be different in the config compared to the status we just loaded)
+        double long_max                   = static_cast<double>(std::numeric_limits<long>::max());
+        double bond_max                   = std::min(long_max, std::pow(2.0, settings::model::model_size / 2));
+        status.bond_max                   = std::min(status.bond_max, safe_cast<long>(bond_max));
+        status.bond_min                   = std::max(status.bond_min, settings::get_bond_min(status.algo_type));
+        status.bond_lim                   = std::min(status.bond_lim, status.bond_max);
+        status.bond_limit_has_reached_max = false;
+
         status.trnc_min                   = settings::precision::svd_truncation_min;
         status.trnc_max                   = settings::precision::svd_truncation_max;
-        status.bond_min                   = settings::get_bond_min(status.algo_type);
-        status.bond_max                   = settings::get_bond_max(status.algo_type);
         status.trnc_limit_has_reached_min = false;
-        status.bond_limit_has_reached_max = false;
 
         // Apply shifts and compress the model
         tensors.move_center_point_to_inward_edge();
