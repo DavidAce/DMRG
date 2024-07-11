@@ -33,6 +33,8 @@ class MatVecMPOS {
 
     private:
     std::vector<Eigen::Tensor<T, 4>> mpos, mpos_shf;
+    Eigen::Tensor<T, 3> mpoTL, mpoLR; // Top left and lower right after svd.
+    Eigen::Tensor<T, 3> mpoTR, mpoLL; // Top right and lower left after svd.
     Eigen::Tensor<T, 3>              envL;
     Eigen::Tensor<T, 3>              envR;
     std::array<long, 3>              shape_mps;

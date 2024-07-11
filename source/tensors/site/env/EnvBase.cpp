@@ -3,26 +3,26 @@
 #include "debug/exceptions.h"
 #include "math/hash.h"
 #include "math/num.h"
+#include "math/svd.h"
 #include "math/tenx.h"
 #include "math/tenx/threads.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tools/common/log.h"
 #include <utility>
-
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
-// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Otherwise, unique_ptr will forcibly inline its own default deleter.
 // Here we follow "rule of five", so we must also define
 // our own copy/move ctor and copy/move assignments
 // This has the side effect that we must define our own
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-EnvBase::EnvBase() : block(std::make_unique<Eigen::Tensor<cplx, 3>>()) { assert_block(); } // default ctor
-EnvBase::~EnvBase()                                   = default;                           // default dtor
-EnvBase::EnvBase(EnvBase &&other) noexcept            = default;                           // default move ctor
-EnvBase &EnvBase::operator=(EnvBase &&other) noexcept = default;                           // default move assign
+EnvBase:: EnvBase() : block(std::make_unique<Eigen::Tensor<cplx, 3>>()) { assert_block(); } // default ctor
+EnvBase::~EnvBase()                                    = default;                           // default dtor
+EnvBase:: EnvBase(EnvBase &&other) noexcept            = default;                           // default move ctor
+EnvBase  &EnvBase::operator=(EnvBase &&other) noexcept = default;                           // default move assign
 
 EnvBase::EnvBase(const EnvBase &other)
     : block(std::make_unique<Eigen::Tensor<cplx, 3>>(*other.block)), sites(other.sites), position(other.position), side(other.side), tag(other.tag),
@@ -101,12 +101,16 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
         if(mpo.dimension(0) != otherblock.dimension(2))
             throw except::runtime_error("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 0,
                                         mpo.dimension(0), 2, otherblock.dimension(2));
-
+        // block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
+        // block->device(*threads->dev) = otherblock.contract(mps, tenx::idx({0}, {1}))
+        //                                    .contract(mpo, tenx::idx({1, 2}, {0, 2}))
+        //                                    .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
+        //                                    .shuffle(tenx::array3{0, 2, 1});
+        Eigen::Tensor<cplx, 4> block_mps_mpo(otherblock.dimension(0), mps.dimension(2), mpo.dimension(1), mpo.dimension(2));
+        block_mps_mpo.device(*threads->dev) = otherblock.contract(mps.conjugate(), tenx::idx({1}, {1})).contract(mpo, tenx::idx({1, 2}, {0, 3}));
         block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
-        block->device(*threads->dev) = otherblock.contract(mps, tenx::idx({0}, {1}))
-                                          .contract(mpo, tenx::idx({1, 2}, {0, 2}))
-                                          .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
-                                          .shuffle(tenx::array3{0, 2, 1});
+        block->device(*threads->dev) = mps.contract(block_mps_mpo, tenx::idx({0, 1}, {3, 0}));
+
     } else if(side == "R") {
         /*! # Right environment contraction
          *   0--[       ]          1--[   GB   ]--2  0--[LB]--1  0--[       ]
@@ -133,11 +137,16 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
         if(mpo.dimension(1) != otherblock.dimension(2))
             throw except::runtime_error("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 1,
                                         mpo.dimension(1), 2, otherblock.dimension(2));
+        // block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
+        // block->device(*threads->dev) = otherblock.contract(mps, tenx::idx({0}, {2}))
+        // .contract(mpo, tenx::idx({1, 2}, {1, 2}))
+        // .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
+        // .shuffle(tenx::array3{0, 2, 1});
+
+        Eigen::Tensor<cplx, 4> block_mps_mpo(otherblock.dimension(0), mps.dimension(1), mpo.dimension(0), mpo.dimension(2));
+        block_mps_mpo.device(*threads->dev) = otherblock.contract(mps.conjugate(), tenx::idx({1}, {2})).contract(mpo, tenx::idx({1, 2}, {1, 3}));
         block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
-        block->device(*threads->dev) = otherblock.contract(mps, tenx::idx({0}, {2}))
-                                          .contract(mpo, tenx::idx({1, 2}, {1, 2}))
-                                          .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
-                                          .shuffle(tenx::array3{0, 2, 1});
+        block->device(*threads->dev) = mps.contract(block_mps_mpo, tenx::idx({0, 2}, {3, 0}));
     }
 }
 
@@ -285,46 +294,115 @@ std::optional<std::size_t> EnvBase::get_unique_id_env() const { return unique_id
 std::optional<std::size_t> EnvBase::get_unique_id_mps() const { return unique_id_mps; }
 std::optional<std::size_t> EnvBase::get_unique_id_mpo() const { return unique_id_mpo; }
 
-Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha) const {
+template<typename T>
+Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const {
+    if constexpr(std::is_same_v<T, cplx>) {
+        if(mps.is_real() and mpo.is_real()) { return get_expansion_term<real>(mps, mpo, alpha, rank_max).cast<cplx>(); }
+    }
+
+    assert(tag == "ene" or tag == "var");
+    assert(side == "L" or side == "R");
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
             throw except::logic_error("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                       get_position(), get_position(), mps.get_position(), mpo.get_position());
+    Eigen::Tensor<T, 4> mpo_tensor;
+    Eigen::Tensor<T, 3> P;
 
-    Eigen::Tensor<cplx, 4> mpo_tensor;
-    if(tag == "ene")
-        mpo_tensor = mpo.MPO();
-    else if(tag == "var")
-        mpo_tensor = mpo.MPO2();
-    else
-        throw except::runtime_error("Expected tag [var|ene]: Got: [{}]", tag);
+    if constexpr(std::is_same_v<T, real>) {
+        mpo_tensor = tag == "ene" ? mpo.MPO().real() : mpo.MPO2().real();
+    } else {
+        mpo_tensor = tag == "ene" ? mpo.MPO() : mpo.MPO2();
+    }
+    auto &threads = tenx::threads::get();
 
     if(side == "L") {
+        // If P is too big we can pre-truncate here
+        if(rank_max > 0 and mps.get_chiR() > rank_max) {
+            svd::solver svd;
+            auto        mps_reduced = mps;
+            // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
+            if constexpr(std::is_same_v<T, real>) {
+                Eigen::Tensor<T, 3> M = mps_reduced.get_M().real();
+                auto [U, S, V]        = svd.schmidt_into_left_normalized(M, mps_reduced.spin_dim(), svd::config(rank_max));
+                M.resize(U.dimensions());
+                M.device(*threads->dev) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
+                mps_reduced.set_M(M);
+            } else {
+                auto [U, S, V] = svd.schmidt_into_left_normalized(mps_reduced.get_M(), mps_reduced.spin_dim(), svd::config(rank_max));
+                Eigen::Tensor<T, 3> M(U.dimensions());
+                M.device(*threads->dev) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
+                mps_reduced.set_M(M);
+            }
+            tools::log->debug("Pre-truncated mps {} -> {} (rank max {})", mps.dimensions(), mps_reduced.dimensions(), rank_max);
+            return get_expansion_term<T>(mps_reduced, mpo, alpha, -1);
+        }
+
         long spin = mps.spin_dim();
         long chiL = mps.get_chiL();
         long chiR = mps.get_chiR() * mpo_tensor.dimension(1);
-        if(get_block().dimension(0) != chiL) throw except::logic_error("block dim 0 != chiL");
-        Eigen::Tensor<cplx, 3> PL = get_block()
-                                        .contract(mps.get_M(), tenx::idx({0}, {1}))
-                                        .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
-                                        .shuffle(tenx::array4{3, 0, 1, 2})
-                                        .reshape(tenx::array3{spin, chiL, chiR});
-        PL = tenx::asNormalized(PL);
-        return PL * PL.constant(alpha);
+        assert(get_block().dimension(0) == chiL);
+        P.resize(spin, chiL, chiR);
+        if constexpr(std::is_same_v<T, real>) {
+            Eigen::Tensor<T, 3> B   = get_block().real();
+            Eigen::Tensor<T, 3> M   = mps.get_M().real();
+            P.device(*threads->dev) = B.contract(M, tenx::idx({0}, {1}))
+                                          .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
+                                          .shuffle(tenx::array4{3, 0, 1, 2})
+                                          .reshape(tenx::array3{spin, chiL, chiR});
+        } else {
+            P.device(*threads->dev) = get_block()
+                                          .contract(mps.get_M(), tenx::idx({0}, {1}))
+                                          .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
+                                          .shuffle(tenx::array4{3, 0, 1, 2})
+                                          .reshape(tenx::array3{spin, chiL, chiR});
+        }
 
     } else if(side == "R") {
+        // If P is too big we can pre-truncate here
+        if(rank_max > 0 and mps.get_chiL() > rank_max) {
+            svd::solver svd;
+            auto        mps_reduced = mps;
+            // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
+            if constexpr(std::is_same_v<T, real>) {
+                Eigen::Tensor<T, 3> M = mps_reduced.get_M().real();
+                auto [U, S, V]        = svd.schmidt_into_right_normalized(M, mps_reduced.spin_dim(), svd::config(rank_max));
+                M.resize(V.dimensions());
+                M.device(*threads->dev) = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(std::array{1, 0, 2});
+                mps_reduced.set_M(M);
+            } else {
+                auto [U, S, V] = svd.schmidt_into_right_normalized(mps_reduced.get_M(), mps_reduced.spin_dim(), svd::config(rank_max));
+                Eigen::Tensor<cplx, 3> M(V.dimensions());
+                M.device(*threads->dev) = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(std::array{1, 0, 2});
+                mps_reduced.set_M(M);
+            }
+            tools::log->debug("Pre-truncated mps {} -> {} (rank max {})", mps.dimensions(), mps_reduced.dimensions(), rank_max);
+            return get_expansion_term<T>(mps_reduced, mpo, alpha, -1);
+        }
+
         long spin = mps.spin_dim();
         long chiL = mps.get_chiL() * mpo_tensor.dimension(0);
         long chiR = mps.get_chiR();
-        if(get_block().dimension(0) != chiR) throw except::logic_error("block dim 0 != chiR");
-        Eigen::Tensor<cplx, 3> PR = get_block()
-                                        .contract(mps.get_M(), tenx::idx({0}, {2}))
-                                        .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))
-                                        .shuffle(tenx::array4{3, 0, 1, 2})
-                                        .reshape(tenx::array3{spin, chiL, chiR});
-        PR = tenx::asNormalized(PR);
-        return PR * PR.constant(alpha);
-
-    } else
-        throw std::runtime_error("Expected side L or R. Got: " + side);
+        assert(get_block().dimension(0) == chiR);
+        P.resize(spin, chiL, chiR);
+        if constexpr(std::is_same_v<T, real>) {
+            Eigen::Tensor<T, 3> B   = get_block().real();
+            Eigen::Tensor<T, 3> M   = mps.get_M().real();
+            P.device(*threads->dev) = B.contract(M, tenx::idx({0}, {2}))
+                                          .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))
+                                          .shuffle(tenx::array4{3, 0, 1, 2})
+                                          .reshape(tenx::array3{spin, chiL, chiR});
+        } else {
+            P.device(*threads->dev) = get_block()
+                                          .contract(mps.get_M(), tenx::idx({0}, {2}))
+                                          .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))
+                                          .shuffle(tenx::array4{3, 0, 1, 2})
+                                          .reshape(tenx::array3{spin, chiL, chiR});
+        }
+    }
+    P = tenx::asNormalized(P);
+    return P * P.constant(alpha);
 }
+
+template Eigen::Tensor<real, 3> EnvBase::get_expansion_term<real>(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const;
+template Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term<cplx>(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const;

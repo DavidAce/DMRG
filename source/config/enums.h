@@ -23,15 +23,29 @@ enum class MeanType { ARITHMETIC, GEOMETRIC };
  *  This calculates the information typical scale from the information lattice, which can be numerically expensive.
  */
 enum class BlockSizePolicy {
-    MINDEF     = 0,  /*!< Default to dmrg_min_blocksize */
-    MAXDEF     = 1,  /*!< Default to dmrg_max_blocksize */
-    MAXVARSAT  = 2,  /*!< Set dmrg_max_blocksize when the energy variance has saturated */
-    MAXSTUCK   = 4,  /*!< Set dmrg_max_blocksize when stuck */
-    INFODEF    = 8,  /*!< Default to the ceil of "information_center_of_mass" on every iteration  */
-    INFOVARSAT = 16, /*!< Default to the ceil of "information_center_of_mass" when the energy variance has saturated */
-    INFOSTUCK  = 32, /*!< Default to the ceil of "information_center_of_mass" when stuck  */
+    MINDEF     = 0,   /*!< Default to dmrg_min_blocksize */
+    MAXDEF     = 1,   /*!< Default to dmrg_max_blocksize */
+    MAXVARSAT  = 2,   /*!< Set dmrg_max_blocksize when the energy variance has saturated */
+    MAXSTUCK   = 4,   /*!< Set dmrg_max_blocksize when stuck */
+    INFODEF    = 8,   /*!< Default to the ceil of "information_center_of_mass" on every iteration  */
+    INFOVARSAT = 16,  /*!< Default to the ceil of "information_center_of_mass" when the energy variance has saturated */
+    INFOSTUCK  = 32,  /*!< Default to the ceil of "information_center_of_mass" when stuck  */
+    MAXBOND    = 64,  /*! Increase only when the bond dimension has reached its maximum   <*/
+    MINTRNC    = 128, /*! Increase only when the truncation error has reached its minimum   <*/
     allow_bitops
 };
+
+enum class EigsIterGainPolicy : int {
+    NEVER     = 0,  /*! Never increase eigs iterations  <*/
+    ITERATION = 1,  /*! Increase eigs iterations every itertaion    <*/
+    VARSAT    = 2,  /*! Increase when the energy variance has saturated  <*/
+    SATURATED = 4,  /*! Increase when the algorithm has saturated  <*/
+    STUCK     = 8,  /*! Increase when the algorithm is stuck  <*/
+    MAXBOND   = 16, /*! Increase only when the bond dimension has reached its maximum   <*/
+    MINTRNC   = 32, /*! Increase only when the truncation error has reached its minimum   <*/
+    allow_bitops
+};
+
 enum class UpdatePolicy {
     NEVER     = 0,  /*!< Never update */
     WARMUP    = 1,  /*!< Update during warmup */
@@ -233,6 +247,7 @@ enum class OptMark {
     PASS,
     FAIL,
 };
+
 enum class StateInitType { REAL, CPLX };
 enum class StateInit {
     RANDOM_PRODUCT_STATE,
@@ -385,7 +400,8 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, StoragePolicy, BlockSizePolicy, UpdatePolicy, ProjectionPolicy, EnvExpandMode>);
+    static_assert(
+        enum_sfinae::is_any_v<T, OptExit, OptWhen, EigsIterGainPolicy, StoragePolicy, BlockSizePolicy, UpdatePolicy, ProjectionPolicy, EnvExpandMode>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -432,6 +448,8 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, BlockSizePolicy::INFODEF)) v.emplace_back("INFODEF");
         if(has_flag(item, BlockSizePolicy::INFOVARSAT)) v.emplace_back("INFOVARSAT");
         if(has_flag(item, BlockSizePolicy::INFOSTUCK)) v.emplace_back("INFOSTUCK");
+        if(has_flag(item, BlockSizePolicy::MAXBOND)) v.emplace_back("MAXBOND");
+        if(has_flag(item, BlockSizePolicy::MINTRNC)) v.emplace_back("MINTRNC");
         if(v.empty()) return "MIN";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
@@ -457,6 +475,15 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, EnvExpandMode::ENE)) v.emplace_back("ENE");
         if(has_flag(item, EnvExpandMode::VAR)) v.emplace_back("VAR");
         if(v.empty()) return "NONE";
+    }
+    if constexpr(std::is_same_v<T, EigsIterGainPolicy>) {
+        if(has_flag(item, EigsIterGainPolicy::ITERATION)) v.emplace_back("ITERATION");
+        if(has_flag(item, EigsIterGainPolicy::VARSAT)) v.emplace_back("VARSAT");
+        if(has_flag(item, EigsIterGainPolicy::SATURATED)) v.emplace_back("SATURATED");
+        if(has_flag(item, EigsIterGainPolicy::STUCK)) v.emplace_back("STUCK");
+        if(has_flag(item, EigsIterGainPolicy::MAXBOND)) v.emplace_back("MAXBOND");
+        if(has_flag(item, EigsIterGainPolicy::MINTRNC)) v.emplace_back("MINTRNC");
+        if(v.empty()) return "NEVER";
     }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
                            [](const std::string &ss, const std::string &s) { return ss.empty() ? s : ss + "|" + s; });
@@ -503,6 +530,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         OptWhen,
         OptExit,
         OptMark,
+        EigsIterGainPolicy,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -538,6 +566,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case BlockSizePolicy::INFODEF :                          return "INFODEF";
         case BlockSizePolicy::INFOVARSAT :                       return "INFOVARSAT";
         case BlockSizePolicy::INFOSTUCK :                        return "INFOSTUCK";
+        case BlockSizePolicy::MAXBOND:                           return "MAXBOND";
+        case BlockSizePolicy::MINTRNC:                           return "MINTRNC";
         default: return "BlockSizePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -832,6 +862,15 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptExit::FAIL_ERROR)                                return "FAIL_ERROR";
         if(item == OptExit::NONE)                                      return "NONE";
     }
+    if constexpr(std::is_same_v<T,EigsIterGainPolicy>){
+        if(item == EigsIterGainPolicy::NEVER)                           return "NEVER";
+        if(item == EigsIterGainPolicy::ITERATION)                       return "ITERATION";
+        if(item == EigsIterGainPolicy::VARSAT)                          return "VARSAT";
+        if(item == EigsIterGainPolicy::SATURATED)                       return "SATURATED";
+        if(item == EigsIterGainPolicy::STUCK)                           return "STUCK";
+        if(item == EigsIterGainPolicy::MAXBOND)                         return "MAXBOND";
+        if(item == EigsIterGainPolicy::MINTRNC)                         return "MINTRNC";
+    }
     return "UNRECOGNIZED ENUM";
 }
 
@@ -877,6 +916,7 @@ constexpr auto sv2enum(std::string_view item) {
         OptWhen,
         OptExit,
         OptMark,
+        EigsIterGainPolicy,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -910,8 +950,20 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("INFODEF")        != std::string_view::npos)  policy |= BlockSizePolicy::INFODEF;
         if(item.find("INFOVARSAT")     != std::string_view::npos)  policy |= BlockSizePolicy::INFOVARSAT;
         if(item.find("INFOSTUCK")      != std::string_view::npos)  policy |= BlockSizePolicy::INFOSTUCK;
+        if(item.find("MAXBOND")        != std::string_view::npos)  policy |= BlockSizePolicy::MAXBOND;
+        if(item.find("MINTRNC")        != std::string_view::npos)  policy |= BlockSizePolicy::MINTRNC;
         return policy;
 
+    }
+    if constexpr(std::is_same_v<T,EigsIterGainPolicy>){
+        auto policy = EigsIterGainPolicy::NEVER;
+        if(item.find("ITERATION")      != std::string_view::npos) policy |= EigsIterGainPolicy::ITERATION;
+        if(item.find("VARSAT")         != std::string_view::npos) policy |= EigsIterGainPolicy::VARSAT;
+        if(item.find("SATURATED")      != std::string_view::npos) policy |= EigsIterGainPolicy::SATURATED;
+        if(item.find("STUCK")          != std::string_view::npos) policy |= EigsIterGainPolicy::STUCK;
+        if(item.find("MAXBOND")        != std::string_view::npos) policy |= EigsIterGainPolicy::MAXBOND;
+        if(item.find("MINTRNC")        != std::string_view::npos) policy |= EigsIterGainPolicy::MINTRNC;
+        return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "NONE")                                  return OptRitz::NONE;

@@ -225,7 +225,7 @@ namespace settings {
         inline double              env_expansion_bias_min      = 0.01;                                   /*!< Sets the lower bound on the bias used when updating alpha *= sqrt(var/var_expn)+bias  */
         inline double              env_expansion_bias_max      = 0.3;                                    /*!< Sets the lower bound on the bias used when updating alpha *= sqrt(var/var_expn)+bias  */
         inline double              env_expansion_bias_gain     = 2.0;                                    /*!< Increase the bias successively as bias = min(bias_max,  bias_min * gain^(iters without progress)  */
-        inline BlockSizePolicy     dmrg_blocksize_policy       = BlockSizePolicy::MINDEF;                /*!< Bitflag to control the adaptive dmrg blocksize {MINDEF, MAXDEF, MAXVARSAT, MAXSTUCK, INFODEF, INFOVARSAT, INFOSTUCK} */
+        inline BlockSizePolicy     dmrg_blocksize_policy       = BlockSizePolicy::MINDEF;                /*!< Bitflag to control the adaptive dmrg blocksize {MINDEF, MAXDEF, MAXVARSAT, MAXSTUCK, INFODEF, INFOVARSAT, INFOSTUCK, MAXBOND, MINTRNC} */
         inline size_t              dmrg_min_blocksize          = 1;                                      /*!< Minimum number of sites in a dmrg optimization step. */
         inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
         inline long                dmrg_max_prob_size          = 1024*2*1024;                            /*!< Restricts the dmrg blocksize to keep the problem size below this limit. Problem size = chiL * (spindim ** blocksize) * chiR */
@@ -245,30 +245,32 @@ namespace settings {
 
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
-        inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
-        inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
-        inline double   eigs_iter_gain                  = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress */
-        inline double   eigs_tol_max                    = 1e-10 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline int      eigs_ncv                        = 0     ;                  /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
-        inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
+        inline long               eig_max_size                    = 4096  ;                      /*!< Maximum problem size before switching from eig to eigs. */
+        inline size_t             eigs_iter_min                   = 100;                         /*!< Minimum number of iterations for eigenvalue solver. */
+        inline size_t             eigs_iter_max                   = 100000;                      /*!< Maximum number of iterations for eigenvalue solver. */
+        inline double             eigs_iter_gain                  = 2     ;                      /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress */
+        inline EigsIterGainPolicy eigs_iter_gain_policy           = EigsIterGainPolicy::VARSAT;  /*!< Bitflag for when to increase the eigensolver iterations. Choose one or more: [NEVER, ITERATION, VARSAT, SATURATED, STUCK, MAXBOND, MINTRNC] */
+        inline double             eigs_tol_min                    = 1e-14 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double             eigs_tol_max                    = 1e-10 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline int                eigs_ncv                        = 0     ;                      /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
+        inline long               eigs_max_size_shift_invert      = 4096  ;                      /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
 
-        inline double   svd_truncation_min              = 1e-14 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
-        inline double   svd_truncation_max              = 1e-6  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
-        inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
-        inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
+        inline double             svd_truncation_min              = 1e-14 ;                      /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
+        inline double             svd_truncation_max              = 1e-6  ;                      /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
+        inline size_t             svd_switchsize_bdc              = 16    ;                      /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
+        inline bool               svd_save_fail                   = false ;                      /*!< Save failed SVD calculations to file */
 
-        inline auto     use_compressed_mpo              = MpoCompress::DPL;        /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
-        inline auto     use_compressed_mpo_squared      = MpoCompress::DPL;        /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
-        inline bool     use_energy_shifted_mpo          = false ;                  /*!< Prevent catastrophic cancellation in H²-E² by subtracting the current energy from the MPOs: H²-E² -> <H-E>² - <(H-E)²> (second term ~ 0). Recommended for fDMRG. */
-        inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Redefining H --> (H + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator (prevents degeneracy from mixing sectors) */
-        inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Redefining H² --> (H² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator (prevents degeneracy from mixing sectors) */
-        inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
-        inline double   variance_saturation_sensitivity = 1e-1  ;                  /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
-        inline double   entropy_saturation_sensitivity  = 1e-3  ;                  /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
-        inline double   target_subspace_error           = 1e-10 ;                  /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
-        inline size_t   max_subspace_size               = 256   ;                  /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
-        inline double   max_norm_error                  = 1e-10 ;                  /*!< Maximum norm deviation from unity during integrity checks */
+        inline auto               use_compressed_mpo              = MpoCompress::DPL;            /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
+        inline auto               use_compressed_mpo_squared      = MpoCompress::DPL;            /*!< Select the compression scheme for the virtual bond dimensions of H² mpos. Select {NONE, SVD (high compression), DPL (high precision)} */
+        inline bool               use_energy_shifted_mpo          = false ;                      /*!< Prevent catastrophic cancellation in H²-E² by subtracting the current energy from the MPOs: H²-E² -> <H-E>² - <(H-E)²> (second term ~ 0). Recommended for fDMRG. */
+        inline bool               use_parity_shifted_mpo          = true  ;                      /*!< Redefining H --> (H + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator (prevents degeneracy from mixing sectors) */
+        inline bool               use_parity_shifted_mpo_squared  = true  ;                      /*!< Redefining H² --> (H² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ) is the (flipped sign) projection operator (prevents degeneracy from mixing sectors) */
+        inline double             variance_convergence_threshold  = 1e-12 ;                      /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
+        inline double             variance_saturation_sensitivity = 1e-1  ;                      /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double             entropy_saturation_sensitivity  = 1e-3  ;                      /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double             target_subspace_error           = 1e-10 ;                      /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
+        inline size_t             max_subspace_size               = 256   ;                      /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
+        inline double             max_norm_error                  = 1e-10 ;                      /*!< Maximum norm deviation from unity during integrity checks */
 
         inline double   max_cache_gbts                  = 2.0   ;                  /*!< Maximum cache size (in GB) for temporary objects, e.g. density and transfer matrices used during subsystem entanglement entropy calculations. Increases the information lattice coverage. */
     }

@@ -365,26 +365,25 @@ int main() {
 
     {
         ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("tools::common::contraction::matrix_vector_product", [&] {
-            tools::common::contraction::matrix_vector_product(res, mps, mpo, enL, enR);
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
+            auto val = tools::common::contraction::expectation_value(mps, mpo, enL, enR);
+            ankerl::nanobench::doNotOptimizeAway(val);
         });
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_tblis", [&] {
-            matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product", [&] {
-            matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_custom", [&] {
-            matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
-            // matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
+        // ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_tblis", [&] {
+        //     matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
+        // ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product", [&] {
+        //     matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
+        // ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_custom", [&] {
+        //     matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
+        //     // matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
         // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("mps enL custom", [&] {
         //     mps_enL_custom(mps_enL, mps, enL);
         //     ankerl::nanobench::doNotOptimizeAway(mps_enL);

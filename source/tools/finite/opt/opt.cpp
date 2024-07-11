@@ -69,40 +69,40 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     break;
                 }
                 case OptAlgo::DIRECTX2: {
-                    if(meta.problem_size <= 8192) {
-                        // Find all eigenvalues within a thin band
-                        eig::solver solver_ene, solver_var;
-                        tools::log->info("effective ham...");
-                        auto        matrix_ene = tensors.get_effective_hamiltonian<real>();
-                        tools::log->info("effective ham²...");
-                        auto        matrix_var = tensors.get_effective_hamiltonian_squared<real>();
-                        auto        eigval     = initial_mps.get_energy(); // The current energy
-                        auto        eigvar     = initial_mps.get_variance();
-                        auto        eshift     = initial_mps.get_energy_shift();                    // The energy shift is our target energy for excited states
-                        auto        vl         = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
-                        auto        vu         = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
-                        tools::log->info("diagonalizing ham...");
-                        solver_ene.eig(matrix_ene.data(), matrix_ene.dimension(0), 'V', 1, 1, vl, vu, eig::Vecs::ON);
-                        tools::log->info("diagonalizing ham²...");
-                        solver_var.eig(matrix_var.data(), matrix_var.dimension(0), 'V', 1, 1, 0.0, std::sqrt(eigvar), eig::Vecs::ON);
-                        auto results_ene = std::vector<opt_mps>();
-                        auto results_var = std::vector<opt_mps>();
-                        tools::log->info("extracting results ham...");
-
-                        extract_results(tensors, initial_mps, meta, solver_ene, results_ene, false);
-                        tools::log->info("extracting results ham²...");
-                        extract_results(tensors, initial_mps, meta, solver_var, results_var, false);
-                        tools::log->info("vl {:.3e} | vu {:.3e}", vl, vu);
-                        for(size_t idx = 0; idx < results_ene.size(); ++idx)
-                            tools::log->info(" -- H¹: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_ene[idx].get_energy(), results_ene[idx].get_variance(),
-                                             results_ene[idx].get_eigs_eigval());
-                        for(size_t idx = 0; idx < results_var.size(); ++idx)
-                            tools::log->info(" -- H²: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_var[idx].get_energy(), results_var[idx].get_variance(),
-                                             results_var[idx].get_eigs_eigval());
-
-
-                        // }
-                    }
+                    // if(meta.problem_size <= 8192) {
+                    //     // Find all eigenvalues within a thin band
+                    //     eig::solver solver_ene, solver_var;
+                    //     tools::log->info("effective ham...");
+                    //     auto        matrix_ene = tensors.get_effective_hamiltonian<real>();
+                    //     tools::log->info("effective ham²...");
+                    //     auto        matrix_var = tensors.get_effective_hamiltonian_squared<real>();
+                    //     auto        eigval     = initial_mps.get_energy(); // The current energy
+                    //     auto        eigvar     = initial_mps.get_variance();
+                    //     auto        eshift     = initial_mps.get_energy_shift();                    // The energy shift is our target energy for excited states
+                    //     auto        vl         = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+                    //     auto        vu         = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+                    //     tools::log->info("diagonalizing ham...");
+                    //     solver_ene.eig(matrix_ene.data(), matrix_ene.dimension(0), 'V', 1, 1, vl, vu, eig::Vecs::ON);
+                    //     tools::log->info("diagonalizing ham²...");
+                    //     solver_var.eig(matrix_var.data(), matrix_var.dimension(0), 'V', 1, 1, 0.0, std::sqrt(eigvar), eig::Vecs::ON);
+                    //     auto results_ene = std::vector<opt_mps>();
+                    //     auto results_var = std::vector<opt_mps>();
+                    //     tools::log->info("extracting results ham...");
+                    //
+                    //     extract_results(tensors, initial_mps, meta, solver_ene, results_ene, false);
+                    //     tools::log->info("extracting results ham²...");
+                    //     extract_results(tensors, initial_mps, meta, solver_var, results_var, false);
+                    //     tools::log->info("vl {:.3e} | vu {:.3e}", vl, vu);
+                    //     for(size_t idx = 0; idx < results_ene.size(); ++idx)
+                    //         tools::log->info(" -- H¹: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_ene[idx].get_energy(), results_ene[idx].get_variance(),
+                    //                          results_ene[idx].get_eigs_eigval());
+                    //     for(size_t idx = 0; idx < results_var.size(); ++idx)
+                    //         tools::log->info(" -- H²: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_var[idx].get_energy(), results_var[idx].get_variance(),
+                    //                          results_var[idx].get_eigs_eigval());
+                    //
+                    //
+                    //     // }
+                    // }
 
                     auto metax2          = meta;
                     metax2.optCost       = OptCost::ENERGY;
@@ -128,13 +128,13 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         if(rnorm_ok and (var_ok or ene_ok)) break;
 
                         // The result is not good enough. But we could use it as initial guess
-                        // meta.optCost    = OptCost::VARIANCE;
-                        // auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
-                        // ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
-                        // rnorm_ok = result_var.get_rnorm() <= meta.eigs_tol.value_or(1e-10);
-                        // tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_rnorm(),
-                                         // result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
-                        // if(rnorm_ok and ene_ok) { result = result_var; }
+                        meta.optCost    = OptCost::VARIANCE;
+                        auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
+                        ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
+                        rnorm_ok = result_var.get_rnorm() <= result.get_rnorm();
+                        tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_rnorm(),
+                                         result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
+                        if(rnorm_ok and ene_ok) { result = result_var; }
                     }
                     break;
                 }

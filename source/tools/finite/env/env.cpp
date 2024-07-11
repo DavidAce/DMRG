@@ -260,17 +260,32 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         //      * mpsR is "B(i+1)" and belongs in envR later in the optimization step
         auto  oldS = tools::finite::measure::entanglement_entropy(mpsL.isCenter() ? mpsL.get_LC() : mpsL.get_L());
         auto &mpoR = model.get_mpo(posR);
-        mpsR.set_M(state.get_multisite_mps({posR}));       // mpsR absorbs the LC(i) bond from the left so that the SVD makes sense later
-        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M_bare(); // mpsR is going into the environment, enriched with PR.
+        mpsR.set_M(state.get_multisite_mps({posR})); // mpsR absorbs the LC(i) bond from the left so that the SVD makes sense later
+        // auto mpsR_reduced = mpsR;
+        // // Predict the size of MR_PR: If it is too big we can pre-truncate here
+        // auto mpsR_rank_max = 2*bond_lim / (1+mpoR.MPO().dimension(0));
+        // if(mpsR_reduced.get_chiL() > std::max(64l, mpsR_rank_max)) {
+        //     // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
+        //     // Note that we discard U here
+        //     auto [U, S, V] =
+        //         svd.schmidt_into_right_normalized(mpsR_reduced.get_M(), mpsR_reduced.spin_dim(), svd::config(mpsR_rank_max, svd_cfg.truncation_limit.value()));
+        //     Eigen::Tensor<cplx, 3> M_reduced = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(std::array{1, 0, 2});
+        //     mpsR_reduced.set_M(M_reduced);
+        //     tools::log->debug("Pre-truncated mpsR {} -> {}", mpsR.get_chiL(), mpsR_reduced.get_chiL());
+        // }
+
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // mpsR is going into the environment, enriched with PR.
         long                   PRdim1 = 0;
         if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
-            Eigen::Tensor<cplx, 3> PR        = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            long PR_chiL_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
+            Eigen::Tensor<cplx, 3> PR        = edges.get_env_eneR(posR).get_expansion_term(mpsR, mpoR, alpha, PR_chiL_max);
             Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
             MR_PR                            = std::move(MR_PR_tmp);
             PRdim1 += PR.dimension(1);
         }
         if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
-            Eigen::Tensor<cplx, 3> PR        = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha);
+            long PR_chiL_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
+            Eigen::Tensor<cplx, 3> PR        = edges.get_env_varR(posR).get_expansion_term(mpsR, mpoR, alpha, PR_chiL_max);
             Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
             MR_PR                            = std::move(MR_PR_tmp);
             PRdim1 += PR.dimension(1);
@@ -324,13 +339,13 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
         Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M_bare();
         long                   PLdim2 = 0;
         if(has_flag(envExpandMode, EnvExpandMode::ENE)) {
-            Eigen::Tensor<cplx, 3> PL        = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_eneL(posL).get_expansion_term(mpsL, mpoL, alpha, bond_lim);
             Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
             ML_PL                            = std::move(ML_PL_tmp);
             PLdim2 += PL.dimension(2);
         }
         if(has_flag(envExpandMode, EnvExpandMode::VAR)) {
-            Eigen::Tensor<cplx, 3> PL        = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha);
+            Eigen::Tensor<cplx, 3> PL        = edges.get_env_varL(posL).get_expansion_term(mpsL, mpoL, alpha, bond_lim);
             Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
             ML_PL                            = std::move(ML_PL_tmp);
             PLdim2 += PL.dimension(2);
@@ -375,8 +390,8 @@ std::vector<size_t> tools::finite::env::expand_environment_forward(StateFinite &
 
     if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
     if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
-    if constexpr(settings::debug or settings::debug_expansion) mpsL.assert_normalized();
-    if constexpr(settings::debug or settings::debug_expansion) mpsR.assert_normalized();
+    if constexpr(settings::debug_expansion) mpsL.assert_normalized();
+    if constexpr(settings::debug_expansion) mpsR.assert_normalized();
     state.clear_cache();
     state.clear_measurements();
     env::rebuild_edges(state, model, edges);

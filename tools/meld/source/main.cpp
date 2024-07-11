@@ -217,6 +217,8 @@ int main(int argc, char *argv[]) {
                 keys.tables.emplace_back(TableKey(algo, state, "", "renyi_entropies_inf"));
                 keys.tables.emplace_back(TableKey(algo, state, "", "truncation_errors"));
                 keys.tables.emplace_back(TableKey(algo, state, "", "opdm_spectrum"));
+                keys.tables.emplace_back(TableKey(algo, state, "", "information_per_scale"));
+                keys.tables.emplace_back(TableKey(algo, state, "", "information_center_of_mass"));
 
                 keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "measurements"));
                 keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "bond_dimensions"));
@@ -225,6 +227,8 @@ int main(int argc, char *argv[]) {
                 keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "memory"));
                 keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "status"));
                 keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "opdm_spectrum"));
+                keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "information_per_scale"));
+                keys.rbdses.emplace_back(RbdsKey(algo, state, "rbds", "information_center_of_mass"));
 
                 keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "measurements"));
                 keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "bond_dimensions"));
@@ -233,6 +237,8 @@ int main(int argc, char *argv[]) {
                 keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "memory"));
                 keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "status"));
                 keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "opdm_spectrum"));
+                keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "information_per_scale"));
+                keys.rteses.emplace_back(RtesKey(algo, state, "rtes", "information_center_of_mass"));
 
                 keys.dsets.emplace_back(DsetKey(algo, state, "", "opdm", Size::FIX, 2));
                 keys.dsets.emplace_back(DsetKey(algo, state, "", "correlation_matrix_sx", Size::FIX, 2));
@@ -242,8 +248,9 @@ int main(int argc, char *argv[]) {
                 keys.dsets.emplace_back(DsetKey(algo, state, "", "expectation_values_sy", Size::FIX, 1));
                 keys.dsets.emplace_back(DsetKey(algo, state, "", "expectation_values_sz", Size::FIX, 1));
                 keys.dsets.emplace_back(DsetKey(algo, state, "", "subsystem_entanglement_entropies", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey(algo, state, "rtes", "subsystem_entanglement_entropies", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey(algo, state, "rbds", "subsystem_entanglement_entropies", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey(algo, state, "", "information_lattice", Size::FIX, 2));
+                // keys.dsets.emplace_back(DsetKey(algo, state, "rtes", "subsystem_entanglement_entropies", Size::FIX, 2));
+                // keys.dsets.emplace_back(DsetKey(algo, state, "rbds", "subsystem_entanglement_entropies", Size::FIX, 2));
 
                 break;
             }

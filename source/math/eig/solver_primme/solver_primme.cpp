@@ -175,9 +175,8 @@ std::string getLogMessage(struct primme_params *primme, [[maybe_unused]] int *ba
         }
     };
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | Δλ {:7.4e}", std::abs(get_eigval(0) - get_eigval(1))) : "";
-    auto        eigidx   = numLocked != nullptr ? *numLocked : 0;
-    return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:19.16f}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
-                       "it/s | {:8.2e} mv/s | {} | {}",
+    // auto        eigidx   = numLocked != nullptr ? *numLocked : 0;
+    return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:19.16f}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s | {} | {}",
                        primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, solver.result.meta.last_basis_eval, msg_diff,
                        solver.result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
                        static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::TypeToString(solver.config.type),

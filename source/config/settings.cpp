@@ -213,11 +213,13 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
 
     dmrg_config.load_parameter("precision::eig_max_size"                      , precision::eig_max_size);
+    dmrg_config.load_parameter("precision::eigs_iter_min"                     , precision::eigs_iter_min);
     dmrg_config.load_parameter("precision::eigs_iter_max"                     , precision::eigs_iter_max);
+    dmrg_config.load_parameter("precision::eigs_iter_gain"                    , precision::eigs_iter_gain);
+    dmrg_config.load_parameter("precision::eigs_iter_gain_policy"             , precision::eigs_iter_gain_policy);
     dmrg_config.load_parameter("precision::eigs_tol_min"                      , precision::eigs_tol_min);
     dmrg_config.load_parameter("precision::eigs_tol_max"                      , precision::eigs_tol_max);
     dmrg_config.load_parameter("precision::eigs_ncv"                          , precision::eigs_ncv);
-    dmrg_config.load_parameter("precision::eigs_iter_gain"                    , precision::eigs_iter_gain);
     dmrg_config.load_parameter("precision::eigs_max_size_shift_invert"        , precision::eigs_max_size_shift_invert);
     dmrg_config.load_parameter("precision::svd_truncation_min"                , precision::svd_truncation_min);
     dmrg_config.load_parameter("precision::svd_truncation_max"                , precision::svd_truncation_max);

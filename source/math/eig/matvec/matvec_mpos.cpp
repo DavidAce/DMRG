@@ -3,6 +3,7 @@
 #include "../log.h"
 #include "general/sfinae.h"
 #include "math/eig/solver.h"
+#include "math/linalg/tensor.h"
 #include "math/svd.h"
 #include "math/tenx.h"
 #include "tensors/edges/EdgesFinite.h"
@@ -65,7 +66,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     size_mps  = spin_dim * envL.dimension(0) * envR.dimension(0);
 
     // If we have 5 or fewer mpos, it is faster to just merge them once and apply them in one contraction.
-    if(mpos.size() <= 2) {
+    if(mpos.size() <= 5) {
         constexpr auto contract_idx    = tenx::idx({1}, {0});
         constexpr auto shuffle_idx     = tenx::array6{0, 3, 1, 4, 2, 5};
         auto          &threads         = tenx::threads::get();
@@ -79,11 +80,30 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
             contracted_mpos            = std::move(temp);
         }
         mpos = {contracted_mpos}; // Replace by a single pre-contracted mpo
+//         {                         // A quick experiment
+// #pragma message "Remove a quick experiment with matvec_mpos"
+//             auto                svd           = svd::solver();
+//             auto                dim4          = contracted_mpos.dimensions();
+//             auto                dim2          = tenx::array2{dim4[2] * dim4[0], dim4[3] * dim4[1]};
+//             Eigen::Tensor<T, 4> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 0, 3, 1});
+//             auto [U, S, V]                    = svd.schmidt(shuffled_mpos, svd::config(dim2[0], 1e-16));
+//             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
+//             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
+//         }
+//         { // A quick experiment
+// #pragma message "Remove a quick experiment with matvec_mpos"
+//             auto                svd           = svd::solver();
+//             auto                dim4          = contracted_mpos.dimensions();
+//             auto                dim2          = tenx::array2{dim4[2],  dim4[0]* dim4[3] * dim4[1]};
+//             Eigen::Tensor<T, 2> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 3, 0, 1}).reshape(dim2);
+//             auto [U, S, V]                    = svd.decompose(shuffled_mpos, svd::config(dim2[0], 1e-16));
+//             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
+//             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
+//         }
+
     } else {
         // We pre-shuffle each mpo to speed up the sequential contraction
-        if(mpos.size() >= 2) {
-            for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
-        }
+        for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
     }
 
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
@@ -112,45 +132,43 @@ void MatVecMPOS<T>::FactorOP() {
     throw std::runtime_error("template<typename T> void MatVecMPOS<T>::FactorOP(): Not implemented");
 }
 
-template<typename T>
-using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
-template<typename T>
-using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
+// template<typename T>
+// using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
+// template<typename T>
+// using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
 
-template<typename ea_type, typename eb_type, typename ec_type>
-void contract_tblis_local(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-                          const tblis::label_vector &lb, const tblis::label_vector &lc, const tblis::tblis_config_s *tblis_config) {
-    const auto &ea_ref = static_cast<const ea_type &>(ea);
-    const auto &eb_ref = static_cast<const eb_type &>(eb);
-    auto       &ec_ref = static_cast<ec_type &>(ec);
-
-    tblis::len_vector da, db, dc;
-    da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
-    db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
-    dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
-
-    auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-    auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-    auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-    typename ea_type::Scalar alpha = 1.0;
-    typename ec_type::Scalar beta  = 0.0;
-
-    tblis::tblis_tensor A_s(alpha, ta);
-    tblis::tblis_tensor B_s(tb);
-    tblis::tblis_tensor C_s(beta, tc);
-
-    tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-}
-std::string get_tblis_arch_local() {
-#if defined(__GNUC__)
-    if(__builtin_cpu_supports("x86-64-v4")) return "skx";
-    if(__builtin_cpu_is("znver3") or __builtin_cpu_is("znver2") or __builtin_cpu_is("znver1")) return "zen";
-    if(__builtin_cpu_supports("x86-64-v3")) return "haswell";
-#endif
-    return "haswell";
-}
-
-
+// template<typename ea_type, typename eb_type, typename ec_type>
+// void contract_tblis_local(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
+//                           const tblis::label_vector &lb, const tblis::label_vector &lc, const tblis::tblis_config_s *tblis_config) {
+//     const auto &ea_ref = static_cast<const ea_type &>(ea);
+//     const auto &eb_ref = static_cast<const eb_type &>(eb);
+//     auto       &ec_ref = static_cast<ec_type &>(ec);
+//
+//     tblis::len_vector da, db, dc;
+//     da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
+//     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
+//     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
+//
+//     auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
+//     auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
+//     auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
+//     typename ea_type::Scalar alpha = 1.0;
+//     typename ec_type::Scalar beta  = 0.0;
+//
+//     tblis::tblis_tensor A_s(alpha, ta);
+//     tblis::tblis_tensor B_s(tb);
+//     tblis::tblis_tensor C_s(beta, tc);
+//
+//     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
+// }
+// std::string get_tblis_arch_local() {
+// #if defined(__GNUC__)
+//     if(__builtin_cpu_supports("x86-64-v4")) return "skx";
+//     if(__builtin_cpu_is("znver3") or __builtin_cpu_is("znver2") or __builtin_cpu_is("znver1")) return "zen";
+//     if(__builtin_cpu_supports("x86-64-v3")) return "haswell";
+// #endif
+//     return "haswell";
+// }
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {

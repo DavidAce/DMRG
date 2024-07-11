@@ -83,12 +83,14 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
     if(not at_edge) {
         long max_pos = initial_position;
         long min_pos = initial_position;
+        long max_off = safe_cast<long>(max_sites) - 1;
         if(direction > 0) {
-            max_pos = std::clamp<long>(initial_position + safe_cast<long>(max_sites), initial_position, length - 1);
-            min_pos = initial_position;
+            max_pos = std::clamp<long>(initial_position + max_off, initial_position, length - 1);
+            min_pos = std::clamp<long>(initial_position, 0l, length - 1);
         } else {
-            max_pos = std::clamp<long>(initial_position + 1, initial_position, length - 1);
-            min_pos = std::clamp<long>(max_pos - safe_cast<long>(max_sites) + 1, 0, initial_position);
+            // max_pos = std::clamp<long>(initial_position + 1, initial_position, length - 1);
+            max_pos = std::clamp<long>(initial_position, 0l, length - 1);
+            min_pos = std::clamp<long>(max_pos - max_off, 0l, max_pos);
         }
 
         auto range = num::range<size_t>(min_pos, max_pos + 1); // +1 to include last position

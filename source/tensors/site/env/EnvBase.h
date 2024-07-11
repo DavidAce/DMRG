@@ -1,7 +1,7 @@
 #pragma once
 
-#include <complex>
 #include "math/tenx/fwd_decl.h"
+#include <complex>
 #include <memory>
 #include <optional>
 
@@ -15,7 +15,8 @@ class MpoSite;
 
 class EnvBase {
     public:
-    using cplx = std::complex<double>;
+    using real = double;
+    using cplx = std::complex<real>;
 
     protected:
     void build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo);
@@ -33,11 +34,11 @@ class EnvBase {
     mutable std::optional<std::size_t>      unique_id_env; // Unique identifiers of the neighboring site which are used to build this block
 
     public:
-    EnvBase();
-    ~EnvBase();                                   // Read comment on implementation
-    EnvBase(EnvBase &&other) noexcept;            // default move ctor
+             EnvBase();
+    ~        EnvBase();                           // Read comment on implementation
+             EnvBase(EnvBase &&other) noexcept;   // default move ctor
     EnvBase &operator=(EnvBase &&other) noexcept; // default move assign
-    EnvBase(const EnvBase &other);                // copy ctor
+             EnvBase(const EnvBase &other);       // copy ctor
     EnvBase &operator=(const EnvBase &other);     // copy assign
 
     explicit EnvBase(size_t position_, std::string side_, std::string tag_);
@@ -66,5 +67,6 @@ class EnvBase {
     std::optional<std::size_t> get_unique_id_mps() const;
     std::optional<std::size_t> get_unique_id_mpo() const;
 
-    Eigen::Tensor<cplx, 3> get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha = 0) const;
+    template<typename T = cplx>
+    Eigen::Tensor<T, 3>    get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha = 0, long rank_max = -1) const;
 };

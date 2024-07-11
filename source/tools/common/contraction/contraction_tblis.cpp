@@ -163,10 +163,14 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
         #endif
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
-            Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
+            // Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
+            Eigen::Tensor<Scalar, 4> mpsenvLmpo_alt(mpo.dimension(1), mpo.dimension(3), mps.dimension(2), envL.dimension(1));
+
             contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd", tblis_config);
-            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl", tblis_config);
-            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk", tblis_config);
+            // contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl", tblis_config);
+            // contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk", tblis_config);
+            contract_tblis(mpo, mpsenvL, mpsenvLmpo_alt, "qhri", "rgjq", "higj", tblis_config);
+            contract_tblis(mpsenvLmpo_alt, envR, res, "higj", "gkh", "ijk", tblis_config);
         }
         else{
             Eigen::Tensor<Scalar, 4> mpsenvR(mps.dimension(0), mps.dimension(1), envR.dimension(1), envR.dimension(2));

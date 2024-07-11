@@ -25,12 +25,14 @@
 AlgorithmFinite::AlgorithmFinite(OptRitz opt_ritz, AlgorithmType algo_type) : AlgorithmBase(opt_ritz, algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
+    dmrg_degeneracy_score.resize(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
 }
 
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz, AlgorithmType algo_type)
     : AlgorithmBase(std::move(h5ppFile_), opt_ritz, algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
+    dmrg_degeneracy_score.resize(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
 }
 
 // We need to make a destructor manually for the enclosing class "ModelFinite"
@@ -196,6 +198,27 @@ void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
 }
 
+int AlgorithmFinite::get_eigs_iter_max() const {
+    using namespace settings::precision;
+    auto iter_min = std::min(safe_cast<double>(eigs_iter_min), safe_cast<double>(eigs_iter_max));
+    auto iter_max = std::max(safe_cast<double>(eigs_iter_min), safe_cast<double>(eigs_iter_max));
+    if(eigs_iter_gain_policy == EigsIterGainPolicy::NEVER) return safe_cast<int>(iter_min);
+    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::MAXBOND) and !status.bond_limit_has_reached_max) return safe_cast<int>(iter_min);
+    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::MINTRNC) and !status.trnc_limit_has_reached_min) return safe_cast<int>(iter_min);
+    bool   gain_iteration   = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::ITERATION) and status.iter > 0;
+    bool   gain_varsat      = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::VARSAT) and status.variance_mpo_saturated_for > 0;
+    bool   gain_saturated   = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::SATURATED) and status.algorithm_saturated_for > 0;
+    bool   gain_stuck       = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::STUCK) and status.algorithm_has_stuck_for > 0;
+    size_t iteration        = gain_iteration ? status.iter : 0;
+    size_t iter_varsat      = gain_varsat ? status.variance_mpo_saturated_for : 0;
+    size_t iter_saturated   = gain_saturated ? status.algorithm_saturated_for : 0;
+    size_t iter_stuck       = gain_stuck ? status.algorithm_has_stuck_for : 0;
+    size_t iter_no_progress = std::max({iteration, iter_varsat, iter_saturated, iter_stuck});
+    double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(eigs_iter_gain, iter_no_progress)));
+    double iter_extra       = iter_min * iter_multiplier; // Run more when stuck
+    return safe_cast<int>(std::min<double>(iter_extra, static_cast<double>(eigs_iter_max)));
+}
+
 AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     tools::log->trace("get_opt_meta: configuring optimization step");
     OptMeta m1;
@@ -214,6 +237,9 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
     bool algo_stuck_long = status.algorithm_has_stuck_for + 3 ==
                            std::clamp(status.algorithm_has_stuck_for + 3, settings::strategy::iter_max_stuck, settings::strategy::iter_max_stuck + 1);
+    // When nearly degenerate we prefer many iterations over many sites
+    auto position       = static_cast<size_t>(std::max<long>(0l, tensors.get_position<long>()));
+    bool has_degeneracy = dmrg_degeneracy_score[position] >= 0.5 * settings::xdmrg::try_shifting_when_degen;
 
     // Copy settings
     m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::dmrg_min_blocksize);
@@ -228,16 +254,13 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // Set up the subspace (environent) expansion
     m1.expand_side = EnvExpandSide::FORWARD;
     // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
-    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
+#pragma message "Revert the envexpandmode to var"
     // if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
     //     if(status.algo_type == AlgorithmType::xDMRG) m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
     // }
     // Set up a multiplier for number of iterations
-    size_t iter_no_progress = std::max({status.algorithm_has_stuck_for, status.algorithm_saturated_for});
-    double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(settings::precision::eigs_iter_gain, iter_no_progress)));
-    double iter_max_extra   = safe_cast<double>(settings::precision::eigs_iter_max) * iter_multiplier; // Run more when stuck
-    using iter_max_type     = decltype(m1.eigs_iter_max)::value_type;
-    m1.eigs_iter_max        = safe_cast<iter_max_type>(std::min<double>(iter_max_extra, std::numeric_limits<iter_max_type>::max()));
+    m1.eigs_iter_max = get_eigs_iter_max();
 
     // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
     m1.eigs_tol = std::clamp(var_latest * 1e-1, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
@@ -254,30 +277,43 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         m1.max_sites        = settings::strategy::dmrg_max_blocksize;
     } else {
         m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
-        m1.max_sites        = dmrg_blocksize;
+        m1.max_sites        = has_degeneracy ? 1 : dmrg_blocksize; // When nearly degenerate we prefer many iterations over many sites
     }
-    if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck) {
-        if(status.algorithm_has_stuck_for > 0 and not var_isconverged and var_latest < 1e-6) {
+
+    if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck and tensors.get_position<long>() >= 0) {
+        if(has_degeneracy and not var_isconverged and var_latest < 1e-7) {
             // Try this desperate measure for one iteration...
-            m1.max_sites        = tensors.get_length<size_t>();
-            m1.max_problem_size = 2 << (m1.max_sites - 1);
-            m1.optAlgo          = OptAlgo::DIRECTX2;
+            // m1.max_sites        = 1; // tensors.get_length<size_t>();
+            // m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
+            ; // 2 << (m1.max_sites - 1);
+            m1.optAlgo = OptAlgo::DIRECTX2;
+            // m1.eigs_iter_max = 5000000;
         }
     }
+
     // Set up the problem size here
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
+
+    bool full_system_optimization = m1.chosen_sites.size() == tensors.get_length<size_t>();
 
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
     if(status.algo_type == AlgorithmType::xDMRG and                                   //
        status.algorithm_has_stuck_for > 1 and                                         //
        status.variance_mpo_saturated_for > settings::strategy::iter_max_saturated and //
+       status.trnc_limit_has_reached_min and                                          //
+       status.bond_limit_has_reached_max and                                          //
        settings::xdmrg::try_shifting_when_degen > 0 and                               //
-       m1.problem_size > settings::precision::eig_max_size                            //
-    ) {
+       m1.problem_size > settings::precision::eig_max_size and                        //
+       not full_system_optimization)                                                  //
+    {
         m1.eigs_nev = 2;
+    }
+    if(full_system_optimization and status.algo_type == AlgorithmType::xDMRG and var_latest < 1e-8) {
+        m1.optCost = OptCost::ENERGY;
+        m1.optRitz = OptRitz::SM;
     }
 
     // if(m1.optSolver == OptSolver::EIGS and m1.chosen_sites.size() == 1 and tensors.state->get_direction() < 0) {
@@ -304,7 +340,7 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide
     if(alpha.value() <= 0) return;
     auto var_before_exp = tools::finite::measure::energy_variance(tensors);
     if(not svd_cfg.has_value()) {
-        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 2 : status.bond_lim;
+        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 5l / 4l : status.bond_lim;
         auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
@@ -728,6 +764,14 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         return;
     }
+    if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MAXBOND) and !status.bond_limit_has_reached_max) {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        return;
+    }
+    if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MINTRNC) and !status.trnc_limit_has_reached_min) {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        return;
+    }
     if(not tensors.position_is_inward_edge()) return;
     /*! Update the number of sites used in dmrg updates.
      *  We try to match the blocksize to the the "information typical scale", obtained from the information lattice.
@@ -774,7 +818,7 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
         msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
     } else if(info_default or info_varsat or info_stuck) {
-        auto   ip        = InfoPolicy{.bits_max_error = -1e-2, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = std::max(status.trnc_lim, 1e-6)};
+        auto   ip        = InfoPolicy{.bits_max_error = -0.5, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = std::max(status.trnc_lim, 1e-6)};
         double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
         double blocksize = std::round(icom);
         if(status.algorithm_has_stuck_for > 0) {
@@ -1374,8 +1418,7 @@ void          AlgorithmFinite::print_status() {
         }
         report += fmt::format("opt:[{}|{}|{}] ", short_optcost, short_optalgo, enum2sv(last_optsolver.value()));
     }
-    std::string stat;
-    if(status.algorithm_saturated_for > 0) { stat = fmt::format("sat:{:<1}", status.algorithm_saturated_for); }
+    std::string stat = fmt::format("sat:{:<1}", status.algorithm_saturated_for);
     if(status.algorithm_has_stuck_for > 0) { stat = fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for); }
     if(status.algorithm_converged_for > 0) { stat = fmt::format("con:{:<1} ", status.algorithm_converged_for); }
     report += stat;

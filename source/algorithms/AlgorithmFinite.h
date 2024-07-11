@@ -22,6 +22,9 @@ class AlgorithmFinite : public AlgorithmBase {
     long                               dmrg_blocksize        = 1; // Number of sites in a DMRG step. This is updated by the information per scale mass center
     size_t                             iter_last_bond_reduce = 0;
     std::optional<std::vector<size_t>> sites_mps, sites_mpo; // Used when moving sites
+    protected:
+    std::vector<double> dmrg_degeneracy_score; // Measures the convergence difficulty at each site
+    int                 get_eigs_iter_max() const;
 
     public:
     // Inherit the constructor of class_algorithm_base

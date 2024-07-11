@@ -123,7 +123,7 @@ namespace tools::finite::opt {
         solver.config.tol             = meta.eigs_tol.value_or(settings::precision::eigs_tol_min);
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.primme_method   = eig::stringToMethod(meta.primme_method.value_or("PRIMME_DEFAULT_MIN_MATVECS"));
+        solver.config.primme_method   = eig::stringToMethod(meta.primme_method.value_or("PRIMME_DYNAMIC"));
         solver.config.maxIter         = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
         solver.config.maxTime         = 2 * 60 * 60;
         solver.config.maxNev          = meta.eigs_nev.value_or(1);
@@ -185,16 +185,23 @@ namespace tools::finite::opt {
         }
 
         auto comparator = [&meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
-            auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
-            if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
+            // auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
+            // if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
+            auto lhs_abs_energy = std::abs(lhs.get_energy()) + std::sqrt(std::abs(lhs.get_variance()));
+            auto rhs_abs_energy = std::abs(rhs.get_energy()) + std::sqrt(std::abs(rhs.get_variance()));
+            auto lhs_min_energy = lhs.get_energy() + std::sqrt(std::abs(lhs.get_variance()));
+            auto rhs_min_energy = rhs.get_energy() + std::sqrt(std::abs(rhs.get_variance()));
+            auto lhs_max_energy = lhs.get_energy() - std::sqrt(std::abs(lhs.get_variance()));
+            auto rhs_max_energy = rhs.get_energy() - std::sqrt(std::abs(rhs.get_variance()));
             switch(meta.optRitz) {
-                case OptRitz::SR: return lhs.get_energy() < rhs.get_energy();
-                case OptRitz::LR: return lhs.get_energy() > rhs.get_energy();
+                case OptRitz::SR: return lhs_min_energy < rhs_min_energy;
+                case OptRitz::LR: return lhs_max_energy > rhs_max_energy;
                 case OptRitz::SM: {
+
                     // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
-                    auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
-                    auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
-                    return diff_energy_lhs < diff_energy_rhs;
+                    // auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
+                    // auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
+                    return lhs_abs_energy < rhs_abs_energy;
                 }
                 default: throw except::runtime_error("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz));
             }

@@ -131,7 +131,7 @@ struct PathId {
     [[nodiscard]] std::string create_target_path(std::string_view tablename, size_t index) const {
         /*
          * When collecting a "KeyT" kind of table with tablename = <name>:
-         *      - the source paths are at <base>/<algo>/<state>/<subgroup>/<name>
+         *      - the source paths are at <base>/<algo>/<state>/<classtag>/indexpfx_index/<name>
          *      - we want all entries of event type KeyT::eventkey in each <name>
          *      - we collect the contribution from each realization to each <KeyT::indexpfx><index> separately
          *      - the target path <base>/<algo>/<state>/<KeyT::classtag>/<KeyT::indexpfx><index>/<name>, collects all the contributions

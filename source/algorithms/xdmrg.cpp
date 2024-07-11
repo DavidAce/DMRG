@@ -32,7 +32,6 @@
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), settings::xdmrg::ritz, AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
     tensors.state->set_name("state_emid");
-    convrates.resize(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
 }
 
 void xdmrg::resume() {
@@ -308,8 +307,8 @@ void xdmrg::run_algorithm() {
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
         update_dmrg_blocksize();         // Updates the number sites used in dmrg steps using the information typical scale
         try_retargeting();
-        try_projection();   // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
-        try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+        try_projection(); // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
+        // try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
 
         // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);
         // update_environment_expansion_alpha();
@@ -381,7 +380,7 @@ void xdmrg::update_state() {
         auto gamma = (std::sqrt(kappa) - 1) / (std::sqrt(kappa) + 1);
         convr      = std::log(0.5) / std::log(gamma);
     }
-    for(auto site : opt_state.get_sites()) convrates.at(site) = convr;
+    for(auto site : opt_state.get_sites()) dmrg_degeneracy_score.at(site) = convr;
 
     tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optCost), enum2sv(opt_meta.optSolver),
                       flag2str(opt_meta.optExit), var_latest, opt_state.get_variance(), opt_state.get_relchange() * 100);
@@ -508,16 +507,16 @@ void xdmrg::try_retargeting() {
     if(not tensors.position_is_inward_edge()) return;
     if(status.algorithm_has_stuck_for == 0) return;
     if(settings::xdmrg::try_shifting_when_degen <= 0) return;
-    auto convmax = num::nanmax(convrates);
+    auto convmax = num::nanmax(dmrg_degeneracy_score);
     if(std::isnan(convmax)) return;
-    tools::log->info("convergence difficulty score: {:.1f} (limit {:.1f}) | {::.1f}", convmax, settings::xdmrg::try_shifting_when_degen, convrates);
+    tools::log->info("convergence difficulty score: {:.1f} (limit {:.1f}) | {::.1f}", convmax, settings::xdmrg::try_shifting_when_degen, dmrg_degeneracy_score);
     if(convmax > settings::xdmrg::try_shifting_when_degen) {
         auto L                                 = tensors.get_length<double>();
         auto mu                                = 0.0;
         auto sig                               = tensors.model->get_energy_upper_bound() / 100.0;
         settings::xdmrg::energy_spectrum_shift = rnd::normal(mu, sig);
         status.energy_tgt                      = settings::xdmrg::energy_spectrum_shift;
-        convrates                              = std::vector<double>(L, std::numeric_limits<double>::quiet_NaN());
+        dmrg_degeneracy_score                         = std::vector(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
         tools::finite::mps::normalize_state(*tensors.state, svd::config(settings::xdmrg::bond_min, status.trnc_max), NormPolicy::ALWAYS);
         clear_convergence_status();
         set_energy_shift_mpo();

@@ -240,25 +240,53 @@ namespace tools::common::h5 {
 
     hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
         // Get the table index where we should append the current entry
-        auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
-        auto dims = h5pp::hdf5::getDimensions(dset);
+        auto dset   = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
+        auto dims   = h5pp::hdf5::getDimensions(dset);
+        auto offset = dims.back();
 
-        // Some types of events we should always append. These do not increase the iteration number.
-        if(sinfo.storage_event == StorageEvent::RBDS_STEP) return dims.front();
-        if(sinfo.storage_event == StorageEvent::RTES_STEP) return dims.front();
-
-        bool replace = has_flag(sinfo.get_table_storage_policy(table_path), StoragePolicy::REPLACE);
-        if(replace) {
-            // Try to find the last occurrence of this event type, to replace it
-            auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
-            auto offset = events.size(); // This should point one past the latest table entry, so that we append
-            for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
-                if(evn == sinfo.storage_event) {
-                    offset = off;
-                    break;
+        // Some types of events are not indexed by iteration number
+        if(sinfo.storage_event == StorageEvent::RBDS_STEP) {
+            auto status_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "status");
+            if(h5file.linkExists(status_path)) {
+                auto events = h5file.readTableField<std::vector<StorageEvent>>(status_path, {"event"}, h5pp::TableSelection::ALL);
+                auto bonds  = h5file.readTableField<std::vector<long>>(status_path, {"bond_lim"}, h5pp::TableSelection::ALL);
+                for(size_t idx = 0; idx < std::min(events.size(), bonds.size()); ++idx) {
+                    auto event    = events[idx];
+                    auto bond_lim = bonds[idx];
+                    if(event == sinfo.storage_event and sinfo.bond_lim == bond_lim) offset = idx;
                 }
             }
             return offset;
+        }
+        if(sinfo.storage_event == StorageEvent::RTES_STEP) {
+            auto status_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "status");
+            if(h5file.linkExists(status_path)) {
+                auto events = h5file.readTableField<std::vector<StorageEvent>>(status_path, {"event"}, h5pp::TableSelection::ALL);
+                auto truncs = h5file.readTableField<std::vector<double>>(status_path, {"trnc_lim"}, h5pp::TableSelection::ALL);
+                for(size_t idx = 0; idx < std::min(events.size(), truncs.size()); ++idx) {
+                    auto event    = events[idx];
+                    auto trnc_lim = truncs[idx];
+                    if(event == sinfo.storage_event and std::abs(sinfo.trnc_lim - trnc_lim) < 1e-12) offset = idx; // Found an existing record
+                }
+            }
+            return offset;
+        }
+        auto istable = h5file.readAttribute<std::optional<std::string>>(table_path, "CLASS") == "TABLE";
+        if(!istable) return offset;
+        bool replace = has_flag(sinfo.get_table_storage_policy(table_path), StoragePolicy::REPLACE);
+        if(replace) {
+            // Try to find the last occurrence of this event type, to replace it
+            if(h5file.fieldExists(table_path, "event")) {
+                auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
+                offset      = events.size(); // This should point one past the latest table entry, so that we append
+                for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
+                    if(evn == sinfo.storage_event) {
+                        offset = off;
+                        break;
+                    }
+                }
+                return offset;
+            }
         } else {
             // In this case we are saving everything, unless it is a duplicate
             if(sinfo.iter > attrs.iter) {
@@ -266,19 +294,22 @@ namespace tools::common::h5 {
                 return dims.front();
             } else {
                 // The current iter may already have been written, so we should compare with existing
-                auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
-                auto iters  = h5file.readTableField<std::vector<uint64_t>>(table_path, "iter", h5pp::TableSelection::ALL);
-                auto offset = events.size(); // This should point one past the latest table entry, so that we append
-                for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
-                    auto iter = iters.at(off);
-                    if(evn == sinfo.storage_event and iter == sinfo.iter) {
-                        // We have a match. We can overwrite this entry!
-                        offset = off;
-                        break;
+                if(h5file.fieldExists(table_path, "event") and h5file.fieldExists(table_path, "iter")) {
+                    auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
+                    auto iters  = h5file.readTableField<std::vector<uint64_t>>(table_path, "iter", h5pp::TableSelection::ALL);
+                    offset      = events.size(); // This should point one past the latest table entry, so that we append
+                    for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
+                        auto iter = iters.at(off);
+                        if(evn == sinfo.storage_event and iter == sinfo.iter) {
+                            // We have a match. We can overwrite this entry!
+                            offset = off;
+                            break;
+                        }
                     }
+                    return offset;
                 }
-                return offset;
             }
         }
+        return offset;
     }
 }
