@@ -511,12 +511,11 @@ void xdmrg::try_retargeting() {
     if(std::isnan(convmax)) return;
     tools::log->info("convergence difficulty score: {:.1f} (limit {:.1f}) | {::.1f}", convmax, settings::xdmrg::try_shifting_when_degen, dmrg_degeneracy_score);
     if(convmax > settings::xdmrg::try_shifting_when_degen) {
-        auto L                                 = tensors.get_length<double>();
         auto mu                                = 0.0;
         auto sig                               = tensors.model->get_energy_upper_bound() / 100.0;
         settings::xdmrg::energy_spectrum_shift = rnd::normal(mu, sig);
         status.energy_tgt                      = settings::xdmrg::energy_spectrum_shift;
-        dmrg_degeneracy_score                         = std::vector(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
+        dmrg_degeneracy_score                  = std::vector(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
         tools::finite::mps::normalize_state(*tensors.state, svd::config(settings::xdmrg::bond_min, status.trnc_max), NormPolicy::ALWAYS);
         clear_convergence_status();
         set_energy_shift_mpo();

@@ -49,7 +49,7 @@ config_ranges = {
     # "model::ising_majorana::delta": ['-6.00', '-5.00', '-4.00', '-3.00', '-2.00', '+2.00', '+3.00', '+4.00', '+5.00', '+6.00'],
     "xdmrg::energy_spectrum_shift": ['1e-6'],
     "xdmrg::iter_min": ['1'],
-    "xdmrg::iter_max": ['200'],
+    "xdmrg::iter_max": ['500'],
     "xdmrg::bond_max": ['8192'],
     "xdmrg::bond_init": ['32'],
     "xdmrg::print_freq": ['1'],

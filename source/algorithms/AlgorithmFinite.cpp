@@ -216,7 +216,7 @@ int AlgorithmFinite::get_eigs_iter_max() const {
     size_t iter_no_progress = std::max({iteration, iter_varsat, iter_saturated, iter_stuck});
     double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(eigs_iter_gain, iter_no_progress)));
     double iter_extra       = iter_min * iter_multiplier; // Run more when stuck
-    return safe_cast<int>(std::min<double>(iter_extra, static_cast<double>(eigs_iter_max)));
+    return safe_cast<int>(std::min(iter_extra, iter_max));
 }
 
 AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
