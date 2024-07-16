@@ -270,7 +270,7 @@ struct SeeProgress {
     double          progress   = 0;
 };
 
-SeeProgress check_see_progress(const Eigen::ArrayXXd &see, LogPolicy log_policy = LogPolicy::SILENT) {
+SeeProgress check_see_progress(const Eigen::ArrayXXd &see, LogPolicy log_policy = LogPolicy::SILENT, spdlog::level::level_enum lvl = spdlog::level::debug) {
     // Check the information lattice
     auto sp       = SeeProgress();
     auto L        = static_cast<double>(see.rows());
@@ -283,13 +283,13 @@ SeeProgress check_see_progress(const Eigen::ArrayXXd &see, LogPolicy log_policy 
     sp.progress =
         (see.isNaN()).select(0.0, Eigen::ArrayXXd::Ones(see.rows(), see.cols())).sum() / (L * (L + 1.0) / 2.0); // Found entries in the top left triangle
     if(log_policy == LogPolicy::VERBOSE or settings::debug) {
-        tools::log->debug("see: \n{}\n", linalg::matrix::to_string(see, 10));
-        tools::log->debug("info: \n{}\n", linalg::matrix::to_string(sp.info, 6));
-        tools::log->debug("il: \n{}\n", linalg::matrix::to_string(tools::finite::measure::information_per_scale(sp.info), 6));
+        tools::log->log(lvl, "see: \n{}\n", linalg::matrix::to_string(see, 10));
+        tools::log->log(lvl, "info: \n{}\n", linalg::matrix::to_string(sp.info, 6));
+        tools::log->log(lvl, "il: \n{}\n", linalg::matrix::to_string(tools::finite::measure::information_per_scale(sp.info), 6));
     }
     if(log_policy != LogPolicy::SILENT) {
-        tools::log->info(" -- progress {:<6.2f}% bits {:<20.16f}/{} err {:.2e} icom {:.16f} neg {:.1e} mem[rss {:<.1f} hwm {:<.1f}]MB", sp.progress * 100,
-                         sp.bits_found, sp.bits_total, sp.bits_error, sp.icom, sp.bits_minus, debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
+        tools::log->log(lvl, " -- progress {:<6.2f}% bits {:<20.16f}/{} err {:.2e} icom {:.16f} neg {:.1e} mem[rss {:<.1f} hwm {:<.1f}]MB", sp.progress * 100,
+                        sp.bits_found, sp.bits_total, sp.bits_error, sp.icom, sp.bits_minus, debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
     }
     return sp;
 }
@@ -338,7 +338,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
         see(ext - 1, 0) = bee[idx];
         if(len - ext >= 1) see(len - ext - 1, ext) = bee[idx];
     }
-    check_see_progress(see, LogPolicy::DEBUG);
+    check_see_progress(see, LogPolicy::DEBUG, spdlog::level::debug);
 
     // Next we take small subsystems
     // We can take subsystems on the left side first and discard their caches before moving onto those on the right side.
@@ -518,6 +518,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies_log2(co
         state.measurements.see_time                         = t_see->get_last_interval();
         state.measurements.subsystem_entanglement_entropies = see;
     }
+    check_see_progress(see, LogPolicy::DEBUG, spdlog::level::info);
     return see;
 }
 

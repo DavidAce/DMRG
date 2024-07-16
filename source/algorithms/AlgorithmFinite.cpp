@@ -203,8 +203,8 @@ int AlgorithmFinite::get_eigs_iter_max() const {
     auto iter_min = std::min(safe_cast<double>(eigs_iter_min), safe_cast<double>(eigs_iter_max));
     auto iter_max = std::max(safe_cast<double>(eigs_iter_min), safe_cast<double>(eigs_iter_max));
     if(eigs_iter_gain_policy == EigsIterGainPolicy::NEVER) return safe_cast<int>(iter_min);
-    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::MAXBOND) and !status.bond_limit_has_reached_max) return safe_cast<int>(iter_min);
-    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::MINTRNC) and !status.trnc_limit_has_reached_min) return safe_cast<int>(iter_min);
+    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::REQMAXBOND) and !status.bond_limit_has_reached_max) return safe_cast<int>(iter_min);
+    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::REQMINTRNC) and !status.trnc_limit_has_reached_min) return safe_cast<int>(iter_min);
     bool   gain_iteration   = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::ITERATION) and status.iter > 0;
     bool   gain_varsat      = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::VARSAT) and status.variance_mpo_saturated_for > 0;
     bool   gain_saturated   = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::SATURATED) and status.algorithm_saturated_for > 0;
@@ -235,8 +235,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // Set up handy quantities
     auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
-    bool algo_stuck_long = status.algorithm_has_stuck_for + 3 ==
-                           std::clamp(status.algorithm_has_stuck_for + 3, settings::strategy::iter_max_stuck, settings::strategy::iter_max_stuck + 1);
+
     // When nearly degenerate we prefer many iterations over many sites
     auto position       = static_cast<size_t>(std::max<long>(0l, tensors.get_position<long>()));
     bool has_degeneracy = dmrg_degeneracy_score[position] >= 0.5 * settings::xdmrg::try_shifting_when_degen;
@@ -255,10 +254,8 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.expand_side = EnvExpandSide::FORWARD;
     // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
     m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
-#pragma message "Revert the envexpandmode to var"
-    // if(status.algorithm_has_stuck_for >= settings::strategy::iter_max_stuck / 2) {
-    //     if(status.algo_type == AlgorithmType::xDMRG) m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR;
-    // }
+    // #pragma message "Revert the envexpandmode to var"
+    // if(status.algo_type == AlgorithmType::xDMRG and status.algorithm_has_stuck_for > 0) { m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR; }
     // Set up a multiplier for number of iterations
     m1.eigs_iter_max = get_eigs_iter_max();
 
@@ -340,7 +337,7 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide
     if(alpha.value() <= 0) return;
     auto var_before_exp = tools::finite::measure::energy_variance(tensors);
     if(not svd_cfg.has_value()) {
-        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 5l / 4l : status.bond_lim;
+        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 4l / 3l : status.bond_lim;
         auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
@@ -756,86 +753,87 @@ void AlgorithmFinite::update_environment_expansion_alpha() {
 }
 
 void AlgorithmFinite::update_dmrg_blocksize() {
-    if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MINDEF) {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
-        return;
-    }
-    if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MAXDEF) {
-        dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
-        return;
-    }
-    if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MAXBOND) and !status.bond_limit_has_reached_max) {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
-        return;
-    }
-    if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MINTRNC) and !status.trnc_limit_has_reached_min) {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
-        return;
-    }
-    if(not tensors.position_is_inward_edge()) return;
-    /*! Update the number of sites used in dmrg updates.
-     *  We try to match the blocksize to the the "information typical scale", obtained from the information lattice.
-     *  This should be a good blocksize to the correlations that exist in the state.
-     */
-    bool has_converged = status.algorithm_converged_for > 0 or var_latest <= settings::precision::variance_convergence_threshold;
-    bool has_saturated = status.variance_mpo_saturated_for + status.algorithm_saturated_for > 0 and status.algorithm_converged_for == 0;
-    bool has_got_stuck = status.algorithm_has_stuck_for > 0 and not has_converged;
-    bool max_varsat    = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MAXVARSAT) and has_saturated;
-    bool max_stuck     = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::MAXSTUCK) and has_got_stuck;
-    bool info_varsat   = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFOVARSAT) and has_saturated;
-    bool info_stuck    = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFOSTUCK) and has_got_stuck;
-    bool info_default  = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::INFODEF);
-
     auto old_bsize = dmrg_blocksize;
-    // auto bond_top  = tensors.state->get_largest_bond();
-
-    // auto infoperscale_def = tools::finite::measure::information_per_scale(*tensors.state);
-    // auto centerofmass_def = tools::finite::measure::information_center_of_mass(infoperscale_def);
-    //
-    // tensors.state->clear_measurements();
-    // auto t_2            = tid::tic_token("1e-2");
-    // auto infoperscale_2 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(-0.001, 3200, svd::config(2048, 1e-2), UseCache::FALSE));
-    // auto centerofmass_2 = tools::finite::measure::information_center_of_mass(infoperscale_2);
-    // t_2.toc();
-
-    // tensors.state->clear_measurements();
-    // auto t_4            = tid::tic_token("1e-4");
-    // auto infoperscale_4 = tools::finite::measure::information_per_scale(*tensors.state, InfoPolicy(-0.001, 3200, svd::config(2048, 1e-4), UseCache::FALSE));
-    // auto centerofmass_4 = tools::finite::measure::information_center_of_mass(infoperscale_4);
-    // t_4.toc();
-
-    // tools::log->info("info per scale svd 1e-2 : {::.16f}", infoperscale_2);
-    // tools::log->info("info per scale svd 1e-4 : {::.16f}", infoperscale_4);
-    // tools::log->info("info per scale svd def  : {::.16f}", infoperscale_def);
-
-    // tools::log->info("info center of mass chi 1e-2 : {:.16f}| t = {:.3e} s", centerofmass_2, t_2->get_last_interval());
-    // tools::log->info("info center of mass chi 1e-4 : {:.16f}| t = {:.3e} s", centerofmass_4, t_4->get_last_interval());
-    // tools::log->info("info center of mass chi def  : {:.16f}", centerofmass_def);
-
-    // auto        see = tools::finite::measure::subsystem_entanglement_entropies_fast_log2(*tensors.state, 1e-1, svd::config(256, 1e-8), UseCache::FALSE);
-    std::string msg;
-    if(max_varsat or max_stuck) {
+    if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MIN) {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        if(old_bsize != dmrg_blocksize) {
+            tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
+        }
+        return;
+    }
+    if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MAX) {
         dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
-        msg += max_varsat ? "set max blocksize when saturated" : "set max blocksize when stuck";
-    } else if(info_default or info_varsat or info_stuck) {
+        if(old_bsize != dmrg_blocksize) {
+            tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
+        }
+        return;
+    }
+    if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::REQMAXBOND) and !status.bond_limit_has_reached_max) {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        if(old_bsize != dmrg_blocksize) {
+            tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
+        }
+        return;
+    }
+    if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::REQMINTRNC) and !status.trnc_limit_has_reached_min) {
+        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        if(old_bsize != dmrg_blocksize) {
+            tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
+        }
+        return;
+    }
+
+    if(not tensors.position_is_inward_edge()) return;
+    using namespace settings::strategy;
+
+    bool has_converged = status.algorithm_converged_for > 0 or var_latest <= settings::precision::variance_convergence_threshold;
+    bool has_saturated = has_flag(dmrg_blocksize_policy, BlockSizePolicy::SATURATED) and status.algorithm_saturated_for > 0 and not has_converged;
+    bool has_got_stuck = has_flag(dmrg_blocksize_policy, BlockSizePolicy::STUCK) and status.algorithm_has_stuck_for > 0 and not has_converged;
+    bool has_no_status = !has_flag(dmrg_blocksize_policy, BlockSizePolicy::SATURATED) and !has_flag(dmrg_blocksize_policy, BlockSizePolicy::STUCK);
+    bool has_to_adjust = has_saturated or has_got_stuck or has_no_status;
+
+    std::string msg;
+    if(has_flag(dmrg_blocksize_policy, BlockSizePolicy::MAX) and has_to_adjust) {
+        dmrg_blocksize = dmrg_max_blocksize;
+        if(old_bsize != dmrg_blocksize) {
+            if(has_no_status)
+                msg += "set max blocksize by default";
+            else
+                msg += has_saturated ? "set max blocksize when saturated" : "set max blocksize when stuck";
+            tools::log->info("Updated blocksize {} -> {} | {} | policy: {}", old_bsize, dmrg_blocksize, msg,
+                             flag2str(settings::strategy::dmrg_blocksize_policy));
+        }
+        return;
+    }
+
+    bool has_icom      = has_flag(dmrg_blocksize_policy, BlockSizePolicy::ICOM);
+    bool has_icomplus1 = has_flag(dmrg_blocksize_policy, BlockSizePolicy::ICOMPLUS1);
+    if((has_icom or has_icomplus1) and has_to_adjust) {
+        /*! Update the number of sites used in dmrg updates.
+         *  We try to match the blocksize to the "information center of mass", obtained from the information lattice.
+         *  This should be a good blocksize to the correlations that exist in the state.
+         */
         auto   ip        = InfoPolicy{.bits_max_error = -0.5, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = std::max(status.trnc_lim, 1e-6)};
         double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
-        double blocksize = std::round(icom);
-        if(status.algorithm_has_stuck_for > 0) {
-            blocksize = std::ceil(icom);
-            msg += fmt::format("center of mass (ceil({:.16f})) when stuck", icom);
+        double blocksize = has_icomplus1 ? std::ceil(icom + 1) : std::ceil(icom);
+        if(has_icomplus1) {
+            if(has_no_status)
+                msg += "set icom+1 blocksize by default";
+            else
+                msg += has_saturated ? "set icom+1 blocksize when saturated" : "set icom+1 blocksize when stuck";
         } else {
-            // Same as the characteristic length scale "xi" when the info decay is exponential
-            msg += fmt::format("center of mass ({:.16f}) by default", icom);
+            if(has_no_status)
+                msg += "set icom blocksize by default";
+            else
+                msg += has_saturated ? "set icom blocksize when saturated" : "set icom blocksize when stuck";
         }
-        dmrg_blocksize = std::clamp<size_t>(static_cast<size_t>(blocksize), settings::strategy::dmrg_min_blocksize, settings::strategy::dmrg_max_blocksize);
-
+        dmrg_blocksize = std::clamp<size_t>(static_cast<size_t>(blocksize), dmrg_min_blocksize, dmrg_max_blocksize);
+        tools::log->info("Updated blocksize {} -> {} | {} | icom {:.3f} | policy: {}", old_bsize, dmrg_blocksize, msg, icom, flag2str(dmrg_blocksize_policy));
     } else {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
-        msg += "set min by default";
-    }
-    if(old_bsize != dmrg_blocksize) {
-        tools::log->info("Updated blocksize {} -> {} | {} | policy: {}", old_bsize, dmrg_blocksize, msg, flag2str(settings::strategy::dmrg_blocksize_policy));
+        dmrg_blocksize = dmrg_min_blocksize;
+        if(old_bsize != dmrg_blocksize) {
+            tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(dmrg_blocksize_policy));
+        }
     }
 }
 
@@ -1386,7 +1384,7 @@ void          AlgorithmFinite::print_status() {
     report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
-    if(settings::strategy::dmrg_min_blocksize == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
+    report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
     if(status.bond_max == status.bond_lim) {
         report += fmt::format("χ:{:<3}|", status.bond_max);
     } else {

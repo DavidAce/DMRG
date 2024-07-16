@@ -18,31 +18,40 @@ enum class MpoCompress {
 enum class MposWithEdges { OFF, ON };
 enum class MeanType { ARITHMETIC, GEOMETRIC };
 
-/*! \brief Sets properties of the dmrg blocksize (number of sites in a dmrg optimization step).
+/*! \brief Controls the dynamical adjustments of the dmrg block size (number of sites in a dmrg optimization step).
+ *  The default block size is always settings::strategy::dmrg_min_blocksize.
+ *  Combine these bitflags to increase the block size on a given status.
  *
- *  This calculates the information typical scale from the information lattice, which can be numerically expensive.
+ *  Examples:
+ *      - MIN                   : Set the block size to settings::strategy::dmrg_min_blocksize at all steps
+ *      - MAX                   : Set the block size to settings::strategy::dmrg_max_blocksize at all steps
+ *      - MAX|SATURATED         : Set the block size to settings::strategy::dmrg_max_blocksize if the algorithm has saturated
+ *      - ICOM|STUCK|REQMINTRNC : Set the block size to the ceil of "information_center_of_mass" if the algorithm is stuck and the trnc_lim ==
+ * settings::precision::svd_truncation_min
+ *
+ *  Note that settings::strategy::dmrg_min_blocksize and settings::strategy::dmrg_max_blocksize are hard limits on the block size.
+ *  This means that "ICOM" sets a block size within those limits.
  */
 enum class BlockSizePolicy {
-    MINDEF     = 0,   /*!< Default to dmrg_min_blocksize */
-    MAXDEF     = 1,   /*!< Default to dmrg_max_blocksize */
-    MAXVARSAT  = 2,   /*!< Set dmrg_max_blocksize when the energy variance has saturated */
-    MAXSTUCK   = 4,   /*!< Set dmrg_max_blocksize when stuck */
-    INFODEF    = 8,   /*!< Default to the ceil of "information_center_of_mass" on every iteration  */
-    INFOVARSAT = 16,  /*!< Default to the ceil of "information_center_of_mass" when the energy variance has saturated */
-    INFOSTUCK  = 32,  /*!< Default to the ceil of "information_center_of_mass" when stuck  */
-    MAXBOND    = 64,  /*! Increase only when the bond dimension has reached its maximum   <*/
-    MINTRNC    = 128, /*! Increase only when the truncation error has reached its minimum   <*/
+    MIN        = 0,  /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    MAX        = 1,  /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    ICOM       = 2,  /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
+    ICOMPLUS1  = 4,  /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
+    SATURATED  = 8,  /*!< Set the block size when the algorithm status == saturated */
+    STUCK      = 16, /*!< Set the block size when the algorithm status == stuck */
+    REQMAXBOND = 32, /*! Require that the bond dimension has reached its maximum before increasing the block size */
+    REQMINTRNC = 64, /*! Require that the truncation error has reached its minimum before increasing the block size   */
     allow_bitops
 };
 
 enum class EigsIterGainPolicy : int {
-    NEVER     = 0,  /*! Never increase eigs iterations  <*/
-    ITERATION = 1,  /*! Increase eigs iterations every itertaion    <*/
-    VARSAT    = 2,  /*! Increase when the energy variance has saturated  <*/
-    SATURATED = 4,  /*! Increase when the algorithm has saturated  <*/
-    STUCK     = 8,  /*! Increase when the algorithm is stuck  <*/
-    MAXBOND   = 16, /*! Increase only when the bond dimension has reached its maximum   <*/
-    MINTRNC   = 32, /*! Increase only when the truncation error has reached its minimum   <*/
+    NEVER      = 0,  /*! Never increase eigs iterations  <*/
+    ITERATION  = 1,  /*! Increase eigs iterations every itertaion    <*/
+    VARSAT     = 2,  /*! Increase when the energy variance has saturated  <*/
+    SATURATED  = 4,  /*! Increase when the algorithm has saturated  <*/
+    STUCK      = 8,  /*! Increase when the algorithm is stuck  <*/
+    REQMAXBOND = 16, /*! Increase only when the bond dimension has reached its maximum   <*/
+    REQMINTRNC = 32, /*! Increase only when the truncation error has reached its minimum   <*/
     allow_bitops
 };
 
@@ -442,14 +451,13 @@ std::string flag2str(const T &item) noexcept {
         if(v.empty()) return "NONE";
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) {
-        if(has_flag(item, BlockSizePolicy::MAXDEF)) v.emplace_back("MAXDEF");
-        if(has_flag(item, BlockSizePolicy::MAXVARSAT)) v.emplace_back("MAXVARSAT");
-        if(has_flag(item, BlockSizePolicy::MAXSTUCK)) v.emplace_back("MAXSTUCK");
-        if(has_flag(item, BlockSizePolicy::INFODEF)) v.emplace_back("INFODEF");
-        if(has_flag(item, BlockSizePolicy::INFOVARSAT)) v.emplace_back("INFOVARSAT");
-        if(has_flag(item, BlockSizePolicy::INFOSTUCK)) v.emplace_back("INFOSTUCK");
-        if(has_flag(item, BlockSizePolicy::MAXBOND)) v.emplace_back("MAXBOND");
-        if(has_flag(item, BlockSizePolicy::MINTRNC)) v.emplace_back("MINTRNC");
+        if(has_flag(item, BlockSizePolicy::MAX)) v.emplace_back("MAX");
+        if(has_flag(item, BlockSizePolicy::ICOM)) v.emplace_back("ICOM");
+        if(has_flag(item, BlockSizePolicy::ICOMPLUS1)) v.emplace_back("ICOMPLUS1");
+        if(has_flag(item, BlockSizePolicy::SATURATED)) v.emplace_back("SATURATED");
+        if(has_flag(item, BlockSizePolicy::STUCK)) v.emplace_back("STUCK");
+        if(has_flag(item, BlockSizePolicy::REQMAXBOND)) v.emplace_back("REQMAXBOND");
+        if(has_flag(item, BlockSizePolicy::REQMINTRNC)) v.emplace_back("REQMINTRNC");
         if(v.empty()) return "MIN";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
@@ -481,8 +489,8 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, EigsIterGainPolicy::VARSAT)) v.emplace_back("VARSAT");
         if(has_flag(item, EigsIterGainPolicy::SATURATED)) v.emplace_back("SATURATED");
         if(has_flag(item, EigsIterGainPolicy::STUCK)) v.emplace_back("STUCK");
-        if(has_flag(item, EigsIterGainPolicy::MAXBOND)) v.emplace_back("MAXBOND");
-        if(has_flag(item, EigsIterGainPolicy::MINTRNC)) v.emplace_back("MINTRNC");
+        if(has_flag(item, EigsIterGainPolicy::REQMAXBOND)) v.emplace_back("REQMAXBOND");
+        if(has_flag(item, EigsIterGainPolicy::REQMINTRNC)) v.emplace_back("REQMINTRNC");
         if(v.empty()) return "NEVER";
     }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
@@ -554,20 +562,19 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         default: return "MpoCompress::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, MposWithEdges>) switch(item) {
-        case MposWithEdges::OFF:                                  return "OFF";
-        case MposWithEdges::ON:                                   return "ON";
+        case MposWithEdges::OFF:                                 return "OFF";
+        case MposWithEdges::ON:                                  return "ON";
         default: return "MposWithEdges::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) switch(item){
-        case BlockSizePolicy::MINDEF :                           return "MINDEF";
-        case BlockSizePolicy::MAXDEF :                           return "MAXDEF";
-        case BlockSizePolicy::MAXVARSAT :                        return "MAXVARSAT";
-        case BlockSizePolicy::MAXSTUCK :                         return "MAXSTUCK";
-        case BlockSizePolicy::INFODEF :                          return "INFODEF";
-        case BlockSizePolicy::INFOVARSAT :                       return "INFOVARSAT";
-        case BlockSizePolicy::INFOSTUCK :                        return "INFOSTUCK";
-        case BlockSizePolicy::MAXBOND:                           return "MAXBOND";
-        case BlockSizePolicy::MINTRNC:                           return "MINTRNC";
+        case BlockSizePolicy::MIN :                              return "MIN";
+        case BlockSizePolicy::MAX :                              return "MAX";
+        case BlockSizePolicy::ICOM :                             return "ICOM";
+        case BlockSizePolicy::ICOMPLUS1 :                        return "ICOMPLUS1";
+        case BlockSizePolicy::SATURATED :                        return "SATURATED";
+        case BlockSizePolicy::STUCK :                            return "STUCK";
+        case BlockSizePolicy::REQMAXBOND :                       return "REQMAXBOND";
+        case BlockSizePolicy::REQMINTRNC:                        return "REQMINTRNC";
         default: return "BlockSizePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -868,8 +875,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == EigsIterGainPolicy::VARSAT)                          return "VARSAT";
         if(item == EigsIterGainPolicy::SATURATED)                       return "SATURATED";
         if(item == EigsIterGainPolicy::STUCK)                           return "STUCK";
-        if(item == EigsIterGainPolicy::MAXBOND)                         return "MAXBOND";
-        if(item == EigsIterGainPolicy::MINTRNC)                         return "MINTRNC";
+        if(item == EigsIterGainPolicy::REQMAXBOND)                      return "REQMAXBOND";
+        if(item == EigsIterGainPolicy::REQMINTRNC)                      return "REQMINTRNC";
     }
     return "UNRECOGNIZED ENUM";
 }
@@ -943,15 +950,14 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ON")                                    return MposWithEdges::ON;
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) {
-        auto policy = BlockSizePolicy::MINDEF;
-        if(item.find("MAXDEF")         != std::string_view::npos)  policy |= BlockSizePolicy::MAXDEF;
-        if(item.find("MAXVARSAT")      != std::string_view::npos)  policy |= BlockSizePolicy::MAXVARSAT;
-        if(item.find("MAXSTUCK")       != std::string_view::npos)  policy |= BlockSizePolicy::MAXSTUCK;
-        if(item.find("INFODEF")        != std::string_view::npos)  policy |= BlockSizePolicy::INFODEF;
-        if(item.find("INFOVARSAT")     != std::string_view::npos)  policy |= BlockSizePolicy::INFOVARSAT;
-        if(item.find("INFOSTUCK")      != std::string_view::npos)  policy |= BlockSizePolicy::INFOSTUCK;
-        if(item.find("MAXBOND")        != std::string_view::npos)  policy |= BlockSizePolicy::MAXBOND;
-        if(item.find("MINTRNC")        != std::string_view::npos)  policy |= BlockSizePolicy::MINTRNC;
+        auto policy = BlockSizePolicy::MIN;
+        if(item.find("MAX")            != std::string_view::npos)  policy |= BlockSizePolicy::MAX;
+        if(item.find("ICOM")           != std::string_view::npos)  policy |= BlockSizePolicy::ICOM;
+        if(item.find("ICOMPLUS1")      != std::string_view::npos)  policy |= BlockSizePolicy::ICOMPLUS1;
+        if(item.find("SATURATED")      != std::string_view::npos)  policy |= BlockSizePolicy::SATURATED;
+        if(item.find("STUCK")          != std::string_view::npos)  policy |= BlockSizePolicy::STUCK;
+        if(item.find("REQMAXBOND")     != std::string_view::npos)  policy |= BlockSizePolicy::REQMAXBOND;
+        if(item.find("REQMINTRNC")     != std::string_view::npos)  policy |= BlockSizePolicy::REQMINTRNC;
         return policy;
 
     }
@@ -961,8 +967,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("VARSAT")         != std::string_view::npos) policy |= EigsIterGainPolicy::VARSAT;
         if(item.find("SATURATED")      != std::string_view::npos) policy |= EigsIterGainPolicy::SATURATED;
         if(item.find("STUCK")          != std::string_view::npos) policy |= EigsIterGainPolicy::STUCK;
-        if(item.find("MAXBOND")        != std::string_view::npos) policy |= EigsIterGainPolicy::MAXBOND;
-        if(item.find("MINTRNC")        != std::string_view::npos) policy |= EigsIterGainPolicy::MINTRNC;
+        if(item.find("REQMAXBOND")     != std::string_view::npos) policy |= EigsIterGainPolicy::REQMAXBOND;
+        if(item.find("REQMINTRNC")     != std::string_view::npos) policy |= EigsIterGainPolicy::REQMINTRNC;
         return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
