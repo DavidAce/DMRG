@@ -91,7 +91,7 @@ double tools::finite::env::get_optimal_mixing_factor_var_new(const std::vector<s
 
     auto K   = Eigen::Matrix2cd{{V, r}, {r, Vr}};
     auto evs = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
-    tools::log->info("evs: \n{}\n", linalg::matrix::to_string(evs, 8));
+    // tools::log->info("evs: \n{}\n", linalg::matrix::to_string(evs, 8));
     return evs.col(0).cwiseAbs().minCoeff();
 }
 
@@ -112,7 +112,7 @@ double tools::finite::env::get_optimal_mixing_factor_var_old(const std::vector<s
     auto   K             = Eigen::Matrix2cd{{V, r}, {r, Vr}};
     auto   evs           = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
     // auto maxval = evs.col(0).cwiseAbs().maxCoeff();
-    tools::log->info("evs: \n{}\n", linalg::matrix::to_string(evs, 8));
+    // tools::log->info("evs: \n{}\n", linalg::matrix::to_string(evs, 8));
     return evs.col(0).cwiseAbs().minCoeff();
 }
 

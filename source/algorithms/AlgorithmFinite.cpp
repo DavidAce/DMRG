@@ -1492,7 +1492,7 @@ void          AlgorithmFinite::print_status() {
     report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
-    report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
+    // report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
     if(status.bond_max == status.bond_lim) {
         report += fmt::format("χ:{:<3}|", status.bond_max);
     } else {
