@@ -25,13 +25,19 @@ tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const Tensor
     auto    t_init = tid::tic_scope("initial_mps", tid::level::higher);
     opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
                         tools::finite::measure::energy_shift(tensors),              // Shifted energy for full system
-                        tools::finite::measure::energy_minus_energy_shift(tensors), // Eigval
+                        tools::finite::measure::energy_minus_energy_shift(tensors), // Energy Eigval (not eigs eigval)
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap to initial state (self) is obviously 1
                         tensors.get_length());
     if(meta.optAlgo == OptAlgo::DIRECTZ) {
         assert(tensors.active_sites.size() == 1);
         initial_mps.set_bond(tenx::asDiagonal(tensors.state->get_mps_site().get_LC()));
+    }
+    if(meta.optCost == OptCost::VARIANCE) {
+        auto var = initial_mps.get_variance();
+        auto ene = initial_mps.get_energy();
+        auto hsq = var + ene*ene;
+        initial_mps.set_eigs_eigval(hsq);
     }
     initial_mps.validate_initial_mps();
     return initial_mps;
@@ -78,7 +84,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     //     auto        matrix_var = tensors.get_effective_hamiltonian_squared<real>();
                     //     auto        eigval     = initial_mps.get_energy(); // The current energy
                     //     auto        eigvar     = initial_mps.get_variance();
-                    //     auto        eshift     = initial_mps.get_energy_shift();                    // The energy shift is our target energy for excited states
+                    //     auto        eshift     = initial_mps.get_eshift();                    // The energy shift is our target energy for excited states
                     //     auto        vl         = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
                     //     auto        vu         = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
                     //     tools::log->info("diagonalizing ham...");
@@ -94,10 +100,12 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     //     extract_results(tensors, initial_mps, meta, solver_var, results_var, false);
                     //     tools::log->info("vl {:.3e} | vu {:.3e}", vl, vu);
                     //     for(size_t idx = 0; idx < results_ene.size(); ++idx)
-                    //         tools::log->info(" -- H¹: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_ene[idx].get_energy(), results_ene[idx].get_variance(),
+                    //         tools::log->info(" -- H¹: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_ene[idx].get_energy(),
+                    //         results_ene[idx].get_variance(),
                     //                          results_ene[idx].get_eigs_eigval());
                     //     for(size_t idx = 0; idx < results_var.size(); ++idx)
-                    //         tools::log->info(" -- H²: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_var[idx].get_energy(), results_var[idx].get_variance(),
+                    //         tools::log->info(" -- H²: energy {:.16f} | variance {:.16f} | eigval {:.16f}", results_var[idx].get_energy(),
+                    //         results_var[idx].get_variance(),
                     //                          results_var[idx].get_eigs_eigval());
                     //
                     //
@@ -131,7 +139,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         meta.optCost    = OptCost::VARIANCE;
                         auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
                         ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
-                        rnorm_ok = result_var.get_rnorm() <= result.get_rnorm();
+                        rnorm_ok        = result_var.get_rnorm() <= result.get_rnorm();
                         tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_rnorm(),
                                          result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
                         if(rnorm_ok and ene_ok) { result = result_var; }
@@ -276,7 +284,7 @@ namespace tools::finite::opt::internal {
         if(meta->optCost == OptCost::VARIANCE) {
             return comparator::eigval(lhs, rhs);
         } else {
-            auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
+            auto diff = std::abs(lhs.get_energy_shifted() - rhs.get_energy_shifted());
             if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(meta->optRitz) {
                 case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");

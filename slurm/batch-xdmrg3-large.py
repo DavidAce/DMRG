@@ -59,7 +59,7 @@ config_ranges = {
     "xdmrg::bond_init": ['32'],
     "xdmrg::print_freq": ['1'],
     "xdmrg::try_directx2_when_stuck": ['false'],
-    "xdmrg::try_shifting_when_degen": ['25000'],
+    "xdmrg::try_shifting_when_degen": ['1e-8'],
 }
 
 configs = get_config_product(config_ranges, config_paths)

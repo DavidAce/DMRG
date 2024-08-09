@@ -118,7 +118,7 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_eigvals(const std::v
     long            idx = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
-        eigvals(idx++) = eigvec.get_eshift_eigval();
+        eigvals(idx++) = eigvec.get_energy_shifted();
     }
     eigvals.conservativeResize(idx);
     return eigvals;

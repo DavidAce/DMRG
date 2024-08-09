@@ -36,7 +36,7 @@ class AlgorithmBase {
     virtual void print_status()                                                                                                = 0;
     virtual void print_status_full()                                                                                           = 0;
     virtual void clear_convergence_status()                                                                                    = 0;
-    virtual void update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt)                           = 0;
+    virtual void update_precision_limit(std::optional<double> energy_upper_bound = std::nullopt)                               = 0;
     virtual void update_bond_dimension_limit()                                                                                 = 0;
     virtual void update_truncation_error_limit()                                                                               = 0;
 
@@ -46,30 +46,32 @@ class AlgorithmBase {
     void init_truncation_error_limits();
 
     protected:
-    enum class SaturationScale { lin, log };
+    // enum class SaturationScale { lin, log };
     struct SaturationReport {
-        bool                has_computed    = false;
-        bool                has_saturated   = false;
-        size_t              saturated_count = 0;
-        size_t              saturated_point = 0;
-        SaturationScale     saturated_scale = SaturationScale::lin;
+        bool                has_computed      = false;
+        bool                has_saturated     = false;
+        size_t              saturated_count   = 0;
+        size_t              saturated_point   = 0;
+        SaturationPolicy    saturation_policy = SaturationPolicy::val;
         std::vector<double> Y_vec;     // The values used to measure saturation. This is the log of given data when log is on
+        std::vector<double> Y_avg;     // The values used to measure saturation. This is the log of given data when log is on
+        std::vector<double> Y_med;     // The values used to measure saturation. This is the log of given data when log is on
         std::vector<double> Y_min;     // The cumulative minimum of Y_vec
+        std::vector<double> Y_nim;     // The cumulative minimum of Y_vec
         std::vector<double> Y_max;     // The cumulative maximum of Y_vec
+        std::vector<double> Y_xam;     // The cumulative maximum of Y_vec
+        std::vector<double> Y_mid;     // The midpoint between Y_min and Y_max
+        std::vector<double> Y_dif;     // The cumulative average difference between adjacent points
         std::vector<double> Y_vec_std; // The "moving start" standard deviation of Y_vec from [i:end]
+        std::vector<double> Y_avg_std; // The "moving start" standard deviation of Y_vec from [i:end]
+        std::vector<double> Y_med_std; // The "moving start" standard deviation of Y_vec from [i:end]
         std::vector<double> Y_min_std; // The "moving start" standard deviation of Y_min from [i:end]
         std::vector<double> Y_max_std; // The "moving start" standard deviation of Y_max from [i:end]
-        std::vector<double> Y_mov_ste; // The "moving window" standard error of 25% width.
+        std::vector<double> Y_mov_std; // The "moving window" standard error of 25% width.
+        std::vector<double> Y_mid_std; // The standard deviation of the midpoint between Y_min and Y_max
+        std::vector<double> Y_dif_avg; // The standard deviation of the midpoint between Y_min and Y_max
         std::vector<int>    Y_sat;     // Flags that tell if Y_vec has saturated at that index
-
-        [[nodiscard]] constexpr std::string_view get_saturated_scale() noexcept {
-            switch(saturated_scale) {
-                case SaturationScale::lin: return "lin";
-                case SaturationScale::log: return "log";
-            }
-            return "error";
-        }
     };
     size_t           count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx = 0);
-    SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity, SaturationScale scale);
+    SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity, SaturationPolicy policy);
 };

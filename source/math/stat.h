@@ -64,18 +64,22 @@ namespace stat {
     }
 
     template<typename ContainerType>
-    [[nodiscard]] typename ContainerType::value_type median(ContainerType &X, std::optional<size_t> start_point = std::nullopt,
-                                                            std::optional<size_t> end_point = std::nullopt) {
-        auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
-        auto n            = static_cast<double>(std::distance(x_it, x_en));
-        if(n == 0) return 0;
+    [[nodiscard]] typename ContainerType::value_type median(ContainerType X, std::optional<size_t> offset = std::nullopt,
+                                                          std::optional<size_t> extent = std::nullopt) {
+        if(X.empty()) return std::numeric_limits<typename ContainerType::value_type>::quiet_NaN();
+        offset = offset.value_or(0);
+        offset = std::clamp<size_t>(offset.value(), 0ul, X.size()-1);
+        extent = extent.value_or(X.size()-offset.value());
+        extent = std::clamp<size_t>(extent.value(), 0ul, X.size()-offset.value());
+        auto x = std::span<typename ContainerType::value_type>(X.begin()+offset.value(), extent.value());
+        auto n  = static_cast<size_t>(x.size());
+        if(n == 0) return std::numeric_limits<typename ContainerType::value_type>::quiet_NaN();
+        std::sort(x.begin(), x.end());
         // Find the starting point
-        auto x_it_mid = X.begin();
-        std::advance(x_it_mid, start_point.value());
+        auto x_it_mid = x.begin();
         // ... and then the mid-point between start to end
         std::advance(x_it_mid, safe_cast<long>(n / 2));
-
-        if(n > 0 and num::mod<size_t>(safe_cast<size_t>(n), 2) == 0) {
+        if(n % 2ul == 0) {
             // Even number of elements, take mean between middle elements
             auto a = *x_it_mid;
             std::advance(x_it_mid, -1);

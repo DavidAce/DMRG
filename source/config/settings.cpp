@@ -193,10 +193,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::iter_max_stuck"                     , strategy::iter_max_stuck);
     dmrg_config.load_parameter("strategy::iter_max_saturated"                 , strategy::iter_max_saturated);
     dmrg_config.load_parameter("strategy::iter_min_converged"                 , strategy::iter_min_converged);
-    dmrg_config.load_parameter("strategy::env_expansion_alpha_max"            , strategy::env_expansion_alpha_max);
-    dmrg_config.load_parameter("strategy::env_expansion_bias_min"             , strategy::env_expansion_bias_min);
-    dmrg_config.load_parameter("strategy::env_expansion_bias_max"             , strategy::env_expansion_bias_max);
-    dmrg_config.load_parameter("strategy::env_expansion_bias_gain"            , strategy::env_expansion_bias_gain);
     dmrg_config.load_parameter("strategy::dmrg_blocksize_policy"              , strategy::dmrg_blocksize_policy);
     dmrg_config.load_parameter("strategy::dmrg_min_blocksize"                 , strategy::dmrg_min_blocksize);
     dmrg_config.load_parameter("strategy::dmrg_max_blocksize"                 , strategy::dmrg_max_blocksize);
@@ -211,6 +207,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::bond_increase_rate"                 , strategy::bond_increase_rate);
     dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);
     dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
+    dmrg_config.load_parameter("strategy::etol_decrease_when"                 , strategy::etol_decrease_when);
+    dmrg_config.load_parameter("strategy::etol_decrease_rate"                 , strategy::etol_decrease_rate);
 
     dmrg_config.load_parameter("precision::eig_max_size"                      , precision::eig_max_size);
     dmrg_config.load_parameter("precision::eigs_iter_min"                     , precision::eigs_iter_min);
@@ -233,6 +231,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
     dmrg_config.load_parameter("precision::variance_saturation_sensitivity"   , precision::variance_saturation_sensitivity);
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);
+    dmrg_config.load_parameter("precision::infocom_saturation_sensitivity"    , precision::infocom_saturation_sensitivity);
     dmrg_config.load_parameter("precision::target_subspace_error"             , precision::target_subspace_error);
     dmrg_config.load_parameter("precision::max_subspace_size"                 , precision::max_subspace_size);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);

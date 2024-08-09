@@ -185,7 +185,7 @@ namespace tools::finite::opt {
         }
 
         auto comparator = [&meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
-            // auto diff = std::abs(lhs.get_eshift_eigval() - rhs.get_eshift_eigval());
+            // auto diff = std::abs(lhs.get_energy_shifted() - rhs.get_energy_shifted());
             // if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             auto lhs_abs_energy = std::abs(lhs.get_energy()) + std::sqrt(std::abs(lhs.get_variance()));
             auto rhs_abs_energy = std::abs(rhs.get_energy()) + std::sqrt(std::abs(rhs.get_variance()));

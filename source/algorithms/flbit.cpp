@@ -416,7 +416,7 @@ void flbit::run_algorithm2() {
 
             auto tevo_op = [&time](const auto &h) -> cplx {
 #if defined(USE_QUADMATH)
-                f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), 2 * M_PIq);
+                f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), atanq(1.0) * 8.0 /* 2 * M_PIq*/ );
                 return std::exp(-1.0i * static_cast<real>(fmod_th_128));
 #else
                 f128_t fmod_th_128 = std::fmod(time.real() * real_t(h.real()), 2 * std::numbers::pi_v<real_t>);

@@ -75,6 +75,7 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->variance_ham_saturated_for    == s.variance_ham_saturated_for and
         this->variance_mom_converged_for    == s.variance_mom_converged_for and
         this->variance_mom_saturated_for    == s.variance_mom_saturated_for and
+        // this->infocom_saturated_for         == s.infocom_saturated_for and
         this->bond_limit_has_reached_max    == s.bond_limit_has_reached_max and
         this->trnc_limit_has_reached_min    == s.trnc_limit_has_reached_min and
         this->spin_parity_has_converged     == s.spin_parity_has_converged and

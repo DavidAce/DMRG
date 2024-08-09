@@ -62,8 +62,18 @@ namespace tools::common::h5 {
 
         // Check if the current entry has already been appended
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
-        if(not attrs.link_exists) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
         if(attrs == sinfo) return;
+        // if(attrs.link_exists) {
+        //      auto type_info = h5file.getTypeInfoDataset(table_path);
+        //      if(type_info.h5Size.value() != H5Tget_size(h5pp_table_algorithm_status::get_h5t())) {
+        //          tools::log->warn("AlgorithmStatus: table size mismatch | replacing ...");
+        //          h5file.deleteLink(table_path);
+        //          h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
+        //          attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+        //      }
+        // }
+
+        if(!attrs.link_exists) { h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status"); }
         auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
         tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
                           flag2str(settings::storage::table::status::policy));

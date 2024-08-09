@@ -51,7 +51,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                     mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
                 }
                 mps.set_sites(initial_mps.get_sites());
-                mps.set_energy_shift(initial_mps.get_energy_shift()); // Will set energy if also given the eigval
+                mps.set_eshift(initial_mps.get_eshift()); // Will set energy if also given the eigval
                 mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));
                 mps.set_length(initial_mps.get_length());
                 mps.set_time(solver.result.meta.time_total);
@@ -88,11 +88,11 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, std::nullopt, &measurements);
-                double eigval       = energy - initial_mps.get_energy_shift();
+                double eigval       = energy - initial_mps.get_eshift();
                 double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, std::nullopt, &measurements);
 
                 mps.set_energy(energy);
-                mps.set_eshift_eigval(eigval);
+                mps.set_energy_shifted(eigval);
                 mps.set_variance(variance);
                 // tools::log->info("extract_results: set variance: {:.16f}", variance);
 
@@ -127,7 +127,7 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_tensor(subspace::get_vector_in_fullspace(subspace_mps, eigvecs.col(idx).normalized()), dims_mps);
                 mps.set_sites(initial_mps.get_sites());
-                mps.set_energy_shift(initial_mps.get_energy_shift()); // Will set energy if also given the eigval
+                mps.set_eshift(initial_mps.get_eshift()); // Will set energy if also given the eigval
                 mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));
                 mps.set_length(initial_mps.get_length());
                 mps.set_time(solver.result.meta.time_total);
@@ -152,11 +152,11 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                     mps.set_rnorm(solver.result.meta.residual_norms.at(safe_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, std::nullopt, &measurements);
-                double eigval       = energy - initial_mps.get_energy_shift();
+                double eigval       = energy - initial_mps.get_eshift();
                 double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, std::nullopt, &measurements);
 
                 mps.set_energy(energy);
-                mps.set_eshift_eigval(eigval);
+                mps.set_energy_shifted(eigval);
                 mps.set_variance(variance);
                 // tools::log->info("extract_results_subspace: set variance: {:.16f}", variance);
                 //                mps.set_grad_max(grad_max);

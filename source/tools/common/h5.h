@@ -55,6 +55,7 @@ namespace tools::common::h5 {
     }
     namespace load {
         extern void status               (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status, const MpsInfo & info = MpsInfo());
+        extern void status_old           (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status, const MpsInfo & info = MpsInfo());
         extern void timer                (const h5pp::File & h5file, std::string_view state_prefix, const AlgorithmStatus & status);
         extern void initial_state_attrs  (const h5pp::File & h5file, std::string_view state_prefix, std::string & pattern);
     }

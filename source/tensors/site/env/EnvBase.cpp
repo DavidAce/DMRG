@@ -284,6 +284,12 @@ void EnvBase::set_edge_dims(const Eigen::Tensor<cplx, 3> &MPS, const Eigen::Tens
     unique_id_mpo = std::nullopt;
 }
 
+// void EnvBase::set_mixing_factor(double alpha) {
+//     if(std::isnan(alpha)) throw except::logic_error("EnvBase::set_mixing_factor: alpha cannot be nan");
+//     mixing_factor_alpha = alpha;
+// }
+// double EnvBase::get_mixing_factor() const { return mixing_factor_alpha; }
+
 std::size_t EnvBase::get_unique_id() const {
     if(unique_id) return unique_id.value();
     unique_id = hash::hash_buffer(get_block().data(), safe_cast<size_t>(get_block().size()));
@@ -318,23 +324,34 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
 
     if(side == "L") {
         // If P is too big we can pre-truncate here
-        if(rank_max > 0 and mps.get_chiR() > rank_max) {
+        if(rank_max > 0 and mps.get_chiR() > std::max(rank_max, 32l)) {
             svd::solver svd;
             auto        mps_reduced = mps;
             // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
             if constexpr(std::is_same_v<T, real>) {
                 Eigen::Tensor<T, 3> M = mps_reduced.get_M().real();
                 auto [U, S, V]        = svd.schmidt_into_left_normalized(M, mps_reduced.spin_dim(), svd::config(rank_max));
-                M.resize(U.dimensions());
-                M.device(*threads->dev) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
-                mps_reduced.set_M(M);
+                if(mps_reduced.isCenter()) {
+                    mps_reduced.set_M(U);
+                    mps_reduced.set_LC(S);
+                } else {
+                    M.resize(U.dimensions());
+                    M.device(*threads->dev) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
+                    mps_reduced.set_M(M);
+                }
+
             } else {
                 auto [U, S, V] = svd.schmidt_into_left_normalized(mps_reduced.get_M(), mps_reduced.spin_dim(), svd::config(rank_max));
-                Eigen::Tensor<T, 3> M(U.dimensions());
-                M.device(*threads->dev) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
-                mps_reduced.set_M(M);
+                if(mps_reduced.isCenter()) {
+                    mps_reduced.set_M(U);
+                    mps_reduced.set_LC(S);
+                } else {
+                    Eigen::Tensor<T, 3> M(U.dimensions());
+                    M.device(*threads->dev) = U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
+                    mps_reduced.set_M(M);
+                }
             }
-            tools::log->debug("Pre-truncated mps {} -> {} (rank max {})", mps.dimensions(), mps_reduced.dimensions(), rank_max);
+            tools::log->debug("Pre-truncated site {}: {} -> {} (rank max {})", mps.get_position(), mps.dimensions(), mps_reduced.dimensions(), rank_max);
             return get_expansion_term<T>(mps_reduced, mpo, alpha, -1);
         }
 
@@ -360,7 +377,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
 
     } else if(side == "R") {
         // If P is too big we can pre-truncate here
-        if(rank_max > 0 and mps.get_chiL() > rank_max) {
+        if(rank_max > 0 and mps.get_chiL() > std::max(rank_max, 32l)) {
             svd::solver svd;
             auto        mps_reduced = mps;
             // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
@@ -376,7 +393,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
                 M.device(*threads->dev) = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(std::array{1, 0, 2});
                 mps_reduced.set_M(M);
             }
-            tools::log->debug("Pre-truncated mps {} -> {} (rank max {})", mps.dimensions(), mps_reduced.dimensions(), rank_max);
+            tools::log->debug("Pre-truncated site {}: {} -> {} (rank max {})", mps.get_position(), mps.dimensions(), mps_reduced.dimensions(), rank_max);
             return get_expansion_term<T>(mps_reduced, mpo, alpha, -1);
         }
 
@@ -400,7 +417,10 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
                                           .reshape(tenx::array3{spin, chiL, chiR});
         }
     }
-    P = tenx::asNormalized(P);
+    // P         = tenx::asNormalized(P);
+    // if(alpha  <= 0.0) alpha = get_mixing_factor();
+    if(std::isnan(alpha)) throw except::logic_error("the mixing factor for env {}{}({}) is nan", tag, side, get_position());
+    if(alpha <= 0) throw except::logic_error("the mixing factor for env {}{}({}) is not positive: {:.3e}", tag, side, get_position(), alpha);
     return P * P.constant(alpha);
 }
 

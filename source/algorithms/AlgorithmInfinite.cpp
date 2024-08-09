@@ -217,7 +217,8 @@ void AlgorithmInfinite::check_convergence_variance_mpo(std::optional<double> thr
     if(not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mpo_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mpo(tensors));
     status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value());
-    auto report                       = check_saturation(var_mpo_iter, sensitivity.value(), SaturationScale::log);
+    auto report =
+        check_saturation(var_mpo_iter, sensitivity.value(), SaturationPolicy::val | SaturationPolicy::mov | SaturationPolicy::min | SaturationPolicy::log);
     if(report.has_computed) { status.variance_mpo_saturated_for = report.saturated_count; }
 }
 
@@ -227,7 +228,8 @@ void AlgorithmInfinite::check_convergence_variance_ham(std::optional<double> thr
     if(not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_ham_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_ham(tensors));
     status.variance_ham_converged_for = count_convergence(var_ham_iter, threshold.value());
-    auto report                       = check_saturation(var_ham_iter, sensitivity.value(), SaturationScale::log);
+    auto report =
+        check_saturation(var_ham_iter, sensitivity.value(), SaturationPolicy::val | SaturationPolicy::mov | SaturationPolicy::min | SaturationPolicy::log);
     if(report.has_computed) { status.variance_ham_saturated_for = report.saturated_count; }
 }
 
@@ -237,7 +239,8 @@ void AlgorithmInfinite::check_convergence_variance_mom(std::optional<double> thr
     if(not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mom_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mom(tensors));
     status.variance_mom_converged_for = count_convergence(var_mom_iter, threshold.value());
-    auto report                       = check_saturation(var_mom_iter, sensitivity.value(), SaturationScale::log);
+    auto report                       = check_saturation(var_mom_iter, sensitivity.value(),
+                                                         SaturationPolicy::val | SaturationPolicy::min | SaturationPolicy::max | SaturationPolicy::mov | SaturationPolicy::log);
     if(report.has_computed) { status.variance_mom_saturated_for = report.saturated_count; }
 }
 
@@ -245,7 +248,7 @@ void AlgorithmInfinite::check_convergence_entg_entropy(std::optional<double> sen
     tools::log->debug("Checking convergence of entanglement");
     if(not sensitivity) sensitivity = settings::precision::entropy_saturation_sensitivity;
     entropy_iter.emplace_back(tools::infinite::measure::entanglement_entropy(*tensors.state));
-    auto report = check_saturation(entropy_iter, sensitivity.value(), SaturationScale::lin);
+    auto report = check_saturation(entropy_iter, sensitivity.value(), SaturationPolicy::val | SaturationPolicy::mov);
     if(report.has_computed) {
         status.entanglement_saturated_for = report.saturated_count;
         status.entanglement_converged_for = report.saturated_count;
@@ -310,8 +313,7 @@ void AlgorithmInfinite::print_status() {
     }
     report += fmt::format("ε: {:<8.2e} ", tools::infinite::measure::truncation_error(*tensors.state));
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::infinite::measure::entanglement_entropy(*tensors.state));
-    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", status.bond_max, status.bond_lim,
-                          tools::infinite::measure::bond_dimension(*tensors.state));
+    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", status.bond_max, status.bond_lim, tools::infinite::measure::bond_dimension(*tensors.state));
     report += fmt::format("Sites: {:6}", tensors.get_length());
 
     report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);

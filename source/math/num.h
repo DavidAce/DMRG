@@ -350,7 +350,7 @@ namespace num {
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
      *   \param from first element to add (default == 0)
      *   \param to last element to add (default == -1: from - size)
-     *   \return binary op of of elements with type Input::value_type .
+     *   \return binary op of elements with type Input::value_type .
      *   \example Let <code> v = {1,2,3,4}</code>. Then <code> cumop(v,std::plus<>(),0,3) = {1,3,6,10} </code>.
      */
     template<typename Input, typename BinaryOp>

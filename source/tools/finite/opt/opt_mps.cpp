@@ -16,9 +16,9 @@ opt_mps::NextEv::NextEv(const opt_mps &res) {
     overlap     = res.get_overlap();
 }
 
-opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double eshift_eigval_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double energy_shifted_,
                  std::optional<double> variance_, double overlap_, size_t length_)
-    : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_), eshift_eigval(eshift_eigval_), energy(eshift_eigval_ + eshift_), variance(variance_),
+    : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_), energy_shifted(energy_shifted_), energy(energy_shifted_ + eshift_), variance(variance_),
       overlap(overlap_), length(length_) {
     norm   = get_vector().norm();
     iter   = 0;
@@ -116,7 +116,7 @@ double opt_mps::get_energy() const {
         throw except::runtime_error("opt_mps: energy not set");
 }
 
-double opt_mps::get_energy_shift() const {
+double opt_mps::get_eshift() const {
     if(eshift)
         return eshift.value();
     else
@@ -125,11 +125,11 @@ double opt_mps::get_energy_shift() const {
 
 double opt_mps::get_energy_per_site() const { return get_energy() / static_cast<double>(get_length()); }
 
-double opt_mps::get_eshift_eigval() const {
-    if(eshift_eigval)
-        return eshift_eigval.value();
+double opt_mps::get_energy_shifted() const {
+    if(energy_shifted)
+        return energy_shifted.value();
     else
-        throw except::runtime_error("opt_mps: eshift_eigval not set");
+        throw except::runtime_error("opt_mps: energy_shifted not set");
 }
 
 double opt_mps::get_variance() const {
@@ -358,21 +358,21 @@ void opt_mps::set_bond(const Eigen::MatrixXcd &matrix) {
 void opt_mps::set_bond(const Eigen::Tensor<cplx, 2> &bond_) { bond = bond_; }
 
 void opt_mps::set_sites(const std::vector<size_t> &sites_) { sites = sites_; }
-void opt_mps::set_eshift_eigval(double eshift_eigval_) {
-    eshift_eigval = eshift_eigval_;
-    if(energy and not eshift) eshift = energy.value() - eshift_eigval.value();
-    if(eshift and not energy) energy = eshift_eigval.value() + eshift.value();
+void opt_mps::set_energy_shifted(double energy_shifted_) {
+    energy_shifted = energy_shifted_;
+    if(energy and not eshift) eshift = energy.value() - energy_shifted.value();
+    if(eshift and not energy) energy = energy_shifted.value() + eshift.value();
 }
-void opt_mps::set_energy_shift(double energy_shift_) {
+void opt_mps::set_eshift(double energy_shift_) {
     eshift = energy_shift_;
-    if(energy and not eshift_eigval) eshift_eigval = energy.value() - eshift.value();
-    if(eshift_eigval and not energy) energy = eshift_eigval.value() + eshift.value();
+    if(energy and not energy_shifted) energy_shifted = energy.value() - eshift.value();
+    if(energy_shifted and not energy) energy = energy_shifted.value() + eshift.value();
 }
 
 void opt_mps::set_energy(double energy_) {
     energy = energy_;
-    if(eshift and not eshift_eigval) eshift_eigval = energy.value() - eshift.value();
-    if(eshift_eigval and not eshift) eshift = energy.value() - eshift_eigval.value();
+    if(eshift and not energy_shifted) energy_shifted = energy.value() - eshift.value();
+    if(energy_shifted and not eshift) eshift = energy.value() - energy_shifted.value();
 }
 void opt_mps::set_energy_per_site(double energy_per_site_) { set_energy(energy_per_site_ * static_cast<double>(get_length())); }
 void opt_mps::set_variance(double variance_) { variance = variance_; }
@@ -422,19 +422,20 @@ void opt_mps::set_trnc_limit(double trnc_) { trnc_lim = trnc_; }
 
 void opt_mps::validate_basis_vector() const {
     std::string error_msg;
+    error_msg.reserve(128);
     /* clang-format off */
-    if(not name)            error_msg.append("\t name           \n");
-    if(not tensor)          error_msg.append("\t tensor         \n");
-    if(not sites)           error_msg.append("\t sites          \n");
-    if(not eshift_eigval)   error_msg.append("\t eshift_eigval  \n");
-    if(not eshift)          error_msg.append("\t eshift         \n");
-    if(not energy)          error_msg.append("\t energy         \n");
-    if(not overlap)         error_msg.append("\t overlap        \n");
-    if(not norm)            error_msg.append("\t norm           \n");
-    if(not length)          error_msg.append("\t length         \n");
-    if(not iter)            error_msg.append("\t iter           \n");
-    if(not num_mv)          error_msg.append("\t num_mv         \n");
-    if(not time)            error_msg.append("\t time           \n");
+    if(not name)            error_msg += "\t name           \n";
+    if(not tensor)          error_msg += "\t tensor         \n";
+    if(not sites)           error_msg += "\t sites          \n";
+    if(not energy_shifted)  error_msg += "\t energy_shifted  \n";
+    if(not eshift)          error_msg += "\t eshift         \n";
+    if(not energy)          error_msg += "\t energy         \n";
+    if(not overlap)         error_msg += "\t overlap        \n";
+    if(not norm)            error_msg += "\t norm           \n";
+    if(not length)          error_msg += "\t length         \n";
+    if(not iter)            error_msg += "\t iter           \n";
+    if(not num_mv)          error_msg += "\t num_mv         \n";
+    if(not time)            error_msg += "\t time           \n";
     if constexpr (settings::debug){
         if(has_nan()) throw except::runtime_error("opt_mps error: mps has nan's");
     }
@@ -444,16 +445,17 @@ void opt_mps::validate_basis_vector() const {
 
 void opt_mps::validate_initial_mps() const {
     std::string error_msg;
+    error_msg.reserve(128);
     /* clang-format off */
-    if(not name)            error_msg.append("\t name           \n");
-    if(not tensor)          error_msg.append("\t tensor         \n");
-    if(not sites)           error_msg.append("\t sites          \n");
-    if(not energy)          error_msg.append("\t energy         \n");
-    if(not eshift)          error_msg.append("\t eshift         \n");
-    if(not eshift_eigval)   error_msg.append("\t eshift_eigval  \n");
-    if(not overlap)         error_msg.append("\t overlap        \n");
-    if(not norm)            error_msg.append("\t norm           \n");
-    if(not length)          error_msg.append("\t length         \n");
+    if(not name)            error_msg += "\t name           \n";
+    if(not tensor)          error_msg += "\t tensor         \n";
+    if(not sites)           error_msg += "\t sites          \n";
+    if(not energy)          error_msg += "\t energy         \n";
+    if(not eshift)          error_msg += "\t eshift         \n";
+    if(not energy_shifted)  error_msg += "\t energy_shifted  \n";
+    if(not overlap)         error_msg += "\t overlap        \n";
+    if(not norm)            error_msg += "\t norm           \n";
+    if(not length)          error_msg += "\t length         \n";
     if constexpr (settings::debug){
         if(has_nan()) throw except::runtime_error("opt_mps error: initial mps has nan's");
     }
@@ -463,20 +465,21 @@ void opt_mps::validate_initial_mps() const {
 
 void opt_mps::validate_result() const {
     std::string error_msg;
+    error_msg.reserve(128);
     /* clang-format off */
-    if(not name)            error_msg.append("\t name           \n");
-    if(not tensor)          error_msg.append("\t tensor         \n");
-    if(not sites)           error_msg.append("\t sites          \n");
-    if(not energy)          error_msg.append("\t energy         \n");
-    if(not eshift)          error_msg.append("\t eshift         \n");
-    if(not eshift_eigval)   error_msg.append("\t eshift_eigval  \n");
-    if(not variance)        error_msg.append("\t variance       \n");
-    if(not overlap)         error_msg.append("\t overlap        \n");
-    if(not norm)            error_msg.append("\t norm           \n");
-    if(not length)          error_msg.append("\t length         \n");
-    if(not iter)            error_msg.append("\t iter           \n");
-    if(not num_mv)          error_msg.append("\t num_mv         \n");
-    if(not time)            error_msg.append("\t time           \n");
+    if(not name)            error_msg += "\t name           \n";
+    if(not tensor)          error_msg += "\t tensor         \n";
+    if(not sites)           error_msg += "\t sites          \n";
+    if(not energy)          error_msg += "\t energy         \n";
+    if(not eshift)          error_msg += "\t eshift         \n";
+    if(not energy_shifted)  error_msg += "\t energy_shifted \n";
+    if(not variance)        error_msg += "\t variance       \n";
+    if(not overlap)         error_msg += "\t overlap        \n";
+    if(not norm)            error_msg += "\t norm           \n";
+    if(not length)          error_msg += "\t length         \n";
+    if(not iter)            error_msg += "\t iter           \n";
+    if(not num_mv)          error_msg += "\t num_mv         \n";
+    if(not time)            error_msg += "\t time           \n";
     if constexpr (settings::debug){
         if(has_nan()) throw except::runtime_error("opt_mps error: mps has nan's");
     }
@@ -501,7 +504,7 @@ bool opt_mps::operator<(const opt_mps &rhs) const {
     // Eigenvalues nearest 0 are near the target energy, and while
     // not strictly relevant, it's probably the best we can do here.
     // Of course this is only valid if the eigenvalues are defined
-    if(this->eshift_eigval and rhs.eshift_eigval) return std::abs(this->get_eshift_eigval()) < std::abs(rhs.get_eshift_eigval());
+    if(this->energy_shifted and rhs.energy_shifted) return std::abs(this->get_energy_shifted()) < std::abs(rhs.get_energy_shifted());
 
     // If we have reched this point the overlaps, variances and eigenvalues are not defined.
     // There is probably a logical bug somewhere

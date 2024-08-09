@@ -24,7 +24,7 @@ namespace tools::finite::opt::internal {
         //     // Find all eigenvalues within a thin band
         //     auto eigval = initial_mps.get_energy(); // The current energy
         //     auto eigvar = initial_mps.get_variance();
-        //     auto eshift = initial_mps.get_energy_shift();                    // The energy shift is our target energy for excited states
+        //     auto eshift = initial_mps.get_eshift();                    // The energy shift is our target energy for excited states
         //     auto vl     = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
         //     auto vu     = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
         //     solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);

@@ -15,6 +15,7 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/env.h"
+#include "tools/finite/env/EnvExpansionResult.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/mpo.h"
 #include "tools/finite/mps.h"
@@ -390,7 +391,7 @@ void TensorsFinite::sync_active_sites() {
 }
 
 void TensorsFinite::clear_active_sites() {
-    if constexpr (settings::debug) tools::log->trace("Clearing active sites {}", active_sites);
+    if constexpr(settings::debug) tools::log->trace("Clearing active sites {}", active_sites);
     active_sites.clear();
     state->active_sites.clear();
     model->active_sites.clear();
@@ -514,23 +515,29 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
     normalize_state(svd_cfg, NormPolicy::IFNEEDED);
 }
 
-void TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, double alpha, svd::config svd_cfg) {
+EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, svd::config svd_cfg) {
     // if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
-    auto t_exp        = tid::tic_scope("exp_env");
-    auto pos_expanded = std::vector<size_t>{};
+    auto t_exp     = tid::tic_scope("exp_env");
+    auto expresult = EnvExpansionResult();
+    if constexpr(settings::debug) assert_validity();
     switch(envExpandSide) {
         case EnvExpandSide::BACKWARD: {
-            // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-            pos_expanded = tools::finite::env::expand_environment_backward(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
+            if(get_position<long>() >= 0) {
+                activate_sites({get_position<size_t>()});
+                rebuild_edges();
+                // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+                expresult = tools::finite::env::expand_environment_backward(*state, *model, *edges, envExpandMode, svd_cfg);
+            }
             break;
         }
         case EnvExpandSide::FORWARD: {
-            pos_expanded = tools::finite::env::expand_environment_forward(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
+            expresult = tools::finite::env::expand_environment_forward(*state, *model, *edges, envExpandMode, svd_cfg);
             break;
         }
     }
-    if(not pos_expanded.empty()) clear_measurements();
+    if(expresult.ok) clear_measurements();
     if constexpr(settings::debug) assert_validity();
+    return expresult;
 }
 
 void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::optional<long> new_pos) {

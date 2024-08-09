@@ -26,32 +26,35 @@ enum class MeanType { ARITHMETIC, GEOMETRIC };
  *      - MIN                   : Set the block size to settings::strategy::dmrg_min_blocksize at all steps
  *      - MAX                   : Set the block size to settings::strategy::dmrg_max_blocksize at all steps
  *      - MAX|SATURATED         : Set the block size to settings::strategy::dmrg_max_blocksize if the algorithm has saturated
- *      - ICOM|STUCK|REQMINTRNC : Set the block size to the ceil of "information_center_of_mass" if the algorithm is stuck and the trnc_lim ==
+ *      - ICOM|STUCK|FIN_TRNC : Set the block size to the ceil of "information_center_of_mass" if the algorithm is stuck and the trnc_lim ==
  * settings::precision::svd_truncation_min
  *
  *  Note that settings::strategy::dmrg_min_blocksize and settings::strategy::dmrg_max_blocksize are hard limits on the block size.
  *  This means that "ICOM" sets a block size within those limits.
  */
 enum class BlockSizePolicy {
-    MIN        = 0,  /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
-    MAX        = 1,  /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
-    ICOM       = 2,  /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
-    ICOMPLUS1  = 4,  /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
-    SATURATED  = 8,  /*!< Set the block size when the algorithm status == saturated */
-    STUCK      = 16, /*!< Set the block size when the algorithm status == stuck */
-    REQMAXBOND = 32, /*! Require that the bond dimension has reached its maximum before increasing the block size */
-    REQMINTRNC = 64, /*! Require that the truncation error has reached its minimum before increasing the block size   */
+    MIN       = 0,   /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    MAX       = 1,   /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    ICOM      = 2,   /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
+    ICOMPLUS1 = 4,   /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
+    SAT_ENT   = 8,   /*!< Set the block size when the entanglement entropy has saturated */
+    SAT_ICOM  = 16,  /*!< Set the block size when the information center of mass has saturated */
+    SAT_VAR   = 32,  /*!< Set the block size when the energy variance has saturated */
+    SAT_ALGO  = 64,  /*!< Set the block size when the algorithm status == saturated (implies all saturations) */
+    STK_ALGO  = 128, /*!< Set the block size when the algorithm status == stuck ( */
+    FIN_BOND  = 256, /*! Require that the bond dimension has reached its final (maximum) value before increasing the block size */
+    FIN_TRNC  = 512, /*! Require that the truncation error has reached its final (minimum) value before increasing the block size   */
     allow_bitops
 };
 
 enum class EigsIterGainPolicy : int {
-    NEVER      = 0,  /*! Never increase eigs iterations  <*/
-    ITERATION  = 1,  /*! Increase eigs iterations every itertaion    <*/
-    VARSAT     = 2,  /*! Increase when the energy variance has saturated  <*/
-    SATURATED  = 4,  /*! Increase when the algorithm has saturated  <*/
-    STUCK      = 8,  /*! Increase when the algorithm is stuck  <*/
-    REQMAXBOND = 16, /*! Increase only when the bond dimension has reached its maximum   <*/
-    REQMINTRNC = 32, /*! Increase only when the truncation error has reached its minimum   <*/
+    NEVER     = 0,  /*! Never increase eigs iterations  <*/
+    ITERATION = 1,  /*! Increase eigs iterations every itertaion    <*/
+    VARSAT    = 2,  /*! Increase when the energy variance has saturated  <*/
+    SATURATED = 4,  /*! Increase when the algorithm has saturated  <*/
+    STUCK     = 8,  /*! Increase when the algorithm is stuck  <*/
+    FIN_BOND  = 16, /*! Increase only when the bond dimension has reached its maximum   <*/
+    FIN_TRNC  = 32, /*! Increase only when the truncation error has reached its minimum   <*/
     allow_bitops
 };
 
@@ -65,6 +68,38 @@ enum class UpdatePolicy {
     STUCK     = 32, /*!< Update when the algorithm is stuck */
     allow_bitops
 };
+
+/*! \brief Controls how saturation is checked.
+ *  Given a series
+ *      x = [x0,x1,x2...xN],
+ *  we generate a new sequence
+ *      y = [f0, f1, f2... fN],
+ *  where fk = function(xk,...,xN).
+ *  That is, we apply a function f on
+ *      x,
+ *      x with first element removed,
+ *      x with first and second elements removed,
+ *  and so on.
+ *  The function f is either
+ *       val: the standard deviation on xk...xN
+ *       mov: the standard deviation on the moving average of xk...xN
+ *       min: the standard deviation on the minimum of xk...xN
+ *       max: the standard deviation on the maximum of xk...xN
+ *       mid: the standard deviation on the midpoint between min and max
+ */
+enum class SaturationPolicy {
+    val = 0,   /*!< Check the standard deviation on xk...xN */
+    avg = 1,   /*!< Check the standard deviation on xk...xN */
+    med = 2,   /*!< Check the standard deviation on xk...xN */
+    mov = 4,   /*!< Check the standard deviation on the moving average of xk...xN */
+    min = 8,   /*!< Check the standard deviation on the minimum of xk...xN */
+    max = 16,  /*!< Check the standard deviation on the maximum of xk...xN */
+    mid = 32,  /*!< Check the standard deviation on the midpoint between min and max */
+    dif = 64,  /*!< Check the standard deviation on the midpoint between min and max */
+    log = 128, /*!< Transform x -> log(x) first */
+    allow_bitops
+};
+
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
@@ -409,8 +444,8 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(
-        enum_sfinae::is_any_v<T, OptExit, OptWhen, EigsIterGainPolicy, StoragePolicy, BlockSizePolicy, UpdatePolicy, ProjectionPolicy, EnvExpandMode>);
+    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, EigsIterGainPolicy, StoragePolicy, BlockSizePolicy, UpdatePolicy, SaturationPolicy,
+                                        ProjectionPolicy, EnvExpandMode>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -454,10 +489,13 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, BlockSizePolicy::MAX)) v.emplace_back("MAX");
         if(has_flag(item, BlockSizePolicy::ICOM)) v.emplace_back("ICOM");
         if(has_flag(item, BlockSizePolicy::ICOMPLUS1)) v.emplace_back("ICOMPLUS1");
-        if(has_flag(item, BlockSizePolicy::SATURATED)) v.emplace_back("SATURATED");
-        if(has_flag(item, BlockSizePolicy::STUCK)) v.emplace_back("STUCK");
-        if(has_flag(item, BlockSizePolicy::REQMAXBOND)) v.emplace_back("REQMAXBOND");
-        if(has_flag(item, BlockSizePolicy::REQMINTRNC)) v.emplace_back("REQMINTRNC");
+        if(has_flag(item, BlockSizePolicy::SAT_ENT)) v.emplace_back("SAT_ENT");
+        if(has_flag(item, BlockSizePolicy::SAT_ICOM)) v.emplace_back("SAT_ICOM");
+        if(has_flag(item, BlockSizePolicy::SAT_VAR)) v.emplace_back("SAT_VAR");
+        if(has_flag(item, BlockSizePolicy::SAT_ALGO)) v.emplace_back("SAT_ALGO");
+        if(has_flag(item, BlockSizePolicy::STK_ALGO)) v.emplace_back("STK_ALGO");
+        if(has_flag(item, BlockSizePolicy::FIN_BOND)) v.emplace_back("FIN_BOND");
+        if(has_flag(item, BlockSizePolicy::FIN_TRNC)) v.emplace_back("FIN_TRNC");
         if(v.empty()) return "MIN";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
@@ -468,6 +506,17 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, UpdatePolicy::SATURATED)) v.emplace_back("SATURATED");
         if(has_flag(item, UpdatePolicy::STUCK)) v.emplace_back("STUCK");
         if(v.empty()) return "NEVER";
+    }
+    if constexpr(std::is_same_v<T, SaturationPolicy>) {
+        if(has_flag(item, SaturationPolicy::avg)) v.emplace_back("avg");
+        if(has_flag(item, SaturationPolicy::med)) v.emplace_back("med");
+        if(has_flag(item, SaturationPolicy::mov)) v.emplace_back("mov");
+        if(has_flag(item, SaturationPolicy::min)) v.emplace_back("min");
+        if(has_flag(item, SaturationPolicy::max)) v.emplace_back("max");
+        if(has_flag(item, SaturationPolicy::mid)) v.emplace_back("mid");
+        if(has_flag(item, SaturationPolicy::dif)) v.emplace_back("dif");
+        if(has_flag(item, SaturationPolicy::log)) v.emplace_back("log");
+        if(v.empty()) return "val";
     }
     if constexpr(std::is_same_v<T, ProjectionPolicy>) {
         if(has_flag(item, ProjectionPolicy::INIT)) v.emplace_back("INIT");
@@ -489,8 +538,8 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, EigsIterGainPolicy::VARSAT)) v.emplace_back("VARSAT");
         if(has_flag(item, EigsIterGainPolicy::SATURATED)) v.emplace_back("SATURATED");
         if(has_flag(item, EigsIterGainPolicy::STUCK)) v.emplace_back("STUCK");
-        if(has_flag(item, EigsIterGainPolicy::REQMAXBOND)) v.emplace_back("REQMAXBOND");
-        if(has_flag(item, EigsIterGainPolicy::REQMINTRNC)) v.emplace_back("REQMINTRNC");
+        if(has_flag(item, EigsIterGainPolicy::FIN_BOND)) v.emplace_back("FIN_BOND");
+        if(has_flag(item, EigsIterGainPolicy::FIN_TRNC)) v.emplace_back("FIN_TRNC");
         if(v.empty()) return "NEVER";
     }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
@@ -510,6 +559,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         BlockSizePolicy,
         SVDLibrary,
         UpdatePolicy,
+        SaturationPolicy,
         GateMove,
         GateOp,
         CircuitOp,
@@ -571,10 +621,13 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case BlockSizePolicy::MAX :                              return "MAX";
         case BlockSizePolicy::ICOM :                             return "ICOM";
         case BlockSizePolicy::ICOMPLUS1 :                        return "ICOMPLUS1";
-        case BlockSizePolicy::SATURATED :                        return "SATURATED";
-        case BlockSizePolicy::STUCK :                            return "STUCK";
-        case BlockSizePolicy::REQMAXBOND :                       return "REQMAXBOND";
-        case BlockSizePolicy::REQMINTRNC:                        return "REQMINTRNC";
+        case BlockSizePolicy::SAT_ENT :                          return "SAT_ENT";
+        case BlockSizePolicy::SAT_ICOM :                         return "SAT_ICOM";
+        case BlockSizePolicy::SAT_VAR :                          return "SAT_VAR";
+        case BlockSizePolicy::SAT_ALGO:                          return "SAT_ALGO";
+        case BlockSizePolicy::STK_ALGO:                          return "STK_ALGO";
+        case BlockSizePolicy::FIN_BOND:                        return "FIN_BOND";
+        case BlockSizePolicy::FIN_TRNC:                        return "FIN_TRNC";
         default: return "BlockSizePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -599,7 +652,17 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == UpdatePolicy::SATURATED)                      return "SATURATED";
         if(item == UpdatePolicy::STUCK)                          return "STUCK";
     }
-
+    if constexpr(std::is_same_v<T, SaturationPolicy>) {
+        if(item == SaturationPolicy::val)                        return "val";
+        if(item == SaturationPolicy::avg)                        return "avg";
+        if(item == SaturationPolicy::med)                        return "med";
+        if(item == SaturationPolicy::mov)                        return "mov";
+        if(item == SaturationPolicy::min)                        return "min";
+        if(item == SaturationPolicy::max)                        return "max";
+        if(item == SaturationPolicy::mid)                        return "mid";
+        if(item == SaturationPolicy::dif)                        return "dif";
+        if(item == SaturationPolicy::log)                        return "log";
+    }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == GateMove::OFF)                                       return "OFF";
         if(item == GateMove::ON)                                        return "ON";
@@ -875,8 +938,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == EigsIterGainPolicy::VARSAT)                          return "VARSAT";
         if(item == EigsIterGainPolicy::SATURATED)                       return "SATURATED";
         if(item == EigsIterGainPolicy::STUCK)                           return "STUCK";
-        if(item == EigsIterGainPolicy::REQMAXBOND)                      return "REQMAXBOND";
-        if(item == EigsIterGainPolicy::REQMINTRNC)                      return "REQMINTRNC";
+        if(item == EigsIterGainPolicy::FIN_BOND)                      return "FIN_BOND";
+        if(item == EigsIterGainPolicy::FIN_TRNC)                      return "FIN_TRNC";
     }
     return "UNRECOGNIZED ENUM";
 }
@@ -895,6 +958,7 @@ constexpr auto sv2enum(std::string_view item) {
         BlockSizePolicy,
         SVDLibrary,
         UpdatePolicy,
+        SaturationPolicy,
         GateMove,
         GateOp,
         CircuitOp,
@@ -951,13 +1015,16 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, BlockSizePolicy>) {
         auto policy = BlockSizePolicy::MIN;
-        if(item.find("MAX")            != std::string_view::npos)  policy |= BlockSizePolicy::MAX;
-        if(item.find("ICOM")           != std::string_view::npos)  policy |= BlockSizePolicy::ICOM;
-        if(item.find("ICOMPLUS1")      != std::string_view::npos)  policy |= BlockSizePolicy::ICOMPLUS1;
-        if(item.find("SATURATED")      != std::string_view::npos)  policy |= BlockSizePolicy::SATURATED;
-        if(item.find("STUCK")          != std::string_view::npos)  policy |= BlockSizePolicy::STUCK;
-        if(item.find("REQMAXBOND")     != std::string_view::npos)  policy |= BlockSizePolicy::REQMAXBOND;
-        if(item.find("REQMINTRNC")     != std::string_view::npos)  policy |= BlockSizePolicy::REQMINTRNC;
+        if(item.find("MAX")         != std::string_view::npos)  policy |= BlockSizePolicy::MAX;
+        if(item.find("ICOM")        != std::string_view::npos)  policy |= BlockSizePolicy::ICOM;
+        if(item.find("ICOMPLUS1")   != std::string_view::npos)  policy |= BlockSizePolicy::ICOMPLUS1;
+        if(item.find("SAT_ENT")     != std::string_view::npos)  policy |= BlockSizePolicy::SAT_ENT;
+        if(item.find("SAT_ICOM")    != std::string_view::npos)  policy |= BlockSizePolicy::SAT_ICOM;
+        if(item.find("SAT_VAR")     != std::string_view::npos)  policy |= BlockSizePolicy::SAT_VAR;
+        if(item.find("SAT_ALGO")    != std::string_view::npos)  policy |= BlockSizePolicy::SAT_ALGO;
+        if(item.find("STK_ALGO")    != std::string_view::npos)  policy |= BlockSizePolicy::STK_ALGO;
+        if(item.find("FIN_BOND")  != std::string_view::npos)  policy |= BlockSizePolicy::FIN_BOND;
+        if(item.find("FIN_TRNC")  != std::string_view::npos)  policy |= BlockSizePolicy::FIN_TRNC;
         return policy;
 
     }
@@ -967,8 +1034,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("VARSAT")         != std::string_view::npos) policy |= EigsIterGainPolicy::VARSAT;
         if(item.find("SATURATED")      != std::string_view::npos) policy |= EigsIterGainPolicy::SATURATED;
         if(item.find("STUCK")          != std::string_view::npos) policy |= EigsIterGainPolicy::STUCK;
-        if(item.find("REQMAXBOND")     != std::string_view::npos) policy |= EigsIterGainPolicy::REQMAXBOND;
-        if(item.find("REQMINTRNC")     != std::string_view::npos) policy |= EigsIterGainPolicy::REQMINTRNC;
+        if(item.find("FIN_BOND")     != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_BOND;
+        if(item.find("FIN_TRNC")     != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_TRNC;
         return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -992,6 +1059,19 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("TRUNCATED")  != std::string_view::npos) policy |= UpdatePolicy::TRUNCATED;
         if(item.find("SATURATED")  != std::string_view::npos) policy |= UpdatePolicy::SATURATED;
         if(item.find("STUCK")      != std::string_view::npos) policy |= UpdatePolicy::STUCK;
+        return policy;
+    }
+    if constexpr(std::is_same_v<T, SaturationPolicy>) {
+        auto policy = SaturationPolicy::val;
+        if(item.find("val")  != std::string_view::npos) policy |= SaturationPolicy::val;
+        if(item.find("avg")  != std::string_view::npos) policy |= SaturationPolicy::avg;
+        if(item.find("med")  != std::string_view::npos) policy |= SaturationPolicy::med;
+        if(item.find("mov")  != std::string_view::npos) policy |= SaturationPolicy::mov;
+        if(item.find("min")  != std::string_view::npos) policy |= SaturationPolicy::min;
+        if(item.find("max")  != std::string_view::npos) policy |= SaturationPolicy::max;
+        if(item.find("mid")  != std::string_view::npos) policy |= SaturationPolicy::mid;
+        if(item.find("dif")  != std::string_view::npos) policy |= SaturationPolicy::dif;
+        if(item.find("log")  != std::string_view::npos) policy |= SaturationPolicy::log;
         return policy;
     }
     if constexpr(std::is_same_v<T, GateMove>) {

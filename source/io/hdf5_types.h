@@ -32,9 +32,29 @@ class h5_enum_storage_level {
     static void            commit(const h5pp::hid::h5f &file_id);
 };
 
+class h5_enum_opt_ritz {
+    private:
+    static inline h5pp::hid::h5t h5_opt_ritz;
+
+    public:
+    static h5pp::hid::h5t &get_h5t();
+    static void            create();
+    static void            commit(const h5pp::hid::h5f &file_id);
+};
+
 class h5_enum_algo_type {
     private:
     static inline h5pp::hid::h5t h5_algo_type;
+
+    public:
+    static h5pp::hid::h5t &get_h5t();
+    static void            create();
+    static void            commit(const h5pp::hid::h5f &file_id);
+};
+
+class h5_enum_algo_stop {
+    private:
+    static inline h5pp::hid::h5t h5_algo_stop;
 
     public:
     static h5pp::hid::h5t &get_h5t();
@@ -241,9 +261,9 @@ class h5pp_ur {
         double       avg;
         int          level;
         size_t       count;
-        item() = default;
-        item(const item &it);
-        item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count);
+                     item() = default;
+                     item(const item &it);
+                     item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count);
     };
 
     static h5pp::hid::h5t get_h5t();

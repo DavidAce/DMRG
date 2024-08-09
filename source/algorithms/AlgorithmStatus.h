@@ -51,6 +51,7 @@ class AlgorithmStatus {
     size_t            variance_ham_saturated_for = 0;
     size_t            variance_mom_converged_for = 0;
     size_t            variance_mom_saturated_for = 0;
+    // size_t            infocom_saturated_for      = 0; /*!< Information center of mass (information scale expectation value) */
     bool              bond_limit_has_reached_max = false;
     bool              trnc_limit_has_reached_min = false;
     bool              spin_parity_has_converged  = false;

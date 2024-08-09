@@ -221,11 +221,7 @@ namespace settings {
         inline size_t              iter_max_stuck              = 5;                                      /*!< If status.algorithm_saturated_for > 0 then status.algorithm_has_stuck_for +=1. If stuck for this many iterations, we stop. */
         inline size_t              iter_max_saturated          = 5;                                      /*!< Saturation means that both variance and entanglement saturated. But if either saturates for this many iterations, then status.algorithm_saturated_for += 1 */
         inline size_t              iter_min_converged          = 1;                                      /*!< Require convergence at least this many iterations before success */
-        inline double              env_expansion_alpha_max     = 1e-2;                                   /*!< Maximum value of alpha used in environment (aka subspace) expansion (disable with <= 0) */
-        inline double              env_expansion_bias_min      = 0.01;                                   /*!< Sets the lower bound on the bias used when updating alpha *= sqrt(var/var_expn)+bias  */
-        inline double              env_expansion_bias_max      = 0.3;                                    /*!< Sets the lower bound on the bias used when updating alpha *= sqrt(var/var_expn)+bias  */
-        inline double              env_expansion_bias_gain     = 2.0;                                    /*!< Increase the bias successively as bias = min(bias_max,  bias_min * gain^(iters without progress)  */
-        inline BlockSizePolicy     dmrg_blocksize_policy       = BlockSizePolicy::MIN;                   /*!< Bitflag to control the adaptive dmrg blocksize {MIN,MAX,ICOM,ICOMPLUS1,SATURATED,STUCK,REQMAXBOND,REQMINTRNC} */
+        inline BlockSizePolicy     dmrg_blocksize_policy       = BlockSizePolicy::MIN;                   /*!< Bitflag to control the adaptive dmrg blocksize {MIN,MAX,ICOM,ICOMPLUS1,SATURATED,STUCK,FIN_BOND,FIN_TRNC} */
         inline size_t              dmrg_min_blocksize          = 1;                                      /*!< Minimum number of sites in a dmrg optimization step. */
         inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
         inline long                dmrg_max_prob_size          = 1024*2*1024;                            /*!< Restricts the dmrg blocksize to keep the problem size below this limit. Problem size = chiL * (spindim ** blocksize) * chiR */
@@ -240,6 +236,9 @@ namespace settings {
         inline double              bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
         inline UpdatePolicy        trnc_decrease_when          = UpdatePolicy::NEVER;                    /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
         inline double              trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
+        inline UpdatePolicy        etol_decrease_when          = UpdatePolicy::NEVER;                    /*!< If and when to decrease EIGS tolerance {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
+        inline double              etol_decrease_rate          = 1e-1;                                   /*!< Decrease EIGS tolerance by this factor. Valid if 0 < x < 1 */
+
     }
 
 
@@ -249,7 +248,7 @@ namespace settings {
         inline size_t             eigs_iter_min                   = 100;                         /*!< Minimum number of iterations for eigenvalue solver. */
         inline size_t             eigs_iter_max                   = 100000;                      /*!< Maximum number of iterations for eigenvalue solver. */
         inline double             eigs_iter_gain                  = 2     ;                      /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress */
-        inline EigsIterGainPolicy eigs_iter_gain_policy           = EigsIterGainPolicy::VARSAT;  /*!< Bitflag for when to increase the eigensolver iterations. Choose one or more: [NEVER, ITERATION, VARSAT, SATURATED, STUCK, REQMAXBOND, REQMINTRNC] */
+        inline EigsIterGainPolicy eigs_iter_gain_policy           = EigsIterGainPolicy::VARSAT;  /*!< Bitflag for when to increase the eigensolver iterations. Choose one or more: [NEVER, ITERATION, VARSAT, SATURATED, STUCK, FIN_BOND, FIN_TRNC] */
         inline double             eigs_tol_min                    = 1e-14 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
         inline double             eigs_tol_max                    = 1e-10 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
         inline int                eigs_ncv                        = 0     ;                      /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
@@ -268,6 +267,7 @@ namespace settings {
         inline double             variance_convergence_threshold  = 1e-12 ;                      /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double             variance_saturation_sensitivity = 1e-1  ;                      /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
         inline double             entropy_saturation_sensitivity  = 1e-3  ;                      /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double             infocom_saturation_sensitivity  = 1e-2  ;                      /*!< Information center of mass saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
         inline double             target_subspace_error           = 1e-10 ;                      /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
         inline size_t             max_subspace_size               = 256   ;                      /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
         inline double             max_norm_error                  = 1e-10 ;                      /*!< Maximum norm deviation from unity during integrity checks */

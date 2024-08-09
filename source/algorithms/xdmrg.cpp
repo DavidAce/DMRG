@@ -309,13 +309,13 @@ void xdmrg::run_algorithm() {
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Updates the bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
+        update_eigs_tolerance();         // Updates the tolerance on the iterative eigensolver
         update_dmrg_blocksize();         // Updates the number sites used in dmrg steps using the information typical scale
         try_retargeting();
         try_projection(); // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         // try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
 
         // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);
-        // update_environment_expansion_alpha();
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -345,7 +345,6 @@ void xdmrg::update_state() {
     // Expand the environment to grow the bond dimension in 1-site dmrg
     if(opt_meta.expand_mode != EnvExpandMode::NONE) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
-        update_environment_expansion_alpha();
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
         opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);
         opt_meta.optSolver    = opt_meta.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
@@ -376,13 +375,24 @@ void xdmrg::update_state() {
 
     // Estimate the convergence rate (requires nev > 1)
     double convr = std::numeric_limits<double>::quiet_NaN();
-    if(!opt_state.next_evs.empty() and opt_state.get_optcost() == OptCost::VARIANCE) {
-        auto ev0   = opt_state.get_eigs_eigval();
-        auto ev1   = opt_state.next_evs.front().eigs_eigval;
-        auto evn   = std::pow(tensors.model->get_energy_upper_bound(), 2.0);
-        auto kappa = (evn - ev0) / (ev1 - ev0);
-        auto gamma = (std::sqrt(kappa) - 1) / (std::sqrt(kappa) + 1);
-        convr      = std::log(0.5) / std::log(gamma);
+    if(opt_state.get_optcost() == OptCost::VARIANCE and settings::xdmrg::try_shifting_when_degen > 0) {
+        // auto ev0   = opt_state.get_eigs_eigval();
+        // auto ev1   = opt_state.next_evs.front().eigs_eigval;
+        // auto evn   = std::pow(tensors.model->get_energy_upper_bound(), 2.0);
+        // auto kappa = (evn - ev0) / (ev1 - ev0);
+        // auto gamma = (std::sqrt(kappa) - 1) / (std::sqrt(kappa) + 1);
+
+        // Compare the progress in the objective function
+        auto old_eigvalue = initial_state.get_variance() + std::pow(initial_state.get_energy(), 2.0); // Plain H²
+        auto new_eigvalue = opt_state.get_eigs_eigval();                                              // Should also be plain H²
+        auto num_matvecs  = static_cast<double>(opt_state.get_mv());
+        auto time_eigs    = opt_state.get_time();
+        if(new_eigvalue < old_eigvalue and num_matvecs > 0 and time_eigs > 0.0) {
+            convr = (1.0 - new_eigvalue / old_eigvalue) / num_matvecs / time_eigs;
+            tools::log->info("H² {:.3e} -> {:.3e} in {:<10} matvecs: convr {:.3e}", old_eigvalue, new_eigvalue, num_matvecs, convr);
+        }
+
+        // convr      = std::log(0.5) / std::log(gamma);
     }
     for(auto site : opt_state.get_sites()) dmrg_degeneracy_score.at(site) = convr;
 
@@ -431,7 +441,6 @@ void xdmrg::update_state() {
     var_change                    = var / var_latest;
     var_latest                    = var;
     ene_latest                    = ene;
-    var_mpo_step.emplace_back(var);
 
     last_optsolver = opt_state.get_optsolver();
     last_optalgo   = opt_state.get_optalgo();

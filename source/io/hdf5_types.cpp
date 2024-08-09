@@ -40,6 +40,29 @@ void h5_enum_storage_event::commit(const h5pp::hid::h5f &file_id) {
     if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
 }
 
+h5pp::hid::h5t &h5_enum_opt_ritz::get_h5t() {
+    create();
+    return h5_opt_ritz;
+}
+
+void h5_enum_opt_ritz::create() {
+    if(h5_opt_ritz.valid()) return;
+    h5_opt_ritz = H5Tenum_create(H5T_NATIVE_INT);
+    int val;
+    H5Tenum_insert(h5_opt_ritz, "NONE", (val = static_cast<int>(OptRitz::NONE), &val));
+    H5Tenum_insert(h5_opt_ritz, "LR", (val = static_cast<int>(OptRitz::LR), &val));
+    H5Tenum_insert(h5_opt_ritz, "SR", (val = static_cast<int>(OptRitz::SR), &val));
+    H5Tenum_insert(h5_opt_ritz, "SM", (val = static_cast<int>(OptRitz::SM), &val));
+    H5Tenum_insert(h5_opt_ritz, "IS", (val = static_cast<int>(OptRitz::IS), &val));
+    H5Tenum_insert(h5_opt_ritz, "TE", (val = static_cast<int>(OptRitz::TE), &val));
+}
+
+void h5_enum_opt_ritz::commit(const h5pp::hid::h5f &file_id) {
+    if(H5Tcommitted(get_h5t()) > 0) return;
+    herr_t err = H5Tcommit(file_id, "OptRitz", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    if(err < 0) throw except::runtime_error("Failed to commit OptRitz to file");
+}
+
 h5pp::hid::h5t &h5_enum_algo_type::get_h5t() {
     create();
     return h5_algo_type;
@@ -60,7 +83,28 @@ void h5_enum_algo_type::create() {
 void h5_enum_algo_type::commit(const h5pp::hid::h5f &file_id) {
     if(H5Tcommitted(get_h5t()) > 0) return;
     herr_t err = H5Tcommit(file_id, "AlgorithmType", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
+    if(err < 0) throw except::runtime_error("Failed to commit AlgorithmType to file");
+}
+
+h5pp::hid::h5t &h5_enum_algo_stop::get_h5t() {
+    create();
+    return h5_algo_stop;
+}
+
+void h5_enum_algo_stop::create() {
+    if(h5_algo_stop.valid()) return;
+    h5_algo_stop = H5Tenum_create(H5T_NATIVE_INT);
+    int val;
+    H5Tenum_insert(h5_algo_stop, "SUCCESS", (val = static_cast<int>(AlgorithmStop::SUCCESS), &val));
+    H5Tenum_insert(h5_algo_stop, "SATURATED", (val = static_cast<int>(AlgorithmStop::SATURATED), &val));
+    H5Tenum_insert(h5_algo_stop, "MAX_ITERS", (val = static_cast<int>(AlgorithmStop::MAX_ITERS), &val));
+    H5Tenum_insert(h5_algo_stop, "NONE", (val = static_cast<int>(AlgorithmStop::NONE), &val));
+}
+
+void h5_enum_algo_stop::commit(const h5pp::hid::h5f &file_id) {
+    if(H5Tcommitted(get_h5t()) > 0) return;
+    herr_t err = H5Tcommit(file_id, "AlgorithmStop", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    if(err < 0) throw except::runtime_error("Failed to commit AlgorithmStop to file");
 }
 
 h5pp::hid::h5t h5pp_table_measurements_finite::get_h5t() {
@@ -146,75 +190,56 @@ h5pp::hid::h5t h5pp_table_algorithm_status::get_h5t() {
 
 void h5pp_table_algorithm_status::register_table_type() {
     if(h5_type.valid()) return;
-    h5_enum_storage_event::create();
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
 
-    if(not h5_algo_type.valid()) {
-        h5_algo_type = H5Tcreate(H5T_ENUM, sizeof(AlgorithmType));
-        int val;
-        H5Tenum_insert(h5_algo_type, "iDMRG", (val = 0, &val));
-        H5Tenum_insert(h5_algo_type, "fDMRG", (val = 1, &val));
-        H5Tenum_insert(h5_algo_type, "xDMRG", (val = 2, &val));
-        H5Tenum_insert(h5_algo_type, "iTEBD", (val = 3, &val));
-        H5Tenum_insert(h5_algo_type, "flBIT", (val = 4, &val));
-        H5Tenum_insert(h5_algo_type, "ANY", (val = 5, &val));
-    }
-    if(not h5_algo_stop.valid()) {
-        h5_algo_stop = H5Tcreate(H5T_ENUM, sizeof(AlgorithmStop));
-        int val;
-        H5Tenum_insert(h5_algo_stop, "SUCCESS", (val = 0, &val));
-        H5Tenum_insert(h5_algo_stop, "SATURATED", (val = 1, &val));
-        H5Tenum_insert(h5_algo_stop, "MAX_ITERS", (val = 2, &val));
-        H5Tenum_insert(h5_algo_stop, "RANDOMIZE", (val = 4, &val));
-        H5Tenum_insert(h5_algo_stop, "NONE", (val = 5, &val));
-    }
-
     /* clang-format off */
-        H5Tinsert(h5_type, "iter",                        HOFFSET(table, iter),                       H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "step",                        HOFFSET(table, step),                       H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "position",                    HOFFSET(table, position),                   H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "direction",                   HOFFSET(table, direction),                  H5T_NATIVE_INT);
-        H5Tinsert(h5_type, "event",                       HOFFSET(table, event),                      h5_enum_storage_event::get_h5t());
-        H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_min",                   HOFFSET(table, bond_min),                  H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "trnc_lim",                    HOFFSET(table, trnc_lim),                   H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "trnc_min",                    HOFFSET(table, trnc_min),                   H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "trnc_max",                   HOFFSET(table, trnc_max),                  H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_min",                  HOFFSET(table, energy_min),                 H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_max",                  HOFFSET(table, energy_max),                 H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_tgt",                  HOFFSET(table, energy_tgt),                 H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_dens",                 HOFFSET(table, energy_dens),                H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_dens_target",          HOFFSET(table, energy_dens_target),         H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_variance_lowest",      HOFFSET(table, energy_variance_lowest),     H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_variance_max_digits",  HOFFSET(table, energy_variance_max_digits), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "energy_variance_prec_limit",  HOFFSET(table, energy_variance_prec_limit), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "env_expansion_alpha",         HOFFSET(table, env_expansion_alpha),        H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  decltype(table::phys_time)::get_h5type());
-        H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    decltype(table::delta_t)::get_h5type());
-        H5Tinsert(h5_type, "algo_type",                   HOFFSET(table, algo_type),                  h5_algo_type);
-        H5Tinsert(h5_type, "algo_stop",                   HOFFSET(table, algo_stop),                  h5_algo_stop);
-        H5Tinsert(h5_type, "algorithm_has_finished",      HOFFSET(table, algorithm_has_finished),     H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_succeeded",     HOFFSET(table, algorithm_has_succeeded),    H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_to_stop",       HOFFSET(table, algorithm_has_to_stop),      H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "algorithm_has_stuck_for",     HOFFSET(table, algorithm_has_stuck_for),    H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "algorithm_saturated_for",     HOFFSET(table, algorithm_saturated_for),    H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "algorithm_converged_for",     HOFFSET(table, algorithm_converged_for),    H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "entanglement_converged_for",  HOFFSET(table, entanglement_converged_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "entanglement_saturated_for",  HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "variance_mpo_converged_for",  HOFFSET(table, variance_mpo_converged_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "variance_mpo_saturated_for",  HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "variance_ham_converged_for",  HOFFSET(table, variance_ham_converged_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "variance_ham_saturated_for",  HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "variance_mom_converged_for",  HOFFSET(table, variance_mom_converged_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "variance_mom_saturated_for",  HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "bond_limit_has_reached_max",  HOFFSET(table, bond_limit_has_reached_max), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "trnc_limit_has_reached_min",  HOFFSET(table, trnc_limit_has_reached_min), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "iter",                        HOFFSET(table, iter),                       H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "step",                        HOFFSET(table, step),                       H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "position",                    HOFFSET(table, position),                   H5T_NATIVE_LONG);
+    H5Tinsert(h5_type, "direction",                   HOFFSET(table, direction),                  H5T_NATIVE_INT);
+    H5Tinsert(h5_type, "event",                       HOFFSET(table, event),                      h5_enum_storage_event::get_h5t());
+    H5Tinsert(h5_type, "opt_ritz",                    HOFFSET(table, opt_ritz),                   h5_enum_opt_ritz::get_h5t());
+    H5Tinsert(h5_type, "algo_type",                   HOFFSET(table, algo_type),                  h5_enum_algo_type::get_h5t());
+    H5Tinsert(h5_type, "algo_stop",                   HOFFSET(table, algo_stop),                  h5_enum_algo_stop::get_h5t());
+    H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
+    H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
+    H5Tinsert(h5_type, "bond_min",                    HOFFSET(table, bond_min),                   H5T_NATIVE_LONG);
+    H5Tinsert(h5_type, "trnc_lim",                    HOFFSET(table, trnc_lim),                   H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "trnc_min",                    HOFFSET(table, trnc_min),                   H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "trnc_max",                    HOFFSET(table, trnc_max),                   H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_min",                  HOFFSET(table, energy_min),                 H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_max",                  HOFFSET(table, energy_max),                 H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_tgt",                  HOFFSET(table, energy_tgt),                 H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_dens",                 HOFFSET(table, energy_dens),                H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_dens_target",          HOFFSET(table, energy_dens_target),         H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_variance_lowest",      HOFFSET(table, energy_variance_lowest),     H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "energy_variance_max_digits",  HOFFSET(table, energy_variance_max_digits), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "energy_variance_prec_limit",  HOFFSET(table, energy_variance_prec_limit), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "env_expansion_alpha",         HOFFSET(table, env_expansion_alpha),        H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  decltype(table::phys_time)::get_h5type());
+    H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    decltype(table::delta_t)::get_h5type());
+    H5Tinsert(h5_type, "algorithm_has_finished",      HOFFSET(table, algorithm_has_finished),     H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "algorithm_has_succeeded",     HOFFSET(table, algorithm_has_succeeded),    H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "algorithm_has_to_stop",       HOFFSET(table, algorithm_has_to_stop),      H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "algorithm_has_stuck_for",     HOFFSET(table, algorithm_has_stuck_for),    H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "algorithm_saturated_for",     HOFFSET(table, algorithm_saturated_for),    H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "algorithm_converged_for",     HOFFSET(table, algorithm_converged_for),    H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "entanglement_converged_for",  HOFFSET(table, entanglement_converged_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "entanglement_saturated_for",  HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "variance_mpo_converged_for",  HOFFSET(table, variance_mpo_converged_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "variance_mpo_saturated_for",  HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "variance_ham_converged_for",  HOFFSET(table, variance_ham_converged_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "variance_ham_saturated_for",  HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "variance_mom_converged_for",  HOFFSET(table, variance_mom_converged_for), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "variance_mom_saturated_for",  HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_ULONG);
+    // H5Tinsert(h5_type, "infocom_saturated_for",       HOFFSET(table, infocom_saturated_for),      H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "bond_limit_has_reached_max",  HOFFSET(table, bond_limit_has_reached_max), H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "trnc_limit_has_reached_min",  HOFFSET(table, trnc_limit_has_reached_min), H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
+    H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
     /* clang-format on */
 }
 

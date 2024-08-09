@@ -32,7 +32,7 @@ class EnvBase {
     mutable std::optional<std::size_t>      unique_id_mps; // Unique identifiers of the neighboring site which are used to build this block
     mutable std::optional<std::size_t>      unique_id_mpo; // Unique identifiers of the neighboring site which are used to build this block
     mutable std::optional<std::size_t>      unique_id_env; // Unique identifiers of the neighboring site which are used to build this block
-
+    // double                                  mixing_factor_alpha = 1e-5; // Used during environment (subspace) expansion
     public:
              EnvBase();
     ~        EnvBase();                           // Read comment on implementation
@@ -62,11 +62,13 @@ class EnvBase {
 
     virtual void set_edge_dims(const MpsSite &MPS, const MpoSite &MPO) = 0;
 
+    // void                       set_mixing_factor(double alpha);
+    // double                     get_mixing_factor() const;
     std::size_t                get_unique_id() const;
     std::optional<std::size_t> get_unique_id_env() const;
     std::optional<std::size_t> get_unique_id_mps() const;
     std::optional<std::size_t> get_unique_id_mpo() const;
 
     template<typename T = cplx>
-    Eigen::Tensor<T, 3>    get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha = 0, long rank_max = -1) const;
+    Eigen::Tensor<T, 3> get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max = -1) const;
 };
