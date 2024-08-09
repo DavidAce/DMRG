@@ -70,12 +70,12 @@ def get_h5_status(filename, batch):
                 expected_attrs = [h5file.get(link).attrs.get(attr) for attr,link in expected_link_attrs.items() if link in h5file]
                 missing_dsets = [path for dset,path in zip(expected_dsets,expected_dset_paths) if dset is None]
                 missing_attrs = [path for link,path in zip(expected_attrs,expected_link_attrs) if link is None]
-                if h5file['/common/finished_all'][()] == 0:
-                    return f"FAILED|simulation has not finished"
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing datasets:{missing_dsets}"
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing attributes:{missing_attrs}"
+                if h5file['/common/finished_all'][()] == 0:
+                    return f"FAILED|simulation has not finished"
                 enum_event = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['event'])  # key value pairs defining the enum
                 enum_algo_stop = h5py.check_enum_dtype(h5file['xDMRG/state_emid/status'].dtype['algo_stop'])  # key value pairs defining the enum
 
