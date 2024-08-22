@@ -57,7 +57,7 @@ namespace tools::finite::opt {
         solver.config.maxNev          = meta.eigs_nev.value_or(1);
         solver.config.maxNcv          = meta.eigs_ncv.value_or(settings::precision::eigs_ncv); // arpack needs ncv ~512. Primme seems happy with 4-32.
         solver.config.primme_locking  = true;
-        solver.config.loglevel        = 1;
+        solver.config.loglevel        = 2;
 
         Eigen::Tensor<Scalar, 3> init;
         if constexpr(std::is_same_v<Scalar, double>) {

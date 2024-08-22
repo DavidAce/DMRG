@@ -21,9 +21,9 @@ StateInfinite::StateInfinite() : MPS_A(std::make_unique<MpsSite>()), MPS_B(std::
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-StateInfinite::~StateInfinite()                                = default; // default dtor
-StateInfinite::StateInfinite(StateInfinite &&other)            = default; // default move ctor
-StateInfinite &StateInfinite::operator=(StateInfinite &&other) = default; // default move assign
+StateInfinite::~StateInfinite()                                 = default; // default dtor
+StateInfinite:: StateInfinite(StateInfinite &&other)            = default; // default move ctor
+StateInfinite  &StateInfinite::operator=(StateInfinite &&other) = default; // default move assign
 
 /* clang-format off */
 StateInfinite::StateInfinite(const StateInfinite &other):
@@ -289,8 +289,8 @@ void StateInfinite::set_positions(size_t position) {
     MPS_B->set_position(position + 1);
 }
 
-void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg) {
-    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, svd_cfg);
+void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg) {
+    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, mevent, svd_cfg);
 }
 
 void StateInfinite::set_mps(const std::vector<MpsSite> &mps_list) {

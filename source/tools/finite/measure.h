@@ -93,6 +93,15 @@ namespace tools::finite::measure {
     [[nodiscard]] extern std::vector<double> truncation_errors                          (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> truncation_errors_active                   (const StateFinite & state);
 
+    [[nodiscard]] cplx expval_hamiltonian                        (const TensorsFinite & tensors);
+    [[nodiscard]] cplx expval_hamiltonian                        (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges);
+    [[nodiscard]] cplx expval_hamiltonian                        (const Eigen::Tensor<cplx, 3> &mps, const ModelFinite & model, const EdgesFinite & edges);
+    [[nodiscard]] cplx expval_hamiltonian                        (const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs, const env_pair<const EnvEne &> &envs);
+    [[nodiscard]] cplx expval_hamiltonian_squared                (const TensorsFinite & tensors);
+    [[nodiscard]] cplx expval_hamiltonian_squared                (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges);
+    [[nodiscard]] cplx expval_hamiltonian_squared                (const Eigen::Tensor<cplx, 3> &mps, const ModelFinite & model, const EdgesFinite & edges);
+    [[nodiscard]] cplx expval_hamiltonian_squared                (const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs, const env_pair<const EnvVar &> &envs);
+
     [[nodiscard]] double energy_minus_energy_shift               (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] double energy                                  (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] double energy_variance                         (const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
@@ -124,6 +133,16 @@ namespace tools::finite::measure {
                                                              const Eigen::Tensor<cplx, 4> &mpo,
                                                              const Eigen::Tensor<cplx, 3> &envL,
                                                              const Eigen::Tensor<cplx, 3> &envR);
+    [[nodiscard]] extern double residual_norm               (const Eigen::Tensor<cplx, 3> &mps,
+                                                             const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
+                                                             const Eigen::Tensor<cplx, 3> &envL,
+                                                             const Eigen::Tensor<cplx, 3> &envR);
+    [[nodiscard]] extern double residual_norm                 (const Eigen::Tensor<cplx, 3> &mps,
+                                                             const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+                                                             const env_pair<const EnvEne &> &envs);
+    [[nodiscard]] extern double residual_norm               (const Eigen::Tensor<cplx, 3> &mps,
+                                                             const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+                                                             const env_pair<const EnvVar &> &envs);
     [[nodiscard]] extern double residual_norm                (const TensorsFinite & tensors);
 
     [[nodiscard]] extern double residual_norm_full           (const StateFinite &state, const ModelFinite &model);
@@ -139,6 +158,12 @@ namespace tools::finite::measure {
                                                                           const std::vector<Eigen::Tensor<cplx,4>> & mpos,
                                                                           const Eigen::Tensor<cplx,1> & ledge,
                                                                           const Eigen::Tensor<cplx,1> & redge);
+    template<typename EnvType>
+    real                                          expectation_value      (const Eigen::Tensor<real, 3> &mpsBra,
+                                                                          const Eigen::Tensor<real, 3> &mpsKet,
+                                                                          const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
+                                                                          const env_pair<EnvType> &envs);
+
     template<typename EnvType>
     cplx                                          expectation_value      (const Eigen::Tensor<cplx, 3> &mpsBra,
                                                                           const Eigen::Tensor<cplx, 3> &mpsKet,

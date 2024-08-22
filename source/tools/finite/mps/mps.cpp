@@ -57,7 +57,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
         }
 
         Eigen::Tensor<cplx, 1> LC(1);
-        LC.setConstant({1.0,0.0}); // Store the LC bond in a temporary. It will become a regular "L" bond later
+        LC.setConstant({1.0, 0.0}); // Store the LC bond in a temporary. It will become a regular "L" bond later
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
         if(state.get_direction() == 1) {
@@ -66,14 +66,14 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
             auto  trnc    = mpsC.get_truncation_error(); // Truncation error of the old B/new AC, i.e. bond to the right of posC,
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
             auto onesite_tensor = tools::common::contraction::contract_bnd_mps_temp(LC, mpsC.get_M());
-            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, svd_cfg, LogPolicy::SILENT);
+            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, MergeEvent::MOVE, svd_cfg, LogPolicy::SILENT);
             mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
         } else if(state.get_direction() == -1) {
             auto  pos_ul         = safe_cast<size_t>(pos);     // Cast to unsigned
             auto &mps            = state.get_mps_site(pos);    // This AC becomes the new B
             auto  trnc           = mps.get_truncation_error(); // Truncation error of old AC/new B, i.e. bond to the left of pos,
             auto  onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (LC is unset later)
-            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, svd_cfg, LogPolicy::SILENT);
+            tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, MergeEvent::MOVE, svd_cfg, LogPolicy::SILENT);
             if(posC >= 0) {
                 auto &mpsC = state.get_mps_site(posC); // This old A is now an AC
                 mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
@@ -106,8 +106,8 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, std::optional<s
         Eigen::Tensor<cplx, 1> LC                  = mps.get_LC();
         double                 truncation_error_LC = mps.get_truncation_error_LC();
         auto                   twosite_tensor      = state.get_multisite_mps({posL_ul, posR_ul});
-        tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, safe_cast<long>(posL), svd_cfg,
-                                                LogPolicy::SILENT);
+        tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, safe_cast<long>(posL),
+                                                MergeEvent::MOVE, svd_cfg, LogPolicy::SILENT);
         state.clear_cache();
         state.clear_measurements();
 
@@ -162,7 +162,8 @@ size_t tools::finite::mps::move_center_point_to_middle(StateFinite &state, std::
 }
 
 size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<size_t> &sites,
-                                               long center_position, std::optional<svd::config> svd_cfg, std::optional<LogPolicy> logPolicy) {
+                                               long center_position, MergeEvent mevent, std::optional<svd::config> svd_cfg,
+                                               std::optional<LogPolicy> logPolicy) {
     auto t_merge          = tid::tic_scope("merge", tid::level::higher);
     auto current_position = state.get_position<long>();
     auto moves            = static_cast<size_t>(std::abs(center_position - current_position));
@@ -276,19 +277,33 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         throw std::runtime_error(
             fmt::format("merge_multisite_mps: number of sites mismatch: sites.size() {} != mps_list.size() {}", sites.size(), mps_list.size()));
 
+    bool keepTruncationErrors = true;
+    switch(mevent) {
+        case MergeEvent::MOVE:
+        case MergeEvent::NORM:
+        case MergeEvent::SWAP: keepTruncationErrors = false; break;
+        default: break;
+    }
+
     // Fuse the split-up mps components into the current state
     for(auto &mps_src : mps_list) {
         auto  pos     = mps_src.get_position();
         auto &mps_tgt = state.get_mps_site(pos);
 
+        if(!keepTruncationErrors) {
+            // The truncation errors are ignored by setting them to a negative value
+            mps_src.unset_truncation_error();
+            mps_src.unset_truncation_error_LC();
+            mps_src.drop_stashed_errors();
+        }
+
         // inject lc_move if there is any waiting
         if(lc_move and pos == lc_move->pos_dst) { mps_src.set_L(lc_move->data, lc_move->error); }
 
-        // No need to copy the svd truncation errors if no svd config was given.
-        if(not svd_cfg) mps_src.drop_stashed_errors();
 
         mps_tgt.fuse_mps(mps_src);
         state.tag_site_normalized(pos, true); // Fused site is normalized
+
 
         // Now take stashes for neighboring sites
         // Note that if U or V are rectangular and pushed onto the next site, that next site loses its normalization, unless
@@ -350,7 +365,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
     if(pos >= 0) {
         auto &mps = state.get_mps_site(pos);
         // Make sure that the bond dimension does not increase faster than spin_dim per site
-        tools::finite::mps::merge_multisite_mps(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, svd_cfg, LogPolicy::SILENT);
+        tools::finite::mps::merge_multisite_mps(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, MergeEvent::NORM, svd_cfg, LogPolicy::SILENT);
     }
     // Now we can move around the chain until we return to the original status
     while(steps++ < 2 or not state.position_is_at(pos, dir, cnt)) move_center_point_single_site(state, svd_cfg);
@@ -570,7 +585,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ga
                           svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front()));
 
     auto new_posC = gm == GateMove::ON ? safe_cast<long>(gate.pos.front()) : old_posC;
-    tools::finite::mps::merge_multisite_mps(state, tmp, gate.pos, new_posC, svd_cfg, LogPolicy::SILENT);
+    tools::finite::mps::merge_multisite_mps(state, tmp, gate.pos, new_posC, MergeEvent::GATE, svd_cfg, LogPolicy::SILENT);
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: merged  pos {} | op {} | gm {} | center {} -> {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           old_posC, new_posC, svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(),
@@ -745,50 +760,51 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     auto new_pos = old_pos;
     if(gm == GateMove::ON)
         new_pos = safe_cast<long>(posL); // The benefit of GateMove::ON is to prefer "AC-B" splits that require a single SVD as often as possible
-//    double lastS_old = 0;
-//    long   bondd_old = 0;
-//    auto   label_old = state.get_mps_site(posL).get_label();
-//    if(label_old == "A") {
-//        auto &mpsR = state.get_mps_site(posR);
-//        bondd_old  = mpsR.get_L().size();
-//        lastS_old  = mpsR.get_L().coeff(bondd_old - 1).real();
-//    }
-//    if(label_old == "AC") {
-//        auto &mpsL = state.get_mps_site(posL);
-//        bondd_old  = mpsL.get_LC().size();
-//        lastS_old  = mpsL.get_LC().coeff(bondd_old - 1).real();
-//    }
-//    if(label_old == "B") {
-//        auto &mpsL = state.get_mps_site(posL);
-//        bondd_old  = mpsL.get_L().size();
-//        lastS_old  = mpsL.get_L().coeff(bondd_old - 1).real();
-//    }
+                                         //    double lastS_old = 0;
+                                         //    long   bondd_old = 0;
+                                         //    auto   label_old = state.get_mps_site(posL).get_label();
+                                         //    if(label_old == "A") {
+                                         //        auto &mpsR = state.get_mps_site(posR);
+                                         //        bondd_old  = mpsR.get_L().size();
+                                         //        lastS_old  = mpsR.get_L().coeff(bondd_old - 1).real();
+                                         //    }
+                                         //    if(label_old == "AC") {
+                                         //        auto &mpsL = state.get_mps_site(posL);
+                                         //        bondd_old  = mpsL.get_LC().size();
+                                         //        lastS_old  = mpsL.get_LC().coeff(bondd_old - 1).real();
+                                         //    }
+                                         //    if(label_old == "B") {
+                                         //        auto &mpsL = state.get_mps_site(posL);
+                                         //        bondd_old  = mpsL.get_L().size();
+                                         //        lastS_old  = mpsL.get_L().coeff(bondd_old - 1).real();
+                                         //    }
 
     // This SVD shouldn't modify the current mps, so no truncation here (no svd config)
     //    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::SILENT);
-    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::SILENT);
+    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, MergeEvent::SWAP, svd_cfg, LogPolicy::SILENT);
 
-//    double lastS_new = 0;
-//    long   bondd_new = 0;
-//    auto   label_new = state.get_mps_site(posL).get_label();
-//    if(label_new == "A") {
-//        auto &mpsR = state.get_mps_site(posR);
-//        bondd_new  = mpsR.get_L().size();
-//        lastS_new  = mpsR.get_L().coeff(bondd_new - 1).real();
-//    }
-//    if(label_new == "AC") {
-//        auto &mpsL = state.get_mps_site(posL);
-//        bondd_new  = mpsL.get_LC().size();
-//        lastS_new  = mpsL.get_LC().coeff(bondd_new - 1).real();
-//    }
-//    if(label_new == "B") {
-//        auto &mpsL = state.get_mps_site(posL);
-//        bondd_new  = mpsL.get_L().size();
-//        lastS_new  = mpsL.get_L().coeff(bondd_new - 1).real();
-//    }
-//
-//    tools::log->info("swap pos [{}, {}] gm {} | center {} -> {} | bond dim {} -> {} | last singular value {:.3e} -> {:.3e}", posL, posR, enum2sv(gm), old_pos,
-//                     new_pos, bondd_old, bondd_new, lastS_old, lastS_new);
+    //    double lastS_new = 0;
+    //    long   bondd_new = 0;
+    //    auto   label_new = state.get_mps_site(posL).get_label();
+    //    if(label_new == "A") {
+    //        auto &mpsR = state.get_mps_site(posR);
+    //        bondd_new  = mpsR.get_L().size();
+    //        lastS_new  = mpsR.get_L().coeff(bondd_new - 1).real();
+    //    }
+    //    if(label_new == "AC") {
+    //        auto &mpsL = state.get_mps_site(posL);
+    //        bondd_new  = mpsL.get_LC().size();
+    //        lastS_new  = mpsL.get_LC().coeff(bondd_new - 1).real();
+    //    }
+    //    if(label_new == "B") {
+    //        auto &mpsL = state.get_mps_site(posL);
+    //        bondd_new  = mpsL.get_L().size();
+    //        lastS_new  = mpsL.get_L().coeff(bondd_new - 1).real();
+    //    }
+    //
+    //    tools::log->info("swap pos [{}, {}] gm {} | center {} -> {} | bond dim {} -> {} | last singular value {:.3e} -> {:.3e}", posL, posR, enum2sv(gm),
+    //    old_pos,
+    //                     new_pos, bondd_old, bondd_new, lastS_old, lastS_new);
 
     std::swap(sites[posL], sites[posR]);
     // Sanity check
@@ -865,7 +881,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, const qm::SwapGate 
         auto gatemap = tenx::MatrixMap(gate.op);
         auto mps_map = tenx::MatrixMap(mps, mps.dimension(0), mps.dimension(1) * mps.dimension(2));
         auto tmp_map = tenx::MatrixMap(tmp, tmp.dimension(0), tmp.dimension(1) * tmp.dimension(2));
-        switch(gop) { // These will call gemm (hopefully from blas
+        switch(gop) { // These will call gemm (hopefully from blas)
             case GateOp::NONE: tmp_map = gatemap * mps_map; break;
             case GateOp::CNJ: tmp_map = gatemap.conjugate() * mps_map; break;
             case GateOp::ADJ: tmp_map = gatemap.adjoint() * mps_map; break;
@@ -880,7 +896,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, const qm::SwapGate 
     // It's best to do an AC-B type of SVD split, so we put the center position on the left-most site when GateMove::ON
     long new_posC = gm == GateMove::ON ? safe_cast<long>(pos_idxs.front()) : old_posC;
 
-    tools::finite::mps::merge_multisite_mps(state, tmp, pos_idxs, new_posC, svd_cfg, LogPolicy::SILENT);
+    tools::finite::mps::merge_multisite_mps(state, tmp, pos_idxs, new_posC, MergeEvent::GATE, svd_cfg, LogPolicy::SILENT);
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::get_count());

@@ -27,6 +27,7 @@ namespace eig {
         primme_largest_abs
     }; // Choice of eigenvalue. LA is largest algebraic, and so on.
     enum class Factorization { NONE, LDLT, LLT, LU };
+    enum class Preconditioner { NONE, DIAG, TRIDIAG };
     enum class Storage { DENSE, SPARSE, MPS }; // Eigen Dense or Sparse, or std::vector for container
     enum class Shinv { ON, OFF };
     enum class Dephase { ON, OFF };
@@ -100,7 +101,14 @@ namespace eig {
             default: throw std::logic_error("No valid eig::Factorization given");
         }
     }
-
+    inline std::string_view PreconditionerToString(Preconditioner prec) {
+        switch(prec) {
+            case Preconditioner::NONE: return "NONE";
+            case Preconditioner::DIAG: return "DIAG";
+            case Preconditioner::TRIDIAG: return "TRIDIAG";
+            default: throw std::logic_error("No valid eig::Preconditioner given");
+        }
+    }
     inline std::string_view RitzToString(std::optional<Ritz> ritz) { return ritz ? RitzToString(ritz.value()) : "Ritz:NONE"; }
     inline std::string_view LibToString(Lib lib) {
         switch(lib) {

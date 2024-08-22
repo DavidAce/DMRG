@@ -20,6 +20,7 @@
 //
 #include "math/eig.h"
 #include <h5pp/details/h5ppEigen.h>
+#include <tensors/edges/EdgesFinite.h>
 
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors, const OptMeta &meta) {
     auto    t_init = tid::tic_scope("initial_mps", tid::level::higher);
@@ -34,12 +35,18 @@ tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const Tensor
         initial_mps.set_bond(tenx::asDiagonal(tensors.state->get_mps_site().get_LC()));
     }
     if(meta.optCost == OptCost::VARIANCE) {
-        auto var = initial_mps.get_variance();
-        auto ene = initial_mps.get_energy();
-        auto hsq = var + ene*ene;
-        initial_mps.set_eigs_eigval(hsq);
+        auto hsq = tools::finite::measure::expval_hamiltonian_squared(tensors);
+        auto rnormH =
+            tools::finite::measure::residual_norm(tensors.get_multisite_mps(), tensors.get_model().get_mpo_active(), tensors.get_edges().get_ene_active());
+        auto rnormH2 =
+            tools::finite::measure::residual_norm(tensors.get_multisite_mps(), tensors.get_model().get_mpo_active(), tensors.get_edges().get_var_active());
+        initial_mps.set_eigs_eigval(std::abs(hsq));
+        initial_mps.set_rnorm_H(rnormH);
+        initial_mps.set_rnorm_H2(rnormH2);
     }
     initial_mps.validate_initial_mps();
+    tensors.clear_cache();
+    tensors.clear_measurements();
     return initial_mps;
 }
 
@@ -114,7 +121,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
                     auto metax2          = meta;
                     metax2.optCost       = OptCost::ENERGY;
-                    metax2.eigs_tol      = std::max(1e-9, meta.eigs_tol.value_or(1e-9));
+                    metax2.optRitz       = OptRitz::SM;
+                    // metax2.eigs_tol      = std::max(1e-9, meta.eigs_tol.value_or(1e-9));
                     metax2.eigs_ncv      = std::max(128, meta.eigs_ncv.value_or(128));
                     metax2.primme_method = "PRIMME_DYNAMIC";
                     result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
@@ -128,10 +136,10 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         // bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
                         bool ene_ok   = std::abs(result.get_energy()) <= std::abs(initial_mps.get_energy());
                         bool var_ok   = result.get_variance() <= initial_mps.get_variance();
-                        bool rnorm_ok = result.get_rnorm() <= 1e-8;
+                        bool rnorm_ok = result.get_eigs_rnorm() <= 1e-8;
                         // bool rnorm_nice = result.get_rnorm() <= 1e-12;
                         // if(rnorm_nice) break;
-                        tools::log->info("ene opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result.get_rnorm(),
+                        tools::log->info("ene opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result.get_eigs_rnorm(),
                                          result.get_variance(), result.get_energy(), result.get_eigs_eigval(), result.get_eigs_shift());
                         if(rnorm_ok and (var_ok or ene_ok)) break;
 
@@ -139,8 +147,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                         meta.optCost    = OptCost::VARIANCE;
                         auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
                         ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
-                        rnorm_ok        = result_var.get_rnorm() <= result.get_rnorm();
-                        tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_rnorm(),
+                        rnorm_ok        = result_var.get_eigs_rnorm() <= result.get_eigs_rnorm();
+                        tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_eigs_rnorm(),
                                          result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
                         if(rnorm_ok and ene_ok) { result = result_var; }
                     }
@@ -255,16 +263,29 @@ namespace tools::finite::opt::internal {
 
     bool comparator::variance(const opt_mps &lhs, const opt_mps &rhs) {
         // The eigenvalue solver on (H-E)² gives results sorted in variance
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
         return lhs.get_variance() < rhs.get_variance();
     }
 
-    bool comparator::gradient(const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_grad_max() < rhs.get_grad_max();
-    }
+    bool comparator::gradient(const opt_mps &lhs, const opt_mps &rhs) { return lhs.get_grad_max() < rhs.get_grad_max(); }
     bool comparator::eigval(const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        auto diff_eig = std::abs(lhs.get_eigs_eigval() - rhs.get_eigs_eigval());
+        auto diff_var = std::abs(lhs.get_variance() - rhs.get_variance());
+        auto same_eig = std::abs(diff_eig) < 10 * std::numeric_limits<double>::epsilon();
+        auto same_var = std::abs(diff_var) < 10 * std::numeric_limits<double>::epsilon();
+        if(same_eig and same_var) {
+            // There is no clear winner. We should therefore stick to comparing overlap for the sake of stability.
+            auto has_overlap = lhs.get_overlap() + rhs.get_overlap() > std::sqrt(2);
+            if(has_overlap) {
+                // Favor comparing overlaps for stability when everything else is too similar. This requires that one or both sufficient overlap to begin with.
+                tools::log->warn("comparator::eigval: degeneracy detected -- comparing overlap");
+                return lhs.get_overlap() > rhs.get_overlap(); // When degenarate, follow overlap
+            }
+        }
+        if(same_eig) {
+            tools::log->warn("comparator::eigval: degeneracy detected -- comparing variance");
+            // The eigvals are too close... compare rnorms instead
+            return lhs.get_variance() < rhs.get_variance();
+        }
         return lhs.get_eigs_eigval() < rhs.get_eigs_eigval();
     }
 
@@ -283,6 +304,7 @@ namespace tools::finite::opt::internal {
         // The variance case first
         if(meta->optCost == OptCost::VARIANCE) {
             return comparator::eigval(lhs, rhs);
+            // return comparator::variance(lhs, rhs);
         } else {
             auto diff = std::abs(lhs.get_energy_shifted() - rhs.get_energy_shifted());
             if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();

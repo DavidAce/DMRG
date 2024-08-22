@@ -26,21 +26,31 @@ class MatVecMPOS {
     using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
-    constexpr static bool               can_shift_invert = false;
-    constexpr static bool               can_shift        = false;
-    constexpr static eig::Storage       storage          = eig::Storage::MPS;
-    constexpr static eig::Factorization factorization    = eig::Factorization::NONE;
+    constexpr static bool         can_shift_invert = false;
+    constexpr static bool         can_shift        = false;
+    constexpr static bool         can_precondition = true;
+    constexpr static eig::Storage storage          = eig::Storage::MPS;
+    eig::Factorization            factorization    = eig::Factorization::NONE;
+    eig::Preconditioner           preconditioner   = eig::Preconditioner::NONE;
 
     private:
     std::vector<Eigen::Tensor<T, 4>> mpos, mpos_shf;
-    Eigen::Tensor<T, 3> mpoTL, mpoLR; // Top left and lower right after svd.
-    Eigen::Tensor<T, 3> mpoTR, mpoLL; // Top right and lower left after svd.
+    Eigen::Tensor<T, 3>              mpoTL, mpoLR; // Top left and lower right after svd.
+    Eigen::Tensor<T, 3>              mpoTR, mpoLL; // Top right and lower left after svd.
     Eigen::Tensor<T, 3>              envL;
     Eigen::Tensor<T, 3>              envR;
     std::array<long, 3>              shape_mps;
     long                             size_mps;
     eig::Form                        form = eig::Form::SYMM;
     eig::Side                        side = eig::Side::R;
+    VectorType                       diagonal;  // The diagonal elements of the matrix, used in the diagonal and tridiagonal preconditioners
+    VectorType                       diaglower; // The sub-diagonal elements of the matrix, used in the tridiagonal preconditioner
+    VectorType                       diagupper; // The super-diagonal elements of the matrix, used in the tridiagonal preconditioner
+    VectorType                       diagtemp;  // Scratch memory for the tridiagonal solver
+    VectorType                       get_diagonal(long offset);
+    void                             thomas(long rows, T *x, T *const dl, T *const dm, T *const du);
+    void                             thomas2(long rows, T *x, T *const dl, T *const dm, T *const du);
+    // void                             thomas(const long rows, const VectorType &x, const VectorType &dl, const VectorType &dm, const VectorType &du);
 
     // Shift stuff
     std::complex<double>  sigma         = cplx(0.0, 0.0); // The shift
@@ -57,17 +67,20 @@ class MatVecMPOS {
     [[nodiscard]] int rows() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
     [[nodiscard]] int cols() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
-    void FactorOP();                      //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
-    void MultOPv(T *mps_in_, T *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
-    void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
+    void FactorOP();                                    //  Factorizes (A-sigma*I) (or finds its diagonal elements)
+    void MultOPv(T *mps_in_, T *mps_out, T eval = 0.0); //  Applies the preconditioner as the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err); //  Applies the preconditioner
     void MultAx(T *mps_in_, T *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
-    void MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_,
-                std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
+
+    void CalcPc();                                     //  Calculates the diagonal or tridiagonal part of A
+    void MultPc(T *mps_in_, T *mps_out, T shift = 0.0); //  Applies the preconditioner as the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void MultPc(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err); //  Applies the preconditioner
 
     // Various utility functions
     long num_mv = 0;
     long num_op = 0;
+    long num_pc = 0;
     void print() const;
     void reset();
     void set_shift(std::complex<double> shift);
@@ -93,8 +106,9 @@ class MatVecMPOS {
     [[nodiscard]] bool isReadyFactorOp() const;
 
     // Timers
-    std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_factorOP; // Factorization time
     std::unique_ptr<tid::ur> t_genMat;
     std::unique_ptr<tid::ur> t_multOPv;
-    std::unique_ptr<tid::ur> t_multAx;
+    std::unique_ptr<tid::ur> t_multPc; // Preconditioner time
+    std::unique_ptr<tid::ur> t_multAx; // Matvec time
 };

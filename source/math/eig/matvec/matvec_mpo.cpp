@@ -51,6 +51,7 @@ MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block te
     t_genMat   = std::make_unique<tid::ur>("Time genMat");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
+    t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
 template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_, const Eigen::Tensor<real, 4> &mpo_);
@@ -94,39 +95,6 @@ void MatVecMPO<T>::FactorOP() {
     }
     eig::log->debug("Finished factorization");
     readyFactorOp = true;
-}
-
-template<typename T>
-void MatVecMPO<T>::MultAx(T *mps_in_, T *mps_out_) {
-    auto                                  token = t_multAx->tic_token();
-    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
-    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
-    tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
-    num_mv++;
-}
-
-template<typename T>
-void MatVecMPO<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_, std::array<long, 4> shape_mpo_) {
-    auto                token       = t_multAx->tic_token();
-    std::array<long, 3> shape_envL_ = {shape_mps_[1], shape_mps_[1], shape_mpo_[0]};
-    std::array<long, 3> shape_envR_ = {shape_mps_[2], shape_mps_[2], shape_mpo_[1]};
-    tools::common::contraction::matrix_vector_product(mps_out, mps_in, shape_mps, mpo_ptr, shape_mpo_, envL_ptr, shape_envL_, envR_ptr, shape_envR_);
-    num_mv++;
-}
-
-template<typename T>
-void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    auto token = t_multAx->tic_token();
-    for(int i = 0; i < *blockSize; i++) {
-        T                                    *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
-        T                                    *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
-        Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_ptr, shape_mps);
-        Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_ptr, shape_mps);
-        tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
-    }
-
-    num_mv += *blockSize;
-    *err = 0;
 }
 
 template<typename T>
@@ -191,6 +159,39 @@ void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
 }
 
 template<typename T>
+void MatVecMPO<T>::MultAx(T *mps_in_, T *mps_out_) {
+    auto                                  token = t_multAx->tic_token();
+    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
+    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
+    tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
+    num_mv++;
+}
+
+template<typename T>
+void MatVecMPO<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_, std::array<long, 4> shape_mpo_) {
+    auto                token       = t_multAx->tic_token();
+    std::array<long, 3> shape_envL_ = {shape_mps_[1], shape_mps_[1], shape_mpo_[0]};
+    std::array<long, 3> shape_envR_ = {shape_mps_[2], shape_mps_[2], shape_mpo_[1]};
+    tools::common::contraction::matrix_vector_product(mps_out, mps_in, shape_mps, mpo_ptr, shape_mpo_, envL_ptr, shape_envL_, envR_ptr, shape_envR_);
+    num_mv++;
+}
+
+template<typename T>
+void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    auto token = t_multAx->tic_token();
+    for(int i = 0; i < *blockSize; i++) {
+        T                                    *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
+        T                                    *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
+        Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_ptr, shape_mps);
+        Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_ptr, shape_mps);
+        tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
+    }
+
+    num_mv += *blockSize;
+    *err = 0;
+}
+
+template<typename T>
 void MatVecMPO<T>::print() const {}
 
 template<typename T>
@@ -210,11 +211,9 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     if(readyShift) return;
     if(sigma == shift) return;
 
-            eig::log->trace("Setting shift = {:.16f} + i{:.16f}", std::real(shift), std::imag(shift));
-            sigma = shift; // We can shift the diagonal of the full matrix instead
-            return;
-
-
+    eig::log->trace("Setting shift = {:.16f} + i{:.16f}", std::real(shift), std::imag(shift));
+    sigma = shift; // We can shift the diagonal of the full matrix instead
+    return;
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size
@@ -316,10 +315,10 @@ Eigen::Tensor<T, 6> MatVecMPO<T>::get_tensor() const {
     auto t_token = t_genMat->tic_token();
     eig::log->debug("Generating tensor");
 
-    auto d0      = shape_mps[0];
-    auto d1      = shape_mps[1];
-    auto d2      = shape_mps[2];
-    auto &threads = tenx::threads::get();
+    auto                d0      = shape_mps[0];
+    auto                d1      = shape_mps[1];
+    auto                d2      = shape_mps[2];
+    auto               &threads = tenx::threads::get();
     Eigen::Tensor<T, 6> tensor;
     tensor.resize(tenx::array6{d0, d1, d2, d0, d1, d2});
     tensor.device(*threads->dev) =

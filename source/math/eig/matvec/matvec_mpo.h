@@ -26,6 +26,7 @@ class MatVecMPO {
 
     constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
+    constexpr static bool         can_precondition = false;
     constexpr static eig::Storage storage          = eig::Storage::MPS;
     eig::Factorization            factorization    = eig::Factorization::NONE;
 
@@ -66,7 +67,6 @@ class MatVecMPO {
                 std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
-
     // Various utility functions
     long num_mv = 0;
     long num_op = 0;
@@ -95,8 +95,9 @@ class MatVecMPO {
     [[nodiscard]] bool isReadyShift() const;
 
     // Timers
-    std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_factorOP; // Factorization time
     std::unique_ptr<tid::ur> t_genMat;
     std::unique_ptr<tid::ur> t_multOPv;
-    std::unique_ptr<tid::ur> t_multAx;
+    std::unique_ptr<tid::ur> t_multPc; // Preconditioner time
+    std::unique_ptr<tid::ur> t_multAx; // Matvec time
 };

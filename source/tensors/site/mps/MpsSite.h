@@ -5,6 +5,7 @@
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 
+
 template<typename T>
 concept is_valid_tensor3 = std::is_same_v<T, Eigen::Tensor<cplx, 3>> ||                   //
                            std::is_same_v<T, Eigen::Tensor<real, 3>> ||                   //
@@ -113,6 +114,8 @@ class MpsSite {
 
     void unset_LC();
     void unset_L();
+    void unset_truncation_error();
+    void unset_truncation_error_LC();
     void fuse_mps(const MpsSite &other);
     void apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint = false);
     void apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint = false);

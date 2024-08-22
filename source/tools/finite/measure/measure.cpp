@@ -110,14 +110,15 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
 std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFinite &state) {
     // Here we get the bond dimensions of the bonds that were merged into the full state in the last step
     // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
-    // If active sites is just {4}, it returns the bond between {4,5} when going left or right.
+    // If active sites is just {4}, it returns the bond between {4,5} when going left or right, or between {3,4} wen going right to left
     auto t_chi = tid::tic_scope("bond_merged", tid::level::highest);
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // In single-site DMRG the active site is a center "AC" site:
         //  * Going left-to-right, the forward (right) bond is expanded, and this same bond is truncated when merging
         //  * Going right-to-left, the forward (left) bond is expanded (L), but LC is still the one truncated when merging.
-        return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+        if(state.get_direction() == +1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+        if(state.get_direction() == -1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     std::vector<long> bond_dimensions;
@@ -297,9 +298,12 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // In single-site DMRG the active site is a center "AC" site:
-        //  * Going left-to-right, the left bond is expanded, and the right bond (LC) is truncated after optimization
-        //  * Going right-to-left, the right bond (LC) is both expanded and truncated with SVD.
-        return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
+        // If we do forward expansion:aCq!eau3
+
+        //  * Going left-to-right, the right bond (LC) is truncated after optimization
+        //  * Going right-to-left, the left bond (L) is truncated after optimization.
+        if(state.get_direction() == +1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
+        if(state.get_direction() == -1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
     std::vector<double> truncation_errors;
@@ -360,6 +364,55 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
 
 Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites, state.get_name()); }
 
+cplx tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cplx, 3> &mps, const ModelFinite &model, const EdgesFinite &edges) {
+    auto mpo  = model.get_mpo_active();
+    auto env  = edges.get_ene_active();
+    auto t_H2 = tid::tic_scope("H", tid::level::highest);
+
+    return tools::finite::measure::expectation_value(mps, mps, mpo, env);
+}
+
+cplx tools::finite::measure::expval_hamiltonian(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
+    auto mps = state.get_mps_active();
+    auto mpo = model.get_mpo_active();
+    auto env = edges.get_ene_active();
+    auto t_H = tid::tic_scope("H", tid::level::highest);
+    return tools::finite::measure::expectation_value(mps, mps, mpo, env);
+}
+
+cplx tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+                                                const env_pair<const EnvEne &> &envs) {
+    auto t_H = tid::tic_scope("H", tid::level::highest);
+    return tools::finite::measure::expectation_value(mps, mps, mpo_refs, envs);
+}
+
+cplx tools::finite::measure::expval_hamiltonian_squared(const Eigen::Tensor<cplx, 3> &mps, const ModelFinite &model, const EdgesFinite &edges) {
+    auto mpo = model.get_mpo_active();
+    auto env = edges.get_var_active();
+    auto t_H = tid::tic_scope("H2", tid::level::highest);
+    return tools::finite::measure::expectation_value(mps, mps, mpo, env);
+}
+cplx tools::finite::measure::expval_hamiltonian_squared(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
+    auto mps  = state.get_mps_active();
+    auto mpo  = model.get_mpo_active();
+    auto env  = edges.get_var_active();
+    auto t_H2 = tid::tic_scope("H2", tid::level::highest);
+    return tools::finite::measure::expectation_value(mps, mps, mpo, env);
+}
+cplx tools::finite::measure::expval_hamiltonian_squared(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+                                                        const env_pair<const EnvVar &> &envs) {
+    auto t_H2 = tid::tic_scope("H2", tid::level::highest);
+    return tools::finite::measure::expectation_value(mps, mps, mpo_refs, envs);
+}
+
+cplx tools::finite::measure::expval_hamiltonian(const TensorsFinite &tensors) {
+    return tools::finite::measure::expval_hamiltonian(*tensors.state, *tensors.model, *tensors.edges);
+}
+
+cplx tools::finite::measure::expval_hamiltonian_squared(const TensorsFinite &tensors) {
+    return tools::finite::measure::expval_hamiltonian_squared(*tensors.state, *tensors.model, *tensors.edges);
+}
+
 double tools::finite::measure::energy_minus_energy_shift(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                                                          MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_shift) {
@@ -371,11 +424,8 @@ double tools::finite::measure::energy_minus_energy_shift(const StateFinite &stat
     }
     assert(num::all_equal(state.active_sites, model.active_sites, edges.active_sites));
     auto t_ene = tid::tic_scope("ene", tid::level::highest);
-    auto mps   = state.get_mps_active();
-    auto mpo   = model.get_mpo_active();
-    auto env   = edges.get_ene_active();
     if constexpr(settings::debug) tools::log->trace("Measuring energy: sites {}", state.active_sites);
-    auto e_minus_ered = tools::finite::measure::expectation_value(mps, mps, mpo, env);
+    auto e_minus_ered = expval_hamiltonian(state, model, edges);
     if constexpr(settings::debug_expval) {
         const auto &multisite_mps = state.get_multisite_mps();
         const auto &multisite_mpo = model.get_multisite_mpo();
@@ -399,7 +449,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
                                                          std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_shift) {
         if constexpr(!settings::debug_expval) {
-            // Return the cache hit when not debugging. Otherwise check that it is correct!
+            // Return the cache hit when not debugging. Otherwise, check that it is correct!
             // tools::log->trace("energy_minus_energy_shift: cache hit: {:.16f}", measurements->energy_minus_energy_shift.value());
             return measurements->energy_minus_energy_shift.value();
         }
@@ -509,13 +559,9 @@ double tools::finite::measure::energy_variance(const StateFinite &state, const M
     assert(not edges.active_sites.empty());
     assert(num::all_equal(state.active_sites, model.active_sites, edges.active_sites));
     if constexpr(settings::debug_expval) tools::log->trace("Measuring energy variance: sites {}", state.active_sites);
-    double      energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
-    double      E2     = energy * energy;
-    auto        t_var  = tid::tic_scope("var", tid::level::highest);
-    const auto &mps    = state.get_mps_active();
-    const auto &mpo    = model.get_mpo_active();
-    const auto &env    = edges.get_var_active();
-    auto        H2     = tools::finite::measure::expectation_value(mps, mps, mpo, env);
+    auto E  = expval_hamiltonian(state, model, edges);
+    auto E2 = E * E;
+    auto H2 = expval_hamiltonian_squared(state, model, edges);
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
     if constexpr(settings::debug_expval) tools::log->trace("Variance |H2-E2| = |{:.16f} - {:.16f}| = {:.16f}", std::real(H2), E2, var);
@@ -664,15 +710,41 @@ double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, 
                                              const Eigen::Tensor<cplx, 3> &envR) {
     // Calculate the residual_norm r = |Hv - Ev|
     auto Hv = tools::common::contraction::matrix_vector_product(mps, mpo, envL, envR);
-    auto E  = tools::common::contraction::expectation_value(mps, mpo, envL, envR);
+    auto E  = tools::common::contraction::contract_mps_overlap(mps, Hv);
+    // auto E  = tools::common::contraction::expectation_value(mps, mpo, envL, envR);
     return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();
 }
 
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
+                                             const Eigen::Tensor<cplx, 3> &envL, const Eigen::Tensor<cplx, 3> &envR) {
+    // Calculate the residual_norm r = |Hv - Ev|
+    auto Hv = tools::common::contraction::matrix_vector_product(mps, mpos, envL, envR);
+    auto E  = tools::common::contraction::contract_mps_overlap(mps, Hv);
+    // auto E  = tools::common::contraction::expectation_value(mps, mpos, envL, envR);
+    return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();
+}
+
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+                                             const env_pair<const EnvEne &> &envs) {
+    // Calculate the residual_norm r = |Hv - Ev|
+    auto mpo_vec = std::vector<Eigen::Tensor<cplx, 4>>();
+    for(const auto &mpo : mpo_refs) mpo_vec.emplace_back(mpo.get().MPO());
+    return residual_norm(mps, mpo_vec, envs.L.get_block(), envs.R.get_block());
+}
+
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+                                             const env_pair<const EnvVar &> &envs) {
+    // Calculate the residual_norm r = |H²v - E²v|
+    auto mpo_vec = std::vector<Eigen::Tensor<cplx, 4>>();
+    for(const auto &mpo : mpo_refs) mpo_vec.emplace_back(mpo.get().MPO2());
+    return residual_norm(mps, mpo_vec, envs.L.get_block(), envs.R.get_block());
+}
+
 double tools::finite::measure::residual_norm(const TensorsFinite &tensors) {
-    const auto &mps = tensors.get_multisite_mps();
-    const auto &mpo = tensors.get_multisite_mpo();
-    const auto &env = tensors.get_multisite_env_ene_blk();
-    return residual_norm(mps, mpo, env.L, env.R);
+    const auto &mps = tensors.get_state().get_multisite_mps();
+    const auto &mpo = tensors.get_model().get_mpo_active();
+    const auto &env = tensors.get_edges().get_ene_active();
+    return residual_norm(mps, mpo, env);
 }
 
 double tools::finite::measure::residual_norm_full(const StateFinite &state, const ModelFinite &model) {
@@ -818,7 +890,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
     Eigen::Tensor<cplx, 4> result, tmp;
     auto                  &threads = tenx::threads::get();
-    #pragma message "tools::finite::measure::expectation_value: check if state1, state2 and mpos are real and contract real objects instead"
+#pragma message "tools::finite::measure::expectation_value: check if state1, state2 and mpos are real and contract real objects instead"
 
     for(size_t pos = 0; pos < L; ++pos) {
         Eigen::Tensor<cplx, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
@@ -908,11 +980,55 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFin
 }
 
 template<typename EnvType>
+real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mpsBra, const Eigen::Tensor<real, 3> &mpsKet,
+                                               const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
+    /*!
+     * Calculates <mpsBra | mpos | mpsKet> by applying the mpos in series without splitting the mps first
+     */
+    auto t_expval = tid::tic_scope("expval", tid::level::highest);
+
+    // Extract the correct tensors depending on EnvType
+    Eigen::Tensor<real, 3>              envL = envs.L.get_block().real();
+    Eigen::Tensor<real, 3>              envR = envs.R.get_block().real();
+    std::vector<Eigen::Tensor<real, 4>> mpos_shf;
+
+    assert(tenx::isReal(mpsBra));
+    assert(tenx::isReal(mpsKet));
+    assert(tenx::isReal(envL));
+    assert(tenx::isReal(envR));
+
+    for(size_t pos = 0; pos < mpos.size(); ++pos) {
+        if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvEne>)
+            mpos_shf.emplace_back(mpos[pos].get().MPO().real().shuffle(tenx::array4{2, 3, 0, 1}));
+        else if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvVar>)
+            mpos_shf.emplace_back(mpos[pos].get().MPO2().real().shuffle(tenx::array4{2, 3, 0, 1}));
+        else
+            static_assert(h5pp::type::sfinae::invalid_type_v<EnvType>);
+        assert(tenx::isReal(mpos_shf.back()));
+    }
+
+    Eigen::Tensor<real, 3> mpoMpsKet = tools::common::contraction::matrix_vector_product(mpsKet, mpos_shf, envL, envR);
+    return tools::common::contraction::contract_mps_overlap(mpsBra, mpoMpsKet);
+}
+template real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mpsBra, const Eigen::Tensor<real, 3> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs);
+template real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mpsBra, const Eigen::Tensor<real, 3> &mpsKet,
+                                                        const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs);
+
+template<typename EnvType>
 cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
                                                const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
     /*!
      * Calculates <mpsBra | mpos | mpsKet> by applying the mpos in series without splitting the mps first
      */
+    bool mpsIsReal = tenx::isReal(mpsBra) and tenx::isReal(mpsKet);
+    bool envIsReal = tenx::isReal(envs.L.get_block()) and tenx::isReal(envs.R.get_block());
+    bool mpoIsReal = std::all_of(mpos.begin(), mpos.end(), [](const auto &mpo) -> bool { return mpo.get().is_real(); });
+    if(mpsIsReal and envIsReal and mpoIsReal) {
+        Eigen::Tensor<real, 3> mpsBraReal = mpsBra.real();
+        Eigen::Tensor<real, 3> mpsKetReal = mpsKet.real();
+        return expectation_value(mpsBraReal, mpsKetReal, mpos, envs);
+    }
     auto t_expval = tid::tic_scope("expval", tid::level::highest);
 
     // Extract the correct tensors depending on EnvType

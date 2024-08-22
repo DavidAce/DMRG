@@ -25,12 +25,12 @@ class TensorsInfinite {
     //  - Activate sites
     //  - Manage measurements cache
 
-    TensorsInfinite();
-    ~TensorsInfinite();                                       // Read comment on implementation
-    TensorsInfinite(TensorsInfinite &&other);                 // default move ctor
-    TensorsInfinite &operator=(TensorsInfinite &&other);      // default move assign
-    TensorsInfinite(const TensorsInfinite &other);            // copy ctor
-    TensorsInfinite &operator=(const TensorsInfinite &other); // copy assign
+                     TensorsInfinite();
+    ~                TensorsInfinite();                             // Read comment on implementation
+                     TensorsInfinite(TensorsInfinite &&other);      // default move ctor
+    TensorsInfinite &operator=(TensorsInfinite &&other);            // default move assign
+                     TensorsInfinite(const TensorsInfinite &other); // copy ctor
+    TensorsInfinite &operator=(const TensorsInfinite &other);       // copy assign
 
     void initialize(ModelType model_type);
     void initialize_model();
@@ -48,7 +48,7 @@ class TensorsInfinite {
     void reset_edges();
     void eject_edges();
 
-    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg = std::nullopt);
+    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt);
     void enlarge();
     void clear_measurements() const;
     void clear_cache() const;

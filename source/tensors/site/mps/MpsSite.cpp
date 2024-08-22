@@ -1,6 +1,7 @@
 #include "math/tenx.h"
 // tenx must appear first
 #include "config/debug.h"
+#include "config/enums.h"
 #include "math/float.h"
 #include "math/hash.h"
 #include "math/linalg/tensor.h"
@@ -353,9 +354,13 @@ void MpsSite::unset_L() {
     unique_id = std::nullopt;
 }
 
+void MpsSite::unset_truncation_error() { truncation_error = -1.0; }
+
+void MpsSite::unset_truncation_error_LC() { truncation_error_LC = -1.0; }
+
 void MpsSite::fuse_mps(const MpsSite &other) {
     //    auto t_fuse = tid::tic_scope("fuse", tid::level::highest);
-    // This operation is done when merging mps after an svd split, for instance
+    // This operation is done when merging mps after an svd split
     auto tag  = get_tag();       // tag, (example: A[3])
     auto otag = other.get_tag(); // other tag, (example: AC[3])
 
@@ -378,7 +383,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     // should be removed since it changes side.
     if(get_label().front() != other.get_label().front()) unset_L();
 
-    // We should only copy the L matrix if it exists
+    // We should only copy the L matrix if it exists.
     // If it does not exist it may just not have been set.
     // For instance, when splitting a multisite tensor into its contituent mps sites,
     // the edge mps sites have empty L matrices on them because these are not updated.
@@ -392,7 +397,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
         // Now we have a situation where no L was given, and no L is found on this site.
         // For edge-sites this is simple: then the mps has edge-dimension == 1, so the only
         // way to have a normalized L is to set it to 1. Otherwise, this is a failure.
-        auto one = Eigen::Tensor<cplx, 1>(1).setConstant(1.0);
+        auto one = Eigen::Tensor<cplx, 1>(1).setConstant(cplx(1.0, 0.0));
         if((other.get_label() != "B" and get_chiL() == 1) or (other.get_label() == "B" and get_chiR() == 1))
             set_L(one);
         else

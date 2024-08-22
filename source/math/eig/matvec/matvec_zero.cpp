@@ -74,13 +74,14 @@ MatVecZero<T>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite
     long spin_dim = mpo.get_spin_dimension();
     shape_mps     = {spin_dim, envL.dimension(0), envR.dimension(0)};
     size_mps      = spin_dim * envL.dimension(0) * envR.dimension(0);
-    shape_bond    = {envL.dimension(0) , envR.dimension(0)};
+    shape_bond    = {envL.dimension(0), envR.dimension(0)};
     size_bond     = envL.dimension(0) * envR.dimension(0);
 
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_genMat   = std::make_unique<tid::ur>("Time genMat");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
+    t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
 template MatVecZero<cplx>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
@@ -107,37 +108,17 @@ void MatVecZero<T>::FactorOP() {
     throw std::runtime_error("template<typename T> void MatVecZero<T>::FactorOP(): Not implemented");
 }
 
-// template<typename T>
-// using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
-// template<typename T>
-// using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
-// template<typename ea_type, typename eb_type, typename ec_type>
-// void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-//                     const tblis::label_vector &lb, const tblis::label_vector &lc) {
-//     const auto &ea_ref = static_cast<const ea_type &>(ea);
-//     const auto &eb_ref = static_cast<const eb_type &>(eb);
-//     auto       &ec_ref = static_cast<ec_type &>(ec);
-//
-//     tblis::len_vector da, db, dc;
-//     da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
-//     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
-//     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
-//
-//     auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-//     typename ea_type::Scalar alpha = 1.0;
-//     typename ec_type::Scalar beta  = 0.0;
-//
-//     tblis::tblis_tensor          A_s(alpha, ta);
-//     tblis::tblis_tensor          B_s(tb);
-//     tblis::tblis_tensor          C_s(beta, tc);
-//     const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
-// #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
-//     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-// #endif
-//     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-// }
+template<typename T>
+void MatVecZero<T>::MultOPv([[maybe_unused]] T *bond_in_, [[maybe_unused]] T *bond_out_) {
+    throw std::runtime_error("template<typename T> void MatVecZero<T>::MultOPv(T *bond_in_, T *bond_out_): Not implemented");
+}
+
+template<typename T>
+void MatVecZero<T>::MultOPv([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
+                            [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    throw std::runtime_error("template<typename T> void MatVecZero<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] "
+                             "primme_params *primme, int *err): Not implemented");
+}
 
 template<typename T>
 void MatVecZero<T>::MultAx(T *bond_in_, T *bond_out_) {
@@ -161,17 +142,6 @@ void MatVecZero<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize,
     *err = 0;
 }
 
-template<typename T>
-void MatVecZero<T>::MultOPv([[maybe_unused]] T *bond_in_, [[maybe_unused]] T *bond_out_) {
-    throw std::runtime_error("template<typename T> void MatVecZero<T>::MultOPv(T *bond_in_, T *bond_out_): Not implemented");
-}
-
-template<typename T>
-void MatVecZero<T>::MultOPv([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
-                            [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    throw std::runtime_error("template<typename T> void MatVecZero<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] "
-                             "primme_params *primme, int *err): Not implemented");
-}
 
 template<typename T>
 void MatVecZero<T>::print() const {}
@@ -310,7 +280,7 @@ std::array<long, 3> MatVecZero<T>::get_shape_envR() const {
 }
 template<typename T>
 Eigen::Tensor<T, 4> MatVecZero<T>::get_tensor() const {
-    return envL.contract(envR, tenx::idx({2},{2})).shuffle(tenx::array4{0,2,1,3});
+    return envL.contract(envR, tenx::idx({2}, {2})).shuffle(tenx::array4{0, 2, 1, 3});
 }
 
 template<typename T>

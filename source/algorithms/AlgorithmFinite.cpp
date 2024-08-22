@@ -241,7 +241,6 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
 
     // Set the default svd limits
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-
     // Set up handy quantities
     auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
@@ -255,25 +254,29 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.max_sites         = m1.min_sites;
     m1.subspace_tol      = settings::precision::target_subspace_error;
     m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
-    m1.primme_method     = "PRIMME_DYNAMIC";
-    m1.eigs_nev          = 1;
-    m1.eigv_target       = 0.0;                           // We always target 0 when OptCost::VARIANCE
-    m1.eigs_ncv          = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
-
-    // Set up the subspace (environment) expansion
-    m1.expand_side = EnvExpandSide::FORWARD;
-    // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
-    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
+    m1.primme_method     = "PRIMME_GD_Olsen_plusK";
+    m1.eigs_nev          = settings::precision::eigs_nev_min;
+    if(status.algorithm_has_stuck_for > 0) {
+        m1.eigs_nev = std::clamp(static_cast<int>(1 + status.algorithm_has_stuck_for), settings::precision::eigs_nev_min, settings::precision::eigs_nev_max);
+    }
+    m1.eigv_target = 0.0;                           // We always target 0 when OptCost::VARIANCE
+    m1.eigs_ncv    = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
     // #pragma message "Revert the envexpandmode to var"
     // if(status.algo_type == AlgorithmType::xDMRG and status.algorithm_has_stuck_for > 0) { m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR; }
     // Set up a multiplier for number of iterations
-    m1.eigs_iter_max = get_eigs_iter_max();
+    m1.eigs_iter_max = get_eigs_iter_max() * m1.eigs_nev.value();
     m1.eigs_tol      = dmrg_eigs_tol;
     if(settings::strategy::etol_decrease_when == UpdatePolicy::NEVER) {
         // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
         m1.eigs_tol = std::clamp(status.energy_variance_lowest * 1e-1, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
-        if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::precision::eigs_tol_min;
+        if(status.algorithm_has_stuck_for > 1 and status.bond_limit_has_reached_max and status.trnc_limit_has_reached_min)
+            m1.eigs_tol = settings::precision::eigs_tol_min;
     }
+
+    // Set up the subspace (environment) expansion
+    m1.expand_side = EnvExpandSide::FORWARD;
+    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
 
     m1.optCost = status.algo_type == AlgorithmType::xDMRG ? OptCost::VARIANCE : OptCost::ENERGY;
     m1.optAlgo = OptAlgo::DIRECT;
@@ -305,21 +308,22 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
-    bool full_system_optimization = m1.chosen_sites.size() == tensors.get_length<size_t>();
-
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
-    // m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
-    // if(status.algo_type == AlgorithmType::xDMRG and                                   //
-    //    status.algorithm_has_stuck_for > 1 and                                         //
-    //    status.variance_mpo_saturated_for > settings::strategy::iter_max_saturated and //
-    //    status.trnc_limit_has_reached_min and                                          //
-    //    status.bond_limit_has_reached_max and                                          //
-    //    settings::xdmrg::try_shifting_when_degen > 0 and                               //
-    //    m1.problem_size > settings::precision::eig_max_size and                        //
-    //    not full_system_optimization)                                                  //
-    // {
-    //     m1.eigs_nev = 2;
-    // }
+    m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
+
+    bool full_system_optimization = m1.chosen_sites.size() == tensors.get_length<size_t>();
+    if(status.algo_type == AlgorithmType::xDMRG and                                   //
+       status.algorithm_has_stuck_for > 1 and                                         //
+       status.variance_mpo_saturated_for > settings::strategy::iter_max_saturated and //
+       status.trnc_limit_has_reached_min and                                          //
+       status.bond_limit_has_reached_max and                                          //
+       settings::xdmrg::try_shifting_when_degen > 0 and                               //
+       m1.problem_size > settings::precision::eig_max_size and                        //
+       not full_system_optimization)                                                  //
+    {
+        m1.eigs_nev = std::max(m1.eigs_nev.value_or(1), 2);
+    }
+
     if(full_system_optimization and status.algo_type == AlgorithmType::xDMRG and var_latest < 1e-8) {
         m1.optCost = OptCost::ENERGY;
         m1.optRitz = OptRitz::SM;
@@ -331,6 +335,13 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     //         m1.eigs_tol = 1e-12;
     //         m1.optAlgo  = OptAlgo::DIRECTZ;
     //     }
+
+    // m1.eigs_nev = settings::precision::eigs_nev_max;
+    // m1.eigs_ncv = std::max(m1.eigs_ncv.value_or(32), 32);
+    // m1.eigs_tol = 1e-12;
+    // m1.optAlgo = OptAlgo::DIRECTX2;
+    // m1.optRitz = OptRitz::SM;
+
     if(var_isconverged) {
         m1.expand_mode = EnvExpandMode::NONE; // No need to expand
     }
@@ -345,8 +356,9 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide
     // alpha = alpha.value_or(status.env_expansion_alpha);
     // if(alpha.value() <= 0) return;
     if(not svd_cfg.has_value()) {
-        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 4l / 3l : status.bond_lim;
-        auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? std::min(1e-12, status.trnc_lim) : status.trnc_lim;
+        #pragma message "Restore the bond and trnc lims for expansion?"
+        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim : status.bond_lim;
+        auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
 
@@ -602,8 +614,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
@@ -706,8 +718,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
     tools::log->info("Updated truncation error limit: {:8.2e} -> {:8.2e} | reasons: {}", status.trnc_lim, trnc_new, fmt::join(reason, " | "));
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
@@ -1101,9 +1113,9 @@ void AlgorithmFinite::check_convergence() {
     if(variance_enabled) num_enabled++;
     if(entropy_enabled) num_enabled++;
     if(infocom_enabled) num_enabled++;
-    int  variance_saturated = variance_enabled and status.variance_mpo_saturated_for > 2;
-    int  entropy_saturated  = entropy_enabled and status.entanglement_saturated_for > 2;
-    int  infocom_saturated  = infocom_enabled and infocom_saturated_for > 2;
+    int  variance_saturated = variance_enabled and status.variance_mpo_saturated_for > 1;
+    int  entropy_saturated  = entropy_enabled and status.entanglement_saturated_for > 1;
+    int  infocom_saturated  = infocom_enabled and infocom_saturated_for > 1;
     int  all_saturated      = variance_saturated + entropy_saturated + infocom_saturated >= num_enabled;
     bool max_saturated      = sum_saturated_for > settings::strategy::iter_max_saturated * num_enabled;
     if(all_saturated or max_saturated) {
@@ -1213,6 +1225,8 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->trace(" -- converged count = {} ", status.variance_mpo_converged_for);
             tools::log->trace(" -- sat             = {}", report.Y_sat);
             tools::log->trace(" -- val             = {::7.4e}", report.Y_vec);
+            tools::log->trace(" -- ene             = {::7.4e}", energies);
+            tools::log->trace(" -- time            = {::7.4e}", times);
             tools::log->trace(" -- avg             = {::7.4e}", report.Y_avg);
             tools::log->trace(" -- med             = {::7.4e}", report.Y_med);
             tools::log->trace(" -- min             = {::7.4e}", report.Y_min);
@@ -1227,8 +1241,6 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->trace(" -- std_mid         = {::7.4e}", report.Y_mid_std);
             tools::log->trace(" -- dif_avg         = {::7.4e}", report.Y_dif_avg);
             tools::log->trace(" -- std_mov         = {::7.4e}", report.Y_mov_std);
-            tools::log->trace(" -- time            = {::7.4e}", times);
-            tools::log->trace(" -- energies        = {::7.4e}", energies);
         }
     }
 }
@@ -1467,7 +1479,13 @@ void          AlgorithmFinite::print_status() {
     report += fmt::format("L:{} ", tensors.get_length());
     std::string site_str;
     if(tensors.active_sites.empty()) site_str = fmt::format("{:^6}", tensors.state->get_position<long>());
-    if(tensors.active_sites.size() == 1) site_str = fmt::format("{:^6}", tensors.active_sites.front());
+    if(tensors.active_sites.size() == 1) {
+        if(tensors.state->get_direction() > 0) {
+            site_str = fmt::format("{:^6}", tensors.active_sites.front());
+        } else {
+            site_str = fmt::format("{:^6}", tensors.active_sites.front());
+        }
+    }
     if(tensors.active_sites.size() >= 2) {
         auto frnt = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.front()) : tensors.active_sites.front();
         auto back = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.back()) : tensors.active_sites.back();
@@ -1529,11 +1547,11 @@ void          AlgorithmFinite::print_status() {
     if(status.algorithm_converged_for > 0) { stat = fmt::format("con:{:<1} ", status.algorithm_converged_for); }
     report += stat;
     if(settings::precision::variance_saturation_sensitivity > 0 or settings::precision::entropy_saturation_sensitivity > 0) {
-        report += "[";
-        if(settings::precision::variance_saturation_sensitivity > 0) report += fmt::format("σ²H:{:<1}", status.variance_mpo_saturated_for);
-        if(settings::precision::entropy_saturation_sensitivity > 0) report += fmt::format("Sₑ {:<1}", status.entanglement_saturated_for);
-        if(settings::precision::infocom_saturation_sensitivity > 0) report += fmt::format("iₗ {:<1}", infocom_saturated_for);
-        report += "] ";
+        std::vector<std::string> satstr;
+        if(settings::precision::variance_saturation_sensitivity > 0) satstr.emplace_back(fmt::format("σ²H:{:<}", status.variance_mpo_saturated_for));
+        if(settings::precision::entropy_saturation_sensitivity > 0) satstr.emplace_back(fmt::format("Sₑ:{:<1}", status.entanglement_saturated_for));
+        if(settings::precision::infocom_saturation_sensitivity > 0) satstr.emplace_back(fmt::format("iₗ:{:<1}", infocom_saturated_for));
+        report += fmt::format("[{}]", fmt::join(satstr, " "));
     } else {
         report += " ";
     }

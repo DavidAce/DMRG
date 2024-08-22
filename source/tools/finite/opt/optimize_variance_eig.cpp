@@ -13,31 +13,32 @@
 #include "tools/finite/opt_mps.h"
 
 namespace tools::finite::opt::internal {
+
     template<typename Scalar>
     void optimize_variance_eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
         auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
-        int         nev    = meta.eigs_nev.value_or(1);
+        int         nev    = std::min<int>(static_cast<int>(matrix.dimension(0)), meta.eigs_nev.value_or(1));
         solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, nev, 0.0, 1.0);
-        extract_results(tensors, initial_mps, meta, solver, results, false);
+        extract_results(tensors, initial_mps, meta, solver, results, true);
         // if(meta.chosen_sites.size() <= 4 and matrix.dimension(0) <= 8192) {
         //     // Find all eigenvalues within a thin band
-        //     auto eigval = initial_mps.get_energy(); // The current energy
-        //     auto eigvar = initial_mps.get_variance();
-        //     auto eshift = initial_mps.get_eshift();                    // The energy shift is our target energy for excited states
-        //     auto vl     = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
-        //     auto vu     = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
-        //     solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
+        // auto eigval = initial_mps.get_energy(); // The current energy
+        // auto eigvar = initial_mps.get_variance();
+        // auto eshift = initial_mps.get_eshift();                    // The energy shift is our target energy for excited states
+        // auto vl     = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+        // auto vu     = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
+        // solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
 
         // if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-        // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
-        // tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
-        // auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
-        // auto indices = num::range<long>(0l, eigvals.size());
-        // auto eigComp = EigIdxComparator(meta.optRitz, eigval, eigvals.data(), eigvals.size());
-        // std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
-        // indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
-        // for(auto idx : indices) { tools::log->info(" -- idx {}: {:.16f}", idx, eigvals(idx)); }
+        //     // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
+        //     tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
+        //     auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+        //     auto indices = num::range<long>(0l, eigvals.size());
+        //     auto eigComp = EigIdxComparator(meta.optRitz, 0, eigvals.data(), eigvals.size());
+        //     std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
+        //     indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
+        //     for(auto idx : indices) { tools::log->info(" -- idx {}: {:.16f}", idx, eigvals(idx)); }
         // }
 
         // eig::solver solver1, solver2;

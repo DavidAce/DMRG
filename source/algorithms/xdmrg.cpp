@@ -70,11 +70,12 @@ void xdmrg::resume() {
         double bond_max                   = std::min(long_max, std::pow(2.0, settings::model::model_size / 2));
         status.bond_max                   = std::min({status.bond_max, safe_cast<long>(bond_max), settings::get_bond_max(status.algo_type)});
         status.bond_min                   = std::max(status.bond_min, settings::get_bond_min(status.algo_type));
-        status.bond_lim                   = std::min(status.bond_lim, status.bond_max);
+        status.bond_lim                   = std::clamp(status.bond_lim, 1l, status.bond_max);
         status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
 
         status.trnc_min                   = settings::precision::svd_truncation_min;
         status.trnc_max                   = settings::precision::svd_truncation_max;
+        status.trnc_lim                   = std::clamp(status.trnc_lim, status.trnc_min, status.trnc_max);
         status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_min;
 
         // Apply shifts and compress the model
@@ -148,13 +149,13 @@ void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
     switch(status.opt_ritz) {
         case OptRitz::NONE: throw std::logic_error("status.opt_ritz == OptRitz::NONE is invalid under xdmrg");
         case OptRitz::SR: {
-            tools::log->warn("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
+            // tools::log->warn("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
             status.energy_tgt = 0.0;
             break;
             // throw std::logic_error("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
         }
         case OptRitz::LR: {
-            tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+            // tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
             status.energy_tgt = 0.0;
             break;
             // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
@@ -315,7 +316,7 @@ void xdmrg::run_algorithm() {
         try_projection(); // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         // try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
 
-        // expand_environment(EnvExpandMode::ENE, EnvExpandSide::BACKWARD);
+        // expand_environment(EnvExpandMode::VAR , EnvExpandSide::BACKWARD);
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -335,7 +336,7 @@ void xdmrg::update_state() {
     // Try activating the sites asked for;
     tensors.activate_sites(opt_meta.chosen_sites);
     if(tensors.active_sites.empty()) {
-        tools::log->warn("Failed to activate sites");
+        tools::log->debug("No more sites to activate");
         return;
     }
     tensors.rebuild_edges();
@@ -343,7 +344,7 @@ void xdmrg::update_state() {
     tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
     auto bond_dims_old = tensors.state->get_mps_dims_active();
     // Expand the environment to grow the bond dimension in 1-site dmrg
-    if(opt_meta.expand_mode != EnvExpandMode::NONE) {
+    if(opt_meta.expand_mode != EnvExpandMode::NONE and tensors.active_sites.size() == 1) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
         opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);
@@ -363,7 +364,7 @@ void xdmrg::update_state() {
     /* clang-format off */
     opt_meta.optExit = OptExit::SUCCESS;
     if(opt_state.get_grad_max()       > 1.000                         ) opt_meta.optExit |= OptExit::FAIL_GRADIENT;
-    if(opt_state.get_rnorm()          > settings::precision::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
+    if(opt_state.get_eigs_rnorm()     > settings::precision::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
     if(opt_state.get_eigs_nev()       == 0 and
        opt_meta.optSolver              == OptSolver::EIGS             ) opt_meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
     if(opt_state.get_overlap()        < 0.010                         ) opt_meta.optExit |= OptExit::FAIL_OVERLAP;
@@ -403,7 +404,7 @@ void xdmrg::update_state() {
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
                           "sites {} | conv {:.2f} | {:20} | {} | time {:.2e} s",
-                          opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
+                          opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_eigs_rnorm(), opt_state.get_overlap(),
                           opt_state.get_sites(), convr, fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())),
                           flag2str(opt_state.get_optexit()), opt_state.get_time());
     }
@@ -414,7 +415,7 @@ void xdmrg::update_state() {
     // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merge
     auto logPolicy = LogPolicy::SILENT;
     if constexpr(settings::debug) logPolicy = LogPolicy::VERBOSE;
-    tensors.merge_multisite_mps(opt_state.get_tensor(), opt_meta.svd_cfg, logPolicy);
+    tensors.merge_multisite_mps(opt_state.get_tensor(), MergeEvent::OPT, opt_meta.svd_cfg, logPolicy);
     tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
     if constexpr(settings::debug) {
         if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());

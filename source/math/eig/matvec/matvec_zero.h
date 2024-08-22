@@ -29,6 +29,7 @@ class MatVecZero {
 
     constexpr static bool               can_shift_invert = false;
     constexpr static bool               can_shift        = false;
+    constexpr static bool               can_precondition = false;
     constexpr static eig::Storage       storage          = eig::Storage::MPS;
     constexpr static eig::Factorization factorization    = eig::Factorization::NONE;
 
@@ -62,8 +63,6 @@ class MatVecZero {
     void MultOPv(T *mps_in_, T *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
     void MultAx(T *bond_in_, T *bond_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
-    void MultAx(T *bond_in, T *bond_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_bond_,
-                std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
     // Various utility functions
@@ -96,8 +95,9 @@ class MatVecZero {
     [[nodiscard]] bool isReadyFactorOp() const;
 
     // Timers
-    std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_factorOP; // Factorization time
     std::unique_ptr<tid::ur> t_genMat;
     std::unique_ptr<tid::ur> t_multOPv;
-    std::unique_ptr<tid::ur> t_multAx;
+    std::unique_ptr<tid::ur> t_multPc; // Preconditioner time
+    std::unique_ptr<tid::ur> t_multAx; // Matvec time
 };

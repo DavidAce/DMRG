@@ -118,6 +118,7 @@ namespace tools::common::contraction {
         return result;
     }
 
+
     template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
     void matrix_inverse_vector_product(
         TensorWrite<res_type> &res,
@@ -376,5 +377,12 @@ namespace tools::common::contraction {
         Eigen::Tensor<typename env_type::Scalar, env_type::NumIndices> res;
         contract_mps_mpo_env(res, env, mps, mpo);
         return res;
+    }
+    template<typename mps_type, typename mpo_type, typename env_type>
+    auto expectation_value(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
+        mps_type result;
+        result.resize(mps.dimensions());
+        matrix_vector_product(result, mps, mpo, envL, envR);
+        return contract_mps_overlap(mps, result);
     }
 }

@@ -124,6 +124,27 @@ namespace tools::finite::opt {
     }
 
     template<typename Scalar>
+    void preconditioner_diagonal(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+        H_ptr->preconditioner = eig::Preconditioner::DIAG;
+        H_ptr->CalcPc();
+        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
+    template<typename Scalar>
+    void preconditioner_tridiagonal(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+        H_ptr->preconditioner = eig::Preconditioner::TRIDIAG;
+        H_ptr->CalcPc();
+        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
+
+    template<typename Scalar>
     double get_largest_eigenvalue_hamiltonian_squared(const TensorsFinite &tensors) {
         const auto &env2                = tensors.get_multisite_env_var_blk();
         auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
@@ -146,19 +167,18 @@ namespace tools::finite::opt {
                                 std::vector<opt_mps> &results, const OptMeta &meta) {
         using Scalar = typename MatVecType::Scalar;
         if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL)
-            throw except::logic_error("eigs_launcher error: Mixed Scalar:cplx with OptType::REAL");
+            throw except::logic_error("eigs_variance_executor error: Mixed Scalar:cplx with OptType::REAL");
         if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX)
-            throw except::logic_error("eigs_launcher error: Mixed Scalar:real with OptType::CPLX");
+            throw except::logic_error("eigs_variance_executor error: Mixed Scalar:real with OptType::CPLX");
 
         // const auto       &mpo = tensors.get_multisite_mpo();
         // const auto       &env = tensors.get_multisite_env_ene_blk();
         // MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
         // solver.config.primme_effective_ham    = &hamiltonian;
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
-
         hamiltonian_squared.reset();
 
-        tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
+        tools::log->trace("eigs_variance_executor: Defining the Hamiltonian-squared matrix-vector product");
 
         if(solver.config.lib == eig::Lib::ARPACK) {
             if(tensors.model->has_compressed_mpo_squared()) throw std::runtime_error("optimize_variance_eigs with ARPACK requires non-compressed MPO²");
@@ -191,20 +211,21 @@ namespace tools::finite::opt {
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
-        auto       &cfg           = solver.config;
-        cfg.loglevel              = 2;
-        cfg.compute_eigvecs       = eig::Vecs::ON;
-        cfg.tol                   = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
-        cfg.tol_other             = std::max(1e-10, cfg.tol.value());         // We do not need high precision on subsequent solutions
+        auto       &cfg     = solver.config;
+        cfg.loglevel        = 2;
+        cfg.compute_eigvecs = eig::Vecs::ON;
+        cfg.tol             = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
+        // cfg.tol_other             = std::max(1e-10, cfg.tol.value());                          // We do not need high precision on subsequent solutions
         cfg.maxIter               = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
         cfg.maxNev                = meta.eigs_nev.value_or(1);
         cfg.maxNcv                = meta.eigs_ncv.value_or(settings::precision::eigs_ncv);
         cfg.maxTime               = meta.eigs_time_max.value_or(2 * 60 * 60); // Two hours default
         cfg.primme_minRestartSize = meta.primme_minRestartSize;
         cfg.primme_maxBlockSize   = meta.primme_maxBlockSize;
-        cfg.primme_locking        = 1;
-        cfg.lib                   = eig::Lib::PRIMME;
-        cfg.primme_method         = eig::stringToMethod(meta.primme_method);
+        cfg.primme_locking        = 0;
+        // cfg.primme_convTestFun    = convtestUnfolded;
+        cfg.lib           = eig::Lib::PRIMME;
+        cfg.primme_method = eig::stringToMethod(meta.primme_method);
         cfg.tag += meta.label;
         switch(meta.optRitz) {
             case OptRitz::SR: cfg.ritz = eig::Ritz::primme_smallest; break;
@@ -220,6 +241,8 @@ namespace tools::finite::opt {
             }
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
+        // cfg.primme_preconditioner = preconditioner_tridiagonal<Scalar>;
+        cfg.primme_preconditioner = preconditioner_diagonal<Scalar>;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::precision::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
@@ -286,14 +309,38 @@ namespace tools::finite::opt {
             return initial_mps; // The solver failed
         }
 
-        if(results.size() >= 2) {
-            std::sort(results.begin(), results.end(), internal::Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
+        auto metax2    = meta;
+        metax2.optCost = OptCost::ENERGY;
+        metax2.optRitz = OptRitz::SM;
+        // #pragma message "remove energy opt trial"
+        //         std::vector<opt_mps> results2;
+        //         for(const auto &result : results) {
+        //             if(result.get_rnorm_H() < 1e-5) {
+        //                 results2.emplace_back(optimize_energy_eigs(tensors, result, status, metax2));
+        //                 results2.back().set_name(fmt::format("{} energy", results2.back().get_name()));
+        //                 results2.back().set_eigs_eigval(std::pow(results2.back().get_eigs_eigval(), 2.0)); // set the eigval to E² for easier comparison with
+        //                 H². reports::eigs_add_entry(results2.back(), spdlog::level::debug);
+        //                 // tools::finite::opt::reports::print_eigs_report();
+        //             }
+        //         }
+        //         results.insert(results.end(), std::make_move_iterator(results2.begin()), std::make_move_iterator(results2.end()));
+
+        // Sort results
+        if(results.size() > 1) {
+            std::sort(results.begin(), results.end(), internal::Comparator(meta)); // Smallest eigenvalue wins
             // Add some information about the other eigensolutions to the winner
             // We can use that to later calculate the gap and the approximate convergence rate
             for(size_t idx = 1; idx < results.size(); ++idx) { results.front().next_evs.emplace_back(results[idx]); }
         }
+        for(const auto &result : results) reports::eigs_add_entry(result, spdlog::level::debug);
 
-        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
+        // if(results.size() > 1) {
+        //     // Remove solutions whose residual norm is too bad to be taken seriously
+        //     std::remove_if(results.rbegin(), results.rend(), [&](opt_mps &r) -> bool {
+        //         if(results.size() > 1 and r.get_rnorm() > std::max(1e-6, settings::precision::eigs_tol_max)) { return true; }
+        //         return false;
+        //     });
+        // }
 
         return results.front();
     }

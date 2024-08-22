@@ -19,7 +19,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     for(auto &Op : Op_vec) {
         // Evolve
         Eigen::Tensor<Scalar, 3> mps_evo = Op.contract(state_evolved.get_2site_mps(), tenx::idx({0}, {0}));
-        state_evolved.set_mps(mps_evo, svd::config(bond_lim));
+        state_evolved.set_mps(mps_evo, MergeEvent::GATE, svd::config(bond_lim));
         if(&Op != &Op_vec.back()) { state_evolved.swap_AB(); }
     }
 

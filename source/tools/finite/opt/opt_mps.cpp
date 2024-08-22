@@ -10,7 +10,7 @@ using namespace tools::finite::opt;
 opt_mps::NextEv::NextEv(const opt_mps &res) {
     eigs_idx    = res.get_eigs_idx();
     eigs_eigval = res.get_eigs_eigval();
-    eigs_rnorm  = res.get_rnorm();
+    eigs_rnorm  = res.get_eigs_rnorm();
     energy      = res.get_energy();
     variance    = res.get_variance();
     overlap     = res.get_overlap();
@@ -178,7 +178,14 @@ double opt_mps::get_time_mv() const {
     if(time_mv)
         return time_mv.value();
     else
-        return get_time();
+        return 0.0;
+}
+
+double opt_mps::get_time_pc() const {
+    if(time_pc)
+        return time_pc.value();
+    else
+        return 0.0;
 }
 
 double opt_mps::get_delta_f() const {
@@ -236,6 +243,12 @@ double opt_mps::get_eigs_tol() const {
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
+double opt_mps::get_eigs_rnorm() const {
+    if(eigs_rnorm)
+        return eigs_rnorm.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
 
 double opt_mps::get_eigs_eigval() const {
     if(eigs_eigval)
@@ -258,9 +271,16 @@ cplx opt_mps::get_eigs_shift() const {
         return cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
-double opt_mps::get_rnorm() const {
-    if(rnorm)
-        return rnorm.value();
+double opt_mps::get_rnorm_H() const {
+    if(rnorm_H)
+        return rnorm_H.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+double opt_mps::get_rnorm_H2() const {
+    if(rnorm_H2)
+        return rnorm_H2.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
@@ -376,7 +396,8 @@ void opt_mps::set_energy(double energy_) {
 }
 void opt_mps::set_energy_per_site(double energy_per_site_) { set_energy(energy_per_site_ * static_cast<double>(get_length())); }
 void opt_mps::set_variance(double variance_) { variance = variance_; }
-void opt_mps::set_rnorm(const double rnorm_) { rnorm = rnorm_; }
+void opt_mps::set_rnorm_H(const double rnorm_) { rnorm_H = rnorm_; }
+void opt_mps::set_rnorm_H2(const double rnorm_) { rnorm_H2 = rnorm_; }
 void opt_mps::set_overlap(double overlap_) { overlap = overlap_; }
 void opt_mps::set_alpha(std::optional<double> alpha_) { alpha = alpha_; }
 void opt_mps::set_length(size_t length_) { length = length_; }
@@ -386,6 +407,7 @@ void opt_mps::set_mv(size_t mv_) { num_mv = mv_; }
 void opt_mps::set_pc(size_t pc_) { num_pc = pc_; }
 void opt_mps::set_time(double time_) { time = time_; }
 void opt_mps::set_time_mv(double time_mv_) { time_mv = time_mv_; }
+void opt_mps::set_time_pc(double time_pc_) { time_mv = time_pc_; }
 void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
 void opt_mps::set_grad_tol(double grad_tol_) { grad_tol = grad_tol_; }
 void opt_mps::set_grad_max(double grad_max_) { grad_max = grad_max_; }
@@ -394,6 +416,7 @@ void opt_mps::set_eigs_idx(long idx_) { eigs_idx = idx_; }
 void opt_mps::set_eigs_nev(long nev_) { eigs_nev = nev_; }
 void opt_mps::set_eigs_ncv(long ncv_) { eigs_ncv = ncv_; }
 void opt_mps::set_eigs_tol(double tol_) { eigs_tol = tol_; }
+void opt_mps::set_eigs_rnorm(double rnorm_) { eigs_rnorm = rnorm_; }
 void opt_mps::set_eigs_eigval(double eigval_) { eigs_eigval = eigval_; }
 void opt_mps::set_eigs_ritz(std::string_view ritz_) { eigs_ritz = std::string(ritz_); }
 void opt_mps::set_eigs_shift(const cplx shift_) { eigs_shift = shift_; }

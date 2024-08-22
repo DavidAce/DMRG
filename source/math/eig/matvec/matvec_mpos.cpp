@@ -14,6 +14,7 @@
 #include "tools/common/contraction.h"
 #include <Eigen/Cholesky>
 #include <primme/primme.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 #if defined(DMRG_ENABLE_TBLIS)
     #include <tblis/tblis.h>
@@ -80,26 +81,26 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
             contracted_mpos            = std::move(temp);
         }
         mpos = {contracted_mpos}; // Replace by a single pre-contracted mpo
-//         {                         // A quick experiment
-// #pragma message "Remove a quick experiment with matvec_mpos"
-//             auto                svd           = svd::solver();
-//             auto                dim4          = contracted_mpos.dimensions();
-//             auto                dim2          = tenx::array2{dim4[2] * dim4[0], dim4[3] * dim4[1]};
-//             Eigen::Tensor<T, 4> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 0, 3, 1});
-//             auto [U, S, V]                    = svd.schmidt(shuffled_mpos, svd::config(dim2[0], 1e-16));
-//             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
-//             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
-//         }
-//         { // A quick experiment
-// #pragma message "Remove a quick experiment with matvec_mpos"
-//             auto                svd           = svd::solver();
-//             auto                dim4          = contracted_mpos.dimensions();
-//             auto                dim2          = tenx::array2{dim4[2],  dim4[0]* dim4[3] * dim4[1]};
-//             Eigen::Tensor<T, 2> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 3, 0, 1}).reshape(dim2);
-//             auto [U, S, V]                    = svd.decompose(shuffled_mpos, svd::config(dim2[0], 1e-16));
-//             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
-//             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
-//         }
+                                  //         {                         // A quick experiment
+                                  // #pragma message "Remove a quick experiment with matvec_mpos"
+                                  //             auto                svd           = svd::solver();
+                                  //             auto                dim4          = contracted_mpos.dimensions();
+                                  //             auto                dim2          = tenx::array2{dim4[2] * dim4[0], dim4[3] * dim4[1]};
+                                  //             Eigen::Tensor<T, 4> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 0, 3, 1});
+                                  //             auto [U, S, V]                    = svd.schmidt(shuffled_mpos, svd::config(dim2[0], 1e-16));
+        //             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
+        //             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
+        //         }
+        //         { // A quick experiment
+        // #pragma message "Remove a quick experiment with matvec_mpos"
+        //             auto                svd           = svd::solver();
+        //             auto                dim4          = contracted_mpos.dimensions();
+        //             auto                dim2          = tenx::array2{dim4[2],  dim4[0]* dim4[3] * dim4[1]};
+        //             Eigen::Tensor<T, 2> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 3, 0, 1}).reshape(dim2);
+        //             auto [U, S, V]                    = svd.decompose(shuffled_mpos, svd::config(dim2[0], 1e-16));
+        //             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
+        //             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
+        //         }
 
     } else {
         // We pre-shuffle each mpo to speed up the sequential contraction
@@ -110,6 +111,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     t_genMat   = std::make_unique<tid::ur>("Time genMat");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
+    t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
 template MatVecMPOS<cplx>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
@@ -127,68 +129,181 @@ int MatVecMPOS<T>::cols() const {
     return safe_cast<int>(size_mps);
 }
 
-template<typename T>
-void MatVecMPOS<T>::FactorOP() {
-    throw std::runtime_error("template<typename T> void MatVecMPOS<T>::FactorOP(): Not implemented");
+std::vector<long> indices(long x, long rank, long size) {
+    std::vector<long> indices(rank);
+    for(int i = 0; i < rank; i++) {
+        indices[i] = x % size;
+        x /= size;
+    }
+    return indices;
 }
 
-// template<typename T>
-// using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
-// template<typename T>
-// using TensorRead = Eigen::TensorBase<T, Eigen::ReadOnlyAccessors>;
+template<size_t rank>
+constexpr std::array<long, rank> indices(long flatindex, const std::array<long, rank> &dimensions) {
+    std::array<long, rank> indices;
+    for(size_t i = 0; i < rank; i++) {
+        indices[i] = flatindex % dimensions[i];
+        flatindex /= dimensions[i];
+    }
+    return indices;
+}
 
-// template<typename ea_type, typename eb_type, typename ec_type>
-// void contract_tblis_local(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb, TensorWrite<ec_type> &ec, const tblis::label_vector &la,
-//                           const tblis::label_vector &lb, const tblis::label_vector &lc, const tblis::tblis_config_s *tblis_config) {
-//     const auto &ea_ref = static_cast<const ea_type &>(ea);
-//     const auto &eb_ref = static_cast<const eb_type &>(eb);
-//     auto       &ec_ref = static_cast<ec_type &>(ec);
-//
-//     tblis::len_vector da, db, dc;
-//     da.assign(ea_ref.dimensions().begin(), ea_ref.dimensions().end());
-//     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
-//     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
-//
-//     auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-//     auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-//     typename ea_type::Scalar alpha = 1.0;
-//     typename ec_type::Scalar beta  = 0.0;
-//
-//     tblis::tblis_tensor A_s(alpha, ta);
-//     tblis::tblis_tensor B_s(tb);
-//     tblis::tblis_tensor C_s(beta, tc);
-//
-//     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-// }
-// std::string get_tblis_arch_local() {
-// #if defined(__GNUC__)
-//     if(__builtin_cpu_supports("x86-64-v4")) return "skx";
-//     if(__builtin_cpu_is("znver3") or __builtin_cpu_is("znver2") or __builtin_cpu_is("znver1")) return "zen";
-//     if(__builtin_cpu_supports("x86-64-v3")) return "haswell";
-// #endif
-//     return "haswell";
-// }
+std::vector<long> indices(long flatindex, size_t rank, const std::vector<long> &dimensions) {
+    std::vector<long> indices(rank);
+    for(size_t i = 0; i < rank; i++) {
+        indices[i] = flatindex % dimensions[i];
+        flatindex /= dimensions[i];
+    }
+    return indices;
+}
+
+template<typename T>
+void MatVecMPOS<T>::thomas(long size, T *x, T *const dl, T *const dm, T *const du) {
+    /*
+     solves Ax = d, where A is a tridiagonal matrix consisting of vectors a, b, c
+     X = number of equations
+     x[] = initially contains the input v, and returns x. indexed from [0, ..., X - 1]
+     dl[] = lower diagonal, indexed from [1, ..., X - 1]
+     dm[] = main diagonal, indexed from [0, ..., X - 1]
+     du[] = upper diagonal, indexed from [0, ..., X - 2]
+     not performed in this example: manual expensive common subexpression elimination
+     */
+    diagtemp.resize(size);
+    auto &t = diagtemp;
+
+    diagtemp[0] = du[0] / dm[0];
+    x[0]        = x[0] / dm[0];
+
+    /* loop from 1 to X - 1 inclusive */
+    for(long ix = 1; ix < size - 1; ix++) {
+        // if(ix < size - 1) {  }
+        auto denom = (dm[ix] - dl[ix] * t[ix - 1]);
+        t[ix]      = du[ix] / denom;
+        x[ix]      = (x[ix] - dl[ix] * x[ix - 1]) / denom;
+    }
+
+    /* loop from X - 2 to 0 inclusive */
+    for(long ix = size - 2; ix >= 0; ix--) x[ix] -= t[ix] * x[ix + 1];
+}
+
+template<typename T>
+void MatVecMPOS<T>::thomas2(long size, T *x, T *const a, T *const b, T *const c) {
+    /*
+    // size is the number of unknowns
+
+    |b0 c0 0 ||x0| |d0|
+    |a1 b1 c1||x1|=|d1|
+    |0  a2 b2||x2| |d2|
+
+    */
+    size--;
+    c[0] /= b[0];
+    x[0] /= b[0];
+    for(long i = 1; i < size; i++) {
+        c[i] /= b[i] - a[i] * c[i - 1];
+        x[i] = (x[i] - a[i] * x[i - 1]) / (b[i] - a[i] * c[i - 1]);
+    }
+
+    x[size] = (x[size] - a[size] * x[size - 1]) / (b[size] - a[size] * c[size - 1]);
+
+    for(long i = size; i-- > 0;) { x[i] -= c[i] * x[i + 1]; }
+}
+
+template<typename T>
+typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal(long offset) {
+    assert(std::abs(offset) <= 1);
+    auto  diagonal = VectorType(size_mps);
+    auto &threads  = tenx::threads::get();
+    auto  ext_j    = std::array<long, 3>{1, 1, envL.dimension(2)};
+    auto  ext_k    = std::array<long, 3>{1, 1, envR.dimension(2)};
+    auto  spindims = std::vector<long>();
+    spindims.reserve(mpos.size());
+    for(const auto &mpo : mpos) spindims.emplace_back(mpo.dimension(2));
+    auto rowindices = std::array<long, 3>{};
+    auto colindices = std::array<long, 3>{};
+    for(long diagidx = 0; diagidx < size_mps; ++diagidx) {
+        if(diagidx + offset < 0 or diagidx + offset >= size_mps) { diagonal(diagidx) = 0.0; }
+        if(offset == 0) {
+            rowindices = indices(diagidx, shape_mps);
+            colindices = rowindices;
+        } else {
+            rowindices = indices(diagidx, shape_mps);
+            colindices = indices(diagidx + offset, shape_mps);
+        }
+        auto ir = rowindices[0];
+        auto jr = rowindices[1];
+        auto kr = rowindices[2];
+        auto ic = colindices[0];
+        auto jc = colindices[1];
+        auto kc = colindices[2];
+
+        // Index i is special, since it is composed of all the mpo physical indices.
+        // auto idxs  = indices(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
+        // mpos
+        auto irxs  = indices(ir, mpos.size(), spindims); // Maps ir to tensor indices to select the upper phsical indices in the mpos
+        auto icxs  = indices(ic, mpos.size(), spindims); // Maps ic to tensor indices to select the lower phsical indices in the mpos
+        auto mpo_i = Eigen::Tensor<Scalar, 4>();
+        for(size_t mdx = 0; mdx < mpos.size(); ++mdx) {
+            if(mdx == 0) {
+                auto &mpoL = mpos[mdx];
+                auto  offL = std::array<long, 4>{0, 0, irxs[mdx], icxs[mdx]};
+                auto  extL = std::array<long, 4>{mpoL.dimension(0), mpoL.dimension(1), 1, 1};
+                mpo_i      = mpoL.slice(offL, extL);
+            }
+            if(mdx + 1 == mpos.size()) break;
+            auto dimR = mpos[mdx + 1].dimensions();
+            auto offR = std::array<long, 4>{0, 0, irxs[mdx + 1], icxs[mdx + 1]};
+            auto extR = std::array<long, 4>{dimR[0], dimR[1], 1, 1};
+            auto shp4 = std::array<long, 4>{mpo_i.dimension(0), dimR[1], 1, 1};
+            auto temp = Eigen::Tensor<Scalar, 4>(shp4);
+            temp.device(*threads->dev) =
+                mpo_i.contract(mpos[mdx + 1].slice(offR, extR), tenx::idx({1}, {0})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(shp4);
+            mpo_i = temp;
+        }
+
+        auto off_j  = std::array<long, 3>{jr, jc, 0};
+        auto off_k  = std::array<long, 3>{kr, kc, 0};
+        auto envL_j = envL.slice(off_j, ext_j);
+        auto envR_k = envR.slice(off_k, ext_k);
+
+        Eigen::Tensor<Scalar, 6> elem(1, 1, 1, 1, 1, 1);
+        elem.device(*threads->dev) = envL_j.contract(mpo_i, tenx::idx({2}, {0})).contract(envR_k, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
+        diagonal(diagidx)          = elem.coeff(0);
+    }
+    return diagonal;
+}
+
+template<typename T>
+void MatVecMPOS<T>::FactorOP() {
+    throw except::runtime_error("MatVecMPOS<T>::FactorOP(): not implemented");
+}
+
+template<typename T>
+void MatVecMPOS<T>::MultOPv([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_,[[maybe_unused]] T eval) {
+    throw except::runtime_error("void MatVecMPOS<T>::MultOPv(...) not implemented");
+}
+
+template<typename T>
+void MatVecMPOS<T>::MultOPv([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
+                            [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    throw except::runtime_error("MatVecMPOS<T>::MultOPv(...): not implemented");
+}
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(T *mps_in_, T *mps_out_) {
-    // auto token   = t_multAx->tic_token();
+    auto token   = t_multAx->tic_token();
     auto mps_in  = Eigen::TensorMap<Eigen::Tensor<T, 3>>(mps_in_, shape_mps);
     auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(mps_out_, shape_mps);
     if(mpos.size() == 1) {
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos.front(), envL, envR);
     } else {
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpos_shf, envL, envR);
-        // tools::common::contraction::matrix_vector_product(mps_out.data(), mps_in.data(), mps_in.dimensions(), mpos_shf, envL.data(), envL.dimensions(),
-        // envR.data(), envR.dimensions());
     }
     num_mv++;
 }
 
 template<typename T>
 void MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    // tools::log->info("blocksize: {}", *blockSize);
-    // #pragma omp parallel for
     for(int i = 0; i < *blockSize; i++) {
         T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
         T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
@@ -198,15 +313,59 @@ void MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize,
 }
 
 template<typename T>
-void MatVecMPOS<T>::MultOPv([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_) {
-    throw std::runtime_error("template<typename T> void MatVecMPOS<T>::MultOPv(T *mps_in_, T *mps_out_): Not implemented");
+void MatVecMPOS<T>::CalcPc() {
+    // auto token = t_multPc->tic_token();
+    if(preconditioner == eig::Preconditioner::DIAG) {
+        if(diagonal.size() == 0) {
+            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... ");
+            diagonal = get_diagonal(0);
+            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... done");
+        }
+    } else if(preconditioner == eig::Preconditioner::TRIDIAG) {
+        if(diagonal.size() == 0 or diaglower.size() == 0 or diagupper.size() == 0) {
+            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... ");
+            if(diagonal.size() == 0) diagonal = get_diagonal(0);
+            if(diaglower.size() == 0) diaglower = get_diagonal(-1);
+            if(diagupper.size() == 0) diagupper = get_diagonal(1);
+            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... done");
+        }
+    }
 }
 
 template<typename T>
-void MatVecMPOS<T>::MultOPv([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
-                            [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    throw std::runtime_error("template<typename T> void MatVecMPOS<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] "
-                             "primme_params *primme, int *err): Not implemented");
+void MatVecMPOS<T>::MultPc([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
+                           [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+    for(int i = 0; i < *blockSize; i++) {
+        T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
+        T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
+        MultPc(mps_in_ptr, mps_out_ptr, primme->ShiftsForPreconditioner[i]);
+    }
+    *err = 0;
+}
+
+template<typename T>
+void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_, T shift) {
+    if(preconditioner == eig::Preconditioner::NONE) return;
+    if(diagonal.size() == 0) { CalcPc(); }
+    auto token   = t_multPc->tic_token();
+    auto mps_in  = Eigen::Map<VectorType>(mps_in_, size_mps);
+    auto mps_out = Eigen::Map<VectorType>(mps_out_, size_mps);
+    using ArrayType = Eigen::Array<T,Eigen::Dynamic,1>;
+    ArrayType diagshf = (diagonal.array() - shift).cwiseAbs();
+    // Use a small cutoff for small differences following Eq 2.11 in https://sdm.lbl.gov/~kewu/ps/thesis.pdf
+    static constexpr auto eps = std::numeric_limits<double>::epsilon();
+    for(auto &d : diagshf) {
+        if(d <= eps) d = eps;
+        // if(d >= 0 and d <= +eps) d = +eps;
+        // if(d <= 0 and d >= -eps) d = -eps;
+    }
+    if(preconditioner == eig::Preconditioner::DIAG) {
+        mps_out = diagshf.array().cwiseInverse().cwiseProduct(mps_in.array());
+    } else if(preconditioner == eig::Preconditioner::TRIDIAG) {
+        mps_out = mps_in; // copy the values
+        thomas(size_mps, mps_out_, diaglower.data(), diagshf.data(), diagupper.data());
+    }
+    num_pc++;
 }
 
 template<typename T>
@@ -218,8 +377,10 @@ void MatVecMPOS<T>::reset() {
     if(t_multOPv) t_multOPv->reset();
     if(t_genMat) t_genMat->reset();
     if(t_multAx) t_multAx->reset();
+    if(t_multPc) t_multPc->reset();
     num_mv = 0;
     num_op = 0;
+    num_pc = 0;
 }
 
 template<typename T>

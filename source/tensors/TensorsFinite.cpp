@@ -62,6 +62,13 @@ TensorsFinite::TensorsFinite(AlgorithmType algo_type, ModelType model_type, size
     initialize(algo_type, model_type, model_size, position);
 }
 
+StateFinite       &TensorsFinite::get_state() { return *state; }
+ModelFinite       &TensorsFinite::get_model() { return *model; }
+EdgesFinite       &TensorsFinite::get_edges() { return *edges; }
+const StateFinite &TensorsFinite::get_state() const { return *state; }
+const ModelFinite &TensorsFinite::get_model() const { return *model; }
+const EdgesFinite &TensorsFinite::get_edges() const { return *edges; }
+
 void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position) {
     tools::log->debug("Initializing tensors: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
                       position);
@@ -504,14 +511,15 @@ size_t TensorsFinite::move_center_point_to_middle(std::optional<svd::config> svd
     return moves;
 }
 
-void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg, LogPolicy log_policy) {
+void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg,
+                                        LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     auto t_merge = tid::tic_scope("merge");
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw except::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}", active_sites, state->active_sites,
                                     model->active_sites, edges->active_sites);
     clear_measurements(log_policy);
-    tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), svd_cfg, log_policy);
+    tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), mevent, svd_cfg, log_policy);
     normalize_state(svd_cfg, NormPolicy::IFNEEDED);
 }
 

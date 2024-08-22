@@ -32,6 +32,19 @@ enum class MeanType { ARITHMETIC, GEOMETRIC };
  *  Note that settings::strategy::dmrg_min_blocksize and settings::strategy::dmrg_max_blocksize are hard limits on the block size.
  *  This means that "ICOM" sets a block size within those limits.
  */
+
+/*! \brief Why an mps merge event is invoked
+ * Currently, this is used to check if an optimized multisite_mps was passed, in which case we need to store the truncation errors (otherwise they are
+ * discarded)
+ */
+enum class MergeEvent {
+    MOVE, /*!< Moved the center position */
+    NORM, /*!< Normalized the state */
+    SWAP, /*!< Swapped sites (e.g. in fLBIT) */
+    GATE, /*!< Applied a gate, e.g. during time evolution */
+    OPT,  /*!< Optimized some sites, e.g. during the main DMRG update */
+};
+
 enum class BlockSizePolicy {
     MIN       = 0,   /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
     MAX       = 1,   /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
@@ -556,6 +569,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         MpoCompress,
         MposWithEdges,
         MeanType,
+        MergeEvent,
         BlockSizePolicy,
         SVDLibrary,
         UpdatePolicy,
@@ -723,6 +737,13 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     if constexpr(std::is_same_v<T, MeanType>) {
         if(item == MeanType::ARITHMETIC)                                return "ARITHMETIC";
         if(item == MeanType::GEOMETRIC)                                 return "GEOMETRIC";
+    }
+    if constexpr(std::is_same_v<T, MergeEvent>) {
+        if(item == MergeEvent::MOVE)                                    return "MOVE";
+        if(item == MergeEvent::NORM)                                    return "NORM";
+        if(item == MergeEvent::SWAP)                                    return "SWAP";
+        if(item == MergeEvent::GATE)                                    return "GATE";
+        if(item == MergeEvent::OPT)                                     return "OPT";
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == ResetReason::INIT)                                   return "INIT";
@@ -955,6 +976,7 @@ constexpr auto sv2enum(std::string_view item) {
         MpoCompress,
         MposWithEdges,
         MeanType,
+        MergeEvent,
         BlockSizePolicy,
         SVDLibrary,
         UpdatePolicy,
@@ -1137,7 +1159,13 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ARITHMETIC")                            return MeanType::ARITHMETIC;
         if(item == "GEOMETRIC")                             return MeanType::GEOMETRIC;
     }
-
+    if constexpr(std::is_same_v<T, MergeEvent>) {
+        if(item == "MOVE")                                  return MergeEvent::MOVE;
+        if(item == "NORM")                                  return MergeEvent::NORM;
+        if(item == "SWAP")                                  return MergeEvent::SWAP;
+        if(item == "GATE")                                  return MergeEvent::GATE;
+        if(item == "OPT")                                   return MergeEvent::OPT;
+    }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == "INIT")                                  return ResetReason::INIT;
         if(item == "FIND_WINDOW")                           return ResetReason::FIND_WINDOW;

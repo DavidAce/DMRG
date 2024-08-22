@@ -31,7 +31,7 @@ namespace tools::finite::mps {
     extern size_t move_center_point_to_pos_dir       (StateFinite & state, long pos, int dir, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_inward_edge   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_middle        (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cplx,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, std::optional<svd::config> svd_cfg = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
+    extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cplx,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
     extern bool normalize_state                      (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void initialize_state                     (StateFinite & state, StateInit state_type, StateInitType type, std::string_view sector, bool use_eigenspinors, long bond_lim, std::string & pattern);
     extern void apply_random_paulis                  (StateFinite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices);

@@ -35,7 +35,11 @@ void AlgorithmBase::init_bond_dimension_limits() {
         status.bond_max = std::min(status.bond_max, safe_cast<long>(bond_max));
     }
     status.bond_lim = std::min(status.bond_max, settings::get_bond_min(status.algo_type));
-    status.bond_min = std::min(status.bond_max, settings::get_bond_min(status.algo_type));
+    status.bond_min = std::max(status.bond_min, settings::get_bond_min(status.algo_type));
+    if(settings::strategy::bond_increase_when == UpdatePolicy::NEVER) {
+        status.bond_lim                   = status.bond_max;
+        status.bond_limit_has_reached_max = true;
+    }
     // Sanity check
     if(status.bond_lim == 0) throw except::runtime_error("Bond dimension limit invalid: {}", status.bond_lim);
 }
@@ -49,6 +53,10 @@ void AlgorithmBase::init_truncation_error_limits() {
         status.trnc_min = settings::precision::svd_truncation_min;
         status.trnc_lim = settings::precision::svd_truncation_max;
         status.trnc_max = settings::precision::svd_truncation_max;
+    }
+    if(settings::strategy::trnc_decrease_when == UpdatePolicy::NEVER) {
+        status.trnc_lim                   = status.trnc_min;
+        status.trnc_limit_has_reached_min = true;
     }
     // Sanity check
     if(status.trnc_lim == 0.0) throw except::runtime_error("Truncation error limit invalid: {}", status.trnc_lim);
@@ -101,18 +109,17 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     for(size_t i = 0; i < report.Y_xam.size(); ++i) report.Y_xam[i] = stat::max(report.Y_vec, i);
 
     // Update min and max so they follow the hull/contour of Y_vec
-    for(size_t i = 0; i < report.Y_min.size(); ++i) report.Y_min[i] = std::max(report.Y_min[i],report.Y_nim[i]);
-    for(size_t i = 0; i < report.Y_max.size(); ++i) report.Y_max[i] = std::min(report.Y_max[i],report.Y_xam[i]);
+    for(size_t i = 0; i < report.Y_min.size(); ++i) report.Y_min[i] = std::max(report.Y_min[i], report.Y_nim[i]);
+    for(size_t i = 0; i < report.Y_max.size(); ++i) report.Y_max[i] = std::min(report.Y_max[i], report.Y_xam[i]);
     // In the last point, the min/max gap shrinks to zero. Fix that by using the last two values
-    report.Y_min.back() = std::min(report.Y_vec.rbegin()[0], report.Y_vec.rbegin()[1]) ;
-    report.Y_max.back() = std::max(report.Y_vec.rbegin()[0], report.Y_vec.rbegin()[1]) ;
+    report.Y_min.back() = std::min(report.Y_vec.rbegin()[0], report.Y_vec.rbegin()[1]);
+    report.Y_max.back() = std::max(report.Y_vec.rbegin()[0], report.Y_vec.rbegin()[1]);
     for(size_t i = 0; i < report.Y_vec.size(); ++i) report.Y_mid[i] = 0.5 * (report.Y_min[i] + report.Y_max[i]);
     // The fix to min/max causes the last to entries in Y_mid to be identical. Here we fix that.
     report.Y_mid.back() = 0.5 * (report.Y_mid.back() + report.Y_vec.back());
 
-    for(size_t i = 1; i < report.Y_vec.size(); ++i) report.Y_dif[i] = report.Y_mid[i] - report.Y_mid[i-1];
+    for(size_t i = 1; i < report.Y_vec.size(); ++i) report.Y_dif[i] = report.Y_mid[i] - report.Y_mid[i - 1];
     report.Y_dif[0] = report.Y_dif[1]; // Fill with second value
-
 
     if(not num::all_equal(report.Y_vec.size(), report.Y_min.size(), report.Y_max.size(), report.Y_sat.size()))
         throw except::logic_error("Report vectors are not equal size:\n Y_vec {}\n Y_min {}\n Y_max {}\n Y_sat {}", report.Y_vec.size(), report.Y_min.size(),
@@ -134,7 +141,7 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     for(size_t i = 0; i < report.Y_max.size() - 1; ++i) report.Y_max_std[i] = stat::stdev(report.Y_max, i);
     for(size_t i = 0; i < report.Y_mid.size() - 1; ++i) report.Y_mid_std[i] = stat::stdev(report.Y_mid, i);
     for(size_t i = 0; i < report.Y_dif.size(); ++i) {
-        auto ilim = report.Y_dif.size() > 4 ? std::min(i, report.Y_dif.size()-4) : i;
+        auto ilim           = report.Y_dif.size() > 4 ? std::min(i, report.Y_dif.size() - 4) : i;
         report.Y_dif_avg[i] = std::abs(stat::mean(report.Y_dif, ilim));
     }
     report.Y_vec_std.back() = report.Y_vec_std.rbegin()[1]; // The last entry is always zero, so just reuse the penultimate entry
@@ -149,16 +156,16 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     // auto fluctuation =  std::max(report.Y_vec_std.at(idx90), sensitivity);
     for(size_t i = 0; i < report.Y_sat.size(); ++i) {
         // Saturated if the std is below 1 sigma compared to the surrounding fluctuations.
-        auto fluctuation = std::max(sensitivity, report.Y_mov_std[i]*0.341);
-        bool vec_sat = report.Y_vec_std[i] < fluctuation and has_flag(policy, SaturationPolicy::val);
-        bool avg_sat = report.Y_avg_std[i] < sensitivity and has_flag(policy, SaturationPolicy::avg);
-        bool med_sat = report.Y_med_std[i] < sensitivity and has_flag(policy, SaturationPolicy::med);
-        bool min_sat = report.Y_min_std[i] < sensitivity and has_flag(policy, SaturationPolicy::min);
-        bool max_sat = report.Y_max_std[i] < sensitivity and has_flag(policy, SaturationPolicy::max);
-        bool mid_sat = report.Y_mid_std[i] < fluctuation and has_flag(policy, SaturationPolicy::mid);
-        bool mov_sat = report.Y_mov_std[i] < sensitivity and has_flag(policy, SaturationPolicy::mov);
-        bool dif_sat = report.Y_dif_avg[i] < sensitivity and has_flag(policy, SaturationPolicy::dif);
-        report.Y_sat[i] = vec_sat or avg_sat or med_sat or min_sat or max_sat or mid_sat or mov_sat or dif_sat;
+        auto fluctuation = std::max(sensitivity, report.Y_mov_std[i] * 0.341);
+        bool vec_sat     = report.Y_vec_std[i] < fluctuation and has_flag(policy, SaturationPolicy::val);
+        bool avg_sat     = report.Y_avg_std[i] < sensitivity and has_flag(policy, SaturationPolicy::avg);
+        bool med_sat     = report.Y_med_std[i] < sensitivity and has_flag(policy, SaturationPolicy::med);
+        bool min_sat     = report.Y_min_std[i] < sensitivity and has_flag(policy, SaturationPolicy::min);
+        bool max_sat     = report.Y_max_std[i] < sensitivity and has_flag(policy, SaturationPolicy::max);
+        bool mid_sat     = report.Y_mid_std[i] < fluctuation and has_flag(policy, SaturationPolicy::mid);
+        bool mov_sat     = report.Y_mov_std[i] < sensitivity and has_flag(policy, SaturationPolicy::mov);
+        bool dif_sat     = report.Y_dif_avg[i] < sensitivity and has_flag(policy, SaturationPolicy::dif);
+        report.Y_sat[i]  = vec_sat or avg_sat or med_sat or min_sat or max_sat or mid_sat or mov_sat or dif_sat;
     }
 
     // Since the last element in Y_vec is always zero, Y_sat is always zero. we just copy the saturation state of the second to last element.

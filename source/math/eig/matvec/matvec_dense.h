@@ -16,6 +16,7 @@ class MatVecDense {
     using Scalar                                   = Scalar_;
     constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
+    constexpr static bool         can_precondition = false;
     constexpr static eig::Storage storage          = eig::Storage::DENSE;
 
     private:
@@ -25,9 +26,9 @@ class MatVecDense {
     eig::Form           form;  // Chooses SYMMETRIC / NONSYMMETRIC mode
     eig::Side           side;  // Chooses whether to find (R)ight or (L)eft eigenvectors
     // Shift and shift-invert mode stuff
-    std::complex<double> sigma         = {0.0, 0.0};   // A possibly complex-valued shift
-    bool                 readyFactorOp = false; // Flag to make sure LU factorization has occurred
-    bool                 readyShift    = false; // Flag to make sure the shift has occurred
+    std::complex<double> sigma         = {0.0, 0.0}; // A possibly complex-valued shift
+    bool                 readyFactorOp = false;      // Flag to make sure LU factorization has occurred
+    bool                 readyShift    = false;      // Flag to make sure the shift has occurred
 
     public:
     // Pointer to data constructor, copies the matrix into an init Eigen matrix.
@@ -59,8 +60,9 @@ class MatVecDense {
     [[nodiscard]] bool isReadyShift() const { return readyShift; }
 
     // Timers
-    void                     init_timers();
-    std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_factorOP; // Factorization time
+    std::unique_ptr<tid::ur> t_genMat;
     std::unique_ptr<tid::ur> t_multOPv;
-    std::unique_ptr<tid::ur> t_multAx;
+    std::unique_ptr<tid::ur> t_multPc; // Preconditioner time
+    std::unique_ptr<tid::ur> t_multAx; // Matvec time
 };

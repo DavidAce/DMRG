@@ -60,7 +60,11 @@ MatVecSparse<Scalar, sparseLU>::MatVecSparse(const Scalar *A_, long L_, bool cop
             sparse_lu::A_cplx_sparse.value().makeCompressed();
         }
     }
-    init_timers();
+    t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
+    t_genMat   = std::make_unique<tid::ur>("Time genMat");
+    t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
+    t_multAx   = std::make_unique<tid::ur>("Time MultAx");
+    t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
 // Function definitions
@@ -349,13 +353,6 @@ eig::Type MatVecSparse<Scalar, sparseLU>::get_type() const {
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");
-}
-
-template<typename Scalar, bool sparseLU>
-void MatVecSparse<Scalar, sparseLU>::init_timers() {
-    t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
-    t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
-    t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
 
 // Explicit instantiations

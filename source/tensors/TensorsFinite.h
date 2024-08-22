@@ -52,18 +52,23 @@ class TensorsFinite {
     TensorsFinite &operator=(const TensorsFinite &other);     // copy assign
                    TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
 
+    StateFinite       &get_state();
+    ModelFinite       &get_model();
+    EdgesFinite       &get_edges();
+    const StateFinite &get_state() const;
+    const ModelFinite &get_model() const;
+    const EdgesFinite &get_edges() const;
+
     void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
     void initialize_model();
     void initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors, long bond_lim,
                           std::string &pattern);
     void normalize_state(std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
-    [[nodiscard]] const std::vector<Eigen::Tensor<cplx, 4>> get_mpos() const;         // Multiple mpos not merged
-    [[nodiscard]] const std::vector<Eigen::Tensor<cplx, 4>> get_mpos_squared() const; // Multiple mpos not merged
-    [[nodiscard]] const Eigen::Tensor<cplx, 3>             &get_multisite_mps() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>             &get_multisite_mpo() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>             &get_multisite_mpo_squared() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &>  get_multisite_env_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &>  get_multisite_env_var_blk() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 3>            &get_multisite_mps() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4>            &get_multisite_mpo() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4>            &get_multisite_mpo_squared() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &> get_multisite_env_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &> get_multisite_env_var_blk() const;
     /* clang-format off */
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian() const;
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
@@ -114,8 +119,8 @@ class TensorsFinite {
     size_t              move_center_point_to_pos(long pos, std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_middle(std::optional<svd::config> svd_cfg = std::nullopt);
-    void                merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg = std::nullopt,
-                                            LogPolicy log_policy = LogPolicy::SILENT);
+    void merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt,
+                             LogPolicy log_policy = LogPolicy::SILENT);
 
     EnvExpansionResult expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, svd::config svd_cfg);
 

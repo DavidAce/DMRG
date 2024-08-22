@@ -317,7 +317,7 @@ void fdmrg::update_state() {
     /* clang-format off */
     opt_meta.optExit = OptExit::SUCCESS;
     if(opt_state.get_grad_max()       > 1.000                         ) opt_meta.optExit |= OptExit::FAIL_GRADIENT;
-    if(opt_state.get_rnorm()          > settings::precision::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
+    if(opt_state.get_eigs_rnorm()     > settings::precision::eigs_tol_max) opt_meta.optExit |= OptExit::FAIL_RESIDUAL;
     if(opt_state.get_eigs_nev()       == 0 and
        opt_meta.optSolver              == OptSolver::EIGS             ) opt_meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
     if(opt_state.get_overlap()        < 0.010                         ) opt_meta.optExit |= OptExit::FAIL_OVERLAP;
@@ -334,7 +334,7 @@ void fdmrg::update_state() {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
                           "sites {} |"
                           "{:20} | {} | time {:.2e} s",
-                          opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_rnorm(), opt_state.get_overlap(),
+                          opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_eigs_rnorm(), opt_state.get_overlap(),
                           opt_state.get_sites(),
                           fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
                           opt_state.get_time());
@@ -347,7 +347,7 @@ void fdmrg::update_state() {
     // TODO: We may need to detect here whether the truncation error limit needs lowering due to a variance increase in the svd merge
     auto logPolicy = LogPolicy::SILENT;
     if constexpr(settings::debug) logPolicy = LogPolicy::VERBOSE;
-    tensors.merge_multisite_mps(opt_state.get_tensor(), opt_meta.svd_cfg, logPolicy);
+    tensors.merge_multisite_mps(opt_state.get_tensor(), MergeEvent::OPT, opt_meta.svd_cfg, logPolicy);
     tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
     if constexpr(settings::debug) {
         if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.3e}", tensors.state->get_truncation_errors_active());

@@ -245,13 +245,15 @@ namespace settings {
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
         inline long               eig_max_size                    = 4096  ;                      /*!< Maximum problem size before switching from eig to eigs. */
-        inline size_t             eigs_iter_min                   = 100;                         /*!< Minimum number of iterations for eigenvalue solver. */
+        inline size_t             eigs_iter_min                   = 1000;                        /*!< Minimum number of iterations for eigenvalue solver. */
         inline size_t             eigs_iter_max                   = 100000;                      /*!< Maximum number of iterations for eigenvalue solver. */
-        inline double             eigs_iter_gain                  = 2     ;                      /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress */
+        inline double             eigs_iter_gain                  = 2     ;                      /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress) */
         inline EigsIterGainPolicy eigs_iter_gain_policy           = EigsIterGainPolicy::VARSAT;  /*!< Bitflag for when to increase the eigensolver iterations. Choose one or more: [NEVER, ITERATION, VARSAT, SATURATED, STUCK, FIN_BOND, FIN_TRNC] */
         inline double             eigs_tol_min                    = 1e-14 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline double             eigs_tol_max                    = 1e-10 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double             eigs_tol_max                    = 1e-8 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
         inline int                eigs_ncv                        = 0     ;                      /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
+        inline int                eigs_nev_min                    = 1     ;                      /*!< The minimum number of eigenpairs to request on OptSolver::EIGS */
+        inline int                eigs_nev_max                    = 8     ;                      /*!< The maximum number of eigenpairs to request on OptSolver::EIGS when stuck (increases slowly) (ncv may have to increase accordingly) */
         inline long               eigs_max_size_shift_invert      = 4096  ;                      /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
 
         inline double             svd_truncation_min              = 1e-14 ;                      /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */

@@ -218,6 +218,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eigs_tol_min"                      , precision::eigs_tol_min);
     dmrg_config.load_parameter("precision::eigs_tol_max"                      , precision::eigs_tol_max);
     dmrg_config.load_parameter("precision::eigs_ncv"                          , precision::eigs_ncv);
+    dmrg_config.load_parameter("precision::eigs_nev_min"                      , precision::eigs_nev_min);
+    dmrg_config.load_parameter("precision::eigs_nev_max"                      , precision::eigs_nev_max);
     dmrg_config.load_parameter("precision::eigs_max_size_shift_invert"        , precision::eigs_max_size_shift_invert);
     dmrg_config.load_parameter("precision::svd_truncation_min"                , precision::svd_truncation_min);
     dmrg_config.load_parameter("precision::svd_truncation_max"                , precision::svd_truncation_max);

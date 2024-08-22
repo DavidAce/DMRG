@@ -416,7 +416,7 @@ void flbit::run_algorithm2() {
 
             auto tevo_op = [&time](const auto &h) -> cplx {
 #if defined(USE_QUADMATH)
-                f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), atanq(1.0) * 8.0 /* 2 * M_PIq*/ );
+                f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), atanq(1.0) * 8.0 /* 2 * M_PIq*/);
                 return std::exp(-1.0i * static_cast<real>(fmod_th_128));
 #else
                 f128_t fmod_th_128 = std::fmod(time.real() * real_t(h.real()), 2 * std::numbers::pi_v<real_t>);
@@ -432,7 +432,7 @@ void flbit::run_algorithm2() {
 
             auto mps_eff = tenx::TensorMap(psi_eff, psi_eff.size(), 1, 1);
             // Merge these psi into the current state
-            tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, svd_cfg);
+            tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, MergeEvent::GATE, svd_cfg);
             tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, true, GateMove::ON, svd_cfg);
 
             // Update stuff
@@ -571,8 +571,8 @@ void flbit::create_time_points() {
     // Sanity check
     if(time_points.front().real() != static_cast<real_t>(settings::flbit::time_start_real)) throw except::logic_error("Time start real mismatch");
     if(time_points.front().imag() != static_cast<real_t>(settings::flbit::time_start_imag)) throw except::logic_error("Time start imag mismatch");
-    if(time_points.back().real()  != static_cast<real_t>(settings::flbit::time_final_real)) throw except::logic_error("Time final real mismatch");
-    if(time_points.back().imag()  != static_cast<real_t>(settings::flbit::time_final_imag)) throw except::logic_error("Time final imag mismatch");
+    if(time_points.back().real() != static_cast<real_t>(settings::flbit::time_final_real)) throw except::logic_error("Time final real mismatch");
+    if(time_points.back().imag() != static_cast<real_t>(settings::flbit::time_final_imag)) throw except::logic_error("Time final imag mismatch");
     if(time_points.size() != settings::flbit::time_num_steps)
         throw except::logic_error("Got time_points.size():[{}] != settings::flbit::time_num_steps:[{}]", time_points.size(), settings::flbit::time_num_steps);
 }
