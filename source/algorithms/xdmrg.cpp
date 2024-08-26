@@ -72,11 +72,13 @@ void xdmrg::resume() {
         status.bond_min                   = std::max(status.bond_min, settings::get_bond_min(status.algo_type));
         status.bond_lim                   = std::clamp(status.bond_lim, 1l, status.bond_max);
         status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
+        tools::log->info("Initialized bond dimension limits: min {} lim {} max {}", status.bond_min, status.bond_lim, status.bond_max);
 
         status.trnc_min                   = settings::precision::svd_truncation_min;
         status.trnc_max                   = settings::precision::svd_truncation_max;
         status.trnc_lim                   = std::clamp(status.trnc_lim, status.trnc_min, status.trnc_max);
         status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_min;
+        tools::log->info("Initialized truncation error limits: max {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_max, status.trnc_lim, status.trnc_min);
 
         // Apply shifts and compress the model
         tensors.move_center_point_to_inward_edge();

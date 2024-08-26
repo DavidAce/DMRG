@@ -143,6 +143,16 @@ namespace tools::finite::opt {
         H_ptr->CalcPc();
         H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
     }
+    template<typename Scalar>
+    void preconditioner_llt(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+        H_ptr->preconditioner = eig::Preconditioner::LLT;
+        // H_ptr->CalcPc();
+        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
 
     template<typename Scalar>
     double get_largest_eigenvalue_hamiltonian_squared(const TensorsFinite &tensors) {
@@ -242,7 +252,8 @@ namespace tools::finite::opt {
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
         // cfg.primme_preconditioner = preconditioner_tridiagonal<Scalar>;
-        cfg.primme_preconditioner = preconditioner_diagonal<Scalar>;
+        // cfg.primme_preconditioner = preconditioner_diagonal<Scalar>;
+        cfg.primme_preconditioner = preconditioner_llt<Scalar>;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::precision::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)

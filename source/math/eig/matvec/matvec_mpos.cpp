@@ -211,7 +211,6 @@ void MatVecMPOS<T>::thomas2(long size, T *x, T *const a, T *const b, T *const c)
 
 template<typename T>
 typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal(long offset) {
-    assert(std::abs(offset) <= 1);
     auto  diagonal = VectorType(size_mps);
     auto &threads  = tenx::threads::get();
     auto  ext_j    = std::array<long, 3>{1, 1, envL.dimension(2)};
@@ -279,7 +278,7 @@ void MatVecMPOS<T>::FactorOP() {
 }
 
 template<typename T>
-void MatVecMPOS<T>::MultOPv([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_,[[maybe_unused]] T eval) {
+void MatVecMPOS<T>::MultOPv([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_, [[maybe_unused]] T eval) {
     throw except::runtime_error("void MatVecMPOS<T>::MultOPv(...) not implemented");
 }
 
@@ -314,7 +313,11 @@ void MatVecMPOS<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize,
 
 template<typename T>
 void MatVecMPOS<T>::CalcPc() {
-    // auto token = t_multPc->tic_token();
+    if(readyCalcPc) return;
+    if(preconditioner == eig::Preconditioner::NONE) {
+        eig::log->info("MatVecMPOS<T>::CalcPc(): no preconditioner chosen");
+        return;
+    }
     if(preconditioner == eig::Preconditioner::DIAG) {
         if(diagonal.size() == 0) {
             eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... ");
@@ -325,11 +328,59 @@ void MatVecMPOS<T>::CalcPc() {
         if(diagonal.size() == 0 or diaglower.size() == 0 or diagupper.size() == 0) {
             eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... ");
             if(diagonal.size() == 0) diagonal = get_diagonal(0);
-            if(diaglower.size() == 0) diaglower = get_diagonal(-1);
             if(diagupper.size() == 0) diagupper = get_diagonal(1);
+            if(diaglower.size() == 0) diaglower = diagupper.conjugate(); // get_diagonal(-1) // assume hermitian
             eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... done");
         }
+    } else if(preconditioner == eig::Preconditioner::LLT) {
+        eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... {} x {}", diagband.rows(), diagband.cols());
+        diagband.resize(size_mps, size_mps);
+        long maxoff = std::clamp(32l, 1l, size_mps);
+        auto trip   = std::vector<Eigen::Triplet<T, long>>();
+        trip.reserve(size_mps * maxoff);
+        for(long off = 0l; off < maxoff; ++off) {
+            auto diag = get_diagonal(off);
+            for(long idx = 0l; idx + off < size_mps; ++idx) {
+                // Fill upper
+                // if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, diag[idx])); }
+                // if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, std::conj(diag[idx]))); }
+                // Fill lower
+                // if(off == 0) continue;
+                if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, diag[idx])); }
+                if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, std::conj(diag[idx]))); }
+            }
+
+            // // Fill lower
+            // for(long idx = off; idx < size_mps; ++idx) {
+            //     if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx - off, diag[idx - off])); }
+            //     if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx - off, std::conj(diag[idx - off]))); }
+            // }
+            // // Fill upper
+            // if(off != 0) {
+            //     for(long idx = 0l; idx + off < size_mps; ++idx) {
+            //         if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, diag[idx])); }
+            //         if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, std::conj(diag[idx]))); }
+            //     }
+            // }
+        }
+        diagband.setFromTriplets(trip.begin(), trip.end()); // Set the upper part only, since the matrix is hermitian
+        // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... compressing");
+        // diagband.makeCompressed();
+        eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... computing");
+        // bandSolver.compute(diagband.template selfadjointView<Eigen::Lower>());
+        bandSolver.compute(diagband);
+        if constexpr(std::is_same_v<decltype(bandSolver), Eigen::ConjugateGradient<SparseTypeRowM, Eigen::Lower | Eigen::Upper>>) {
+            bandSolver.setTolerance(1e-10);
+        }
+
+        eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... info:{}", static_cast<int>(bandSolver.info()));
+        // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... info:{} : {}",
+        // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... done {} nnz", diagband.nonZeros());
+        if(static_cast<int>(bandSolver.info()) != 0) throw except::runtime_error("compute failed");
+    } else {
+        throw except::runtime_error("Unknown preconditioner: {}", eig::PreconditionerToString(preconditioner));
     }
+    readyCalcPc = true;
 }
 
 template<typename T>
@@ -346,24 +397,47 @@ void MatVecMPOS<T>::MultPc([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, 
 template<typename T>
 void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_, T shift) {
     if(preconditioner == eig::Preconditioner::NONE) return;
-    if(diagonal.size() == 0) { CalcPc(); }
-    auto token   = t_multPc->tic_token();
-    auto mps_in  = Eigen::Map<VectorType>(mps_in_, size_mps);
-    auto mps_out = Eigen::Map<VectorType>(mps_out_, size_mps);
-    using ArrayType = Eigen::Array<T,Eigen::Dynamic,1>;
-    ArrayType diagshf = (diagonal.array() - shift).cwiseAbs();
-    // Use a small cutoff for small differences following Eq 2.11 in https://sdm.lbl.gov/~kewu/ps/thesis.pdf
-    static constexpr auto eps = std::numeric_limits<double>::epsilon();
-    for(auto &d : diagshf) {
-        if(d <= eps) d = eps;
-        // if(d >= 0 and d <= +eps) d = +eps;
-        // if(d <= 0 and d >= -eps) d = -eps;
+    if(not readyCalcPc or diagband.nonZeros() == 0) { CalcPc(); }
+    auto token      = t_multPc->tic_token();
+    auto mps_in     = Eigen::Map<VectorType>(mps_in_, size_mps);
+    auto mps_out    = Eigen::Map<VectorType>(mps_out_, size_mps);
+    using ArrayType = Eigen::Array<T, Eigen::Dynamic, 1>;
+    ArrayType diagshf;
+    if(preconditioner == eig::Preconditioner::DIAG or preconditioner == eig::Preconditioner::TRIDIAG) {
+        // Use a small cutoff for small differences following Eq 2.11 in https://sdm.lbl.gov/~kewu/ps/thesis.pdf
+        diagshf                   = (diagonal.array() - shift).cwiseAbs();
+        static constexpr auto eps = std::numeric_limits<double>::epsilon();
+        for(auto &d : diagshf) {
+            if(d <= eps) d = eps;
+            // if(d >= 0 and d <= +eps) d = +eps;
+            // if(d <= 0 and d >= -eps) d = -eps;
+        }
     }
     if(preconditioner == eig::Preconditioner::DIAG) {
         mps_out = diagshf.array().cwiseInverse().cwiseProduct(mps_in.array());
     } else if(preconditioner == eig::Preconditioner::TRIDIAG) {
         mps_out = mps_in; // copy the values
         thomas(size_mps, mps_out_, diaglower.data(), diagshf.data(), diagupper.data());
+    } else if(preconditioner == eig::Preconditioner::LLT) {
+        // SparseType bandshift = diagband;
+        // for(auto & d : bandshift.diagonal()) d -= shift;
+        // tools::log->info("diagband nnz: {}", diagband.nonZeros());
+        // bandshift.diagonal().array() -= shift;
+        // bandSolver.compute(bandshift);
+        // SparseType bandshf = diagband;
+        // bandshf.diagonal() -= shift;
+        if(bandSolver.info() == Eigen::Success) {
+            if constexpr(std::is_same_v<decltype(bandSolver), Eigen::ConjugateGradient<SparseTypeRowM, Eigen::Lower | Eigen::Upper>>) {
+                if(solverGuess.size() == mps_in.size()) {
+                    mps_out = bandSolver.solveWithGuess(mps_in, solverGuess);
+                } else {
+                    mps_out = bandSolver.solve(mps_in);
+                }
+                solverGuess = mps_out;
+            } else {
+                mps_out = bandSolver.solve(mps_in);
+            }
+        }
     }
     num_pc++;
 }

@@ -334,7 +334,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
             primme.applyPreconditioner           = config.primme_preconditioner.value();
             primme.preconditioner                = this;
             primme.correctionParams.precondition = true;
-            matrix.CalcPc();
         }
     }
 
@@ -482,7 +481,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.num_pc         = primme.stats.numPreconds;
     result.meta.num_op         = matrix.num_op;
     result.meta.time_mv        = primme.stats.timeMatvec;
-    result.meta.time_pc        = matrix.t_multPc->get_time();
+    result.meta.time_pc        = primme.stats.timePrecond;
     result.meta.time_op        = matrix.t_multOPv->get_time();
     result.meta.n              = primme.n;
     result.meta.tag            = config.tag;

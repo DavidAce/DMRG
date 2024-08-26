@@ -42,6 +42,8 @@ void AlgorithmBase::init_bond_dimension_limits() {
     }
     // Sanity check
     if(status.bond_lim == 0) throw except::runtime_error("Bond dimension limit invalid: {}", status.bond_lim);
+    tools::log->info("Initialized bond dimension limits: min {} lim {} max {}", status.bond_min, status.bond_lim, status.bond_max);
+
 }
 
 void AlgorithmBase::init_truncation_error_limits() {
@@ -60,7 +62,7 @@ void AlgorithmBase::init_truncation_error_limits() {
     }
     // Sanity check
     if(status.trnc_lim == 0.0) throw except::runtime_error("Truncation error limit invalid: {}", status.trnc_lim);
-    tools::log->info("Initialized truncation error limits: init {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_max, status.trnc_lim, status.trnc_min);
+    tools::log->info("Initialized truncation error limits: max {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_max, status.trnc_lim, status.trnc_min);
 }
 
 size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx) {

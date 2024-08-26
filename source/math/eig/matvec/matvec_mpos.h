@@ -3,6 +3,9 @@
 #include "math/float.h"
 #include <array>
 #include <complex>
+#include <Eigen/IterativeLinearSolvers>
+#include <Eigen/Sparse>
+#include <Eigen/SparseCholesky>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
@@ -25,6 +28,8 @@ class MatVecMPOS {
     using Scalar     = T;
     using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+    using SparseType = Eigen::SparseMatrix<T>;
+    using SparseTypeRowM = Eigen::SparseMatrix<T,Eigen::RowMajor>;
 
     constexpr static bool         can_shift_invert = false;
     constexpr static bool         can_shift        = false;
@@ -47,15 +52,23 @@ class MatVecMPOS {
     VectorType                       diaglower; // The sub-diagonal elements of the matrix, used in the tridiagonal preconditioner
     VectorType                       diagupper; // The super-diagonal elements of the matrix, used in the tridiagonal preconditioner
     VectorType                       diagtemp;  // Scratch memory for the tridiagonal solver
-    VectorType                       get_diagonal(long offset);
-    void                             thomas(long rows, T *x, T *const dl, T *const dm, T *const du);
-    void                             thomas2(long rows, T *x, T *const dl, T *const dm, T *const du);
+    SparseType                       diagband;  // The diagonal band stored as a sparse matrix
+    Eigen::SimplicialLLT<SparseType, Eigen::Lower> bandSolver; // The solver for the diagonal band preconditioner
+    // Eigen::SimplicialLDLT<SparseType, Eigen::Lower> bandSolver; // The solver for the diagonal band preconditioner
+    // Eigen::SparseLU<SparseType> bandSolver; // The solver for the diagonal band preconditioner
+    // Eigen::ConjugateGradient<SparseType, Eigen::Lower|Eigen::Upper> bandSolver; // The solver for the diagonal band preconditioner
+    // Eigen::BiCGSTAB<SparseTypeRowM> bandSolver; // The solver for the diagonal band preconditioner
+    VectorType                  solverGuess;
+    VectorType                  get_diagonal(long offset);
+    void                        thomas(long rows, T *x, T *const dl, T *const dm, T *const du);
+    void                        thomas2(long rows, T *x, T *const dl, T *const dm, T *const du);
     // void                             thomas(const long rows, const VectorType &x, const VectorType &dl, const VectorType &dm, const VectorType &du);
 
     // Shift stuff
     std::complex<double>  sigma         = cplx(0.0, 0.0); // The shift
     bool                  readyShift    = false;          // Flag to make sure the shift has occurred
     constexpr static bool readyFactorOp = false;          // Flag to check if factorization has occurred
+    bool                  readyCalcPc   = false;
 
     public:
     MatVecMPOS() = default;
@@ -73,7 +86,7 @@ class MatVecMPOS {
     void MultAx(T *mps_in_, T *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
-    void CalcPc();                                     //  Calculates the diagonal or tridiagonal part of A
+    void CalcPc();                                      //  Calculates the diagonal or tridiagonal part of A
     void MultPc(T *mps_in_, T *mps_out, T shift = 0.0); //  Applies the preconditioner as the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultPc(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err); //  Applies the preconditioner
 
