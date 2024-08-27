@@ -130,7 +130,6 @@ namespace tools::finite::opt {
         if(primme == nullptr) return;
         const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
         H_ptr->preconditioner = eig::Preconditioner::DIAG;
-        H_ptr->CalcPc();
         H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
     }
     template<typename Scalar>
@@ -140,7 +139,6 @@ namespace tools::finite::opt {
         if(primme == nullptr) return;
         const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
         H_ptr->preconditioner = eig::Preconditioner::TRIDIAG;
-        H_ptr->CalcPc();
         H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
     }
     template<typename Scalar>
@@ -150,7 +148,7 @@ namespace tools::finite::opt {
         if(primme == nullptr) return;
         const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
         H_ptr->preconditioner = eig::Preconditioner::LLT;
-        // H_ptr->CalcPc();
+        H_ptr->set_lltBandwidth(8);
         H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
     }
 
@@ -320,9 +318,9 @@ namespace tools::finite::opt {
             return initial_mps; // The solver failed
         }
 
-        auto metax2    = meta;
-        metax2.optCost = OptCost::ENERGY;
-        metax2.optRitz = OptRitz::SM;
+        // auto metax2    = meta;
+        // metax2.optCost = OptCost::ENERGY;
+        // metax2.optRitz = OptRitz::SM;
         // #pragma message "remove energy opt trial"
         //         std::vector<opt_mps> results2;
         //         for(const auto &result : results) {

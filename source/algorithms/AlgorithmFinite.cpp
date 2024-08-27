@@ -254,7 +254,8 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.max_sites         = m1.min_sites;
     m1.subspace_tol      = settings::precision::target_subspace_error;
     m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
-    m1.primme_method     = "PRIMME_GD_Olsen_plusK";
+    m1.primme_method     = "PRIMME_DYNAMIC";
+    // m1.primme_method     = "PRIMME_GD_Olsen_plusK";
     m1.eigs_nev          = settings::precision::eigs_nev_min;
     if(status.algorithm_has_stuck_for > 0) {
         m1.eigs_nev = std::clamp(static_cast<int>(1 + status.algorithm_has_stuck_for), settings::precision::eigs_nev_min, settings::precision::eigs_nev_max);
