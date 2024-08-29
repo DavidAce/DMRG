@@ -46,6 +46,7 @@ class MatVecMPOS {
     Eigen::Tensor<T, 3>                             envR;
     std::array<long, 3>                             shape_mps;
     long                                            size_mps;
+    std::vector<long>                               spindims;
     eig::Form                                       form = eig::Form::SYMM;
     eig::Side                                       side = eig::Side::R;
     VectorType                                      diagonal;   // The diagonal elements of the matrix, used in the diagonal and tridiagonal preconditioners
@@ -54,13 +55,17 @@ class MatVecMPOS {
     VectorType                                      diagtemp;   // Scratch memory for the tridiagonal solver
     SparseType                                      diagband;   // The diagonal band stored as a sparse matrix
     Eigen::SimplicialLLT<SparseType, Eigen::Lower>  lltSolver;  // The solver for the diagonal band preconditioner
-    Eigen::SimplicialLDLT<SparseType, Eigen::Lower> ldltSolver; // The solver for the diagonal band preconditioner
+    // Eigen::SimplicialLDLT<SparseType, Eigen::Lower> ldltSolver; // The solver for the diagonal band preconditioner
     // Eigen::SimplicialLDLT<SparseType, Eigen::Lower> bandSolver; // The solver for the diagonal band preconditioner
-    // Eigen::SparseLU<SparseType> bandSolver; // The solver for the diagonal band preconditioner
-    Eigen::ConjugateGradient<SparseType, Eigen::Lower|Eigen::Upper> cgSolver; // The solver for the diagonal band preconditioner
+    // Eigen::SparseLU<SparseType, Eigen::COLAMDOrdering<int>> qrSolver; // The solver for the diagonal band preconditioner
+    // Eigen::ConjugateGradient<SparseType, Eigen::Lower | Eigen::Upper> cgSolver; // The solver for the diagonal band preconditioner
     // Eigen::BiCGSTAB<SparseTypeRowM> bandSolver; // The solver for the diagonal band preconditioner
+    SparseType sparseMatrix;
     VectorType solverGuess;
-    VectorType get_diagonal(long offset);
+    T          get_matrix_element(long I, long J) const;
+    VectorType get_diagonal_new(long offset) const;
+    VectorType get_diagonal_old(long offset) const;
+    VectorType get_diagonal(long offset) const;
     void       thomas(long rows, T *x, T *const dl, T *const dm, T *const du);
     void       thomas2(long rows, T *x, T *const dl, T *const dm, T *const du);
     // void                             thomas(const long rows, const VectorType &x, const VectorType &dl, const VectorType &dm, const VectorType &du);
@@ -88,7 +93,7 @@ class MatVecMPOS {
     void MultAx(T *mps_in_, T *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
-    void CalcPc(T shift = 0.0);                                      //  Calculates the diagonal or tridiagonal part of A
+    void CalcPc(T shift = 0.0);                         //  Calculates the diagonal or tridiagonal part of A
     void MultPc(T *mps_in_, T *mps_out, T shift = 0.0); //  Applies the preconditioner as the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultPc(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err); //  Applies the preconditioner
 
@@ -117,6 +122,9 @@ class MatVecMPOS {
     [[nodiscard]] std::array<long, 3>                     get_shape_envR() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 6>                get_tensor() const;
     [[nodiscard]] MatrixType                              get_matrix() const;
+    [[nodiscard]] SparseType                              get_sparse_matrix() const;
+    [[nodiscard]] double                                  get_sparsity() const;
+    [[nodiscard]] long                                    get_non_zeros() const;
 
     [[nodiscard]] bool isReadyShift() const;
     [[nodiscard]] bool isReadyFactorOp() const;

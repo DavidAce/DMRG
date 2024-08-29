@@ -13,9 +13,9 @@
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include <Eigen/Cholesky>
+#include <Eigen/Eigenvalues>
 #include <primme/primme.h>
 #include <unsupported/Eigen/CXX11/Tensor>
-
 #if defined(DMRG_ENABLE_TBLIS)
     #include <tblis/tblis.h>
     #include <tblis/util/thread.h>
@@ -65,6 +65,8 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
 
     shape_mps = {spin_dim, envL.dimension(0), envR.dimension(0)};
     size_mps  = spin_dim * envL.dimension(0) * envR.dimension(0);
+    spindims.reserve(mpos.size());
+    for(const auto &mpo : mpos) spindims.emplace_back(mpo.dimension(2));
 
     // If we have 5 or fewer mpos, it is faster to just merge them once and apply them in one contraction.
     if(mpos.size() <= 5) {
@@ -81,27 +83,6 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
             contracted_mpos            = std::move(temp);
         }
         mpos = {contracted_mpos}; // Replace by a single pre-contracted mpo
-                                  //         {                         // A quick experiment
-                                  // #pragma message "Remove a quick experiment with matvec_mpos"
-                                  //             auto                svd           = svd::solver();
-                                  //             auto                dim4          = contracted_mpos.dimensions();
-                                  //             auto                dim2          = tenx::array2{dim4[2] * dim4[0], dim4[3] * dim4[1]};
-                                  //             Eigen::Tensor<T, 4> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 0, 3, 1});
-                                  //             auto [U, S, V]                    = svd.schmidt(shuffled_mpos, svd::config(dim2[0], 1e-16));
-        //             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
-        //             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
-        //         }
-        //         { // A quick experiment
-        // #pragma message "Remove a quick experiment with matvec_mpos"
-        //             auto                svd           = svd::solver();
-        //             auto                dim4          = contracted_mpos.dimensions();
-        //             auto                dim2          = tenx::array2{dim4[2],  dim4[0]* dim4[3] * dim4[1]};
-        //             Eigen::Tensor<T, 2> shuffled_mpos = contracted_mpos.shuffle(tenx::array4{2, 3, 0, 1}).reshape(dim2);
-        //             auto [U, S, V]                    = svd.decompose(shuffled_mpos, svd::config(dim2[0], 1e-16));
-        //             tools::log->info("MPO decomposition dim4 {} -> {} {} | trnc {:.3e}", dim4, U.dimensions(), V.dimensions(), svd.get_truncation_error());
-        //             tools::log->info("S: \n{}\n", linalg::tensor::to_string(S, 16));
-        //         }
-
     } else {
         // We pre-shuffle each mpo to speed up the sequential contraction
         for(const auto &mpo : mpos) mpos_shf.emplace_back(mpo.shuffle(tenx::array4{2, 3, 0, 1}));
@@ -210,18 +191,95 @@ void MatVecMPOS<T>::thomas2(long size, T *x, T *const a, T *const b, T *const c)
 }
 
 template<typename T>
-typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal(long offset) {
-    auto  diagonal = VectorType(size_mps);
-    auto &threads  = tenx::threads::get();
-    auto  ext_j    = std::array<long, 3>{1, 1, envL.dimension(2)};
-    auto  ext_k    = std::array<long, 3>{1, 1, envR.dimension(2)};
-    auto  spindims = std::vector<long>();
-    spindims.reserve(mpos.size());
-    for(const auto &mpo : mpos) spindims.emplace_back(mpo.dimension(2));
+T MatVecMPOS<T>::get_matrix_element(long I, long J) const {
     auto rowindices = std::array<long, 3>{};
     auto colindices = std::array<long, 3>{};
+    if(I < 0 or I >= size_mps) return 0;
+    if(J < 0 or J >= size_mps) return 0;
+
+    if(I == J) {
+        rowindices = indices(I, shape_mps);
+        colindices = rowindices;
+    } else {
+        rowindices = indices(I, shape_mps);
+        colindices = indices(J, shape_mps);
+    }
+    auto ir = rowindices[0];
+    auto jr = rowindices[1];
+    auto kr = rowindices[2];
+    auto ic = colindices[0];
+    auto jc = colindices[1];
+    auto kc = colindices[2];
+
+    // Index i is special, since it is composed of all the mpo physical indices.
+    // auto idxs  = indices(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
+    // mpos
+
+    auto irxs  = indices(ir, mpos.size(), spindims); // Maps ir to tensor indices to select the upper physical indices in the mpos
+    auto icxs  = indices(ic, mpos.size(), spindims); // Maps ic to tensor indices to select the lower physical indices in the mpos
+    auto mpo_i = Eigen::Tensor<Scalar, 4>();
+    auto temp  = Eigen::Tensor<Scalar, 4>();
+    for(size_t mdx = 0; mdx < mpos.size(); ++mdx) {
+        if(mdx == 0) {
+            auto &mpoL = mpos[mdx];
+            auto  offL = std::array<long, 4>{0, 0, irxs[mdx], icxs[mdx]};
+            auto  extL = std::array<long, 4>{mpoL.dimension(0), mpoL.dimension(1), 1, 1};
+            mpo_i      = mpoL.slice(offL, extL);
+        }
+        if(mdx + 1 == mpos.size()) break;
+        auto dimR  = mpos[mdx + 1].dimensions();
+        auto offR  = std::array<long, 4>{0, 0, irxs[mdx + 1], icxs[mdx + 1]};
+        auto extR  = std::array<long, 4>{dimR[0], dimR[1], 1, 1};
+        auto shp4  = std::array<long, 4>{mpo_i.dimension(0), dimR[1], 1, 1};
+        auto mpo_r = Eigen::Tensor<Scalar, 4>(mpos[mdx + 1].slice(offR, extR));
+        temp.resize(shp4);
+        // temp  = mpo_i.contract(mpo_r, tenx::idx({1}, {0})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(shp4);
+        // mpo_i = temp;
+        auto mpo_i_map     = Eigen::Map<const MatrixType>(mpo_i.data(), mpo_i.dimension(0), mpo_i.dimension(1));
+        auto mpo_R_map     = Eigen::Map<const MatrixType>(mpo_r.data(), extR[0], extR[1]);
+        auto temp_map      = Eigen::Map<MatrixType>(temp.data(), shp4[0], shp4[1]);
+        temp_map.noalias() = mpo_i_map * mpo_R_map;
+        mpo_i              = std::move(temp);
+        if(tenx::isZero(mpo_i, std::numeric_limits<double>::epsilon())) { return 0.0; }
+    }
+    auto ext_j = std::array<long, 3>{1, 1, envL.dimension(2)};
+    auto ext_k = std::array<long, 3>{1, 1, envR.dimension(2)};
+    auto off_j = std::array<long, 3>{jr, jc, 0};
+    auto off_k = std::array<long, 3>{kr, kc, 0};
+    // auto envL_j = envL.slice(off_j, ext_j);
+    // auto envR_k = envR.slice(off_k, ext_k);
+    auto envL_j     = Eigen::Tensor<Scalar, 3>(envL.slice(off_j, ext_j));
+    auto envR_k     = Eigen::Tensor<Scalar, 3>(envR.slice(off_k, ext_k));
+    auto envL_j_map = Eigen::Map<const VectorType>(envL_j.data(), envL_j.size());
+    auto envR_k_map = Eigen::Map<const VectorType>(envR_k.data(), envR_k.size());
+    auto mpo_i_map  = Eigen::Map<const MatrixType>(mpo_i.data(), mpo_i.dimension(0), mpo_i.dimension(1));
+    return envL_j_map.transpose() * mpo_i_map * envR_k_map;
+    // Eigen::Tensor<Scalar, 6> elem(1, 1, 1, 1, 1, 1);
+    // elem = envL_j.contract(mpo_i, tenx::idx({2}, {0})).contract(envR_k, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
+    // return elem.coeff(0);
+}
+
+template<typename T>
+typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal_new(long offset) const {
+    auto res = VectorType(size_mps);
+#pragma omp parallel for
+    for(long I = 0; I < size_mps; ++I) { res[I] = get_matrix_element(I, I + offset); }
+    return res;
+}
+
+template<typename T>
+typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal_old(long offset) const {
+    auto  res        = VectorType(size_mps);
+    auto &threads    = tenx::threads::get();
+    auto  ext_j      = std::array<long, 3>{1, 1, envL.dimension(2)};
+    auto  ext_k      = std::array<long, 3>{1, 1, envR.dimension(2)};
+    auto  rowindices = std::array<long, 3>{};
+    auto  colindices = std::array<long, 3>{};
     for(long diagidx = 0; diagidx < size_mps; ++diagidx) {
-        if(diagidx + offset < 0 or diagidx + offset >= size_mps) { diagonal(diagidx) = 0.0; }
+        if(diagidx + offset < 0 or diagidx + offset >= size_mps) {
+            res(diagidx) = 0.0;
+            continue;
+        }
         if(offset == 0) {
             rowindices = indices(diagidx, shape_mps);
             colindices = rowindices;
@@ -267,9 +325,105 @@ typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal(long offset) {
 
         Eigen::Tensor<Scalar, 6> elem(1, 1, 1, 1, 1, 1);
         elem.device(*threads->dev) = envL_j.contract(mpo_i, tenx::idx({2}, {0})).contract(envR_k, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
-        diagonal(diagidx)          = elem.coeff(0);
+        res(diagidx)               = elem.coeff(0);
     }
-    return diagonal;
+    auto   res2    = get_diagonal_new(offset);
+    long   idxd    = -1;
+    double maxdiff = (res - res2).cwiseAbs().maxCoeff(&idxd);
+    if(maxdiff > 1e-12) {
+        eig::log->error("diagonal mismatch offset {}: maxdiff {:.3e} (idx {}) | res {:20.16f} res2 {:20.16f}", offset, maxdiff, idxd, res[idxd], res2[idxd]);
+    }
+    return res;
+}
+
+template<typename T>
+typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal(long offset) const {
+    // auto &threads = tenx::threads::get();
+    auto res   = VectorType(size_mps);
+    auto ext_j = std::array<long, 3>{1, 1, envL.dimension(2)};
+    auto ext_k = std::array<long, 3>{1, 1, envR.dimension(2)};
+
+    auto rowindices = std::array<long, 3>{};
+    auto colindices = std::array<long, 3>{};
+    for(long diagidx = 0; diagidx < size_mps; ++diagidx) {
+        if(diagidx + offset < 0 or diagidx + offset >= size_mps) {
+            res[diagidx] = 0.0;
+            continue;
+        }
+        if(offset == 0) {
+            rowindices = indices(diagidx, shape_mps);
+            colindices = rowindices;
+        } else {
+            rowindices = indices(diagidx, shape_mps);
+            colindices = indices(diagidx + offset, shape_mps);
+        }
+        auto ir = rowindices[0];
+        auto jr = rowindices[1];
+        auto kr = rowindices[2];
+        auto ic = colindices[0];
+        auto jc = colindices[1];
+        auto kc = colindices[2];
+
+        // Index i is special, since it is composed of all the mpo physical indices.
+        // auto idxs  = indices(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
+        // mpos
+        auto irxs   = indices(ir, mpos.size(), spindims); // Maps ir to tensor indices to select the upper phsical indices in the mpos
+        auto icxs   = indices(ic, mpos.size(), spindims); // Maps ic to tensor indices to select the lower phsical indices in the mpos
+        auto mpo_i  = Eigen::Tensor<Scalar, 4>();
+        auto temp   = Eigen::Tensor<Scalar, 4>();
+        bool isZero = false;
+        for(size_t mdx = 0; mdx < mpos.size(); ++mdx) {
+            if(mdx == 0) {
+                auto &mpoL = mpos[mdx];
+                auto  offL = std::array<long, 4>{0, 0, irxs[mdx], icxs[mdx]};
+                auto  extL = std::array<long, 4>{mpoL.dimension(0), mpoL.dimension(1), 1, 1};
+                mpo_i      = mpoL.slice(offL, extL);
+            }
+            if(mdx + 1 == mpos.size()) break;
+            auto dimR  = mpos[mdx + 1].dimensions();
+            auto offR  = std::array<long, 4>{0, 0, irxs[mdx + 1], icxs[mdx + 1]};
+            auto extR  = std::array<long, 4>{dimR[0], dimR[1], 1, 1};
+            auto shp4  = std::array<long, 4>{mpo_i.dimension(0), dimR[1], 1, 1};
+            auto mpo_r = Eigen::Tensor<Scalar, 4>(mpos[mdx + 1].slice(offR, extR));
+            temp.resize(shp4);
+            auto mpo_i_map     = Eigen::Map<const MatrixType>(mpo_i.data(), mpo_i.dimension(0), mpo_i.dimension(1));
+            auto mpo_R_map     = Eigen::Map<const MatrixType>(mpo_r.data(), extR[0], extR[1]);
+            auto temp_map      = Eigen::Map<MatrixType>(temp.data(), shp4[0], shp4[1]);
+            temp_map.noalias() = mpo_i_map * mpo_R_map;
+
+            mpo_i = std::move(temp);
+            if(tenx::isZero(mpo_i, std::numeric_limits<double>::epsilon())) {
+                isZero = true;
+                break;
+            }
+            // temp  = mpo_i.contract(mpo_r, tenx::idx({1}, {0})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(shp4);
+        }
+        if(isZero) {
+            res[diagidx] = 0.0;
+            continue;
+        }
+
+        auto off_j = std::array<long, 3>{jr, jc, 0};
+        auto off_k = std::array<long, 3>{kr, kc, 0};
+
+        auto envL_j     = Eigen::Tensor<Scalar, 3>(envL.slice(off_j, ext_j));
+        auto envR_k     = Eigen::Tensor<Scalar, 3>(envR.slice(off_k, ext_k));
+        auto envL_j_map = Eigen::Map<const VectorType>(envL_j.data(), envL_j.size());
+        auto envR_k_map = Eigen::Map<const VectorType>(envR_k.data(), envR_k.size());
+        auto mpo_i_map  = Eigen::Map<const MatrixType>(mpo_i.data(), mpo_i.dimension(0), mpo_i.dimension(1));
+        res[diagidx]    = envL_j_map.transpose() * mpo_i_map * envR_k_map;
+
+        // Eigen::Tensor<Scalar, 6> elem(1, 1, 1, 1, 1, 1);
+        // elem         = envL_j.contract(mpo_i, tenx::idx({2}, {0})).contract(envR_k, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
+        // res[diagidx] = elem.coeff(0);
+    }
+    auto   res2    = get_diagonal_new(offset);
+    long   idxd    = -1;
+    double maxdiff = (res - res2).cwiseAbs().maxCoeff(&idxd);
+    if(maxdiff > 1e-12) {
+        eig::log->error("diagonal mismatch offset {}: maxdiff {:.3e} (idx {}) | res {:20.16f} res2 {:20.16f}", offset, maxdiff, idxd, res[idxd], res2[idxd]);
+    }
+    return res;
 }
 
 template<typename T>
@@ -318,19 +472,21 @@ void MatVecMPOS<T>::CalcPc(T shift) {
         eig::log->info("MatVecMPOS<T>::CalcPc(): no preconditioner chosen");
         return;
     }
+    // tools::log->info("sparsity: {} n*n {}", get_non_zeros(), size_mps * size_mps);
+    // exit(0);
     if(preconditioner == eig::Preconditioner::DIAG) {
         if(diagonal.size() == 0) {
-            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... ");
-            diagonal = get_diagonal(0);
-            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... done");
+            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... ");
+            diagonal = get_diagonal_new(0);
+            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the diagonal preconditioner ... done");
         }
     } else if(preconditioner == eig::Preconditioner::TRIDIAG) {
         if(diagonal.size() == 0 or diaglower.size() == 0 or diagupper.size() == 0) {
-            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... ");
+            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... ");
             if(diagonal.size() == 0) diagonal = get_diagonal(0);
             if(diagupper.size() == 0) diagupper = get_diagonal(1);
             if(diaglower.size() == 0) diaglower = diagupper.conjugate(); // get_diagonal(-1) // assume hermitian
-            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... done");
+            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the tridiagonal preconditioner ... done");
         }
     } else if(preconditioner == eig::Preconditioner::LLT) {
         eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ...");
@@ -339,56 +495,55 @@ void MatVecMPOS<T>::CalcPc(T shift) {
         auto trip   = std::vector<Eigen::Triplet<T, long>>();
         trip.reserve(size_mps * maxoff);
         for(long off = 0l; off < maxoff; ++off) {
-            auto diag = get_diagonal(off);
+            auto diag = get_diagonal_new(off);
             // if(off == 0) diagonal = diag;
             // if(off == 1) {
             //     diagupper = diag;
             //     diaglower = diag.conjugate();
             // }
-            if(off != 0) shift = 0.0;
+            if(off == 0 and shift != 0.0) diag.array() -= shift;
             for(long idx = 0l; idx + off < size_mps; ++idx) {
-                auto elem = diag[idx] - shift;
-                if(std::abs(elem) < 10*std::numeric_limits<double>::epsilon()) continue; // Skip small values
-                // Fill upper
+                auto elem = std::abs(diag[idx]);
+                // if(off == 0) elem =  std::abs(elem);
+                if(std::abs(elem) < 10 * std::numeric_limits<double>::epsilon()) continue; // Skip small values
+                // // Fill upper
                 if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, elem)); }
                 if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, std::conj(elem))); }
                 // Fill lower
-                // if(off == 0) continue;
+                if(off == 0) continue;
                 if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, elem)); }
                 if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, std::conj(elem))); }
             }
-
-            // // Fill lower
-            // for(long idx = off; idx < size_mps; ++idx) {
-            //     if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx - off, diag[idx - off])); }
-            //     if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx - off, std::conj(diag[idx - off]))); }
-            // }
-            // // Fill upper
-            // if(off != 0) {
-            //     for(long idx = 0l; idx + off < size_mps; ++idx) {
-            //         if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, diag[idx])); }
-            //         if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, std::conj(diag[idx]))); }
-            //     }
-            // }
         }
         diagband.setFromTriplets(trip.begin(), trip.end()); // Set the upper part only, since the matrix is hermitian
         // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... compressing");
-        // diagband.makeCompressed();
+        diagband.makeCompressed();
         // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the cg preconditioner ... computing");
         // cgSolver.setTolerance(1e-4);
         // cgSolver.compute(diagband);
-        if(cgSolver.info() != Eigen::Success) {
-            eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner | bandwidth {} ...", pcBandwidth);
-            lltSolver.compute(diagband);
-            eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner | bandwidth {} ... info:{}", pcBandwidth,
-                            static_cast<int>(lltSolver.info()));
+        // if(cgSolver.info() != Eigen::Success) {
+        eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner | bandwidth {} | shift {:.3e} ...", pcBandwidth, shift);
+        lltSolver.compute(diagband);
+        eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner | bandwidth {} | shift {:.3e} ... info:{}", pcBandwidth, shift,
+                       static_cast<int>(lltSolver.info()));
 
-            if(lltSolver.info() != Eigen::Success) {
-                eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the ldlt preconditioner | bandwidth {} ...", pcBandwidth);
-                ldltSolver.compute(diagband);
-                eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the ldlt preconditioner | bandwidth {} ... info:{}", pcBandwidth,
-                                static_cast<int>(lltSolver.info()));
-            }
+        // if(lltSolver.info() != Eigen::Success) {
+        //     eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the qr preconditioner | bandwidth {} | shift {:.3e} ...", pcBandwidth, shift);
+        //     qrSolver.compute(diagband);
+        //     eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the qr preconditioner | bandwidth {} | shift {:.3e}... info:{}", pcBandwidth, shift,
+        //                     static_cast<int>(qrSolver.info()));
+        // }
+        // if(lltSolver.info() != Eigen::Success and qrSolver.info() != Eigen::Success) {
+        //     eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the ldlt preconditioner | bandwidth {} | shift {:.3e} ...", pcBandwidth, shift);
+        //     ldltSolver.compute(diagband);
+        //     eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the ldlt preconditioner | bandwidth {} | shift {:.3e} ... info:{}", pcBandwidth, shift,
+        //                    static_cast<int>(ldltSolver.info()));
+        // }
+        if((lltSolver.info() != Eigen::Success) and size_mps <= 3000) {
+            // Analyze the matrix if it is small enough
+            eig::log->info("diagband is hermitian: {}", diagband.isApprox(diagband.adjoint()));
+            eig::log->info("diagband has eigvals :");
+            for(const auto &ev : diagband.toDense().template selfadjointView<Eigen::Lower>().eigenvalues()) tools::log->info("{:20.16f}", ev);
         }
 
     } else {
@@ -411,44 +566,56 @@ void MatVecMPOS<T>::MultPc([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, 
 template<typename T>
 void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_, T shift) {
     if(preconditioner == eig::Preconditioner::NONE) return;
-    if(not readyCalcPc or diagband.nonZeros() == 0) { CalcPc(shift); }
     auto token      = t_multPc->tic_token();
     auto mps_in     = Eigen::Map<VectorType>(mps_in_, size_mps);
     auto mps_out    = Eigen::Map<VectorType>(mps_out_, size_mps);
     using ArrayType = Eigen::Array<T, Eigen::Dynamic, 1>;
     ArrayType diagshf;
     if(preconditioner == eig::Preconditioner::DIAG or preconditioner == eig::Preconditioner::TRIDIAG) {
+        if(not readyCalcPc) { CalcPc(0.0); }
         // Use a small cutoff for small differences following Eq 2.11 in https://sdm.lbl.gov/~kewu/ps/thesis.pdf
-        diagshf                   = (diagonal.array() - shift).cwiseAbs();
+        diagshf                   = (diagonal.array() - shift);
         static constexpr auto eps = std::numeric_limits<double>::epsilon();
         for(auto &d : diagshf) {
-            if(d <= eps) d = eps;
-            // if(d >= 0 and d <= +eps) d = +eps;
-            // if(d <= 0 and d >= -eps) d = -eps;
+            // if(d <= eps) d = eps;
+            if(d >= 0 and d <= +eps) d = +eps;
+            if(d <= 0 and d >= -eps) d = -eps;
         }
     }
     if(preconditioner == eig::Preconditioner::DIAG) {
         mps_out = diagshf.array().cwiseInverse().cwiseProduct(mps_in.array());
+        num_pc++;
     } else if(preconditioner == eig::Preconditioner::TRIDIAG) {
         mps_out = mps_in; // copy the values
         thomas(size_mps, mps_out_, diaglower.data(), diagshf.data(), diagupper.data());
+        num_pc++;
     } else if(preconditioner == eig::Preconditioner::LLT) {
-        // SparseType bandshift = diagband;
-        // for(auto & d : bandshift.diagonal()) d -= shift;
-        // tools::log->info("diagband nnz: {}", diagband.nonZeros());
-        // bandshift.diagonal().array() -= shift;
-        // bandSolver.compute(bandshift);
-        // SparseType bandshf = diagband;
-        // bandshf.diagonal() -= shift;
-        if(cgSolver.info() == Eigen::Success) {
-            mps_out = cgSolver.solve(mps_in);
-        } else if(lltSolver.info() == Eigen::Success) {
+        if(not readyCalcPc) { CalcPc(shift); }
+        // if(cgSolver.info() == Eigen::Success) {
+        //     mps_out = cgSolver.solve(mps_in);
+        // } else
+        if(lltSolver.info() == Eigen::Success) {
             mps_out = lltSolver.solve(mps_in);
-        } else if(ldltSolver.info() == Eigen::Success) {
-            mps_out = ldltSolver.solve(mps_in);
+            if(lltSolver.info() != Eigen::Success) {
+                mps_out = mps_in;
+            } else
+                num_pc++;
         }
+        // else if(qrSolver.info() == Eigen::Success) {
+        //     mps_out = qrSolver.solve(mps_in);
+        //     if(qrSolver.info() != Eigen::Success) {
+        //         mps_out = mps_in;
+        //     } else
+        //         num_pc++;
+        //
+        // } else if(ldltSolver.info() == Eigen::Success) {
+        //     mps_out = ldltSolver.solve(mps_in);
+        //     if(qrSolver.info() != Eigen::Success) {
+        //         mps_out = mps_in;
+        //     } else
+        //         num_pc++;
+        // }
     }
-    num_pc++;
 }
 
 template<typename T>
@@ -593,6 +760,37 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_matrix() const {
     return tenx::MatrixCast(get_tensor(), rows(), cols());
 }
 
+template<typename T>
+typename MatVecMPOS<T>::SparseType MatVecMPOS<T>::get_sparse_matrix() const {
+    // Fill lower
+    std::vector<Eigen::Triplet<T, long>> trip;
+    trip.reserve(size_mps);
+#pragma omp parallel for collapse(2)
+    for(long J = 0; J < size_mps; J++) {
+        for(long I = J; I < size_mps; I++) {
+            auto elem = get_matrix_element(I, J);
+            if(std::abs(elem) > std::numeric_limits<double>::epsilon()) {
+#pragma omp critical
+                { trip.emplace_back(Eigen::Triplet<T, long>{I, J, elem}); }
+            }
+        }
+    }
+    SparseType sparseMatrix(size_mps, size_mps);
+    sparseMatrix.setFromTriplets(trip.begin(), trip.end());
+    return sparseMatrix;
+}
+
+template<typename T>
+double MatVecMPOS<T>::get_sparsity() const {
+    auto sp = get_sparse_matrix();
+    auto n  = static_cast<double>(size_mps);
+    return (static_cast<double>(sp.nonZeros()) * 2.0 - n) / (n * n);
+}
+template<typename T>
+long MatVecMPOS<T>::get_non_zeros() const {
+    auto sp = get_sparse_matrix();
+    return sp.nonZeros();
+}
 template<typename T>
 bool MatVecMPOS<T>::isReadyFactorOp() const {
     return readyFactorOp;

@@ -250,8 +250,8 @@ namespace tools::finite::opt {
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
         // cfg.primme_preconditioner = preconditioner_tridiagonal<Scalar>;
-        // cfg.primme_preconditioner = preconditioner_diagonal<Scalar>;
-        cfg.primme_preconditioner = preconditioner_llt<Scalar>;
+        cfg.primme_preconditioner = preconditioner_diagonal<Scalar>;
+        // cfg.primme_preconditioner = preconditioner_llt<Scalar>;
 
         //         Apply preconditioner if applicable, usually faster on small matrices
         //                if(initial_mps.get_tensor().size() > settings::precision::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
