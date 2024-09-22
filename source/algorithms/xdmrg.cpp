@@ -80,6 +80,8 @@ void xdmrg::resume() {
         status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_min;
         tools::log->info("Initialized truncation error limits: max {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_max, status.trnc_lim, status.trnc_min);
 
+        status.opt_ritz = settings::xdmrg::ritz;
+
         // Apply shifts and compress the model
         tensors.move_center_point_to_inward_edge();
         set_parity_shift_mpo();
@@ -157,14 +159,20 @@ void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
             // throw std::logic_error("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
         }
         case OptRitz::LR: {
-            // tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+            tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+            status.energy_tgt = 0.0;
+            break;
+            // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
+        }
+        case OptRitz::LM: {
+            tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
             status.energy_tgt = 0.0;
             break;
             // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
         }
         case OptRitz::SM: {
             // When the Hamiltonian is traceless, the energy level nearest zero is closest to the infinite-temperature limit.
-            // Therefore we expect the energy target to be == 0. However, in some cases we get a symmetric energy spectrum, with
+            // Therefore, we expect the energy target to be == 0. However, in some cases we get a symmetric energy spectrum, with
             // every energy level having a counterpart with opposite sign (e.g. Ising-Majorana with g == 0).
             // In this case we can break the degeneracy by setting a tiny shift ~1e-10 to bias xDMRG towards one of the states closest to 0.
             status.energy_tgt = settings::xdmrg::energy_spectrum_shift;
@@ -317,8 +325,8 @@ void xdmrg::run_algorithm() {
         try_retargeting();
         try_projection(); // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         // try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
-
         // expand_environment(EnvExpandMode::VAR , EnvExpandSide::BACKWARD);
+
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -346,7 +354,8 @@ void xdmrg::update_state() {
     tools::log->debug("Updating state: {}", opt_meta.string()); // Announce the current configuration for optimization
     auto bond_dims_old = tensors.state->get_mps_dims_active();
     // Expand the environment to grow the bond dimension in 1-site dmrg
-    if(opt_meta.expand_mode != EnvExpandMode::NONE and tensors.active_sites.size() == 1) {
+    // if(opt_meta.expand_mode != EnvExpandMode::NONE and tensors.active_sites.size() == 1) {
+    if(opt_meta.expand_mode != EnvExpandMode::NONE) {
         expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
         opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);

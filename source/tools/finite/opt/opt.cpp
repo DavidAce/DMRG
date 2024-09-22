@@ -119,39 +119,37 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
                     //     // }
                     // }
 
-                    auto metax2          = meta;
-                    metax2.optCost       = OptCost::ENERGY;
-                    metax2.optRitz       = OptRitz::SM;
+                    auto metax2    = meta;
+                    metax2.optCost = OptCost::ENERGY;
+                    metax2.optRitz = OptRitz::SM;
                     // metax2.eigs_tol      = std::max(1e-9, meta.eigs_tol.value_or(1e-9));
-                    metax2.eigs_ncv      = std::max(128, meta.eigs_ncv.value_or(128));
-                    metax2.primme_method = "PRIMME_DYNAMIC";
-                    result               = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
+                    metax2.eigs_ncv = std::max(128, meta.eigs_ncv.value_or(128));
+                    // metax2.primme_method = "PRIMME_DYNAMIC";
+                    result = internal::optimize_energy_eigs(tensors, initial_mps, status, metax2);
                     tools::finite::opt::reports::print_eigs_report();
-                    if(meta.optRitz == OptRitz::SM) {
-                        // We accept this result if the residual norm is small, and either
-                        // - The energy is smaller in absolute
-                        // - The variance is lower
-                        // Otherwise we call optimize_variance_eigs on the result
-                        // auto sigma    = std::sqrt(initial_mps.get_variance());
-                        // bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
-                        bool ene_ok   = std::abs(result.get_energy()) <= std::abs(initial_mps.get_energy());
-                        bool var_ok   = result.get_variance() <= initial_mps.get_variance();
-                        bool rnorm_ok = result.get_eigs_rnorm() <= 1e-8;
-                        // bool rnorm_nice = result.get_rnorm() <= 1e-12;
-                        // if(rnorm_nice) break;
-                        tools::log->info("ene opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result.get_eigs_rnorm(),
-                                         result.get_variance(), result.get_energy(), result.get_eigs_eigval(), result.get_eigs_shift());
-                        if(rnorm_ok and (var_ok or ene_ok)) break;
+                    // We accept this result if the residual norm is small, and either
+                    // - The energy is smaller in absolute
+                    // - The variance is lower
+                    // Otherwise we call optimize_variance_eigs on the result
+                    // auto sigma    = std::sqrt(initial_mps.get_variance());
+                    // bool in2sigma = std::abs(result.get_energy() - initial_mps.get_energy()) <= 2 * sigma;
+                    bool ene_ok   = std::abs(result.get_energy()) <= std::abs(initial_mps.get_energy());
+                    bool var_ok   = result.get_variance() <= initial_mps.get_variance();
+                    bool rnorm_ok = result.get_eigs_rnorm() <= 1e-8;
+                    // bool rnorm_nice = result.get_rnorm() <= 1e-12;
+                    // if(rnorm_nice) break;
+                    tools::log->info("ene opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result.get_eigs_rnorm(),
+                                     result.get_variance(), result.get_energy(), result.get_eigs_eigval(), result.get_eigs_shift());
+                    // if(rnorm_ok and (var_ok or ene_ok)) break;
 
-                        // The result is not good enough. But we could use it as initial guess
-                        meta.optCost    = OptCost::VARIANCE;
-                        auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
-                        ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
-                        rnorm_ok        = result_var.get_eigs_rnorm() <= result.get_eigs_rnorm();
-                        tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_eigs_rnorm(),
-                                         result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
-                        if(rnorm_ok and ene_ok) { result = result_var; }
-                    }
+                    // The result is not good enough. But we could use it as initial guess
+                    meta.optCost    = OptCost::VARIANCE;
+                    auto result_var = internal::optimize_variance_eigs(tensors, result, status, meta);
+                    ene_ok          = std::abs(result_var.get_energy()) <= std::min(std::abs(result.get_energy()), std::abs(initial_mps.get_energy()));
+                    rnorm_ok        = result_var.get_eigs_rnorm() <= result.get_eigs_rnorm();
+                    tools::log->info("var opt rnorm {:.4e} var {:.16f} ene {:.16f} | eigv = {:.16f} shift {:.16f}", result_var.get_eigs_rnorm(),
+                                     result_var.get_variance(), result_var.get_energy(), result_var.get_eigs_eigval(), result_var.get_eigs_shift());
+                    if(rnorm_ok and ene_ok) { result = result_var; }
                     break;
                 }
                 case OptAlgo::SUBSPACE: result = internal::optimize_variance_subspace(tensors, initial_mps, status, meta); break;
@@ -254,6 +252,8 @@ namespace tools::finite::opt::internal {
         return lhs.get_energy() < rhs.get_energy();
     }
 
+    bool comparator::energy_absolute(const opt_mps &lhs, const opt_mps &rhs) { return std::abs(lhs.get_energy()) < std::abs(rhs.get_energy()); }
+
     bool comparator::energy_distance(const opt_mps &lhs, const opt_mps &rhs, double target) {
         if(std::isnan(target)) throw except::logic_error("Energy target for comparison is NAN");
         auto diff_energy_lhs = std::abs(lhs.get_energy() - target);
@@ -303,7 +303,19 @@ namespace tools::finite::opt::internal {
         if(not meta) throw except::logic_error("No opt_meta given to comparator");
         // The variance case first
         if(meta->optCost == OptCost::VARIANCE) {
-            return comparator::eigval(lhs, rhs);
+#pragma message "These comparisons need to be corrected for the abs case"
+            switch(meta->optRitz) {
+                case OptRitz::SR:
+                case OptRitz::SM: {
+                    return comparator::eigval(lhs, rhs);
+                }
+                case OptRitz::LR:
+                case OptRitz::LM: {
+                    return comparator::eigval(rhs, lhs);
+                }
+                default: return comparator::eigval(lhs, rhs);
+            }
+
             // return comparator::variance(lhs, rhs);
         } else {
             auto diff = std::abs(lhs.get_energy_shifted() - rhs.get_energy_shifted());
@@ -312,6 +324,7 @@ namespace tools::finite::opt::internal {
                 case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");
                 case OptRitz::SR: return comparator::energy(lhs, rhs);
                 case OptRitz::LR: return comparator::energy(rhs, lhs);
+                case OptRitz::LM: return comparator::energy_absolute(rhs, lhs);
                 case OptRitz::SM: return comparator::energy_distance(lhs, rhs, 0.0);
                 case OptRitz::IS: return comparator::energy_distance(lhs, rhs, target_energy);
                 case OptRitz::TE: return comparator::energy_distance(lhs, rhs, target_energy);
@@ -329,6 +342,7 @@ namespace tools::finite::opt::internal {
             case OptRitz::SR: return lhs < rhs;
             case OptRitz::LR: return rhs < lhs;
             case OptRitz::SM: return std::abs(lhs) < std::abs(rhs);
+            case OptRitz::LM: return std::abs(lhs) > std::abs(rhs);
             case OptRitz::IS:
             case OptRitz::TE: {
                 auto diff_lhs = std::abs(lhs - shift);

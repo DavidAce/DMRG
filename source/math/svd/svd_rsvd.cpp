@@ -15,10 +15,16 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     auto t_rsvd   = tid::tic_scope("rsvd");
     long rank_lim = rank_max > 0 ? std::min(std::min(rows, cols), rank_max) : std::min(rows, cols);
     if(rank_lim <= 0) throw std::logic_error("rank_lim <= 0");
-    auto mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
-
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
     if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
+    auto mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        if(tenx::isReal(mat)) {
+            svd::MatrixType<real> matreal = mat.real();
+            auto [U, S, V]                = do_svd_rsvd(matreal.data(), rows, cols);
+            return std::make_tuple(U.cast<cplx>(), S.cast<cplx>(), V.cast<cplx>());
+        }
+    }
 
 #if !defined(NDEBUG)
     // These are more expensive debugging operations
@@ -56,8 +62,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                     truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
                                     SVD.singularValues().topRows(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite());
     }
-    log->trace("SVD with RND SVD finished successfully | rank {:<4} | rank_lim {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}", rank, rank_lim, rows,
-                    cols, truncation_error, t_rsvd->get_last_interval());
+    log->trace("SVD with RND SVD finished successfully | rank {:<4} | rank_lim {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}", rank, rank_lim, rows, cols,
+               truncation_error, t_rsvd->get_last_interval());
     // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint());
 }

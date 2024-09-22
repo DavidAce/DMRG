@@ -70,5 +70,7 @@ class EnvBase {
     std::optional<std::size_t> get_unique_id_mpo() const;
 
     template<typename T = cplx>
+    Eigen::Tensor<T, 3> get_expansion_term(const Eigen::Tensor<T, 3> &mps, const Eigen::Tensor<T, 4> &mpo, double alpha) const;
+    template<typename T = cplx>
     Eigen::Tensor<T, 3> get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max = -1) const;
 };

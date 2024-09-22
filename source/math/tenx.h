@@ -404,9 +404,17 @@ namespace tenx {
     auto VectorMap(const Eigen::Tensor<Scalar, rank> &tensor) {
         return Eigen::Map<const VectorType<Scalar>>(tensor.data(), tensor.size());
     }
+    template<typename Scalar, auto rank>
+    auto VectorMap(Eigen::Tensor<Scalar, rank> &tensor) {
+        return Eigen::Map<VectorType<Scalar>>(tensor.data(), tensor.size());
+    }
     template<typename Derived>
     auto VectorMap(const Eigen::TensorMap<Derived> &tensor) {
         return Eigen::Map<const VectorType<typename Derived::Scalar>>(tensor.data(), tensor.size());
+    }
+    template<typename Derived>
+    auto VectorMap(Eigen::TensorMap<Derived> &tensor) {
+        return Eigen::Map<VectorType<typename Derived::Scalar>>(tensor.data(), tensor.size());
     }
     template<typename Scalar, auto rank>
     auto VectorMap(const Eigen::Tensor<Scalar, rank> &&tensor) = delete; // Prevent map from temporary

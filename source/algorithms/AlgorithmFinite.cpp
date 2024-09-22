@@ -250,13 +250,15 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     bool has_degeneracy = dmrg_degeneracy_score[position] >= 0.5 * settings::xdmrg::try_shifting_when_degen;
 
     // Copy settings
-    m1.min_sites         = std::min(tensors.get_length<size_t>(), settings::strategy::dmrg_min_blocksize);
-    m1.max_sites         = m1.min_sites;
-    m1.subspace_tol      = settings::precision::target_subspace_error;
-    m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
-    m1.primme_method     = "PRIMME_DYNAMIC";
-    // m1.primme_method     = "PRIMME_GD_Olsen_plusK";
-    m1.eigs_nev          = settings::precision::eigs_nev_min;
+    m1.min_sites    = std::min(tensors.get_length<size_t>(), settings::strategy::dmrg_min_blocksize);
+    m1.max_sites    = m1.min_sites;
+    m1.subspace_tol = settings::precision::target_subspace_error;
+    // m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
+    // m1.primme_method = "PRIMME_DYNAMIC";
+    m1.primme_method = "PRIMME_GD_Olsen_plusK"; // The fastest when using a preconditioner, since it uses the least matvecs
+    // m1.primme_method = "PRIMME_JD_Olsen_plusK";
+    // m1.primme_method = "PRIMME_RQI";
+    m1.eigs_nev = settings::precision::eigs_nev_min;
     if(status.algorithm_has_stuck_for > 0) {
         m1.eigs_nev = std::clamp(static_cast<int>(1 + status.algorithm_has_stuck_for), settings::precision::eigs_nev_min, settings::precision::eigs_nev_max);
     }
@@ -269,28 +271,32 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.eigs_tol      = dmrg_eigs_tol;
     if(settings::strategy::etol_decrease_when == UpdatePolicy::NEVER) {
         // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
-        m1.eigs_tol = std::clamp(status.energy_variance_lowest * 1e-1, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
+        m1.eigs_tol = std::clamp(status.energy_variance_lowest * 10, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
         if(status.algorithm_has_stuck_for > 1 and status.bond_limit_has_reached_max and status.trnc_limit_has_reached_min)
             m1.eigs_tol = settings::precision::eigs_tol_min;
     }
 
+    m1.eigs_jcbMaxBlockSize = 32;
+    if(status.algorithm_has_stuck_for >= 1) { m1.eigs_jcbMaxBlockSize = 64; }
+    if(status.algorithm_has_stuck_for >= 2) { m1.eigs_jcbMaxBlockSize = 128; }
+
     // Set up the subspace (environment) expansion
     m1.expand_side = EnvExpandSide::FORWARD;
-    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
+    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE | EnvExpandMode::VAR : EnvExpandMode::ENE;
     // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
 
     m1.optCost = status.algo_type == AlgorithmType::xDMRG ? OptCost::VARIANCE : OptCost::ENERGY;
     m1.optAlgo = OptAlgo::DIRECT;
 
-    m1.optSolver = OptSolver::EIGS;
-
+    m1.optSolver        = OptSolver::EIGS;
+    m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
     if(status.iter < settings::strategy::iter_max_warmup) {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
         m1.max_sites        = settings::strategy::dmrg_max_blocksize;
     } else {
-        m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
-        m1.max_sites        = has_degeneracy ? 1 : dmrg_blocksize; // When nearly degenerate we prefer many iterations over many sites
+        m1.max_sites = has_degeneracy ? 1 : dmrg_blocksize; // When nearly degenerate we prefer many iterations over many sites
     }
 
     if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck and tensors.get_position<long>() >= 0) {
@@ -303,6 +309,10 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
             // m1.eigs_iter_max = 5000000;
         }
     }
+
+    // m1.optAlgo = OptAlgo::DIRECTX2;
+    // m1.eigs_iter_max = 5000000;
+    // m1.max_sites = 20;
 
     // Set up the problem size here
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
@@ -325,10 +335,10 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         m1.eigs_nev = std::max(m1.eigs_nev.value_or(1), 2);
     }
 
-    if(full_system_optimization and status.algo_type == AlgorithmType::xDMRG and var_latest < 1e-8) {
-        m1.optCost = OptCost::ENERGY;
-        m1.optRitz = OptRitz::SM;
-    }
+    // if(full_system_optimization and status.algo_type == AlgorithmType::xDMRG and var_latest < 1e-8) {
+    //     m1.optCost = OptCost::ENERGY;
+    //     m1.optRitz = OptRitz::SM;
+    // }
 
     // if(m1.optSolver == OptSolver::EIGS and m1.chosen_sites.size() == 1 and tensors.state->get_direction() < 0) {
     // #pragma message "testing DIRECTZ"
@@ -340,8 +350,6 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // m1.eigs_nev = settings::precision::eigs_nev_max;
     // m1.eigs_ncv = std::max(m1.eigs_ncv.value_or(32), 32);
     // m1.eigs_tol = 1e-12;
-    // m1.optAlgo = OptAlgo::DIRECTX2;
-    // m1.optRitz = OptRitz::SM;
 
     if(var_isconverged) {
         m1.expand_mode = EnvExpandMode::NONE; // No need to expand
@@ -357,14 +365,18 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide
     // alpha = alpha.value_or(status.env_expansion_alpha);
     // if(alpha.value() <= 0) return;
     if(not svd_cfg.has_value()) {
-        #pragma message "Restore the bond and trnc lims for expansion?"
-        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim : status.bond_lim;
-        auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim : status.trnc_lim;
-        svd_cfg       = svd::config(bond_lim, trnc_lim);
+        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 5/4: status.bond_lim;
+        auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim * 1e-1 : status.trnc_lim;
+        // auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim : status.bond_lim;
+        // auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim : status.trnc_lim;
+        svd_cfg = svd::config(bond_lim, trnc_lim);
     }
 
     auto res = tensors.expand_environment(envexpMode, envexpSide, svd_cfg.value());
-    if(not res.ok) return;
+    if(not res.ok) {
+        tools::log->debug("Expansion canceled");
+        return;
+    }
     tools::log->debug("Expanded environment {} {} | bond {} {} | αₑ:{:.2e} αᵥ:{:.2e} | var {:.3e} -> {:.3e} | ene {:.16f} -> {:.16f}", flag2str(envexpMode),
                       enum2sv(envexpSide), res.posL, res.posR, res.alpha_ene, res.alpha_var, res.var_old, res.var_new, res.ene_old, res.ene_new);
     using namespace settings::strategy;
@@ -415,7 +427,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
-            status.step += tensors.move_center_point(svd::config(status.bond_lim, status.trnc_lim)); // Shouldn't truncate.
+            status.step += tensors.move_center_point(svd::config(status.bond_lim, status.trnc_lim));
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge, so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
@@ -528,7 +540,7 @@ void AlgorithmFinite::try_moving_sites() {
 void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_bound) {
     if(not tensors.position_is_inward_edge()) return;
     // The variance precision limit depends on the Hamiltonian operator norm ~ largest eigenvalue.
-    // We can get a rough order of magnitude etimate the largest eigenvalue by adding the absolute value of all the
+    // We can get a rough order of magnitude estimate of the largest eigenvalue by adding the absolute value of all the
     // Hamiltonian couplings and fields.
     if(not energy_upper_bound) energy_upper_bound = tensors.model->get_energy_upper_bound();
     double energy_abs                 = std::abs(energy_upper_bound.value());
@@ -717,10 +729,12 @@ void AlgorithmFinite::update_truncation_error_limit() {
     if(trnc_new < status.trnc_min / rate) trnc_new = status.trnc_min; // If the truncation error is close enough to reaching min, just set min.
 
     tools::log->info("Updated truncation error limit: {:8.2e} -> {:8.2e} | reasons: {}", status.trnc_lim, trnc_new, fmt::join(reason, " | "));
+
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
     // status.algorithm_has_stuck_for    = 0;
     // status.algorithm_saturated_for    = 0;
+
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
@@ -1043,6 +1057,14 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_axis) {
                         }
                         break;
                     }
+                    case OptRitz::LM: { // Take the largest  absolute energy
+                        if(std::abs(energy_neg) > std::abs(energy_pos)) {
+                            tensors = tensors_neg;
+                        } else if(not std::isnan(energy_pos)) {
+                            tensors = tensors_pos;
+                        }
+                        break;
+                    }
                     case OptRitz::IS:
                     case OptRitz::TE:
                     case OptRitz::NONE: { // Take the smallest variance
@@ -1154,7 +1176,7 @@ void AlgorithmFinite::check_convergence() {
                      status.algorithm_converged_for, status.variance_mpo_converged_for, status.entanglement_converged_for, status.spin_parity_has_converged,
                      status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for, infocom_saturated_for,
                      status.algorithm_has_stuck_for, status.algorithm_has_succeeded, status.algorithm_has_to_stop, status.energy_variance_prec_limit);
-
+    tools::log->info("Truncation errors: {::.3e}", tensors.state->get_truncation_errors());
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::get_iter_min(status.algo_type)) {
         if(status.iter >= settings::get_iter_max(status.algo_type)) status.algo_stop = AlgorithmStop::MAX_ITERS;

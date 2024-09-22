@@ -33,12 +33,26 @@ namespace eig {
         int dgeev(real *matrix, size_type L);
         int zgeev(cplx *matrix, size_type L);
 
+        int dsygvd(real *matrixA, real *matrixB, size_type L);
+        int dsygvx(real *matrixA, real *matrixB, size_type L, char range, int il, int iu, double vl, double vu);
+        int zhegv(cplx *matrixA, cplx *matrixB, size_type L);
+        int zhegvd(cplx *matrixA, cplx *matrixB, size_type L);
+        int zhegvx(cplx *matrixA, cplx *matrixB, size_type L, char range, int il, int iu, double vl, double vu);
+        int dggev(real *matrixA, real *matrixB, size_type L);
+        int zggev(cplx *matrixA, cplx *matrixB, size_type L);
+
         void eig_init(Form form, Type type, Vecs compute_eigvecs, Dephase remove_phase_);
         template<Form form = Form::SYMM, typename Scalar>
         void eig(Scalar *matrix, size_type L, Vecs compute_eigvecs = Vecs::ON, Dephase remove_phase_ = Dephase::OFF);
 
         template<Form form = Form::SYMM, typename Scalar>
+        void eig(Scalar *matrixA, Scalar *matrixB, size_type L, Vecs compute_eigvecs = Vecs::ON, Dephase remove_phase_ = Dephase::OFF);
+
+        template<Form form = Form::SYMM, typename Scalar>
         void eig(Scalar *matrix, size_type L, char range, int il, int iu, double vl, double vu, Vecs compute_eigvecs = Vecs::ON,
+                 Dephase remove_phase_ = Dephase::OFF);
+        template<Form form = Form::SYMM, typename Scalar>
+        void eig(Scalar *matrixA, Scalar *matrixB, size_type L, char range, int il, int iu, double vl, double vu, Vecs compute_eigvecs = Vecs::ON,
                  Dephase remove_phase_ = Dephase::OFF);
 
         // Functions for few eigensolutions

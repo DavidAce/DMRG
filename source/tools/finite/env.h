@@ -11,18 +11,30 @@ enum class EnvExpandMode;
 struct EnvExpansionResult;
 
 namespace tools::finite::env {
-    extern double             get_optimal_mixing_factor_ene_new(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                                const EdgesFinite &edges, EnvExpandMode envExpandMode);
-    extern double             get_optimal_mixing_factor_var_new(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                                const EdgesFinite &edges, EnvExpandMode envExpandMode);
-    extern double             get_optimal_mixing_factor_ene_old(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                                const EdgesFinite &edges, EnvExpandMode envExpandMode);
-    extern double             get_optimal_mixing_factor_var_old(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                                const EdgesFinite &edges, EnvExpandMode envExpandMode);
-    extern EnvExpansionResult expand_environment_backward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
-                                                          svd::config svd_cfg);
-    extern EnvExpansionResult expand_environment_forward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
-                                                         svd::config svd_cfg);
+    extern EnvExpansionResult                 get_optimally_mixed_block(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                        const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern std::tuple<double, double, double> get_optimal_mixing_factors(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                         const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern std::array<double, 2> get_optimal_mixing_factor_ene(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                               const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern std::array<double, 2> get_optimal_mixing_factor_var(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                               const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern double                get_optimal_mixing_factor_ene_old(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                   const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern double                get_optimal_mixing_factor_var_old(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                   const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern EnvExpansionResult    expand_environment_backward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+                                                             svd::config svd_cfg);
+    extern EnvExpansionResult    expand_environment_reversed(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+                                                             svd::config svd_cfg);
+    extern EnvExpansionResult    expand_environment_forward_old(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+                                                                svd::config svd_cfg);
+    extern EnvExpansionResult    expand_environment_forward_nsite(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+                                                                  svd::config svd_cfg);
+    extern EnvExpansionResult    expand_environment_forward_1site(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+                                                                  svd::config svd_cfg);
+    extern EnvExpansionResult expand_environment_forward_active(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+                                                                svd::config svd_cfg);
     // extern ExpansionResult     expand_environment_forward_1site(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, double alpha,
     //                                                       EnvExpandMode envExpandMode, svd::config svd_cfg);
     extern void assert_edges(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges);

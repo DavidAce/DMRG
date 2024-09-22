@@ -68,6 +68,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, const
                 switch(meta.optRitz) {
                     case OptRitz::NONE: throw std::logic_error("find_subspace: invalid OptRitz::NONE");
                     case OptRitz::SR: [[fallthrough]];
+                    case OptRitz::LM: [[fallthrough]];
                     case OptRitz::LR: {
                         if(model.has_energy_shifted_mpo()) {
                             eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors); // E-Eshf Should be close to 0
@@ -76,6 +77,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, const
                         }
                         break;
                     }
+
                     // Subspace of energy eigenpairs close to eigval == 0.
                     // Note that mpos may have an in-built energy shift already.
                     case OptRitz::IS: [[fallthrough]];
@@ -272,25 +274,25 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     // Create a reusable config for multiple nev trials
     // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
     eig::settings config;
-    config.lib                  = eig::Lib::PRIMME;
-    config.tol                  = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
-    config.maxNev               = meta.eigs_nev;
-    config.maxNcv               = meta.eigs_ncv;
-    config.shift_invert         = eig::Shinv::OFF;
-    config.maxIter              = meta.eigs_iter_max;
-    config.ritz                 = eig::Ritz::primme_closest_abs;
+    config.lib                 = eig::Lib::PRIMME;
+    config.tol                 = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
+    config.maxNev              = meta.eigs_nev;
+    config.maxNcv              = meta.eigs_ncv;
+    config.shift_invert        = eig::Shinv::OFF;
+    config.maxIter             = meta.eigs_iter_max;
+    config.ritz                = eig::Ritz::primme_closest_abs;
     config.primme_targetShifts = {eigval_shift};
     // config.primme_projection    = "primme_proj_refined"; // TODO: What is this?
     config.compute_eigvecs = eig::Vecs::ON;
     config.primme_locking  = 1;
     config.loglevel        = 2;
     if(initial_mps.size() <= settings::precision::eigs_max_size_shift_invert) {
-        hamiltonian.factorization   = eig::Factorization::LU;
-        config.shift_invert         = eig::Shinv::ON;
-        config.ritz                 = eig::Ritz::primme_largest_abs;
-        config.sigma                = cplx(eigval_shift, 0.0);
-        config.primme_projection    = "primme_proj_default";
-        config.primme_locking       = false;
+        hamiltonian.factorization  = eig::Factorization::LU;
+        config.shift_invert        = eig::Shinv::ON;
+        config.ritz                = eig::Ritz::primme_largest_abs;
+        config.sigma               = cplx(eigval_shift, 0.0);
+        config.primme_projection   = "primme_proj_default";
+        config.primme_locking      = false;
         config.primme_targetShifts = {};
     }
 

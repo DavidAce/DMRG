@@ -15,12 +15,53 @@
 namespace tools::finite::opt::internal {
 
     template<typename Scalar>
-    void optimize_variance_eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        eig::solver solver;
-        auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
-        int         nev    = std::min<int>(static_cast<int>(matrix.dimension(0)), meta.eigs_nev.value_or(1));
-        solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, nev, 0.0, 1.0);
-        extract_results(tensors, initial_mps, meta, solver, results, true);
+    void optimize_variance_eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, OptMeta &meta) {
+        // eig::solver solver;
+        // auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
+        // int         nev    = std::min<int>(static_cast<int>(matrix.dimension(0)), meta.eigs_nev.value_or(1));
+        // solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, nev, 0.0, 1.0);
+        // extract_results(tensors, initial_mps, meta, solver, results, true);
+
+        // Use he generalized problem Hx=(1/E)H²x: find the largest eigenpair
+        eig::solver solver_u, solver_l;
+        auto        matrixA_u = tensors.get_effective_hamiltonian<Scalar>();
+        auto        matrixB_u = tensors.get_effective_hamiltonian_squared<Scalar>();
+        auto        matrixA_l = matrixA_u;
+        auto        matrixB_l = matrixB_u;
+        int         nev       = std::min<int>(static_cast<int>(matrixA_u.dimension(0)), meta.eigs_nev.value_or(1));
+        int         il        = matrixA_u.dimension(0) - (nev - 1);
+        int         iu        = matrixA_u.dimension(0);
+        solver_u.eig(matrixA_u.data(), matrixB_u.data(), matrixA_u.dimension(0), 'I', il, iu, 0.0, 1.0);
+        solver_l.eig(matrixA_l.data(), matrixB_l.data(), matrixA_l.dimension(0), 'I', 1, nev, 0.0, 1.0);
+        auto eigvals_u = eig::view::get_eigvals<real>(solver_u.result, false);
+        auto eigvals_l = eig::view::get_eigvals<real>(solver_l.result, false);
+        auto ev_u      = eigvals_u(eigvals_u.size() - 1);
+        auto ev_l      = eigvals_l(0);
+        tools::log->info("ev_u {:.16f}, ev_l {:.16f}", ev_u, ev_l);
+        if(std::abs(ev_l) >= std::abs(ev_u)) {
+            extract_results(tensors, initial_mps, meta, solver_l, results, true);
+        } else {
+            extract_results(tensors, initial_mps, meta, solver_u, results, true);
+        }
+
+        // eig::solver solver;
+        // auto        matrixA_u = tensors.get_effective_hamiltonian<Scalar>();
+        // auto        matrixB_u = tensors.get_effective_hamiltonian_squared<Scalar>();
+        // auto        matrixA_l = matrixA_u;
+        // auto        matrixB_l = matrixB_u;
+        // solver.eig(matrixA_u.data(), matrixB_u.data(), matrixA_u.dimension(0));
+        //
+        // if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
+        //     // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
+        //     tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
+        //     auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+        //     auto indices = num::range<long>(0l, eigvals.size());
+        //     auto eigComp = EigIdxComparator(OptRitz::LM, 0, eigvals.data(), eigvals.size());
+        //     std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
+        //     indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
+        //     for(auto idx : indices) { tools::log->info(" -- idx {}: {:.16f}", idx, eigvals(idx)); }
+        // }
+
         // if(meta.chosen_sites.size() <= 4 and matrix.dimension(0) <= 8192) {
         //     // Find all eigenvalues within a thin band
         // auto eigval = initial_mps.get_energy(); // The current energy

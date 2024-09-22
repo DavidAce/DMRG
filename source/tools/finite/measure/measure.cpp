@@ -562,6 +562,8 @@ double tools::finite::measure::energy_variance(const StateFinite &state, const M
     auto E  = expval_hamiltonian(state, model, edges);
     auto E2 = E * E;
     auto H2 = expval_hamiltonian_squared(state, model, edges);
+    // #pragma message "remove minus one for double parity shift test"
+    // H2-=1.0;
     assert(std::abs(std::imag(H2)) < 1e-10);
     double var = std::abs(H2 - E2);
     if constexpr(settings::debug_expval) tools::log->trace("Variance |H2-E2| = |{:.16f} - {:.16f}| = {:.16f}", std::real(H2), E2, var);
@@ -627,6 +629,8 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
         }
     }
     assert(std::abs(std::imag(H2)) < 1e-10);
+    // #pragma message "remove minus one for double parity shift test"
+    // H2-=1.0;
     double var = std::abs(H2 - E2);
     // tools::log->info("Var H = H² - E² = {:.16f} - {:.16f} = {:.16f}", std::real(H2), E2, var);
     if(measurements != nullptr) measurements->energy_variance = var;

@@ -139,7 +139,7 @@ std::string getLogMessage(struct primme_params *primme, [[maybe_unused]] int *ba
                           [[maybe_unused]] void *basisEvals = nullptr, [[maybe_unused]] void *basisNorms = nullptr, [[maybe_unused]] int *numLocked = 0,
                           [[maybe_unused]] void *lockedEvals = nullptr, [[maybe_unused]] void *lockedNorms = nullptr) {
     if(primme->monitor == nullptr) {
-        return fmt::format("iter {:>6} | mv {:>6} | size {} | λ {:19.16f} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s", primme->stats.numOuterIterations,
+        return fmt::format("iter {:>6} | mv {:>6} | size {} | λ {:28.24f} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s", primme->stats.numOuterIterations,
                            primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
@@ -323,6 +323,12 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.monitorFun = monitorFun; // Set the function which prints log output
     primme.monitor    = this;       // Make eig objects visible from within monitorFun
 
+    // Set mass matrix if given
+    if(config.primme_massMatrixMatvec) {
+        primme.massMatrixMatvec = config.primme_massMatrixMatvec.value();
+        primme.massMatrix       = this;
+    }
+
     // Set custom convergence test if given
     if(config.primme_convTestFun) {
         primme.convTestFun = config.primme_convTestFun.value();
@@ -334,6 +340,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
             primme.applyPreconditioner           = config.primme_preconditioner.value();
             primme.preconditioner                = this;
             primme.correctionParams.precondition = true;
+            matrix.preconditioner                = eig::Preconditioner::JACOBI;
+            matrix.set_jcbMaxBlockSize(config.jcbMaxBlockSize);
+            // matrix.CalcPc();
         }
     }
 
@@ -350,7 +359,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.correctionParams.maxInnerIterations = -1; // Up to the remaining matvecs
     primme.maxBlockSize                        = config.primme_maxBlockSize.value_or(1);
     primme.maxBasisSize                        = getBasisSize(primme.n, primme.numEvals, config.maxNcv);
-    primme.minRestartSize                      = config.primme_minRestartSize.value_or(primme.maxBasisSize / 2);
+    primme.minRestartSize                      = config.primme_minRestartSize.value_or(primme.maxBasisSize / 2 -1);
     // Make sure the basis is bigger than minRestartSize + maxPrevRetain, where the latter will be set to max(2,maxBlockSize) in primme_set_method
     primme.maxBasisSize = std::clamp(primme.maxBasisSize, primme.minRestartSize + std::max(2, primme.maxBlockSize + 1), primme.n);
 
@@ -459,6 +468,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
                 eig::log->error("PRIMME_INVALID_ARG  maxPrevRetain({}) + minRestartSize({}) >= maxBasisSize({}), and n({}) > maxBasisSize({}) (exit {})",
                                 primme.restartingParams.maxPrevRetain, primme.minRestartSize, primme.maxBasisSize, primme.n, primme.maxBasisSize, info);
                 break;
+            case -39: eig::log->error("Incorrect projection with massMatVec: Use primme_proj_RR! (exit {})", info); break;
             case -40: eig::log->error("PRIMME_LAPACK_FAILURE (exit {})", info); break;
             case -41: eig::log->error("PRIMME_USER_FAILURE (exit {})", info); break;
             case -42: eig::log->error("PRIMME_ORTHO_CONST_FAILURE (exit {})", info); break;

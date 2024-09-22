@@ -281,6 +281,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     switch(mevent) {
         case MergeEvent::MOVE:
         case MergeEvent::NORM:
+        case MergeEvent::EXP:
         case MergeEvent::SWAP: keepTruncationErrors = false; break;
         default: break;
     }

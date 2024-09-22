@@ -334,7 +334,6 @@ namespace num {
         num  = std::clamp<size_t>(num, 0, in.size() - from);
         if constexpr(std::is_default_constructible_v<Input>) {
             Input res;
-            res.reserve(num);
             std::adjacent_difference(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), std::back_inserter(res));
             return res;
         } else {
@@ -344,6 +343,13 @@ namespace num {
             std::adjacent_difference(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), std::back_inserter(res));
             return res;
         }
+    }
+
+    template<typename Input>
+    [[nodiscard]] auto mean(const Input &in, size_t from = 0, size_t num = -1ul) {
+        from = std::clamp<size_t>(from, 0, in.size());
+        num  = std::clamp<size_t>(num, 0, in.size() - from);
+        return std::reduce(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num)) / static_cast<double>(num);
     }
 
     /*! \brief Cumulative operator for containers such as vector

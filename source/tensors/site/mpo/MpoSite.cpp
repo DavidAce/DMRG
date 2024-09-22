@@ -394,12 +394,23 @@ Eigen::Tensor<cplx, 4> MpoSite::get_parity_shifted_mpo_squared(const Eigen::Tens
     auto id = qm::spin::half::id;
     auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo2);
 
-    Eigen::Tensor<cplx, 4> mpo2_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
-    mpo2_with_parity_shift_op.setZero();
-    mpo2_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
-    mpo2_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
-    mpo2_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-    return mpo2_with_parity_shift_op;
+Eigen::Tensor<cplx, 4> mpo2_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
+mpo2_with_parity_shift_op.setZero();
+mpo2_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
+mpo2_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
+mpo2_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+return mpo2_with_parity_shift_op;
+
+// #pragma message "Remove this test below for shifting both parity sectors"
+//     Eigen::Tensor<cplx, 4> mpo2_with_both_parity_shifts_op(d0 + 4, d1 + 4, d2, d3);
+//     mpo2_with_both_parity_shifts_op.setZero();
+//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
+//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
+//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 2, d1 + 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 3, d1 + 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+//
+//     return mpo2_with_both_parity_shifts_op;
 }
 
 void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
@@ -415,7 +426,8 @@ void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
     }
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(sign != parity_shift_sign_mpo2 or axus != parity_shift_axus_mpo2) {
-        if constexpr(settings::debug) tools::log->trace("MpoSite[{}]::set_parity_shift_mpo_squared: {}{}", get_position(), fmt::format("{:+}", sign).front(), axus);
+        if constexpr(settings::debug)
+            tools::log->trace("MpoSite[{}]::set_parity_shift_mpo_squared: {}{}", get_position(), fmt::format("{:+}", sign).front(), axus);
         parity_shift_sign_mpo2 = sign;
         parity_shift_axus_mpo2 = axus;
         clear_mpo_squared();
@@ -606,13 +618,26 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_left() const {
     if(std::abs(parity_shift_sign_mpo2) != 1.0) return ledge2;
 
     double q = 1.0;
-    double a = 2.0;                               // The shift amount (select 1.0 to shift up by 1.0)
+    double a = 1.0;                               // The shift amount (select 1.0 to shift up by 1.0)
     if(position == 0) q = parity_shift_sign_mpo2; // Selects the opposite sector sign (only needed on one MPO)
     auto ledge2_with_shift = Eigen::Tensor<Scalar, 1>(d0 * d0 + 2);
     ledge2_with_shift.setZero();
     ledge2_with_shift.slice(tenx::array1{0}, ledge2.dimensions()) = ledge2;
     ledge2_with_shift(d0 * d0 + 0)                                = a * 0.5;        // 1.0;
     ledge2_with_shift(d0 * d0 + 1)                                = a * 0.5 * (-q); // 1.0;
+
+    // #pragma message "remove the test below for double shifts"
+    // double q = 1.0;
+    // double a = 2.0;                               // The shift amount (select 1.0 to shift up by 1.0)
+    // if(position == 0) q = parity_shift_sign_mpo2; // Selects the opposite sector sign (only needed on one MPO)
+    // auto ledge2_with_shift = Eigen::Tensor<Scalar, 1>(d0 * d0 + 4);
+    // ledge2_with_shift.setZero();
+    // ledge2_with_shift.slice(tenx::array1{0}, ledge2.dimensions()) = ledge2;
+    // ledge2_with_shift(d0 * d0 + 0)                                = a * 0.5;        // 1.0;
+    // ledge2_with_shift(d0 * d0 + 1)                                = a * 0.5 * (-q); // 1.0;
+    // ledge2_with_shift(d0 * d0 + 2)                                = 0.5 * a * 0.5;        // 1.0;
+    // ledge2_with_shift(d0 * d0 + 3)                                = 0.5 * a * 0.5 * (q); // 1.0;
+
     return ledge2_with_shift;
 }
 template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO2_edge_left() const;
@@ -646,6 +671,15 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_right() const {
     redge2_with_shift.slice(tenx::array1{0}, redge2.dimensions()) = redge2;
     redge2_with_shift(d0 * d0 + 0)                                = 1.0; // 0.5;
     redge2_with_shift(d0 * d0 + 1)                                = 1.0; // 0.5 * q;
+    // #pragma message "remove the test below for double shifts"
+    // auto redge2_with_shift = Eigen::Tensor<Scalar, 1>(d0 * d0 + 4);
+    // redge2_with_shift.setZero();
+    // redge2_with_shift.slice(tenx::array1{0}, redge2.dimensions()) = redge2;
+    // redge2_with_shift(d0 * d0 + 0)                                = 1.0; // 0.5;
+    // redge2_with_shift(d0 * d0 + 1)                                = 1.0; // 0.5 * q;
+    // redge2_with_shift(d0 * d0 + 2)                                = 1.0; // 0.5 * q;
+    // redge2_with_shift(d0 * d0 + 3)                                = 1.0; // 0.5 * q;
+
     return redge2_with_shift;
 }
 template Eigen::Tensor<cplx, 1>   MpoSite::get_MPO2_edge_right() const;

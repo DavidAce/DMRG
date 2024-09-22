@@ -43,6 +43,7 @@ enum class MergeEvent {
     SWAP, /*!< Swapped sites (e.g. in fLBIT) */
     GATE, /*!< Applied a gate, e.g. during time evolution */
     OPT,  /*!< Optimized some sites, e.g. during the main DMRG update */
+    EXP,  /*!< Subspace expansion (aka perurbation, noise, enrichment) to increase the bond dimension */
 };
 
 enum class BlockSizePolicy {
@@ -271,6 +272,7 @@ enum class OptSolver {
 enum class OptRitz {
     NONE, /*!< No eigenpair is targeted (e.g. time evolution) */
     LR,   /*!< Largest Real eigenvalue */
+    LM,   /*!< Largest Absolute eigenvalue */
     SR,   /*!< Smallest Real eigenvalue */
     SM,   /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
     IS,   /*!< Initial State energy. MPO² Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
@@ -646,8 +648,9 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::NONE)                                return "NONE";
-        if(item == OptRitz::SR)                                  return "SR";
         if(item == OptRitz::LR)                                  return "LR";
+        if(item == OptRitz::LM)                                  return "LM";
+        if(item == OptRitz::SM)                                  return "SM";
         if(item == OptRitz::SM)                                  return "SM";
         if(item == OptRitz::IS)                                  return "IS";
         if(item == OptRitz::TE)                                  return "TE";
@@ -1062,8 +1065,9 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "NONE")                                  return OptRitz::NONE;
-        if(item == "SR")                                    return OptRitz::SR;
         if(item == "LR")                                    return OptRitz::LR;
+        if(item == "LM")                                    return OptRitz::LM;
+        if(item == "SR")                                    return OptRitz::SR;
         if(item == "SM")                                    return OptRitz::SM;
         if(item == "IS")                                    return OptRitz::IS;
         if(item == "TE")                                    return OptRitz::TE;

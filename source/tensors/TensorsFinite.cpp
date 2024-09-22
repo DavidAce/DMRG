@@ -527,19 +527,23 @@ EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode
     // if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
     auto t_exp     = tid::tic_scope("exp_env");
     auto expresult = EnvExpansionResult();
+    if(get_position<long>() < 0) {
+        expresult.msg ="Negative position";
+        return {};
+    }
+    if(active_sites.empty()) activate_sites({get_position<size_t>()});
+    rebuild_edges(); // Use fresh edges
     if constexpr(settings::debug) assert_validity();
     switch(envExpandSide) {
         case EnvExpandSide::BACKWARD: {
             if(get_position<long>() >= 0) {
-                activate_sites({get_position<size_t>()});
-                rebuild_edges();
                 // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
                 expresult = tools::finite::env::expand_environment_backward(*state, *model, *edges, envExpandMode, svd_cfg);
             }
             break;
         }
         case EnvExpandSide::FORWARD: {
-            expresult = tools::finite::env::expand_environment_forward(*state, *model, *edges, envExpandMode, svd_cfg);
+            expresult = tools::finite::env::expand_environment_forward_nsite(*state, *model, *edges, envExpandMode, svd_cfg);
             break;
         }
     }

@@ -25,6 +25,7 @@ namespace tools::finite::opt::internal{
 
     namespace comparator{
         extern bool energy              (const opt_mps &lhs, const opt_mps &rhs);
+        extern bool energy_absolute     (const opt_mps &lhs, const opt_mps &rhs);
         extern bool energy_distance     (const opt_mps &lhs, const opt_mps &rhs, double target);
         extern bool variance            (const opt_mps &lhs, const opt_mps &rhs);
         extern bool gradient            (const opt_mps &lhs, const opt_mps &rhs);

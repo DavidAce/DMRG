@@ -112,8 +112,8 @@ namespace tools::common::contraction {
 
     template<typename mps_type, typename mpo_type, typename env_type>
     mps_type matrix_vector_product(const mps_type &mps, const mpo_type &mpo, const env_type &envL, const env_type &envR) {
-        mps_type result;
-        result.resize(mps.dimensions());
+        using Scalar = typename mps_type::Scalar;
+        Eigen::Tensor<Scalar,3> result(mps.dimensions());
         matrix_vector_product(result, mps, mpo, envL, envR);
         return result;
     }

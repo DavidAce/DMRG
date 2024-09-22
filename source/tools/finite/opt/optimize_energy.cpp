@@ -26,9 +26,19 @@ namespace tools::finite::opt {
         if(x == nullptr) return;
         if(y == nullptr) return;
         if(primme == nullptr) return;
-        const auto H_ptr = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
+        const auto H_ptr = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
         H_ptr->FactorOP();
         H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
+
+    template<typename Scalar>
+    void preconditioner_jacobi(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+        H_ptr->preconditioner = eig::Preconditioner::JACOBI;
+        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
     }
 
     template<typename Scalar>
@@ -44,14 +54,14 @@ namespace tools::finite::opt {
         const auto       &mpo  = tensors.get_multisite_mpo();
         const auto       &env  = tensors.get_multisite_env_ene_blk();
         const auto        size = initial_mps.get_tensor().size();
-        MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
+        MatVecMPOS<Scalar> hamiltonian(env.L, env.R, mpo);
         hamiltonian.factorization = eig::Factorization::NONE; // No LU factorization by default
 
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
         solver.config.tol             = meta.eigs_tol.value_or(settings::precision::eigs_tol_min);
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC;
+        solver.config.primme_method   = eig::stringToMethod(meta.primme_method);;
         solver.config.maxIter         = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
         solver.config.maxTime         = 2 * 60 * 60;
         solver.config.maxNev          = meta.eigs_nev.value_or(1);
@@ -87,11 +97,12 @@ namespace tools::finite::opt {
                                       size, settings::precision::eigs_max_size_shift_invert);
                 // The problem size is too big. Just find the eigenstate closest to zero
                 // Remember: since the Hamiltonian is expected to be shifted, the target energy is near zero.
-                hamiltonian.factorization         = eig::Factorization::NONE;
-                solver.config.ritz                = eig::Ritz::primme_closest_abs;
-                solver.config.primme_projection   = "primme_proj_refined";
-                solver.config.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
-                // solver.config.primme_preconditioner = preconditioner<Scalar>;
+                hamiltonian.factorization           = eig::Factorization::NONE;
+                solver.config.ritz                  = eig::Ritz::primme_closest_abs;
+                solver.config.primme_projection     = "primme_proj_refined";
+                solver.config.primme_targetShifts   = {meta.eigv_target.value_or(0.0)};
+                solver.config.primme_preconditioner = preconditioner_jacobi<Scalar>;
+                solver.config.jcbMaxBlockSize       = meta.eigs_jcbMaxBlockSize;
             }
         }
 
@@ -197,7 +208,6 @@ namespace tools::finite::opt {
                 case OptRitz::SR: return lhs_min_energy < rhs_min_energy;
                 case OptRitz::LR: return lhs_max_energy > rhs_max_energy;
                 case OptRitz::SM: {
-
                     // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
                     // auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
                     // auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());

@@ -9,6 +9,7 @@ namespace eig {
     enum class Form { SYMM, NSYM };    // Symmetric or non-symmetric problems (complex symmetric are assumed Hermitian)
     enum class Type { REAL, CPLX };    // Real or complex, i.e. double or std::complex<double> matrix
     enum class Side { L, R, LR };      // Left, right or both eigenvectors (for nsym problems)
+    enum class Prob { STD, GEN };      // Standard or generalized eigenvalue problem
     enum class Ritz {
         LA,
         SA,
@@ -27,7 +28,7 @@ namespace eig {
         primme_largest_abs
     }; // Choice of eigenvalue. LA is largest algebraic, and so on.
     enum class Factorization { NONE, LDLT, LLT, LU };
-    enum class Preconditioner { NONE, DIAG, TRIDIAG, LLT };
+    enum class Preconditioner { NONE, JACOBI };
     enum class Storage { DENSE, SPARSE, MPS }; // Eigen Dense or Sparse, or std::vector for container
     enum class Shinv { ON, OFF };
     enum class Dephase { ON, OFF };
@@ -104,9 +105,7 @@ namespace eig {
     inline std::string_view PreconditionerToString(Preconditioner prec) {
         switch(prec) {
             case Preconditioner::NONE: return "NONE";
-            case Preconditioner::DIAG: return "DIAG";
-            case Preconditioner::TRIDIAG: return "TRIDIAG";
-            case Preconditioner::LLT: return "LLT";
+            case Preconditioner::JACOBI: return "JACOBI";
             default: throw std::logic_error("No valid eig::Preconditioner given");
         }
     }
@@ -127,7 +126,16 @@ namespace eig {
             default: throw std::logic_error("Not a valid eig::Type");
         }
     }
+
     constexpr std::string_view TypeToString(std::optional<Type> type) { return type ? TypeToString(type.value()) : "Type:UNKNOWN"; }
+
+    constexpr std::string_view ProbToString(Prob prob) {
+        switch(prob) {
+            case Prob::STD: return "STD";
+            case Prob::GEN: return "GEN";
+            default: throw std::logic_error("Not a valid eig::Prob");
+        }
+    }
 
     inline PrimmeMethod stringToMethod(std::optional<std::string> methodstring) {
         if(not methodstring.has_value()) return PrimmeMethod::PRIMME_DYNAMIC;

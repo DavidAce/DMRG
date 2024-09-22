@@ -18,6 +18,7 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
+#include "tools/finite/mps.h"
 #include <Eigen/Eigenvalues>
 
 namespace settings {
@@ -25,98 +26,415 @@ namespace settings {
     static constexpr bool debug_expansion = false;
 }
 
-double tools::finite::env::get_optimal_mixing_factor_ene_new(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                             const EdgesFinite &edges, EnvExpandMode envExpandMode) {
-    if(not has_flag(envExpandMode, EnvExpandMode::ENE)) return std::numeric_limits<double>::quiet_NaN();
+std::array<double, 2> tools::finite::env::get_optimal_mixing_factor_ene(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                        const EdgesFinite &edges, EnvExpandMode envExpandMode) {
+    if(not has_flag(envExpandMode, EnvExpandMode::ENE)) return {0.0, 0.0};
     assert_edges_ene(state, model, edges);
-    // Calculate the residual_norm r = |Hv - Ev|
-    auto                                v    = state.get_multisite_mps(sites);
-    auto                                env  = edges.get_multisite_env_ene_blk(sites);
+
+    auto                                t    = state.get_multisite_mps(sites);
+    auto                                env1 = edges.get_multisite_env_ene_blk(sites);
     auto                                mpos = model.get_mpo(sites);
-    std::vector<Eigen::Tensor<cplx, 4>> H;
-    for(const auto &mpo : mpos) H.emplace_back(mpo.get().MPO());
+    std::vector<Eigen::Tensor<cplx, 4>> H1;
+    for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
 
-    auto Hv      = tools::common::contraction::matrix_vector_product(v, H, env.L, env.R);
-    auto HHv    = tools::common::contraction::matrix_vector_product(Hv, H, env.L, env.R);
-    auto vHv     = tools::common::contraction::contract_mps_overlap(v, Hv);
-    auto vHHHv = tools::common::contraction::contract_mps_overlap(Hv, HHv);
+    auto H1t = tools::common::contraction::matrix_vector_product(t, H1, env1.L, env1.R);
 
-    auto E  = vHv;                                                              // Energy
-    auto r  = cplx((tenx::VectorMap(Hv) - tenx::VectorMap(v) * E).norm(), 0.0); // Residual norm
-    cplx Er = vHHHv / (r * r);                                                  // "Energy" of the residual vector
+    auto v0     = tenx::VectorMap(t);
+    auto H1v0   = tenx::VectorMap(H1t);
+    auto v0H1v0 = v0.dot(H1v0);
+    // Gram schmidt
+    Eigen::VectorXcd       v1     = (H1v0 - v0 * v0.dot(H1v0)).normalized(); // Normalized residual vector
+    Eigen::Tensor<cplx, 3> t1     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v1.data(), t.dimensions());
+    auto                   H1t1   = tools::common::contraction::matrix_vector_product(t1, H1, env1.L, env1.R);
+    Eigen::VectorXcd       H1v1   = tenx::VectorMap(H1t1);
+    auto                   v1H1v0 = v1.dot(H1v0);
+    auto                   v1H1v1 = v1.dot(H1v1);
+    auto                   v0H1v1 = std::conj(v1H1v0);
 
-    auto K   = Eigen::Matrix2cd{{E, r}, {r, Er}};
-    auto evs = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
-    return evs.col(0).cwiseAbs().minCoeff();
-}
+    auto K      = Eigen::Matrix2cd{{v0H1v0, v0H1v1}, {v1H1v0, v1H1v1}};
+    auto solver = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors);
+    auto evals  = solver.eigenvalues();
+    auto evecs  = solver.eigenvectors();
+    tools::log->info("K(H1): \n{}\n", linalg::matrix::to_string(K.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals, 8));
+    long                  minIdx  = 0;
+    [[maybe_unused]] auto minEval = evals.minCoeff(&minIdx);
+    Eigen::VectorXd       col     = evecs.col(minIdx).real();
 
-double tools::finite::env::get_optimal_mixing_factor_ene_old(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                             const EdgesFinite &edges, EnvExpandMode envExpandMode) {
-    if(not has_flag(envExpandMode, EnvExpandMode::ENE)) return std::numeric_limits<double>::quiet_NaN();
-    assert_edges_ene(state, model, edges);
+    return {col.coeff(0), col.coeff(1)};
+
     // Calculate the residual_norm r = |Hv - Ev|
-    auto   mps           = state.get_multisite_mps(sites);
-    auto   mpo           = model.get_multisite_mpo(sites);
-    auto   env           = edges.get_multisite_env_ene_blk(sites);
-    cplx   E             = tools::common::contraction::expectation_value(mps, mpo, env.L, env.R);
-    auto   Hv            = tools::common::contraction::matrix_vector_product(mps, mpo, env.L, env.R);
-    double residual_norm = (tenx::VectorMap(Hv) - tenx::VectorMap(mps) * E).norm();
-    auto   r             = cplx(residual_norm, 0.0);
-    cplx   Er            = tools::common::contraction::expectation_value(Hv, mpo, env.L, env.R) / (r * r);
-    auto   K             = Eigen::Matrix2cd{{E, r}, {r, Er}};
-    auto   evs           = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
-    return evs.col(0).cwiseAbs().minCoeff();
+    // auto                                t    = state.get_multisite_mps(sites);
+    // auto                                env1  = edges.get_multisite_env_ene_blk(sites);
+    // auto                                mpos = model.get_mpo(sites);
+    // std::vector<Eigen::Tensor<cplx, 4>> H1;
+    // for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
+    //
+    // auto Hv    = tools::common::contraction::matrix_vector_product(v, H, env1.L, env1.R);
+    // auto HHv   = tools::common::contraction::matrix_vector_product(Hv, H, env.L, env1.R);
+    // auto vHv   = tools::common::contraction::contract_mps_overlap(v, Hv);
+    // auto vHHHv = tools::common::contraction::contract_mps_overlap(Hv, HHv);
+    // auto E     = vHv;                                                              // Energy
+    // auto r     = cplx((tenx::VectorMap(Hv) - tenx::VectorMap(v) * E).norm(), 0.0); // Residual norm
+    // // auto V  =
+    // cplx Er = vHHHv / (r * r); // "Energy" of the residual vector
+    //
+    // auto K   = Eigen::Matrix2cd{{E, r}, {r, Er}};
+    // auto evs = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
+    // return evs.col(0).cwiseAbs().minCoeff();
 }
 
-double tools::finite::env::get_optimal_mixing_factor_var_new(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                             const EdgesFinite &edges, EnvExpandMode envExpandMode) {
-    if(not has_flag(envExpandMode, EnvExpandMode::VAR)) return std::numeric_limits<double>::quiet_NaN();
+std::array<double, 2> tools::finite::env::get_optimal_mixing_factor_var(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                        const EdgesFinite &edges, EnvExpandMode envExpandMode) {
+    if(not has_flag(envExpandMode, EnvExpandMode::VAR)) return {0.0, 0.0};
     // Calculate the residual_norm r = |Hv - Ev|
     assert_edges_var(state, model, edges);
-    // Calculate the residual_norm r = |Hv - Ev|
-    auto                                v    = state.get_multisite_mps(sites);
-    auto                                env  = edges.get_multisite_env_var_blk(sites);
+    auto                                t    = state.get_multisite_mps(sites);
+    auto                                env2 = edges.get_multisite_env_var_blk(sites);
     auto                                mpos = model.get_mpo(sites);
     std::vector<Eigen::Tensor<cplx, 4>> H2;
     for(const auto &mpo : mpos) H2.emplace_back(mpo.get().MPO2());
 
-    auto H2v      = tools::common::contraction::matrix_vector_product(v, H2, env.L, env.R);
-    auto H2H2v    = tools::common::contraction::matrix_vector_product(H2v, H2, env.L, env.R);
-    auto vH2v     = tools::common::contraction::contract_mps_overlap(v, H2v);
-    auto vH2H2H2v = tools::common::contraction::contract_mps_overlap(H2v, H2H2v);
+    auto H2t = tools::common::contraction::matrix_vector_product(t, H2, env2.L, env2.R);
+    // Define the krylov subspace
+    auto v0   = tenx::VectorMap(t);
+    auto H2v0 = tenx::VectorMap(H2t);
 
-    auto V  = vH2v;                                                              // Variance
-    auto r  = cplx((tenx::VectorMap(H2v) - tenx::VectorMap(v) * V).norm(), 0.0); // Residual norm
-    cplx Vr = vH2H2H2v / (r * r);                                                // "Variance" of the residual vector
+    // Gram schmidt
+    Eigen::VectorXcd v1 = (H2v0 - v0 * v0.dot(H2v0)).normalized(); // Orthogonal vector to v0
 
-    auto K   = Eigen::Matrix2cd{{V, r}, {r, Vr}};
-    auto evs = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
-    // tools::log->info("evs: \n{}\n", linalg::matrix::to_string(evs, 8));
-    return evs.col(0).cwiseAbs().minCoeff();
-}
+    Eigen::Tensor<cplx, 3> t1     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v1.data(), t.dimensions());
+    auto                   H2t1   = tools::common::contraction::matrix_vector_product(t1, H2, env2.L, env2.R);
+    auto                   H2v1   = tenx::VectorMap(H2t1);
+    auto                   v0H2v0 = v0.dot(H2v0);
+    auto                   v1H2v0 = v1.dot(H2v0);
+    auto                   v1H2v1 = v1.dot(H2v1);
+    auto                   v0H2v1 = std::conj(v1H2v0);
 
-double tools::finite::env::get_optimal_mixing_factor_var_old(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                             const EdgesFinite &edges, EnvExpandMode envExpandMode) {
-    if(not has_flag(envExpandMode, EnvExpandMode::VAR)) return std::numeric_limits<double>::quiet_NaN();
+    auto K = Eigen::Matrix2cd{
+        {v0H2v0, v0H2v1},
+        {v1H2v0, v1H2v1},
+    };
+
+    auto solver = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors);
+    auto evals  = solver.eigenvalues();
+    auto evecs  = solver.eigenvectors();
+    tools::log->info("K(H2): \n{}\n", linalg::matrix::to_string(K.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals, 8));
+    long                  minIdx  = 0;
+    [[maybe_unused]] auto minEval = evals.minCoeff(&minIdx);
+    Eigen::VectorXd       col     = evecs.col(minIdx).real();
+    // if(col.coeff(0) < 0.0) col.array() *= -1.0;
+
+    return {col.coeff(0), col.coeff(1)};
+
     // Calculate the residual_norm r = |Hv - Ev|
-    assert_edges_var(state, model, edges);
 
-    auto   mps           = state.get_multisite_mps(sites);
-    auto   mpo           = model.get_multisite_mpo_squared(sites);
-    auto   env           = edges.get_multisite_env_var_blk(sites);
-    cplx   V             = tools::common::contraction::expectation_value(mps, mpo, env.L, env.R);
-    auto   H2v           = tools::common::contraction::matrix_vector_product(mps, mpo, env.L, env.R);
-    double residual_norm = (tenx::VectorMap(H2v) - V * tenx::VectorMap(mps)).norm();
-    auto   r             = cplx(residual_norm, 0.0);
-    cplx   Vr            = tools::common::contraction::expectation_value(H2v, mpo, env.L, env.R) / (r * r);
-    auto   K             = Eigen::Matrix2cd{{V, r}, {r, Vr}};
-    auto   evs           = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
-    // auto maxval = evs.col(0).cwiseAbs().maxCoeff();
+    // auto env = edges.get_multisite_env_var_blk(sites);
+
+    // auto H2H2t    = tools::common::contraction::matrix_vector_product(H2t, H2, env.L, env.R);
+    // auto vH2v     = tools::common::contraction::contract_mps_overlap(t, H2t);
+    // auto vH2H2H2v = tools::common::contraction::contract_mps_overlap(H2t, H2H2t);
+
+    // auto v   = tenx::VectorMap(t);
+    // auto H2v = tenx::VectorMap(H2t);
+    // auto H2H2v = tenx::VectorMap(H2H2t);
+
+    // auto vH2v     = v.dot(H2v);
+    // auto vH2H2H2v = H2v.dot(H2H2v);
+
+    // auto V  = vH2v;                            // Variance
+    // auto rn = cplx((H2v - v * V).norm(), 0.0); // Residual norm
+    // cplx Vr = vH2H2H2v / (rn * rn);            // "Variance" of the residual vector
+    //
+    // auto Kold = Eigen::Matrix2cd{{V, rn}, {rn, Vr}};
+    // auto evs  = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K, Eigen::ComputeEigenvectors).eigenvectors();
+    // tools::log->info("K  : \n{}\n", linalg::matrix::to_string(K.real(), 8));
     // tools::log->info("evs: \n{}\n", linalg::matrix::to_string(evs, 8));
-    return evs.col(0).cwiseAbs().minCoeff();
+
+    // auto r  = Eigen::VectorXcd((H2v - v * V).normalized()); // Residual vector
+    // // auto rt = tenx::TensorMap(r, t.dimensions()); // Residual tensor
+    // auto rt = Eigen::TensorMap<Eigen::Tensor<cplx,3>>(r.data(), t.dimensions()); // Residual tensor
+    // auto H2rt = Eigen::Tensor<cplx,3>(t.dimensions());
+    // tools::common::contraction::matrix_vector_product(H2rt, rt, H2, env.L, env.R);
+    // auto H2r = tenx::VectorMap(H2rt);
+    //
+    // auto rH2v = r.dot(H2v);
+    // auto rH2r = r.dot(H2r);
+    // auto K2   = Eigen::Matrix2cd{{vH2v, rH2v}, {std::conj(rH2v), rH2r}};
+    // auto evs2 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K2, Eigen::ComputeEigenvectors).eigenvectors();
+    //
+    // tools::log->info("Kold  : \n{}\n", linalg::matrix::to_string(Kold.real(), 8));
+    // tools::log->info("evs2: \n{}\n", linalg::matrix::to_string(evs, 8));
+    // return evs.col(0).cwiseAbs().minCoeff();
 }
 
-void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_P0, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_PR,
+std::tuple<double, double, double> tools::finite::env::get_optimal_mixing_factors(const std::vector<size_t> &sites, const StateFinite &state,
+                                                                                  const ModelFinite &model, const EdgesFinite &edges,
+                                                                                  EnvExpandMode envExpandMode) {
+    assert_edges_ene(state, model, edges);
+    assert_edges_var(state, model, edges);
+    auto                                t    = state.get_multisite_mps(sites);
+    auto                                env1 = edges.get_multisite_env_ene_blk(sites);
+    auto                                env2 = edges.get_multisite_env_var_blk(sites);
+    auto                                mpos = model.get_mpo(sites);
+    std::vector<Eigen::Tensor<cplx, 4>> H1;
+    std::vector<Eigen::Tensor<cplx, 4>> H2;
+    for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
+    for(const auto &mpo : mpos) H2.emplace_back(mpo.get().MPO2());
+
+    auto H1t = tools::common::contraction::matrix_vector_product(t, H1, env1.L, env1.R);
+    auto H2t = tools::common::contraction::matrix_vector_product(t, H2, env2.L, env2.R);
+    // Define the krylov subspace
+    auto v0   = tenx::VectorMap(t);
+    auto H1v0 = tenx::VectorMap(H1t);
+    auto H2v0 = tenx::VectorMap(H2t);
+
+    // Gram schmidt
+    Eigen::VectorXcd v1 = (H1v0 - v0 * v0.dot(H1v0)).normalized();                     // Normalized residual vector
+    Eigen::VectorXcd v2 = (H2v0 - v0 * v0.dot(H2v0) - v1 * v1.dot(H2v0)).normalized(); // Normalized residual vector
+
+    Eigen::Tensor<cplx, 3> t1     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v1.data(), t.dimensions());
+    Eigen::Tensor<cplx, 3> t2     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v2.data(), t.dimensions());
+    auto                   H1t1   = tools::common::contraction::matrix_vector_product(t1, H1, env1.L, env1.R);
+    auto                   H1t2   = tools::common::contraction::matrix_vector_product(t2, H1, env1.L, env1.R);
+    auto                   H2t1   = tools::common::contraction::matrix_vector_product(t1, H2, env2.L, env2.R);
+    auto                   H2t2   = tools::common::contraction::matrix_vector_product(t2, H2, env2.L, env2.R);
+    auto                   H1v1   = tenx::VectorMap(H1t1);
+    auto                   H1v2   = tenx::VectorMap(H1t2);
+    auto                   H2v1   = tenx::VectorMap(H2t1);
+    auto                   H2v2   = tenx::VectorMap(H2t2);
+    auto                   H1_on  = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::ENE));
+    auto                   H2_on  = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::VAR));
+    auto                   v0H1v0 = v0.dot(H1v0);
+    auto                   v1H1v0 = v1.dot(H1v0) * H1_on;
+    auto                   v1H1v1 = v1.dot(H1v1) * H1_on;
+    auto                   v1H1v2 = v1.dot(H1v2) * H1_on * H2_on;
+    auto                   v2H1v0 = v2.dot(H1v0) * H2_on;
+    auto                   v2H1v2 = v2.dot(H1v2) * H2_on * H2_on;
+
+    auto v0H1v1 = std::conj(v1H1v0);
+    auto v0H1v2 = std::conj(v2H1v0);
+    auto v2H1v1 = std::conj(v1H1v2);
+
+    auto K1 = Eigen::Matrix3cd{
+        {v0H1v0, v0H1v1, v0H1v2},
+        {v1H1v0, v1H1v1, v1H1v2},
+        {v2H1v0, v2H1v1, v2H1v2},
+    };
+
+    auto solver1 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K1, Eigen::ComputeEigenvectors);
+    auto evals1  = solver1.eigenvalues();
+    auto evecs1  = solver1.eigenvectors();
+    tools::log->info("K1   : \n{}\n", linalg::matrix::to_string(K1.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs1, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals1, 8));
+
+    auto v0H2v0 = v0.dot(H2v0);
+    auto v1H2v0 = v1.dot(H2v0);
+    auto v2H2v0 = v2.dot(H2v0);
+    auto v1H2v1 = v1.dot(H2v1);
+    auto v1H2v2 = v1.dot(H2v2);
+    auto v2H2v2 = v2.dot(H2v2);
+
+    auto v0H2v1 = std::conj(v1H2v0);
+    auto v0H2v2 = std::conj(v2H2v0);
+    auto v2H2v1 = std::conj(v1H2v2);
+
+    auto K2 = Eigen::Matrix3cd{
+        {v0H2v0, v0H2v1, v0H2v2},
+        {v1H2v0, v1H2v1, v1H2v2},
+        {v2H2v0, v2H2v1, v2H2v2},
+    };
+
+    auto solver2 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K2, Eigen::ComputeEigenvectors);
+    auto evals2  = solver2.eigenvalues();
+    auto evecs2  = solver2.eigenvectors();
+    tools::log->info("K2   : \n{}\n", linalg::matrix::to_string(K2.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs2, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals2, 8));
+
+    auto K3      = Eigen::Matrix3cd(K2 - K1 * K1);
+    auto solver3 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K3, Eigen::ComputeEigenvectors);
+    auto evals3  = solver3.eigenvalues();
+    auto evecs3  = solver3.eigenvectors();
+    tools::log->info("K3   : \n{}\n", linalg::matrix::to_string(K3.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs3, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals3, 8));
+
+    // Decide to minimize <H²> or <H²> - E²
+
+    long            minIdx  = 0;
+    auto            minEval = evals3.minCoeff(&minIdx);
+    Eigen::VectorXd col     = evecs3.col(minIdx).real();
+    // if(col.coeff(0) < 0.0) col.array() *= -1.0;
+    Eigen::VectorXcd       vf     = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
+    Eigen::Tensor<cplx, 3> tf     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(vf.data(), t.dimensions());
+    auto                   vfH1vf = tools::common::contraction::expectation_value(tf, H1, env1.L, env1.R);
+    auto                   vfH2vf = tools::common::contraction::expectation_value(tf, H2, env2.L, env2.R);
+    tools::log->info("final state <H> = {:.16f}, <H²> = {:.16f}, Var(H) = {:.3e}", vfH1vf, vfH2vf, vfH2vf - vfH1vf * vfH1vf);
+
+    return {col.coeff(0), col.coeff(1), col.coeff(2)};
+}
+
+EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                 const EdgesFinite &edges, EnvExpandMode envExpandMode) {
+    assert_edges_ene(state, model, edges);
+    assert_edges_var(state, model, edges);
+    auto res         = EnvExpansionResult();
+    res.sites        = sites;
+    res.dims_old     = state.get_mps_dims(sites);
+    res.bond_old     = state.get_bond_dims(sites);
+    res.posL         = sites.front();
+    res.posR         = sites.back();
+    const auto &mpsL = state.get_mps_site(res.posL);
+    const auto &mpsR = state.get_mps_site(res.posR);
+    res.dimL_old     = mpsL.dimensions();
+    res.dimR_old     = mpsR.dimensions();
+
+    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query, just return
+
+    auto t0 = state.get_multisite_mps(sites);
+    auto t1 = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto t2 = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto v0 = tenx::VectorMap(t0);
+    auto v1 = tenx::VectorMap(t1);
+    auto v2 = tenx::VectorMap(t2);
+
+    auto                                env1 = edges.get_multisite_env_ene_blk(sites);
+    auto                                env2 = edges.get_multisite_env_var_blk(sites);
+    auto                                mpos = model.get_mpo(sites);
+    std::vector<Eigen::Tensor<cplx, 4>> H1;
+    std::vector<Eigen::Tensor<cplx, 4>> H2;
+    for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
+    for(const auto &mpo : mpos) H2.emplace_back(mpo.get().MPO2());
+
+    auto H1t0 = tools::common::contraction::matrix_vector_product(t0, H1, env1.L, env1.R);
+    auto H2t0 = tools::common::contraction::matrix_vector_product(t0, H2, env2.L, env2.R);
+    // Define the krylov subspace
+    auto H1v0 = tenx::VectorMap(H1t0);
+    auto H2v0 = tenx::VectorMap(H2t0);
+
+    // Gram schmidt
+    v1 = (H1v0 - v0 * v0.dot(H1v0)).normalized();
+    v2 = (H2v0 - v0 * v0.dot(H2v0) - v1 * v1.dot(H2v0)).normalized();
+
+    auto H1t1   = tools::common::contraction::matrix_vector_product(t1, H1, env1.L, env1.R);
+    auto H1t2   = tools::common::contraction::matrix_vector_product(t2, H1, env1.L, env1.R);
+    auto H2t1   = tools::common::contraction::matrix_vector_product(t1, H2, env2.L, env2.R);
+    auto H2t2   = tools::common::contraction::matrix_vector_product(t2, H2, env2.L, env2.R);
+    auto H1v1   = tenx::VectorMap(H1t1);
+    auto H1v2   = tenx::VectorMap(H1t2);
+    auto H2v1   = tenx::VectorMap(H2t1);
+    auto H2v2   = tenx::VectorMap(H2t2);
+    auto H1_on  = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::ENE));
+    auto H2_on  = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::VAR));
+    auto v0H1v0 = v0.dot(H1v0);
+    auto v1H1v0 = v1.dot(H1v0) * H1_on;
+    auto v1H1v1 = v1.dot(H1v1) * H1_on;
+    auto v1H1v2 = v1.dot(H1v2) * H1_on * H2_on;
+    auto v2H1v0 = v2.dot(H1v0) * H2_on;
+    auto v2H1v2 = v2.dot(H1v2) * H2_on * H2_on;
+
+    auto v0H1v1 = std::conj(v1H1v0);
+    auto v0H1v2 = std::conj(v2H1v0);
+    auto v2H1v1 = std::conj(v1H1v2);
+
+    auto K1 = Eigen::Matrix3cd{
+        {v0H1v0, v0H1v1, v0H1v2},
+        {v1H1v0, v1H1v1, v1H1v2},
+        {v2H1v0, v2H1v1, v2H1v2},
+    };
+
+    auto solver1 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K1, Eigen::ComputeEigenvectors);
+    auto evals1  = solver1.eigenvalues();
+    auto evecs1  = solver1.eigenvectors();
+    tools::log->info("K1   : \n{}\n", linalg::matrix::to_string(K1.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs1, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals1, 8));
+
+    auto v0H2v0 = v0.dot(H2v0);
+    auto v1H2v0 = v1.dot(H2v0);
+    auto v2H2v0 = v2.dot(H2v0);
+    auto v1H2v1 = v1.dot(H2v1);
+    auto v1H2v2 = v1.dot(H2v2);
+    auto v2H2v2 = v2.dot(H2v2);
+
+    auto v0H2v1 = std::conj(v1H2v0);
+    auto v0H2v2 = std::conj(v2H2v0);
+    auto v2H2v1 = std::conj(v1H2v2);
+
+    auto K2 = Eigen::Matrix3cd{
+        {v0H2v0, v0H2v1, v0H2v2},
+        {v1H2v0, v1H2v1, v1H2v2},
+        {v2H2v0, v2H2v1, v2H2v2},
+    };
+
+    auto solver2 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K2, Eigen::ComputeEigenvectors);
+    auto evals2  = solver2.eigenvalues();
+    auto evecs2  = solver2.eigenvectors();
+    tools::log->info("K2   : \n{}\n", linalg::matrix::to_string(K2.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs2, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals2, 8));
+    long   optK2Idx = 0;
+    auto   optK2Val = evals2.minCoeff(&optK2Idx);
+    auto   oldK2Val = std::real(K2(0, 0));
+    double K2_reduc = optK2Val / oldK2Val;
+
+    auto K3      = Eigen::Matrix3cd(K2 - K1 * K1);
+    auto solver3 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K3, Eigen::ComputeEigenvectors);
+    auto evals3  = solver3.eigenvalues();
+    auto evecs3  = solver3.eigenvectors();
+    tools::log->info("K3   : \n{}\n", linalg::matrix::to_string(K3.real(), 8));
+    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs3, 8));
+    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals3, 8));
+    long   optK3Idx = 0;
+    auto   optK3Val = evals3.minCoeff(&optK3Idx);
+    auto   oldK3Val = std::real(K3(0, 0));
+    double K3_reduc = optK3Val / oldK3Val;
+
+    auto solver4 = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(K1, K2,  Eigen::ComputeEigenvectors|Eigen::Ax_lBx);
+    auto evals4  = solver4.eigenvalues();
+    auto evecs4  = solver4.eigenvectors();
+    tools::log->info("evecs4: \n{}\n", linalg::matrix::to_string(evecs4, 8));
+    tools::log->info("evals4: \n{}\n", linalg::matrix::to_string(evals4, 8));
+    long   optK4Idx = 0;
+    auto   optK4Val = evals4.cwiseAbs().maxCoeff(&optK4Idx);
+    auto   oldK4Val = 1.0 / std::real(v0H1v0);
+    double K4_reduc = optK4Val / oldK4Val;
+
+
+    // Decide to optimize either K2 = <H²> or K3 = <H²> - E²
+    // if(K2_reduc < K3_reduc) {
+        // tools::log->debug("expansion minimizes K2");
+        Eigen::VectorXd col = evecs4.col(optK4Idx).normalized().real();
+        res.mixed_blk       = Eigen::Tensor<cplx, 3>(t0.dimensions());
+        res.alpha_mps       = col.coeff(0);
+        res.alpha_ene       = col.coeff(1);
+        res.alpha_var       = col.coeff(2);
+        auto vf             = tenx::VectorMap(res.mixed_blk);
+        vf                  = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
+    // } else {
+    //     tools::log->debug("expansion minimizes K3");
+    //     Eigen::VectorXd col = evecs3.col(optK3Idx).real();
+    //     res.mixed_blk       = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    //     res.alpha_mps       = col.coeff(0);
+    //     res.alpha_ene       = col.coeff(1);
+    //     res.alpha_var       = col.coeff(2);
+    //     auto vf             = tenx::VectorMap(res.mixed_blk);
+    //     vf                  = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
+    // }
+
+    auto vfH1vf = tools::common::contraction::expectation_value(res.mixed_blk, H1, env1.L, env1.R);
+    auto vfH2vf = tools::common::contraction::expectation_value(res.mixed_blk, H2, env2.L, env2.R);
+    tools::log->info("final state <H> = {:.16f}, <H²> = {:.16f}, Var(H) = {:.3e}", vfH1vf, vfH2vf, vfH2vf - vfH1vf * vfH1vf);
+
+    return res;
+}
+
+void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_PR,
                              const svd::config &svd_cfg) {
     // The expanded bond sits between mpsL and mpsR
     // We zero-pad mpsL and enrich mpsR.
@@ -129,21 +447,21 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
     // Thus, the possible situations are [AC,B] or [B,B] or [A,AC]
     // After USV = SVD(MR_PR):
     //      If [AC,B]:
-    //           * ML_P0 is [AC(i), 0]            <--- Note that we use full AC(i)! Not bare A(i)
+    //           * ML_PL is [AC(i), PL]            <--- Note that we use full AC(i)! Not bare A(i)
     //           * MR_PR is [B(i+1), PR]^T
-    //           * mpsL:  AC(i)   = ML_P0 * U     <---- lost left normalization, but it is not needed during optimization
+    //           * mpsL:  AC(i)   = ML_PL * U     <---- lost left normalization, but it is not needed during optimization
     //           * mpsL:  C(i)   = S
     //           * mpsR:  B(i+1) = V
     //      If [B,B]:
-    //           * ML_P0 is [B(i), 0]
+    //           * ML_PL is [B(i), PL]
     //           * MR_PR is [B(i+1), PR]^T
-    //           * mpsL:  B(i)   = ML_P0 * U * S  <-- lost right normalization, but it is not needed during optimization
+    //           * mpsL:  B(i)   = ML_PL * U * S  <-- lost right normalization, but it is not needed during optimization
     //           * mpsL:  Λ(i)   = S
     //           * mpsR:  B(i+1) = V
     //      If [A,AC]:
-    //           * ML_P0 is [A(i-1), 0]
+    //           * ML_PL is [A(i-1), PL]
     //           * MR_PR is [A(i), PR]^T             <--- Note that we use bare A(i)! Not AC(i)
-    //           * mpsL:  A(i-1) = ML_P0 * U         <--- lost left normalization, but it will not be needed during the optimization later
+    //           * mpsL:  A(i-1) = ML_PL * U         <--- lost left normalization, but it will not be needed during the optimization later
     //           * mpsR:  Λ(i) = S, (will become a center later)
     //           * mpsR:  A(i) = S * V (note that we replace bare A(i), not AC(i)!)
     //           * The old C(i) living in mpsR is outdated, but it incorporated into AC(i) when building MR_PR.
@@ -160,17 +478,16 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
         mpsR.set_M(V);
         mpsR.stash_U(U, posL);
         mpsR.stash_C(S, -1.0, posL); // Set a negative truncation error to ignore it.
-        mpsL.set_M(ML_P0);
+        mpsL.set_M(ML_PL);
         mpsL.take_stash(mpsR); // normalization of mpsL is lost here.
     } else if(labL == "B" and labR == "B") {
         auto US = Eigen::Tensor<cplx, 3>(U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0})));
         mpsR.set_M(V);
         mpsR.stash_U(US, posL);
         mpsR.stash_S(S, -1.0, posL); // Set a negative truncation error to ignore it.
-        mpsL.set_M(ML_P0);
+        mpsL.set_M(ML_PL);
         mpsL.take_stash(mpsR); // normalization of mpsL is lost here.
     } else if(labL == "A" and labR == "AC") {
-        // TODO: Setting identity might be wrong. Remember that the previous two cases work well already, so don't start absorbing S before getting to this point.
         auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
         auto C1 = Eigen::Tensor<cplx, 1>(V.dimension(2));
         C1.setConstant(cplx(1.0, 0.0)); // Replaces C with an identity
@@ -178,7 +495,7 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
         mpsR.set_L(S);
         mpsR.set_LC(C1);
         mpsR.stash_U(U, posL);
-        mpsL.set_M(ML_P0);
+        mpsL.set_M(ML_PL);
         mpsL.take_stash(mpsR);
     } else {
         throw except::runtime_error("merge_expansion_term_PR: could not match case: [{},{}]", labL, labR);
@@ -190,7 +507,7 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
         cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsL);
         Eigen::Tensor<cplx, 3> M_tmp          = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
         mpsL.set_M(M_tmp);
-        if constexpr(settings::debug or settings::debug_expansion) {
+        if constexpr(settings::debug_expansion) {
             auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
             cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
             tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), std::abs(norm_old),
@@ -199,7 +516,7 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
     }
 }
 
-void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_P0,
+void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_PR,
                              const svd::config &svd_cfg) {
     // The expanded bond sits between mpsL and mpsR.
     // During forward expansion <--
@@ -212,39 +529,24 @@ void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eige
     // After USV = SVD(ML_PL):
     //      If [A, AC]:
     //           * ML_PL is [A(i-1), PL]
-    //           * MR_P0 is [A(i), 0]^T             <--- Note that we use bare A(i)! Not AC(i)
+    //           * MR_PR is [A(i), PR]^T             <--- Note that we use bare A(i)! Not AC(i)
     //           * mpsL:  A(i-1) = U
     //           * mpsR:  Λ(i)   = S                <--- takes stash S
-    //           * mpsR:  A(i)   = S * V * MR_P0    <--- takes stash S,V and loses left-right normalization
+    //           * mpsR:  A(i)   = S * V * MR_PR    <--- takes stash S,V and loses left-right normalization
     //           * mpsR:  C(i)                      <--- does not change
     //      If [A,A]:
     //           * ML_PL is [A(i-1), PL]^T
-    //           * MR_P0 is [A(i), 0]^T             <--- Note that we use bare A(i)! Not AC(i)
+    //           * MR_PR is [A(i), 0]^T             <--- Note that we use bare A(i)! Not AC(i)
     //           * mpsL:  A(i-1) = U
     //           * mpsR:  Λ(i)   = S (takes stash S)
-    //           * mpsR:  A(i) = S * V * MR_P0 (takes stash S,SV and loses left normalization)
+    //           * mpsR:  A(i) = S * V * MR_PR (takes stash S,SV and loses left normalization)
     //      If [AC,B]:
     //           * ML_PL is [AC(i), PL]^T
-    //           * MR_P0 is [B(i+1), 0]^T
+    //           * MR_PR is [B(i+1), 0]^T
     //           * mpsL:  A(i) = U
     //           * mpsL:  C(i) = S
-    //           * mpsR:  B(i+1) = V * MR_P0 (loses right normalization, but that is not be needed during the next optimization)
+    //           * mpsR:  B(i+1) = V * MR_PR (loses right normalization, but that is not be needed during the next optimization)
     //
-
-    // {
-    //     // Sanity check
-    //     Eigen::Tensor<cplx, 0> M4 = mpsL.get_M()
-    //                                     .contract(mpsL.get_M().conjugate(), tenx::idx({0, 1}, {0, 1}))
-    //                                     .contract(mpsR.get_M(), tenx::idx({0}, {1}))
-    //                                     .contract(mpsR.get_M().conjugate(), tenx::idx({0, 1, 2}, {1, 0, 2}));
-    //     Eigen::Tensor<cplx, 0> P4 = ML_PL.contract(ML_PL.conjugate(), tenx::idx({0, 1}, {0, 1}))
-    //                                     .contract(MR_P0, tenx::idx({0}, {1}))
-    //                                     .contract(MR_P0.conjugate(), tenx::idx({0, 1, 2}, {1, 0, 2}));
-    //     auto check1 = std::abs(M4.coeff(0) - cplx(1.0, 0.0));
-    //     auto check2 = std::abs(P4.coeff(0) - cplx(1.0, 0.0));
-    //     if(check1 > 1e-8) throw except::runtime_error("merge_expansion_term_PL: normalization check 1 failed: |{:.16f} - 1| > 1e-8", M4.coeff(0));
-    //     if(check2 > 1e-8) throw except::runtime_error("merge_expansion_term_PL: normalization check 2 failed: |{:.16f} - 1| > 1e-8", P4.coeff(0));
-    // }
 
     svd::solver svd;
     auto        posR = mpsR.get_position();
@@ -257,21 +559,102 @@ void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eige
         mpsL.set_M(U);
         mpsL.stash_S(S, -1.0, posR); // Set a negative truncation error to ignore it.
         mpsL.stash_V(SV, posR);
-        mpsR.set_M(MR_P0);
+        mpsR.set_M(MR_PR);
         mpsR.take_stash(mpsL); // normalization of mpsR is lost here
     } else if(labL == "A" and labR == "A") {
         auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
         mpsL.set_M(U);
         mpsL.stash_S(S, -1.0, posR); // Set a negative truncation error to ignore it.
         mpsL.stash_V(SV, posR);
-        mpsR.set_M(MR_P0);
+        mpsR.set_M(MR_PR);
         mpsR.take_stash(mpsL); // normalization of mpsR is lost here
     } else if(labL == "AC" and labR == "B") {
         mpsL.set_M(U);
         mpsL.set_LC(S);
         mpsL.stash_V(V, posR);
-        mpsR.set_M(MR_P0);
+        mpsR.set_M(MR_PR);
         mpsR.take_stash(mpsL);
+    } else {
+        throw except::runtime_error("merge_expansion_term_PL: could not match case: [{},{}]", labL, labR);
+    }
+
+    {
+        // Make mpsR normalized so that later checks can succeed
+        auto                   multisite_mpsR = state.get_multisite_mps({posR});
+        cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsR);
+        Eigen::Tensor<cplx, 3> M_tmp          = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
+        mpsR.set_M(M_tmp);
+        if constexpr(settings::debug_expansion) {
+            auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
+            cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
+            tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), std::abs(norm_old),
+                              std::abs(norm_new));
+        }
+    }
+}
+
+void merge_expanded_terms(const StateFinite &state, MpsSite &mpsL, MpsSite &mpsR, const Eigen::Tensor<cplx, 4> &MP, const svd::config &svd_cfg) {
+    // The expanded bond sits between mpsL and mpsR.
+    // The possible situations are  [A, AC], [A,A], [AC,B] or [B,B]
+    // After USV = SVD(MP), where MP = ML_PL * MR_PR
+    //      If [A, AC]:
+    //           * ML_PL is [A(i-1), PL]
+    //           * MR_PR is [AC(i), PR]^T           <--- Note that we use AC(i)! Not bare A(i)
+    //           * mpsL:  A(i-1) = U
+    //           * mpsR:  Λ(i)   = S                <--- takes stash S
+    //           * mpsR:  AC(i)  = S * V            <--- takes stash S,V and loses left normalization
+    //           * mpsR:  C(i)   = I                <--- does not change, however, it is already baked into AC, so we can set this to identity
+    //      If [A,A]:
+    //           * ML_PL is [A(i-1), PL]
+    //           * MR_PR is [A(i), PR]^T             <--- Note that we use bare A(i)! Not AC(i)
+    //           * mpsL:  A(i-1) = U
+    //           * mpsR:  Λ(i)   = S                 <--- takes stash S
+    //           * mpsR:  A(i) = S * V               <--- takes stash S,V and loses left normalization
+    //      If [AC,B]:
+    //           * ML_PL is [AC(i), PL]
+    //           * MR_PR is [B(i+1), PR]^T
+    //           * mpsL:  A(i) = U
+    //           * mpsL:  C(i) = S
+    //           * mpsR:  B(i+1) = V
+    //      If [B,B]:
+    //           * ML_PL is [B(i), PL]
+    //           * MR_PR is [B(i+1), PR]^T
+    //           * mpsL:  B(i)   = U * S  <-- loses right normalization, but it is not needed during optimization
+    //           * mpsL:  Λ(i)   = S
+    //           * mpsR:  B(i+1) = V
+    //
+
+    svd::solver svd;
+    auto        posL = mpsL.get_position();
+    auto        posR = mpsR.get_position();
+    auto        labL = mpsL.get_label();
+    auto        labR = mpsR.get_label();
+    auto [U, S, V]   = svd.schmidt(MP, svd_cfg);
+
+    if(labL == "A" and labR == "AC") {
+        auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
+        auto C1 = Eigen::Tensor<cplx, 1>(V.dimension(2));
+        C1.setConstant(cplx(1.0, 0.0)); // Replaces C with an identity
+        mpsL.set_M(U);
+        mpsL.stash_S(S, -1.0, posR); // Set a negative truncation error to ignore it.
+        mpsR.set_M(SV);              // normalization of mpsR is lost here
+        mpsR.take_stash(mpsL);
+        mpsR.set_LC(C1);
+    } else if(labL == "A" and labR == "A") {
+        auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
+        mpsL.set_M(U);
+        mpsR.set_M(SV); // normalization of mpsR is lost here
+        mpsR.set_L(S, -1.0);
+    } else if(labL == "AC" and labR == "B") {
+        mpsL.set_M(U);
+        mpsL.set_LC(S);
+        mpsR.set_M(V);
+    } else if(labL == "B" and labR == "B") {
+        auto US = Eigen::Tensor<cplx, 3>(U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0})));
+        mpsL.set_M(US);
+        mpsL.set_L(S, -1.0);
+        mpsR.set_M(V);
+
     } else {
         throw except::runtime_error("merge_expansion_term_PL: could not match case: [{},{}]", labL, labR);
     }
@@ -290,7 +673,6 @@ void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eige
         }
     }
 }
-
 
 /*!
     Follows the environment (aka subspace) expansion technique as explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
@@ -323,7 +705,6 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
         return {}; // No expansion
     }
 
-
     // Define the left and right mps that will get modified
     state.clear_cache();
     state.clear_measurements();
@@ -344,11 +725,10 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
 
     // Stop here if it's just a query
     if(envExpandMode == EnvExpandMode::NONE) return res; // Position query
-    res.ene_old   = tools::finite::measure::energy(state, model, edges);
-    res.var_old   = tools::finite::measure::energy_variance(state, model, edges);
-    res.alpha_ene = get_optimal_mixing_factor_ene_new(pos_expanded, state, model, edges, envExpandMode);
-    res.alpha_var = get_optimal_mixing_factor_var_new(pos_expanded, state, model, edges, envExpandMode);
-    if(!(res.alpha_ene > 0) and !(res.alpha_var > 0)) {
+    res.ene_old                                           = tools::finite::measure::energy(state, model, edges);
+    res.var_old                                           = tools::finite::measure::energy_variance(state, model, edges);
+    std::tie(res.alpha_mps, res.alpha_ene, res.alpha_var) = get_optimal_mixing_factors(pos_expanded, state, model, edges, envExpandMode);
+    if(res.alpha_ene == 0 and res.alpha_var == 0) {
         tools::log->debug("Expansion canceled: {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(),
                           mpsR.get_position(), res.alpha_ene, res.alpha_var);
         return res;
@@ -357,60 +737,50 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
                       res.alpha_ene, res.alpha_var);
 
     // Set up the SVD
-    auto bond_lim = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
     svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
-    svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
+    svd_cfg.rank_max         = svd_cfg.rank_max.value_or(settings::get_bond_max(state.get_algorithm()));
+    long        bond_lim     = svd_cfg.rank_max.value();
     svd::solver svd(svd_cfg);
 
     if(state.get_direction() > 0 and posL > 0) {
         // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
-        //      * mpsL is "AC(i)" and is the active site that will get moved into envL later
+        //      * mpsL is "AC(i)" and will get moved into envL later
         //      * mpsR is "B(i+1)" and will become the active site after moving center position
-        auto                  &mpoL   = model.get_mpo(posL);
-        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M(); // mpsL is going to be optimized, enriched with PL
-        long                   PLdim2 = 0;
+        auto &mpoL = model.get_mpo(posL);
+        // auto                  &mpoR   = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M(); // mpsL is going to be optimized, enriched with PL
+        // Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // mpsL is going to be optimized, enriched with PL
+        long PLdim2 = 0;
         if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
-            auto                  &env         = edges.get_env_eneL(posL);
-            long                   PL_chiR_max = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
-            Eigen::Tensor<cplx, 3> PL          = env.get_expansion_term(mpsL, mpoL, res.alpha_ene, PL_chiR_max);
-            Eigen::Tensor<cplx, 3> ML_PL_tmp   = ML_PL.concatenate(PL, 2);
-            ML_PL                              = std::move(ML_PL_tmp);
+            auto &envL = edges.get_env_eneL(posL);
+            // auto                  &envR      = edges.get_env_eneR(posR);
+            long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
+            Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_ene, chi_max);
+            // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, 0.0, -1);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            // Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL = std::move(ML_PL_tmp);
+            // MR_PR                            = std::move(MR_PR_tmp);
             PLdim2 += PL.dimension(2);
-            res.env_ene = env; // Saves a reference to the expanded environment
+            res.env_ene = envL; // Saves a reference to the expanded environment
         }
         if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
-            auto                  &env         = edges.get_env_varL(posL);
-            long                   PL_chiR_max = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
-            Eigen::Tensor<cplx, 3> PL          = env.get_expansion_term(mpsL, mpoL, res.alpha_var, PL_chiR_max);
-            Eigen::Tensor<cplx, 3> ML_PL_tmp   = ML_PL.concatenate(PL, 2);
-            ML_PL                              = std::move(ML_PL_tmp);
+            auto &envL = edges.get_env_varL(posL);
+            // auto                  &envR      = edges.get_env_varR(posR);
+            long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
+            Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_var, chi_max);
+            // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, 0.0, -1);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            // Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL = std::move(ML_PL_tmp);
+            // MR_PR                            = std::move(MR_PR_tmp);
             PLdim2 += PL.dimension(2);
-            res.env_var = env; // Saves a reference to the expanded environment
+            res.env_var = envL; // Saves a reference to the expanded environment
         }
         if(PLdim2 == 0) { tools::log->error("expand_environment_backward: PLdim2 == 0: this is likely an error"); }
         Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
         Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M().concatenate(P0, 1); // mpsR is going into the environment, padded with zeros
         merge_expansion_term_PL(state, mpsL, ML_PL, mpsR, MR_P0, svd_cfg);
-        // auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg);
-        // mpsL.set_M(U);
-        // mpsL.set_LC(S, -1.0); // Set a negative truncation error to ignore it.
-        // mpsL.stash_V(V, posR);
-        // mpsR.set_M(MR_P0);
-        // mpsR.take_stash(mpsL); // right normalization of mpsR is lost here -- but we will move right soon, thereby left-normalizing it into an AC
-        // {
-        //     // Make mpsR normalized. This is strictly optional, but we do it so that normalization checks can succeed
-        //     auto                   multisite_mpsR = state.get_multisite_mps({posR});
-        //     cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsR);
-        //     Eigen::Tensor<cplx, 3> M_tmp          = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
-        //     mpsR.set_M(M_tmp);
-        //     if constexpr(settings::debug or settings::debug_expansion) {
-        //         auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
-        //         cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
-        //         tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), std::abs(norm_old),
-        //                           std::abs(norm_new));
-        //     }
-        // }
-
         tools::log->debug("Environment expansion backward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
                           flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2],
                           ML_PL.dimension(2), mpsL.get_chiR());
@@ -418,74 +788,44 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
         if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
     }
     if(state.get_direction() < 0) {
-        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
+        // The expanded bond sits between mpsL and mpsR. In 1-site DMRG, when the direction is left-to-right:
         //      * mpsL is "A(i-1)" and will become the active site after moving center position
         //      * mpsR is "AC(i)" and is the active site that will get moved into envR later
-        auto                  &mpoR   = model.get_mpo(posR);
+        // auto                  &mpoL   = model.get_mpo(posL);
+        auto &mpoR = model.get_mpo(posR);
+        // Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M(); // [ AC  P ]^T  including LC
         Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // [ AC  P ]^T  including LC
         long                   PRdim1 = 0;
         if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
-            auto                  &env         = edges.get_env_eneR(posR);
-            long                   PR_chiL_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
-            Eigen::Tensor<cplx, 3> PR          = env.get_expansion_term(mpsR, mpoR, res.alpha_ene, PR_chiL_max);
-            Eigen::Tensor<cplx, 3> MR_PR_temp  = MR_PR.concatenate(PR, 1);
-            MR_PR                              = std::move(MR_PR_temp);
+            // auto                  &envL       = edges.get_env_eneL(posL);
+            auto &envR    = edges.get_env_eneR(posR);
+            long  chi_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
+            // Eigen::Tensor<cplx, 3> PL         = envL.get_expansion_term(mpsL, mpoL, 0.0, chi_max);
+            Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_ene, chi_max);
+            // Eigen::Tensor<cplx, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+            // ML_PL                             = std::move(ML_PL_temp);
+            MR_PR = std::move(MR_PR_temp);
             PRdim1 += PR.dimension(1);
-            res.env_ene = env;
+            res.env_ene = envR;
         }
         if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
-            auto                  &env         = edges.get_env_varR(posR);
-            long                   PR_chiL_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
-            Eigen::Tensor<cplx, 3> PR          = env.get_expansion_term(mpsR, mpoR, res.alpha_var, PR_chiL_max);
-            Eigen::Tensor<cplx, 3> MR_PR_temp  = MR_PR.concatenate(PR, 1);
-            MR_PR                              = std::move(MR_PR_temp);
+            // auto                  &envL       = edges.get_env_varL(posL);
+            auto &envR    = edges.get_env_varR(posR);
+            long  chi_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
+            // Eigen::Tensor<cplx, 3> PL         = envL.get_expansion_term(mpsL, mpoL, 0.0, chi_max);
+            Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_var, chi_max);
+            // Eigen::Tensor<cplx, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+            // ML_PL                             = std::move(ML_PL_temp);
+            MR_PR = std::move(MR_PR_temp);
             PRdim1 += PR.dimension(1);
-            res.env_var = env;
+            res.env_var = envR;
         }
         if(PRdim1 == 0) { tools::log->error("expand_environment_backward: PRdim1 == 0: this is likely an error"); }
         Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
         Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // [ A   0 ]
         merge_expansion_term_PR(state, mpsL, ML_P0, mpsR, MR_PR, svd_cfg);
-
-        // auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg);
-        // // We have right-normalized AC = L * A * LC  --> S * V = L * B
-        // // Therefore the new truncated AC should absorb S, and then a subsequent left normalization produces the new LC again.
-        // auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
-        // // mpsR.set_M(SV); // This SV = L*AC*LC is not left-normalized! It is still a valid "multisite_mps", but the baked in LC must be extracted with SVD
-        // mpsR.set_L(S); // We keep track of L in an A type tensor, even though it is included in A already
-        // mpsR.stash_U(U, posL);
-        // mpsL.set_M(ML_P0);
-        // mpsL.take_stash(mpsR);
-        // if(posR + 1 < state.get_length<size_t>()) {
-        //     auto &mpsRR = state.get_mps_site(posR + 1);
-        //     // We now fix the left normalization of mpsR (so that L*AC*LC -> L*AC, LC) and send a remaining stash to the B at posR+1
-        //     // Set up the SVD
-        //     auto svd_cfg2     = svd_cfg;
-        //     svd_cfg2.rank_max = mpsRR.get_chiL();
-        //     auto [U2, L2, V2] = svd.schmidt_into_left_normalized(SV, mpsR.spin_dim(), svd_cfg2);
-        //     mpsR.set_M(U2);
-        //     mpsR.set_LC(L2);
-        //     mpsR.stash_V(V2, posR + 1);
-        //     mpsRR.take_stash(mpsR);
-        // }
-        //
-        // {
-        //     // Make mpsL normalized. This is strictly optional, but we do it so that normalization checks can succeed
-        //     auto                   multisite_mpsL = state.get_multisite_mps({posR});
-        //     cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsL);
-        //     Eigen::Tensor<cplx, 3> M_tmp          = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
-        //     mpsL.set_M(M_tmp);
-        //     // Eigen::Tensor<cplx, 3> AL           = mpsL.get_M_bare().contract(tenx::asDiagonal(S), tenx::idx({2}, {0}));
-        //     // cplx                   AL_norm      = tools::common::contraction::contract_mps_norm(AL);
-        //     // Eigen::Tensor<cplx, 3> A_normalized = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(AL_norm, -0.5)); // Rescale
-        //     // mpsL.set_M(A_normalized);
-        //     if constexpr(settings::debug or settings::debug_expansion) {
-        //         auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
-        //         cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
-        //         tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), std::abs(norm_old),
-        //                           std::abs(norm_new));
-        //     }
-        // }
 
         tools::log->debug("Environment expansion backward pos {} | {} | αₑ:{:.2e} αᵥ:{:.3e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
                           flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2],
@@ -494,6 +834,78 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
     if constexpr(settings::debug_expansion) mpsL.assert_normalized();
     if constexpr(settings::debug_expansion) mpsR.assert_normalized();
     env::rebuild_edges(state, model, edges);
+    res.dimL_new = mpsL.dimensions();
+    res.dimR_new = mpsR.dimensions();
+    res.ene_new  = tools::finite::measure::energy(state, model, edges);
+    res.var_new  = tools::finite::measure::energy_variance(state, model, edges);
+    res.ok       = true;
+    return res;
+}
+
+EnvExpansionResult tools::finite::env::expand_environment_forward_nsite(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                        EnvExpandMode envExpandMode, svd::config svd_cfg) {
+    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+        throw except::runtime_error("expand_environment_forward_nsite: All lengths not equal: state {} | model {} | edges {}", state.get_length(),
+                                    model.get_length(), edges.get_length());
+    if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        throw except::runtime_error("expand_environment_forward_nsite: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                    model.active_sites, edges.active_sites);
+    if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
+
+    // Determine which bond to expand
+    // std::vector<size_t> pos_expanded;
+    std::vector<size_t> pos_active_and_expanded;
+    if(state.get_direction() > 0) {
+        auto pos = state.active_sites.back();
+        // if(pos == std::clamp<size_t>(pos, 0, state.get_length<size_t>() - 2)) pos_expanded = {pos, pos + 1};
+        if(pos != std::clamp<size_t>(pos, 0, state.get_length<size_t>() - 2)) {
+            tools::log->debug("Expansion canceled: No sites to expand");
+            return {};
+        }
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), state.active_sites.begin(), state.active_sites.end());
+        pos_active_and_expanded.emplace_back(pos + 1);
+    }
+    if(state.get_direction() < 0) {
+        auto pos = state.active_sites.front();
+        // if(pos == std::clamp<size_t>(pos, 1, state.get_length<size_t>() - 1)) pos_expanded = {pos - 1, pos};
+        if(pos != std::clamp<size_t>(pos, 1, state.get_length<size_t>() - 1)) {
+            tools::log->debug("Expansion canceled: No sites to expand");
+            return {};
+        }
+        pos_active_and_expanded.emplace_back(pos - 1);
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), state.active_sites.begin(), state.active_sites.end());
+    }
+
+    // Define the left and right mps that will get modified
+    auto res = get_optimally_mixed_block(pos_active_and_expanded, state, model, edges, envExpandMode);
+
+    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query
+    const auto &mpsL = state.get_mps_site(res.posL);
+    const auto &mpsR = state.get_mps_site(res.posR);
+    res.ene_old      = tools::finite::measure::energy(state, model, edges);
+    res.var_old      = tools::finite::measure::energy_variance(state, model, edges);
+
+    if(res.alpha_ene == 0 and res.alpha_var == 0) {
+        tools::log->debug("Expansion canceled: {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(),
+                          mpsR.get_position(), res.alpha_ene, res.alpha_var);
+        return res;
+    }
+    tools::log->debug("Expanding {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position(),
+                      res.alpha_ene, res.alpha_var);
+
+    mps::merge_multisite_mps(state, res.mixed_blk, pos_active_and_expanded, state.get_position<long>(), MergeEvent::EXP, svd_cfg);
+
+    res.dims_new = state.get_mps_dims(pos_active_and_expanded);
+    res.bond_new = state.get_bond_dims(pos_active_and_expanded);
+
+    tools::log->debug("Environment expansion forward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {}", pos_active_and_expanded,
+                      flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), res.bond_old,
+                      res.bond_new);
+    state.clear_cache();
+    state.clear_measurements();
+    for(const auto &mps : state.get_mps(pos_active_and_expanded)) mps.get().assert_normalized();
+    env::rebuild_edges(state, model, edges);
+
     res.dimL_new = mpsL.dimensions();
     res.dimR_new = mpsR.dimensions();
     res.ene_new  = tools::finite::measure::energy(state, model, edges);
@@ -544,16 +956,13 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
 
 
 */
-
-
-
-EnvExpansionResult tools::finite::env::expand_environment_forward(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
-                                                                  svd::config svd_cfg) {
+EnvExpansionResult tools::finite::env::expand_environment_forward_1site(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                        EnvExpandMode envExpandMode, svd::config svd_cfg) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
-        throw except::runtime_error("expand_environment_forward: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
-                                    edges.get_length());
+        throw except::runtime_error("expand_environment_forward_1site: All lengths not equal: state {} | model {} | edges {}", state.get_length(),
+                                    model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-        throw except::runtime_error("expand_environment_forward: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+        throw except::runtime_error("expand_environment_forward_1site: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
                                     model.active_sites, edges.active_sites);
     if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
 
@@ -598,8 +1007,565 @@ EnvExpansionResult tools::finite::env::expand_environment_forward(StateFinite &s
     res.ene_old = tools::finite::measure::energy(state, model, edges);
     res.var_old = tools::finite::measure::energy_variance(state, model, edges);
 
-    res.alpha_ene = get_optimal_mixing_factor_ene_new(pos_active_and_expanded, state, model, edges, envExpandMode);
-    res.alpha_var = get_optimal_mixing_factor_var_new(pos_active_and_expanded, state, model, edges, envExpandMode);
+    // res.alpha_ene = get_optimal_mixing_factor_ene_new(pos_active_and_expanded, state, model, edges, envExpandMode);
+    // res.alpha_var = get_optimal_mixing_factor_var_new(pos_active_and_expanded, state, model, edges, envExpandMode);
+    std::tie(res.alpha_mps, res.alpha_ene, res.alpha_var) = get_optimal_mixing_factors(pos_expanded, state, model, edges, envExpandMode);
+    if(res.alpha_ene == 0 and res.alpha_var == 0) {
+        tools::log->debug("Expansion canceled: {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(),
+                          mpsR.get_position(), res.alpha_ene, res.alpha_var);
+        return res;
+    }
+    tools::log->debug("Expanding {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position(),
+                      res.alpha_ene, res.alpha_var);
+
+    // Set up the SVD
+    // Bond dimension can't grow faster than x spin_dim, but we can generate a highly enriched environment here for optimization,
+    // and let the proper truncation happen after optimization instead.
+    auto bond_lim            = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
+    svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
+    // svd_cfg.svd_rtn          = svd::rtn::gersvd;
+    // svd_cfg.loglevel         = 0;
+    svd::solver svd;
+
+    if(state.get_direction() > 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
+        // We have
+        //      * mpsL is AC(i), or B(i) during multisite dmrg
+        //      * mpsR is B(i+1) and belongs in envR later in the optimization step
+        auto                  &mpoL   = model.get_mpo(posL);
+        auto                  &mpoR   = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M();                                                   // mpsR is going into the environment, enriched with PR.
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M() * mpsR.get_M().constant(cplx(res.alpha_mps, 0.0)); // mpsR is going into the environment, enriched with PR.
+        long                   PRdim1 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene != 0) {
+            auto                  &envL      = edges.get_env_eneL(posL);
+            auto                  &envR      = edges.get_env_eneR(posR);
+            long                   chi_max   = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
+            Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, std::sqrt(std::abs(res.alpha_ene)), -1);
+            Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, std::sqrt(std::abs(res.alpha_ene)), -1);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL                            = std::move(ML_PL_tmp);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+            res.env_ene = envR;
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var != 0) {
+            auto                  &envL      = edges.get_env_varL(posL);
+            auto                  &envR      = edges.get_env_varR(posR);
+            long                   chi_max   = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
+            Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, std::sqrt(std::abs(res.alpha_var)), -1);
+            Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, std::sqrt(std::abs(res.alpha_var)), -1);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL                            = std::move(ML_PL_tmp);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+            res.env_var = envR;
+        }
+        // Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
+        // Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
+        // merge_expansion_term_PR(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
+        Eigen::Tensor<cplx, 4> MP = ML_PL.contract(MR_PR, tenx::idx({2}, {1}));
+        merge_expanded_terms(state, mpsL, mpsR, MP, svd_cfg);
+
+        state.clear_measurements();
+        state.clear_cache();
+
+        tools::log->debug("Environment expansion forward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2],
+                          MR_PR.dimension(1), mpsL.get_chiR());
+    }
+    if(state.get_direction() < 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is right-to-left:
+        //      * mpsL is A(i-1) and belongs in envL later in the optimization step
+        //      * mpsR is A(i) (or AC(i)) and is the active site
+        auto &mpoL = model.get_mpo(posL);
+        // auto                  &mpoR   = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M() * mpsL.get_M().constant(cplx(res.alpha_mps, 0.0));
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M();
+        long                   PLdim2 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene != 0) {
+            auto &envL = edges.get_env_eneL(posL);
+            // auto &envR                       = edges.get_env_eneR(posR);
+            long chi_max              = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
+            chi_max                   = -1;
+            Eigen::Tensor<cplx, 3> PL = envL.get_expansion_term(mpsL, mpoL, res.alpha_ene, chi_max);
+            // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, 1.0, chi_max);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            // Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL = std::move(ML_PL_tmp);
+            // MR_PR                            = std::move(MR_PR_tmp);
+            PLdim2 += PL.dimension(2);
+            res.env_ene = envL;
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var != 0) {
+            auto &envL = edges.get_env_varL(posL);
+            // auto &envR                       = edges.get_env_varR(posR);
+            long chi_max              = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
+            chi_max                   = -1;
+            Eigen::Tensor<cplx, 3> PL = envL.get_expansion_term(mpsL, mpoL, res.alpha_var, chi_max);
+            // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, 1.0, chi_max);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            // Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL = std::move(ML_PL_tmp);
+            // MR_PR                            = std::move(MR_PR_tmp);
+            PLdim2 += PL.dimension(2);
+            res.env_var = envL;
+        }
+        if(PLdim2 == 0) { tools::log->error("expand_environment_forward_1site: PRdim1 == 0: this is likely an error: mpsL was needlessly modified! "); }
+
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
+        Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
+        merge_expansion_term_PL(state, mpsL, ML_PL, mpsR, MR_P0, svd_cfg);
+        // Eigen::Tensor<cplx, 4> MP = ML_PL.contract(MR_PR, tenx::idx({2}, {1}));
+        // merge_expanded_terms(state, mpsL, mpsR, MP, svd_cfg);
+
+        state.clear_cache();
+        state.clear_measurements();
+
+        // if constexpr(settings::debug) {
+        // state.clear_cache();
+        // state.clear_measurements();
+        // auto newS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
+        // if(std::abs(newS - oldS) > std::max(1e-4, alpha)) {
+        //     tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
+        // }
+        // }
+
+        tools::log->debug("Environment expansion forward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimR_old[1],
+                          ML_PL.dimension(2), mpsR.get_chiL());
+    }
+
+    if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
+    if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
+    if constexpr(settings::debug_expansion) mpsL.assert_normalized();
+    if constexpr(settings::debug_expansion) mpsR.assert_normalized();
+    state.clear_cache();
+    state.clear_measurements();
+    env::rebuild_edges(state, model, edges);
+    res.dimL_new = mpsL.dimensions();
+    res.dimR_new = mpsR.dimensions();
+    res.ene_new  = tools::finite::measure::energy(state, model, edges);
+    res.var_new  = tools::finite::measure::energy_variance(state, model, edges);
+    res.ok       = true;
+    return res;
+}
+
+EnvExpansionResult tools::finite::env::expand_environment_reversed(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                   EnvExpandMode envExpandMode, svd::config svd_cfg) {
+    if(state.get_position<long>() < 0) { return {}; }
+
+    auto                pos = state.get_position<size_t>();
+    std::vector<size_t> pos_expanded;
+    if(state.get_direction() > 0 and pos == std::clamp<size_t>(pos, 1, state.get_length<size_t>() - 1)) pos_expanded = {pos - 1, pos};
+    if(state.get_direction() < 0 and pos == std::clamp<size_t>(pos, 0, state.get_length<size_t>() - 2)) pos_expanded = {pos, pos + 1};
+    if(pos_expanded.empty()) {
+        return {}; // No expansion
+    }
+
+    // Define the left and right mps that will get modified
+    state.clear_cache();
+    state.clear_measurements();
+
+    auto  posL     = pos_expanded.front();
+    auto  posR     = pos_expanded.back();
+    auto &mpsL     = state.get_mps_site(posL);
+    auto &mpsR     = state.get_mps_site(posR);
+    auto  dimL_old = mpsL.dimensions();
+    auto  dimR_old = mpsR.dimensions();
+
+    // Save expansion metadata
+    auto res     = EnvExpansionResult();
+    res.posL     = posL;
+    res.posR     = posR;
+    res.dimL_old = dimL_old;
+    res.dimR_old = dimR_old;
+
+    // Stop here if it's just a query
+    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query
+    res.ene_old = tools::finite::measure::energy(state, model, edges);
+    res.var_old = tools::finite::measure::energy_variance(state, model, edges);
+    // res.alpha_ene = get_optimal_mixing_factor_ene(pos_expanded, state, model, edges, envExpandMode);
+    // res.alpha_var = get_optimal_mixing_factor_var(pos_expanded, state, model, edges, envExpandMode);
+    std::tie(res.alpha_mps, res.alpha_ene, res.alpha_var) = get_optimal_mixing_factors(pos_expanded, state, model, edges, envExpandMode);
+
+    if(!(res.alpha_ene > 0) and !(res.alpha_var > 0)) {
+        tools::log->debug("Expansion canceled: {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(),
+                          mpsR.get_position(), res.alpha_ene, res.alpha_var);
+        return res;
+    }
+    tools::log->debug("Expanding {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position(),
+                      res.alpha_ene, res.alpha_var);
+
+    // Set up the SVD
+    auto bond_lim = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
+    svd_cfg.rank_max         = std::min(bond_lim, svd_cfg.rank_max.value_or(bond_lim));
+    svd::solver svd(svd_cfg);
+
+    if(state.get_direction() > 0) {
+        // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
+        //      * mpsL is "A(i-1)" Gets expanded
+        //      * mpsR is "AC(i)" Gets optimized
+        auto &mpoL = model.get_mpo(posL);
+        // auto                  &mpoR   = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M() * mpsL.get_M().constant(cplx(res.alpha_mps, 0.0)); // mpsL is going to be optimized, enriched with PL
+        // Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // mpsL is going to be optimized, enriched with PL
+        long PLdim2 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
+            auto                  &envL    = edges.get_env_eneL(posL);
+            auto                  &envR    = edges.get_env_eneR(posR);
+            long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
+            Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_ene, chi_max);
+            // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR,  res.alpha_ene, chi_max);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            // Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL = std::move(ML_PL_tmp);
+            // MR_PR                            = std::move(MR_PR_tmp);
+            PLdim2 += PL.dimension(2);
+            res.env_ene = envL; // Saves a reference to the expanded environment
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
+            auto                  &envL    = edges.get_env_varL(posL);
+            auto                  &envR    = edges.get_env_varR(posR);
+            long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
+            Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_var, chi_max);
+            // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_var, chi_max);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            // Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL = std::move(ML_PL_tmp);
+            // MR_PR                            = std::move(MR_PR_tmp);
+            PLdim2 += PL.dimension(2);
+            res.env_var = envL; // Saves a reference to the expanded environment
+        }
+        if(PLdim2 == 0) { tools::log->error("expand_environment_reversed: PLdim2 == 0: this is likely an error"); }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
+        Eigen::Tensor<cplx, 3> MR_PR = mpsR.get_M_bare().concatenate(P0, 1);
+
+        merge_expansion_term_PL(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
+        tools::log->debug("Environment expansion reversed pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2],
+                          ML_PL.dimension(2), mpsL.get_chiR());
+        if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
+        if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
+    }
+    if(state.get_direction() < 0) {
+        // The expanded bond sits between mpsL and mpsR. In 1-site DMRG, when the direction is right-to-left:
+        //      * mpsL is "AC(i)" Gets optimized
+        //      * mpsR is "B(i+1)" Gets expanded
+        // auto                  &mpoL   = model.get_mpo(posL);
+        auto &mpoR = model.get_mpo(posR);
+        // Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M(); // [ AC  P ]^T  including LC
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // [ AC  P ]^T  including LC
+        long                   PRdim1 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
+            // auto                  &envL       = edges.get_env_eneL(posL);
+            auto &envR    = edges.get_env_eneR(posR);
+            long  chi_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
+            // Eigen::Tensor<cplx, 3> PL         = envL.get_expansion_term(mpsL, mpoL, res.alpha_ene, chi_max);
+            Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_ene, chi_max);
+            // Eigen::Tensor<cplx, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+            // ML_PL                             = std::move(ML_PL_temp);
+            MR_PR = std::move(MR_PR_temp);
+            PRdim1 += PR.dimension(1);
+            res.env_ene = envR;
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
+            // auto                  &envL       = edges.get_env_varL(posL);
+            auto &envR    = edges.get_env_varR(posR);
+            long  chi_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
+            // Eigen::Tensor<cplx, 3> PL         = envL.get_expansion_term(mpsL, mpoL, res.alpha_var, chi_max);
+            Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_var, chi_max);
+            // Eigen::Tensor<cplx, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+            // ML_PL                             = std::move(ML_PL_temp);
+            MR_PR = std::move(MR_PR_temp);
+            PRdim1 += PR.dimension(1);
+            res.env_var = envR;
+        }
+        if(PRdim1 == 0) { tools::log->error("expand_environment_reversed: PRdim1 == 0: this is likely an error"); }
+        Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
+        Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
+
+        merge_expansion_term_PR(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
+
+        tools::log->debug("Environment expansion reversed pos {} | {} | αₑ:{:.2e} αᵥ:{:.3e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2],
+                          MR_PR.dimension(1), mpsL.get_chiR());
+    }
+    if constexpr(settings::debug_expansion) mpsL.assert_normalized();
+    if constexpr(settings::debug_expansion) mpsR.assert_normalized();
+    env::rebuild_edges(state, model, edges);
+    res.dimL_new = mpsL.dimensions();
+    res.dimR_new = mpsR.dimensions();
+    res.ene_new  = tools::finite::measure::energy(state, model, edges);
+    res.var_new  = tools::finite::measure::energy_variance(state, model, edges);
+    res.ok       = true;
+    return res;
+}
+
+EnvExpansionResult tools::finite::env::expand_environment_forward_active(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                         EnvExpandMode envExpandMode, svd::config svd_cfg) {
+    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+        throw except::runtime_error("expand_environment_forward_1site: All lengths not equal: state {} | model {} | edges {}", state.get_length(),
+                                    model.get_length(), edges.get_length());
+    if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        throw except::runtime_error("expand_environment_forward_1site: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                    model.active_sites, edges.active_sites);
+    if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
+
+    // Determine which bond to expand
+    std::vector<size_t> pos_expanded;
+    std::vector<size_t> pos_active_and_expanded;
+    if(state.get_direction() > 0 and state.active_sites.back() + 1 < state.get_length<size_t>()) {
+        auto pos     = state.active_sites.back();
+        pos_expanded = {pos + 1};
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), state.active_sites.begin(), state.active_sites.end());
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), pos_expanded.begin(), pos_expanded.end());
+    }
+    if(state.get_direction() < 0 and state.active_sites.front() >= 1) {
+        auto pos     = state.active_sites.front();
+        pos_expanded = {pos - 1};
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), pos_expanded.begin(), pos_expanded.end());
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), state.active_sites.begin(), state.active_sites.end());
+    }
+    if(pos_expanded.empty()) {
+        return {}; // No update
+    }
+
+    // Define the left and right mps that will get modified
+    state.clear_cache();
+    state.clear_measurements();
+    // auto posL = pos_active_and_expanded.front();
+    // auto posR = pos_active_and_expanded.back();
+    // auto &mpsL     = state.get_mps_site(posL);
+    // auto &mpsR     = state.get_mps_site(posR);
+    // auto  dimL_old = mpsL.dimensions();
+    // auto  dimR_old = mpsR.dimensions();
+
+    // Save expansion metadata
+    auto res = EnvExpansionResult();
+    // res.posL     = posL;
+    // res.posR     = posR;
+    // res.dimL_old = dimL_old;
+    // res.dimR_old = dimR_old;
+
+    // Stop here if it's just a query
+    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query
+    res.ene_old = tools::finite::measure::energy(state, model, edges);
+    res.var_old = tools::finite::measure::energy_variance(state, model, edges);
+
+    std::tie(res.alpha_mps, res.alpha_ene, res.alpha_var) = get_optimal_mixing_factors(pos_active_and_expanded, state, model, edges, envExpandMode);
+
+    if(!(res.alpha_ene > 0) and !(res.alpha_var > 0)) {
+        tools::log->debug("Expansion canceled: {} | αₑ:{:.2e} αᵥ:{:.2e}", pos_active_and_expanded, res.alpha_ene, res.alpha_var);
+        return res;
+    }
+    tools::log->debug("Expanding {} | αₑ:{:.2e} αᵥ:{:.2e}", pos_active_and_expanded, res.alpha_ene, res.alpha_var);
+
+    // Set up the SVD
+    // Bond dimension can't grow faster than x spin_dim, but we can generate a highly enriched environment here for optimization,
+    // and let the proper truncation happen after optimization instead.
+    // auto bond_lim            = std::min(mpsL.spin_dim() * mpsL.get_chiL(), mpsR.spin_dim() * mpsR.get_chiR());
+    svd_cfg.truncation_limit = svd_cfg.truncation_limit.value_or(settings::precision::svd_truncation_min);
+    svd_cfg.rank_max         = svd_cfg.rank_max.value_or(settings::get_bond_max(state.get_algorithm()));
+    svd::solver svd;
+
+    if(state.get_direction() > 0) {
+        // We expand the bond between active_sites.back() and the site to its right.
+        auto  mpsL     = state.get_multisite_mps();
+        auto &mpsR     = state.get_mps_site(pos_active_and_expanded.back());
+        auto &mpoR     = model.get_mpo(pos_active_and_expanded.back());
+        auto  dimL_old = mpsL.dimensions();
+        auto  dimR_old = mpsR.dimensions();
+
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL;         // mpsR is going into the environment, enriched with PR.
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // mpsR is going into the environment, enriched with PR.
+        long                   PRdim1 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
+            const auto            &mpoL      = model.get_multisite_mpo();
+            const auto            &envL      = edges.get_ene_active().L;
+            const auto            &envR      = edges.get_env_eneR(pos_active_and_expanded.back());
+            Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, 1.0);
+            Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_ene, -1);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL                            = std::move(ML_PL_tmp);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
+            const auto            &mpoL      = model.get_multisite_mpo();
+            const auto            &envL      = edges.get_var_active().L;
+            const auto            &envR      = edges.get_env_varR(pos_active_and_expanded.back());
+            Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, 1.0);
+            Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_var, -1);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL                            = std::move(ML_PL_tmp);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PRdim1 += PR.dimension(1);
+        }
+        // merge_expansion_term_PR(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
+        auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg);
+
+        if(mpsR.get_label() == "B") {
+            Eigen::Tensor<cplx, 2> US =
+                U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0})).reshape(tenx::array2{U.dimension(0) * U.dimension(1), S.dimension(0)});
+            Eigen::Tensor<cplx, 3> mpsL_US = mpsL.contract(US, tenx::idx({2}, {0}));
+            mpsR.set_M(V);
+            mps::merge_multisite_mps(state, mpsL_US, state.active_sites, state.get_position<long>(), MergeEvent::NORM, svd_cfg);
+        } else {
+            throw except::runtime_error("Expansion not implemented for label mpsR={}", mpsR.get_label());
+        }
+
+        // Eigen::Tensor<cplx, 4> MP = ML_PL.contract(MR_PR, tenx::idx({2}, {1}));
+        // merge_expanded_terms(state, mpsL, mpsR, MP, svd_cfg);
+
+        state.clear_measurements();
+        state.clear_cache();
+
+        tools::log->debug("Environment expansion forward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}",
+                          pos_active_and_expanded, flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(),
+                          svd_cfg.rank_max.value(), dimL_old[2], PRdim1, mpsR.get_chiL());
+    }
+    if(state.get_direction() < 0) {
+        auto  posL     = pos_active_and_expanded.front();
+        auto  posR     = pos_active_and_expanded.back();
+        auto &mpsL     = state.get_mps_site(posL);
+        auto &mpsR     = state.get_mps_site(posR);
+        auto  dimL_old = mpsL.dimensions();
+        auto  dimR_old = mpsR.dimensions();
+        // The expanded bond sits between mpsL and mpsR. When direction is right-to-left:
+        //      * mpsL is A(i-1) and belongs in envL later in the optimization step
+        //      * mpsR is A(i) (or AC(i)) and is the active site
+        auto                  &mpoL   = model.get_mpo(posL);
+        auto                  &mpoR   = model.get_mpo(posR);
+        Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M();
+        Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M();
+        long                   PLdim2 = 0;
+        if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
+            auto                  &envL      = edges.get_env_eneL(posL);
+            auto                  &envR      = edges.get_env_eneR(posR);
+            long                   chi_max   = 2 * svd_cfg.rank_max.value() / (1 + mpoL.MPO().dimension(1));
+            Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_ene, chi_max);
+            Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, 1.0, chi_max);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL                            = std::move(ML_PL_tmp);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PLdim2 += PL.dimension(2);
+            res.env_ene = envL;
+        }
+        if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
+            auto                  &envL      = edges.get_env_varL(posL);
+            auto                  &envR      = edges.get_env_varR(posR);
+            long                   chi_max   = 2 * svd_cfg.rank_max.value() / (1 + mpoL.MPO2().dimension(1));
+            Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_var, chi_max);
+            Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, 1.0, chi_max);
+            Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+            Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+            ML_PL                            = std::move(ML_PL_tmp);
+            MR_PR                            = std::move(MR_PR_tmp);
+            PLdim2 += PL.dimension(2);
+            res.env_var = envL;
+        }
+        if(PLdim2 == 0) { tools::log->error("expand_environment_forward_1site: PRdim1 == 0: this is likely an error: mpsL was needlessly modified! "); }
+
+        // Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
+        // Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
+        merge_expansion_term_PL(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
+
+        state.clear_cache();
+        state.clear_measurements();
+
+        // if constexpr(settings::debug) {
+        // state.clear_cache();
+        // state.clear_measurements();
+        // auto newS = tools::finite::measure::entanglement_entropy(mpsR.get_L());
+        // if(std::abs(newS - oldS) > std::max(1e-4, alpha)) {
+        //     tools::log->warn("Entanglement entropy changed by too much: {:.16f} -> {:.16f}, diff = {:.3e}", oldS, newS, newS - oldS);
+        // }
+        // }
+
+        tools::log->debug("Environment expansion forward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
+                          flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimR_old[1],
+                          PLdim2, mpsR.get_chiL());
+    }
+
+    // if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());
+    // if(dimR_old[2] != mpsR.get_chiR()) throw except::runtime_error("mpsR changed chiR during environment expansion: {} -> {}", dimR_old, mpsR.dimensions());
+    // if constexpr(settings::debug_expansion) mpsL.assert_normalized();
+    // if constexpr(settings::debug_expansion) mpsR.assert_normalized();
+    state.clear_cache();
+    state.clear_measurements();
+    env::rebuild_edges(state, model, edges);
+    // res.dimL_new = mpsL.dimensions();
+    // res.dimR_new = mpsR.dimensions();
+    res.ene_new = tools::finite::measure::energy(state, model, edges);
+    res.var_new = tools::finite::measure::energy_variance(state, model, edges);
+    res.ok      = true;
+    return res;
+}
+
+EnvExpansionResult tools::finite::env::expand_environment_forward_old(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
+                                                                      EnvExpandMode envExpandMode, svd::config svd_cfg) {
+    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+        throw except::runtime_error("expand_environment_forward_old: All lengths not equal: state {} | model {} | edges {}", state.get_length(),
+                                    model.get_length(), edges.get_length());
+    if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        throw except::runtime_error("expand_environment_forward_old: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                    model.active_sites, edges.active_sites);
+    if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
+
+    // Determine which bond to expand
+    std::vector<size_t> pos_expanded;
+    std::vector<size_t> pos_active_and_expanded;
+    if(state.get_direction() > 0) {
+        auto pos = state.active_sites.back();
+        if(pos == std::clamp<size_t>(pos, 0, state.get_length<size_t>() - 2)) pos_expanded = {pos, pos + 1};
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), state.active_sites.begin(), state.active_sites.end());
+        pos_active_and_expanded.emplace_back(pos + 1);
+    }
+    if(state.get_direction() < 0) {
+        auto pos = state.active_sites.front();
+        if(pos == std::clamp<size_t>(pos, 1, state.get_length<size_t>() - 1)) pos_expanded = {pos - 1, pos};
+        pos_active_and_expanded.emplace_back(pos - 1);
+        pos_active_and_expanded.insert(pos_active_and_expanded.end(), state.active_sites.begin(), state.active_sites.end());
+    }
+    if(pos_expanded.empty()) {
+        return {}; // No update
+    }
+
+    // Define the left and right mps that will get modified
+    state.clear_cache();
+    state.clear_measurements();
+    auto  posL     = pos_expanded.front();
+    auto  posR     = pos_expanded.back();
+    auto &mpsL     = state.get_mps_site(posL);
+    auto &mpsR     = state.get_mps_site(posR);
+    auto  dimL_old = mpsL.dimensions();
+    auto  dimR_old = mpsR.dimensions();
+
+    // Save expansion metadata
+    auto res     = EnvExpansionResult();
+    res.posL     = posL;
+    res.posR     = posR;
+    res.dimL_old = dimL_old;
+    res.dimR_old = dimR_old;
+
+    // Stop here if it's just a query
+    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query
+    res.ene_old = tools::finite::measure::energy(state, model, edges);
+    res.var_old = tools::finite::measure::energy_variance(state, model, edges);
+
+    std::tie(res.alpha_mps, res.alpha_ene, res.alpha_mps) = get_optimal_mixing_factors(pos_active_and_expanded, state, model, edges, envExpandMode);
+    // res.alpha_ene = get_optimal_mixing_factor_ene(pos_active_and_expanded, state, model, edges, envExpandMode);
+    // res.alpha_var = get_optimal_mixing_factor_var(pos_active_and_expanded, state, model, edges, envExpandMode);
     if(!(res.alpha_ene > 0) and !(res.alpha_var > 0)) {
         tools::log->debug("Expansion canceled: {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(),
                           mpsR.get_position(), res.alpha_ene, res.alpha_var);
@@ -622,10 +1588,10 @@ EnvExpansionResult tools::finite::env::expand_environment_forward(StateFinite &s
         //      * mpsL is AC(i), or B(i) during multisite dmrg
         //      * mpsR is B(i+1) and belongs in envR later in the optimization step
         Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M(); // mpsR is going into the environment, enriched with PR.
+        auto                  &mpoR   = model.get_mpo(posR);
         long                   PRdim1 = 0;
         if(has_flag(envExpandMode, EnvExpandMode::ENE) and res.alpha_ene > 0) {
             auto                  &env         = edges.get_env_eneR(posR);
-            auto                  &mpoR        = model.get_mpo(posR);
             long                   PR_chiL_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
             Eigen::Tensor<cplx, 3> PR          = env.get_expansion_term(mpsR, mpoR, res.alpha_ene, PR_chiL_max);
             Eigen::Tensor<cplx, 3> MR_PR_tmp   = MR_PR.concatenate(PR, 1);
@@ -635,7 +1601,6 @@ EnvExpansionResult tools::finite::env::expand_environment_forward(StateFinite &s
         }
         if(has_flag(envExpandMode, EnvExpandMode::VAR) and res.alpha_var > 0) {
             auto                  &env         = edges.get_env_varR(posR);
-            auto                  &mpoR        = model.get_mpo(posR);
             long                   PR_chiL_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
             Eigen::Tensor<cplx, 3> PR          = env.get_expansion_term(mpsR, mpoR, res.alpha_var, PR_chiL_max);
             Eigen::Tensor<cplx, 3> MR_PR_tmp   = MR_PR.concatenate(PR, 1);
@@ -643,7 +1608,7 @@ EnvExpansionResult tools::finite::env::expand_environment_forward(StateFinite &s
             PRdim1 += PR.dimension(1);
             res.env_var = env;
         }
-        if(PRdim1 == 0) { tools::log->error("expand_environment_forward: PRdim1 == 0: this is likely an error: mpsR was needlessly modified! "); }
+        if(PRdim1 == 0) { tools::log->error("expand_environment_forward_old: PRdim1 == 0: this is likely an error: mpsR was needlessly modified! "); }
         Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
         Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
 
@@ -681,7 +1646,7 @@ EnvExpansionResult tools::finite::env::expand_environment_forward(StateFinite &s
             PLdim2 += PL.dimension(2);
             res.env_var = env;
         }
-        if(PLdim2 == 0) { tools::log->error("expand_environment_forward: PRdim1 == 0: this is likely an error: mpsL was needlessly modified! "); }
+        if(PLdim2 == 0) { tools::log->error("expand_environment_forward_old: PRdim1 == 0: this is likely an error: mpsL was needlessly modified! "); }
 
         Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
         Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);

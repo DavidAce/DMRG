@@ -20,6 +20,8 @@ namespace eig {
         std::optional<int>    maxIter   = std::nullopt;
         std::optional<int>    maxNev    = std::nullopt;
         std::optional<int>    maxNcv    = std::nullopt;
+        // Preconditioner
+        std::optional<long> jcbMaxBlockSize = std::nullopt; // Block size used with the block Jacobi preconditioner
 
         // Solver properties
         std::optional<Form>    form            = std::nullopt;
@@ -54,6 +56,7 @@ namespace eig {
         void                                                                                                           *primme_effective_ham    = nullptr;
         void                                                                                                           *primme_effective_ham_sq = nullptr;
         std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner   = std::nullopt;
+        std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_massMatrixMatvec   = std::nullopt;
         std::optional<void (*)(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr)> primme_convTestFun =
             std::nullopt;
         // std::optional<primme_params> primme;

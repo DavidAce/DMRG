@@ -19,9 +19,83 @@
 #include "tools/finite/measure.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
+#include <math/num.h>
 #include <primme/primme.h>
 
 namespace tools::finite::opt {
+
+    template<typename Scalar>
+    void preconditioner_jacobi(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+        H_ptr->preconditioner = eig::Preconditioner::JACOBI;
+        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
+
+    template<typename Scalar>
+    void massMatrixMatvec(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        const auto H_ptr = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+        H_ptr->MultBx(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
+
+    template<typename Scalar>
+    void convTestFun([[maybe_unused]] double *eval, [[maybe_unused]] void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
+        if(rNorm == nullptr) return;
+        if(primme == nullptr) return;
+
+        double problemNorm;
+        if(not primme->massMatrixMatvec) {
+            problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
+        } else {
+            problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
+        }
+        double problemTol = problemNorm * primme->eps;
+        double diff_rnorm = 0;
+        double diff_eval  = 0;
+        if(primme->monitor != nullptr and *rNorm != 0) {
+            auto &solver = *static_cast<eig::solver *>(primme->monitor);
+            auto &config = solver.config;
+            auto &result = solver.result;
+            result.meta.recent_evals.push_back(*eval);
+            result.meta.recent_rnorms.push_back(*rNorm);
+            while(result.meta.recent_evals.size() > 500) result.meta.recent_evals.pop_front();
+            while(result.meta.recent_rnorms.size() > 500) result.meta.recent_rnorms.pop_front();
+            double diff_evals_sum  = -1.0;
+            double diff_rnorms_sum = -1.0;
+            if(result.meta.recent_evals.size() >= 250) {
+                auto diff      = num::diff(result.meta.recent_evals);
+                diff_evals_sum = num::sum(diff, 1);
+                // tools::log->info("recent evals: {::.3e}", result.meta.recent_evals);
+                // tools::log->info("diff   evals: {::.3e}", diff);
+            }
+            if(result.meta.recent_rnorms.size() >= 250) {
+                auto diff       = num::diff(result.meta.recent_rnorms);
+                diff_rnorms_sum = num::sum(diff, 1);
+                // tools::log->info("recent rnorm: {::.3e}", result.meta.recent_rnorms);
+                // tools::log->info("diff   rnorm: {::.3e}", diff);
+            }
+
+            bool evals_saturated   = diff_evals_sum > -primme->eps;
+            bool rnorms_saturated  = diff_rnorms_sum > -primme->eps;
+            result.meta.last_eval  = *eval;
+            result.meta.last_rnorm = *rNorm;
+
+            *isconv = *rNorm < problemTol and (evals_saturated or rnorms_saturated) or *rNorm < primme->eps;
+            if(*isconv == 1) {
+                tools::log->info("eval {:38.32f} ({:+8.3e}) | rnorm {:38.32f} ({:+8.3e}) | problemNorm {:.3e}", *eval, diff_evals_sum, *rNorm, diff_rnorms_sum,
+                                 problemNorm);
+            }
+        } else {
+            *isconv = 0;
+        }
+
+        *ierr = 0;
+    }
 
     template<typename Scalar>
     struct opt_mps_init_t {
@@ -112,46 +186,6 @@ namespace tools::finite::opt {
         return init;
     }
 
-    template<typename Scalar, typename eig::Factorization factorization>
-    void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
-        if(x == nullptr) return;
-        if(y == nullptr) return;
-        if(primme == nullptr) return;
-        const auto H_ptr     = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
-        H_ptr->factorization = factorization;
-        H_ptr->FactorOP();
-        H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
-    }
-
-    template<typename Scalar>
-    void preconditioner_diagonal(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
-        if(x == nullptr) return;
-        if(y == nullptr) return;
-        if(primme == nullptr) return;
-        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
-        H_ptr->preconditioner = eig::Preconditioner::DIAG;
-        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
-    }
-    template<typename Scalar>
-    void preconditioner_tridiagonal(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
-        if(x == nullptr) return;
-        if(y == nullptr) return;
-        if(primme == nullptr) return;
-        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
-        H_ptr->preconditioner = eig::Preconditioner::TRIDIAG;
-        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
-    }
-    template<typename Scalar>
-    void preconditioner_llt(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
-        if(x == nullptr) return;
-        if(y == nullptr) return;
-        if(primme == nullptr) return;
-        const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
-        H_ptr->preconditioner = eig::Preconditioner::LLT;
-        H_ptr->set_lltBandwidth(8);
-        H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
-    }
-
     template<typename Scalar>
     double get_largest_eigenvalue_hamiltonian_squared(const TensorsFinite &tensors) {
         const auto &env2                = tensors.get_multisite_env_var_blk();
@@ -220,7 +254,7 @@ namespace tools::finite::opt {
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
         auto       &cfg     = solver.config;
-        cfg.loglevel        = 2;
+        cfg.loglevel        = 1;
         cfg.compute_eigvecs = eig::Vecs::ON;
         cfg.tol             = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
         // cfg.tol_other             = std::max(1e-10, cfg.tol.value());                          // We do not need high precision on subsequent solutions
@@ -231,7 +265,8 @@ namespace tools::finite::opt {
         cfg.primme_minRestartSize = meta.primme_minRestartSize;
         cfg.primme_maxBlockSize   = meta.primme_maxBlockSize;
         cfg.primme_locking        = 0;
-        // cfg.primme_convTestFun    = convtestUnfolded;
+        // cfg.primme_convTestFun    = convTestFun<Scalar>;
+
         cfg.lib           = eig::Lib::PRIMME;
         cfg.primme_method = eig::stringToMethod(meta.primme_method);
         cfg.tag += meta.label;
@@ -239,26 +274,25 @@ namespace tools::finite::opt {
             case OptRitz::SR: cfg.ritz = eig::Ritz::primme_smallest; break;
             case OptRitz::LR: cfg.ritz = eig::Ritz::primme_largest; break;
             case OptRitz::SM: {
-                cfg.ritz              = eig::Ritz::SA; // H² is positive semi-definite!
-                cfg.primme_projection = meta.primme_projection.value_or("primme_proj_refined");
-                if(cfg.primme_projection.value() != "primme_proj_default") {
-                    cfg.ritz                = eig::Ritz::primme_closest_abs;
-                    cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
-                }
+                cfg.ritz                = eig::Ritz::primme_closest_abs; // H² is positive definite!
+                cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
+                cfg.primme_projection   = meta.primme_projection.value_or("primme_proj_refined");
+                // if(cfg.primme_projection.value() != "primme_proj_default") {
+                //     cfg.ritz                = eig::Ritz::primme_closest_abs;
+                //     cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
+                // }
                 break;
             }
             default: throw except::logic_error("undhandled ritz: {}", enum2sv(meta.optRitz));
         }
-        // cfg.primme_preconditioner = preconditioner_tridiagonal<Scalar>;
-        cfg.primme_preconditioner = preconditioner_diagonal<Scalar>;
-        // cfg.primme_preconditioner = preconditioner_llt<Scalar>;
 
-        //         Apply preconditioner if applicable, usually faster on small matrices
-        //                if(initial_mps.get_tensor().size() > settings::precision::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
-        //                    configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
-        //        if(initial_mps.get_tensor().size() > 8192 and initial_mps.get_tensor().size() <= 20000)
-        //        configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
+        // cfg.primme_preconditioner = preconditioner_jacobi<Scalar>;
+        // cfg.jcbMaxBlockSize       = 1;//meta.eigs_jcbMaxBlockSize;
 
+        cfg.primme_massMatrixMatvec = massMatrixMatvec<Scalar>;
+        cfg.primme_projection       = meta.primme_projection.value_or("primme_proj_RR");
+        cfg.primme_targetShifts.clear();
+        cfg.ritz                = eig::Ritz::primme_largest_abs; // H² is positive definite!
         // Overrides from default
 
         const auto &state = *tensors.state;
@@ -266,9 +300,10 @@ namespace tools::finite::opt {
         const auto &edges = *tensors.edges;
         const auto &mpss  = state.get_mps_active();
         const auto &mpos  = model.get_mpo_active();
-        const auto &envs  = edges.get_var_active();
+        const auto &envv  = edges.get_var_active();
+        const auto &enve  = edges.get_ene_active();
         if(meta.optAlgo == OptAlgo::DIRECTZ) {
-            auto hamiltonian_squared = MatVecZero<Scalar>(mpss, mpos, envs);
+            auto hamiltonian_squared = MatVecZero<Scalar>(mpss, mpos, envv);
             // auto matrix = hamiltonian_squared.get_matrix();
             // eig::solver sol;
             // sol.eig<eig::Form::SYMM>(matrix.data(), matrix.rows(), eig::Vecs::ON);
@@ -281,7 +316,8 @@ namespace tools::finite::opt {
 
             eigs_variance_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
         } else {
-            auto hamiltonian_squared = MatVecMPOS<Scalar>(mpos, envs);
+            // auto hamiltonian_squared = MatVecMPOS<Scalar>(mpos, envv, enve);
+            auto hamiltonian_squared = MatVecMPOS<Scalar>(mpos, enve, envv);
             if constexpr(hamiltonian_squared.can_shift_invert) {
                 if(initial_mps.get_tensor().size() <= settings::precision::eigs_max_size_shift_invert) {
                     cfg.shift_invert                  = eig::Shinv::ON;
