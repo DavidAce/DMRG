@@ -153,26 +153,27 @@ void eig::solver::eig(Scalar *matrixA, Scalar *matrixB, size_type L, Vecs comput
                 throw except::runtime_error("Unknown type");
             }
         } else {
-            throw except::logic_error("The generalized solvers have not been implemented");
             if constexpr(std::is_same_v<Scalar, real>) {
                 eig_init(form, Type::REAL, compute_eigvecs_, remove_phase_);
                 if constexpr(form == Form::SYMM) {
                     if(config.tag.empty()) config.tag = "dsygvd";
-                    // info = dsygvd(matrixA, matrixB, L);
-
+                    info = dsygvd(matrixA, matrixB, L);
                 } else if constexpr(form == Form::NSYM) {
+                    throw except::logic_error("dggev has not been implemented");
                     if(config.tag.empty()) config.tag = "dggev";
                     // info = dggev(matrixA, matrixB, L);
                 }
             } else if constexpr(std::is_same_v<Scalar, cplx>) {
                 eig_init(form, Type::CPLX, compute_eigvecs_, remove_phase_);
                 if constexpr(form == Form::SYMM) {
+                    throw except::logic_error("zhegvd has not been implemented");
                     if(config.tag.empty()) config.tag = "zhegvd";
                     // info = zhegvd(matrixA, matrixB, L);
                     //                if(config.tag.empty()) config.tag = "zheev";
                     //                info = zheev(matrix, L);
                 } else if constexpr(form == Form::NSYM) {
                     if(config.tag.empty()) config.tag = "zggev";
+                    throw except::logic_error("zggev has not been implemented");
                     // info = zggev(matrixA, matrixB, L);
                 }
             } else {

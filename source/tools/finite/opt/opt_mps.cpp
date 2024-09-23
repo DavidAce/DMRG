@@ -7,15 +7,6 @@
 
 using namespace tools::finite::opt;
 
-opt_mps::NextEv::NextEv(const opt_mps &res) {
-    eigs_idx    = res.get_eigs_idx();
-    eigs_eigval = res.get_eigs_eigval();
-    eigs_rnorm  = res.get_eigs_rnorm();
-    energy      = res.get_energy();
-    variance    = res.get_variance();
-    overlap     = res.get_overlap();
-}
-
 opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double energy_shifted_,
                  std::optional<double> variance_, double overlap_, size_t length_)
     : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_), energy_shifted(energy_shifted_), energy(energy_shifted_ + eshift_), variance(variance_),
@@ -319,12 +310,6 @@ OptSolver opt_mps::get_optsolver() const {
     else
         throw except::runtime_error("opt_mps: optSolver not set");
 }
-OptCost opt_mps::get_optcost() const {
-    if(optCost)
-        return optCost.value();
-    else
-        throw except::runtime_error("opt_mps: optCost not set");
-}
 
 OptAlgo opt_mps::get_optalgo() const {
     if(optAlgo)
@@ -396,7 +381,7 @@ void opt_mps::set_energy(double energy_) {
 }
 void opt_mps::set_energy_per_site(double energy_per_site_) { set_energy(energy_per_site_ * static_cast<double>(get_length())); }
 void opt_mps::set_variance(double variance_) { variance = variance_; }
-void opt_mps::set_rnorm_H(const double rnorm_) { rnorm_H = rnorm_; }
+void opt_mps::set_rnorm_H1(const double rnorm_) { rnorm_H = rnorm_; }
 void opt_mps::set_rnorm_H2(const double rnorm_) { rnorm_H2 = rnorm_; }
 void opt_mps::set_overlap(double overlap_) { overlap = overlap_; }
 void opt_mps::set_alpha(std::optional<double> alpha_) { alpha = alpha_; }
@@ -437,7 +422,6 @@ void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &
 }
 
 void opt_mps::set_optsolver(OptSolver optSolver_) { optSolver = optSolver_; }
-void opt_mps::set_optcost(OptCost optCost_) { optCost = optCost_; }
 void opt_mps::set_optalgo(OptAlgo optAlgo_) { optAlgo = optAlgo_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 void opt_mps::set_bond_limit(long bond_) { bond_lim = bond_; }

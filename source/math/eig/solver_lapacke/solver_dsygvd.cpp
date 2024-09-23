@@ -22,22 +22,24 @@
 using namespace eig;
 
 int eig::solver::dsygvd(real *matrixA, real *matrixB, size_type L) {
-    #pragma message "dsygvd is not implemented. Defaulting to dsyevd"
-    eig::log->trace("Starting eig dsyevd");
+    eig::log->trace("Starting eig dsygvd");
     auto t_start = std::chrono::high_resolution_clock::now();
 
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     eigvals.resize(safe_cast<size_t>(L));
 
     // Call lapack solver
-    int    info = 0;
-    char   jobz = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
-    char   uplo = 'U';
+    int    info  = 0;
+    int    itype = 1;
+    char   jobz  = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
+    char   uplo  = 'U';
     double lwork_query[1];
     int    liwork_query[1];
-    int    n = safe_cast<int>(L);
+    int    n   = safe_cast<int>(L);
+    int    lda = n;
+    int    ldb = n;
 
-    info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR, jobz, uplo, n, matrixA, n, eigvals.data(), lwork_query, -1, liwork_query, -1);
+    info = LAPACKE_dsygvd_work(LAPACK_COL_MAJOR, itype, jobz, uplo, n, matrixA, lda, matrixB, ldb, eigvals.data(), lwork_query, -1, liwork_query, -1);
     if(info < 0) throw std::runtime_error("LAPACKE_dsyevd_work query: info" + std::to_string(info));
 
     int lwork  = safe_cast<int>(lwork_query[0]);
@@ -48,8 +50,9 @@ int eig::solver::dsygvd(real *matrixA, real *matrixB, size_type L) {
     std::vector<double> work(safe_cast<size_t>(lwork));
     std::vector<int>    iwork(safe_cast<size_t>(liwork));
     auto                t_prep = std::chrono::high_resolution_clock::now();
-    info                       = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR, jobz, uplo, n, matrixA, n, eigvals.data(), work.data(), lwork, iwork.data(), liwork);
-    if(info < 0) throw std::runtime_error("LAPACKE_dsyevd_work: info" + std::to_string(info));
+    info = LAPACKE_dsygvd_work(LAPACK_COL_MAJOR, itype, jobz, uplo, n, matrixA, lda, matrixB, ldb, eigvals.data(), work.data(), lwork, iwork.data() , liwork);
+
+    if(info < 0) throw std::runtime_error("LAPACKE_dsygvd_work: info" + std::to_string(info));
 
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {

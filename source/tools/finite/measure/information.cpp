@@ -283,7 +283,7 @@ SeeProgress check_see_progress(const Eigen::ArrayXXd &see, LogPolicy log_policy 
     sp.bits_minus = (sp.info < 0).select(sp.info, 0).sum();
     sp.progress =
         (see.isNaN()).select(0.0, Eigen::ArrayXXd::Ones(see.rows(), see.cols())).sum() / (L * (L + 1.0) / 2.0); // Found entries in the top left triangle
-    if(log_policy == LogPolicy::VERBOSE or settings::debug) {
+    if(log_policy == LogPolicy::VERBOSE) {
         tools::log->log(lvl, "see: \n{}\n", linalg::matrix::to_string(see, 10));
         tools::log->log(lvl, "info: \n{}\n", linalg::matrix::to_string(sp.info, 6));
         tools::log->log(lvl, "il: \n{}\n", linalg::matrix::to_string(tools::finite::measure::information_per_scale(sp.info), 6));

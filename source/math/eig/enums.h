@@ -27,7 +27,7 @@ namespace eig {
         primme_closest_abs,
         primme_largest_abs
     }; // Choice of eigenvalue. LA is largest algebraic, and so on.
-    enum class Factorization { NONE, LDLT, LLT, LU };
+    enum class Factorization { NONE, LLT, LDLT, LU, QR };
     enum class Preconditioner { NONE, JACOBI };
     enum class Storage { DENSE, SPARSE, MPS }; // Eigen Dense or Sparse, or std::vector for container
     enum class Shinv { ON, OFF };
@@ -96,9 +96,10 @@ namespace eig {
     inline std::string_view FactorizationToString(Factorization fact) {
         switch(fact) {
             case Factorization::NONE: return "NONE";
-            case Factorization::LDLT: return "LDLT";
             case Factorization::LLT: return "LLT";
+            case Factorization::LDLT: return "LDLT";
             case Factorization::LU: return "LU";
+            case Factorization::QR: return "QR";
             default: throw std::logic_error("No valid eig::Factorization given");
         }
     }

@@ -27,13 +27,14 @@ namespace tools::finite::opt::internal {
             case OptRitz::NONE: throw std::logic_error("optimize_energy_eig_executor: Invalid: OptRitz::NONE");
             case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
             case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;
+            case OptRitz::LM: solver.eig(matrix.data(), matrix.dimension(0)); break; // Find all eigenvalues
             case OptRitz::SM:
             case OptRitz::TE:
             case OptRitz::IS: {
                 // Find all eigenvalues within a thin energy band
                 auto eigval = initial_mps.get_energy(); // The current energy
                 auto eigvar = initial_mps.get_variance();
-                auto eshift = initial_mps.get_eshift();                    // The energy shift is our target energy for excited states
+                auto eshift = initial_mps.get_eshift();                          // The energy shift is our target energy for excited states
                 auto vl     = eshift - std::abs(eigval) - 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
                 auto vu     = eshift + std::abs(eigval) + 2 * std::sqrt(eigvar); // Find energies at most two sigma away from the band
                 solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
@@ -57,16 +58,15 @@ namespace tools::finite::opt::internal {
     }
 
     opt_mps optimize_energy_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
-        if(meta.optCost != OptCost::ENERGY)
-            throw except::logic_error("optimize_energy_eig: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::ENERGY), enum2sv(meta.optCost));
+        if(meta.optAlgo != OptAlgo::DMRG)
+            throw except::logic_error("optimize_energy_eig: Expected OptAlgo [{}] | Got [{}]", enum2sv(OptAlgo::DMRG), enum2sv(meta.optAlgo));
 
         const auto problem_size = tensors.active_problem_size();
         if(problem_size > settings::precision::eig_max_size)
             throw except::logic_error("optimize_energy_eig: the problem size is too large for eig: {} > {}(max)", problem_size,
                                       settings::precision::eig_max_size);
 
-        tools::log->debug("optimize_energy_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optCost),
-                          enum2sv(meta.optAlgo));
+        tools::log->debug("optimize_energy_eig: ritz {} | type {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optAlgo));
 
         initial_mps.validate_initial_mps();
         // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eigs requires energy-shifted MPO²");

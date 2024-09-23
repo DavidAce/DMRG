@@ -15,42 +15,26 @@
 namespace tools::finite::opt::internal {
 
     template<typename Scalar>
-    void optimize_variance_eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, OptMeta &meta) {
-        // eig::solver solver;
-        // auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
-        // int         nev    = std::min<int>(static_cast<int>(matrix.dimension(0)), meta.eigs_nev.value_or(1));
-        // solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, nev, 0.0, 1.0);
-        // extract_results(tensors, initial_mps, meta, solver, results, true);
-
-        // Use he generalized problem Hx=(1/E)H²x: find the largest eigenpair
-        eig::solver solver_u, solver_l;
-        auto        matrixA_u = tensors.get_effective_hamiltonian<Scalar>();
-        auto        matrixB_u = tensors.get_effective_hamiltonian_squared<Scalar>();
-        auto        matrixA_l = matrixA_u;
-        auto        matrixB_l = matrixB_u;
-        int         nev       = std::min<int>(static_cast<int>(matrixA_u.dimension(0)), meta.eigs_nev.value_or(1));
-        int         il        = matrixA_u.dimension(0) - (nev - 1);
-        int         iu        = matrixA_u.dimension(0);
-        solver_u.eig(matrixA_u.data(), matrixB_u.data(), matrixA_u.dimension(0), 'I', il, iu, 0.0, 1.0);
-        solver_l.eig(matrixA_l.data(), matrixB_l.data(), matrixA_l.dimension(0), 'I', 1, nev, 0.0, 1.0);
-        auto eigvals_u = eig::view::get_eigvals<real>(solver_u.result, false);
-        auto eigvals_l = eig::view::get_eigvals<real>(solver_l.result, false);
-        auto ev_u      = eigvals_u(eigvals_u.size() - 1);
-        auto ev_l      = eigvals_l(0);
-        tools::log->info("ev_u {:.16f}, ev_l {:.16f}", ev_u, ev_l);
-        if(std::abs(ev_l) >= std::abs(ev_u)) {
-            extract_results(tensors, initial_mps, meta, solver_l, results, true);
-        } else {
-            extract_results(tensors, initial_mps, meta, solver_u, results, true);
+    void optimize_folded_spectrum_eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, OptMeta &meta) {
+        // Solve the folded spectrum problem H²v=E²x (H² is positive definite)
+        if(meta.optRitz == OptRitz::NONE) return;
+        eig::solver solver;
+        auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
+        auto        nev    = std::min<int>(static_cast<int>(matrix.dimension(0)), meta.eigs_nev.value_or(1));
+        auto        il     = 1;
+        auto        iu     = nev;
+        switch(meta.optRitz) {
+            case OptRitz::LR: [[fallthrough]];
+            case OptRitz::LM: {
+                il = static_cast<int>(matrix.dimension(0) - (nev - 1));
+                iu = static_cast<int>(matrix.dimension(0));
+                break;
+            }
+            default: break;
         }
+        solver.eig(matrix.data(), matrix.dimension(0), 'I', il, iu, 0.0, 1.0);
+        extract_results(tensors, initial_mps, meta, solver, results, true);
 
-        // eig::solver solver;
-        // auto        matrixA_u = tensors.get_effective_hamiltonian<Scalar>();
-        // auto        matrixB_u = tensors.get_effective_hamiltonian_squared<Scalar>();
-        // auto        matrixA_l = matrixA_u;
-        // auto        matrixB_l = matrixB_u;
-        // solver.eig(matrixA_u.data(), matrixB_u.data(), matrixA_u.dimension(0));
-        //
         // if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
         //     // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
         //     tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
@@ -96,26 +80,24 @@ namespace tools::finite::opt::internal {
         // }
     }
 
-    opt_mps optimize_variance_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
-        initial_mps.validate_basis_vector();
-        if(meta.optCost != OptCost::VARIANCE)
-            throw except::logic_error("optimize_variance_eig: Expected OptCost [{}] | Got [{}]", enum2sv(OptCost::VARIANCE), enum2sv(meta.optCost));
-        // if(not tensors.model->is_shifted()) throw std::runtime_error("optimize_variance_eig requires energy-shifted MPO²");
+    opt_mps optimize_folded_spectrum_eig(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
+                                         OptMeta &meta) {
+        if(meta.optSolver == OptSolver::EIGS) return optimize_folded_spectrum(tensors, initial_mps, status, meta);
+
+        initial_mps.validate_initial_mps();
 
         const auto problem_size = tensors.active_problem_size();
         if(problem_size > settings::precision::eig_max_size)
-            throw except::logic_error("optimize_variance_eig: the problem size is too large for eig: {}", problem_size);
+            throw except::logic_error("optimize_folded_spectrum_eig: the problem size is too large for eig: {}", problem_size);
 
-        tools::log->trace("Full diagonalization of (H-E)²");
-        tools::log->debug("optimize_variance_eig: ritz {} | type {} | func {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optCost),
-                          enum2sv(meta.optAlgo));
+        tools::log->debug("optimize_folded_spectrum_eig: ritz {} | type {} | algo {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optAlgo));
 
         reports::eigs_add_entry(initial_mps, spdlog::level::debug);
-        auto                 t_var = tid::tic_scope("eig-var", tid::level::higher);
+        auto                 t_var = tid::tic_scope("eig-xdmrg", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
-            case OptType::REAL: optimize_variance_eig_executor<real>(tensors, initial_mps, results, meta); break;
-            case OptType::CPLX: optimize_variance_eig_executor<cplx>(tensors, initial_mps, results, meta); break;
+            case OptType::REAL: optimize_folded_spectrum_eig_executor<real>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: optimize_folded_spectrum_eig_executor<cplx>(tensors, initial_mps, results, meta); break;
         }
         auto t_post = tid::tic_scope("post");
         if(results.empty()) {
@@ -125,9 +107,6 @@ namespace tools::finite::opt::internal {
 
         if(results.size() >= 2) {
             std::sort(results.begin(), results.end(), Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
-            // Add some information about the other eigensolutions to the winner
-            // We can use that to later calculate the gap and the approximate convergence rate
-            for(size_t idx = 1; idx < results.size(); ++idx) { results.front().next_evs.emplace_back(results[idx]); }
         }
 
         for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);

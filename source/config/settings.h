@@ -414,7 +414,8 @@ namespace settings {
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
         inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
-        inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select what part of the energy eigenspectrum to target [LR SR SM IS TE] */
+        inline OptAlgo    algo                          = OptAlgo::GDMRG;          /*!< Choose the type of DMRG algorithm [DMRG DMRGX, HYBRID_DMRGX, XDMRG, GDMRG]  */
+        inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select which eigenpair to target [LR (largest real), SR(largest real) SM(smallest magnitude) IS(initial state) TE(target energy density) CE(current energy)] */
         inline double     energy_spectrum_shift         = 1e-10 ;                  /*!< (Used with ritz == OptRitz::SM) Shift the energy eigenvalue spectrum by this amount: H -> H - shift   */
         inline double     energy_density_target         = 0.5;                     /*!< (Used with ritz == OptRitz::TE) Target energy in [0-1], Target energy = energy_density_target * (EMAX+EMIN) + EMIN. */
         inline size_t     iter_min                      = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
@@ -424,8 +425,6 @@ namespace settings {
         inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline size_t     max_states                    = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool       store_wavefn                  = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool       try_directx2_when_stuck       = false;                   /*!< Try OptAlgo::DIRECTX2: find ritz SM for H instead of H² in the last stuck step. Keep if good, else  use as an initial guess for OptAlgo::DIRECT. */
-        inline double     try_shifting_when_degen       = 0;
     }
 }
 /* clang-format on */

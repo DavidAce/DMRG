@@ -9,18 +9,6 @@
 namespace tools::finite::opt {
     class opt_mps {
         private:
-        struct NextEv {
-            // If the eigenvalues are  x_0, x_1, x_2 ... x_n, this struct saves
-            // information about the eigensolution x_1,x_2..., when nev > 1
-            // We save information about the next neighboring eigensolution
-            long   eigs_idx;
-            double eigs_eigval;
-            double eigs_rnorm;
-            double energy;
-            double variance;
-            double overlap;
-                   NextEv(const opt_mps &res);
-        };
         // All of these values are supposed to be for the full system size
         std::optional<std::string>            name           = std::nullopt;
         std::optional<Eigen::Tensor<cplx, 3>> tensor         = std::nullopt;
@@ -55,7 +43,6 @@ namespace tools::finite::opt {
         std::optional<double>                 eigs_eigval    = std::nullopt;
         std::optional<std::string>            eigs_ritz      = std::nullopt;
         std::optional<cplx>                   eigs_shift     = std::nullopt;
-        std::optional<OptCost>                optCost        = std::nullopt;
         std::optional<OptAlgo>                optAlgo        = std::nullopt;
         std::optional<OptSolver>              optSolver      = std::nullopt;
         std::optional<OptRitz>                optRitz        = std::nullopt;
@@ -66,7 +53,6 @@ namespace tools::finite::opt {
         public:
         bool                 is_basis_vector = false;
         std::vector<MpsSite> mps_backup; // Used during subspace expansion to keep track of compatible neighbor mps
-        std::vector<NextEv>  next_evs;
 
         opt_mps() = default;
         // Constructor used for candidates
@@ -75,6 +61,9 @@ namespace tools::finite::opt {
         // Constructor used for results
         opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                 double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
+        // Constructor used for initial state
+        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+              double overlap_, size_t length);
 
         [[nodiscard]] bool                               is_initialized() const;
         [[nodiscard]] std::string_view                   get_name() const;
@@ -122,12 +111,10 @@ namespace tools::finite::opt {
         [[nodiscard]] std::string_view           get_eigs_ritz() const;
         [[nodiscard]] cplx                       get_eigs_shift() const;
         [[nodiscard]] OptSolver                  get_optsolver() const;
-        [[nodiscard]] OptCost                    get_optcost() const;
         [[nodiscard]] OptAlgo                    get_optalgo() const;
         [[nodiscard]] OptExit                    get_optexit() const;
         [[nodiscard]] long                       get_bond_lim() const;
         [[nodiscard]] double                     get_trnc_lim() const;
-        [[nodiscard]] std::vector<NextEv>        get_next_evs() const;
 
         void clear();
         void normalize();
@@ -142,7 +129,7 @@ namespace tools::finite::opt {
         void set_energy(double energy_);
         void set_energy_per_site(double energy_per_site_);
         void set_variance(double variance_);
-        void set_rnorm_H(const double rnorm_);
+        void set_rnorm_H1(const double rnorm_);
         void set_rnorm_H2(const double rnorm_);
         void set_overlap(double overlap_);
         void set_alpha(std::optional<double> alpha_);
@@ -169,7 +156,6 @@ namespace tools::finite::opt {
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_optsolver(OptSolver optsolver_);
-        void set_optcost(OptCost optcost_);
         void set_optalgo(OptAlgo optalgo_);
         void set_optexit(OptExit optexit_);
         void set_bond_limit(long bond_);

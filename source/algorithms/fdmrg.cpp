@@ -299,7 +299,7 @@ void fdmrg::update_state() {
 
     // Expand the environment to grow the bond dimension in 1-site dmrg
     if(opt_meta.expand_mode != EnvExpandMode::NONE) {
-        expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
+        expand_environment(opt_meta.expand_mode, opt_meta.expand_side, opt_meta.optAlgo, opt_meta.optRitz);
         // update_environment_expansion_alpha();
         // The expansion may have changed the problem size!
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
@@ -326,21 +326,20 @@ void fdmrg::update_state() {
 
     opt_state.set_optexit(opt_meta.optExit);
 
-    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optCost), enum2sv(opt_meta.optSolver),
+    tools::log->trace("Optimization [{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optSolver),
                          flag2str(opt_meta.optExit), variance_before_step.value(), opt_state.get_variance(), opt_state.get_relchange() * 100);
     if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
                           "sites {} |"
-                          "{:20} | {} | time {:.2e} s",
+                          "{} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_eigs_rnorm(), opt_state.get_overlap(),
                           opt_state.get_sites(),
-                          fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())), flag2str(opt_state.get_optexit()),
+                          enum2sv(opt_state.get_optsolver()), flag2str(opt_state.get_optexit()),
                           opt_state.get_time());
     }
     last_optsolver = opt_state.get_optsolver();
-    last_optcost  = opt_state.get_optcost();
     tensors.state->tag_active_sites_normalized(false);
 
     // Do the truncation with SVD
@@ -373,9 +372,6 @@ void fdmrg::update_state() {
 
     last_optsolver = opt_state.get_optsolver();
     last_optalgo   = opt_state.get_optalgo();
-    last_optcost   = opt_state.get_optcost();
-
     if constexpr(settings::debug) tensors.assert_validity();
-
 }
 

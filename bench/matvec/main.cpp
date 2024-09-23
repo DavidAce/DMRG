@@ -18,6 +18,8 @@
     #include <tci/tci_config.h>
 #endif
 
+#include <cblas.h>
+
 using namespace tools::common::contraction;
 
 #if defined(DMRG_ENABLE_TBLIS)
@@ -57,10 +59,47 @@ void mps_enL_tblis(TensorWrite<res_type> &res_, const TensorRead<mps_type> &mps_
     tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
     #endif
     if(mps.dimension(1) == enL.dimension(0)) {
-        contract_tblis(mps, enL, res_, "afb", "fcd", "abcd", tblis_config);
+        contract_tblis(mps, enL, res, "afb", "fcd", "abcd", tblis_config);
     } else {
-        contract_tblis(mps, enL, res_, "fab", "fcd", "abcd", tblis_config);
+        contract_tblis(mps, enL, res, "fab", "fcd", "abcd", tblis_config);
     }
+}
+
+void dsymm_mps_enL(const Eigen::Map<const Eigen::MatrixXd> &A, const Eigen::Map<const Eigen::MatrixXd> &B, Eigen::Map<Eigen::MatrixXd> &C, double alpha = 1.0,
+                   double beta = 0) {
+    int lda = static_cast<int>(A.rows()); // Should be == N
+    int ldb = static_cast<int>(B.rows()); // Should be == M
+    int ldc = static_cast<int>(C.rows()); // Should be == M
+    int M   = static_cast<int>(C.rows());
+    int N   = static_cast<int>(C.cols());
+
+    // We calculate B*A, where B is mps and A is enL, which is symmetric
+    cblas_dsymm(CBLAS_ORDER::CblasColMajor, CBLAS_SIDE::CblasRight, CBLAS_UPLO::CblasLower, M, N, alpha, A.data(), lda, B.data(), ldb, beta, C.data(), ldc);
+}
+
+template<typename res_type, typename mps_type, typename env_type>
+void mps_enL_gemm(TensorWrite<res_type> &res_, const TensorRead<mps_type> &mps_, const TensorRead<env_type> &enL_) {
+    auto res = tenx::asEval(res_);
+    auto mps = tenx::asEval(mps_);
+    auto enL = tenx::asEval(enL_);
+    // Transpose mps
+    using Scalar     = typename mps_type::Scalar;
+    using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    // auto        mps_shf = Eigen::Tensor<Scalar, 3>(mps.shuffle(tenx::array3{0, 2, 1}));
+    auto mps_mat = Eigen::Map<const MatrixType>(mps.data(), mps.dimension(0) * mps.dimension(1), mps.dimension(2));
+    // auto        mps_row = tenx::to_RowMajor(mps_mat);
+    #pragma omp parallel for
+    for(long idx = 0; idx < enL.dimension(2); ++idx) {
+        auto res_idx = res.dimension(0) * res.dimension(1) * res.dimension(2) * idx;
+        auto enL_idx = enL.dimension(0) * enL.dimension(1) * idx;
+        auto res_mat = Eigen::Map<MatrixType>(res.data() + res_idx, res.dimension(0) * res.dimension(1), res.dimension(2));
+        auto enL_mat = Eigen::Map<const MatrixType>(enL.data() + enL_idx, enL.dimension(0), enL.dimension(1));
+        // dsymm_mps_enL(enL_mat, mps_mat, res_mat);
+        res_mat.noalias() = mps_mat * enL_mat.template selfadjointView<Eigen::Lower>();
+    }
+    // auto res_mat      = Eigen::Map<MatrixType>(res.data(), res.dimension(0) * res.dimension(1), res.dimension(2) * res.dimension(3));
+    // auto enL_mat      = Eigen::Map<const MatrixType>(enL.data(), enL.dimension(0), enL.dimension(1) * enL.dimension(2));
+    // res_mat.noalias() = mps_mat * enL_mat;
 }
 
 template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
@@ -322,16 +361,16 @@ void matrix_vector_product_custom(TensorWrite<res_type> &res, const TensorRead<m
 int main() {
     tools::log = tools::Logger::setLogger("matvec", 2, true);
     fmt::print("Compiler flags {}\n", env::build::compiler_flags);
-    settings::threading::num_threads = 8;
+    settings::threading::num_threads = 1;
     settings::configure_threads();
     using real = double;
     using cplx = std::complex<double>;
-    long sites = 2;
+    long sites = 24;
     long d     = 2 << (sites - 1);
     // long d     = 8 << (sites - 1);
     long m    = 12;
-    long chiL = 1024;
-    long chiR = 512;
+    long chiL = 1;
+    long chiR = 1;
 
     tools::log->info("__builtin_cpu_supports(avx512f)    : {}", __builtin_cpu_supports("avx512f"));
     tools::log->info("__builtin_cpu_supports(x86-64-v4)  : {}", __builtin_cpu_supports("x86-64-v4"));
@@ -348,7 +387,7 @@ int main() {
     auto res     = Eigen::Tensor<real, 3>(d, chiL, chiR);
     auto mps     = Eigen::Tensor<real, 3>(d, chiL, chiR);
     auto mps_shf = Eigen::Tensor<real, 3>(chiR, d, chiL);
-    auto mpo     = Eigen::Tensor<real, 4>(m, m, d, d);
+    // auto mpo     = Eigen::Tensor<real, 4>(m, m, d, d);
     auto enL     = Eigen::Tensor<real, 3>(chiL, chiL, m);
     auto enR     = Eigen::Tensor<real, 3>(chiR, chiR, m);
     auto mpo_shf = Eigen::Tensor<real, 4>(2, 2, m, m);
@@ -364,33 +403,33 @@ int main() {
     auto mpos_shf = std::vector<Eigen::Tensor<real, 4>>(sites, mpo_shf);
 
     {
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("tools::common::contraction::matrix_vector_product", [&] {
-            tools::common::contraction::matrix_vector_product(res, mps, mpo, enL, enR);
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_tblis", [&] {
-            matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product", [&] {
-            matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
-            ankerl::nanobench::doNotOptimizeAway(res);
-            ankerl::nanobench::doNotOptimizeAway(mps);
-        });
-        ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_custom", [&] {
+        // ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("tools::common::contraction::matrix_vector_product", [&] {
+        //     tools::common::contraction::matrix_vector_product(res, mps, mpo, enL, enR);
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
+        // ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product_tblis", [&] {
+        //     matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
+        // ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("matrix_vector_product", [&] {
+        //     matrix_vector_product_tblis(res, mps, mpo, enL, enR, get_arch());
+        //     ankerl::nanobench::doNotOptimizeAway(res);
+        //     ankerl::nanobench::doNotOptimizeAway(mps);
+        // });
+        ankerl::nanobench::Bench().warmup(1).epochs(1).minEpochIterations(2).run("matrix_vector_product_custom", [&] {
             matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
             // matrix_vector_product_custom(res, mps, mpos_shf, enL, enR);
             ankerl::nanobench::doNotOptimizeAway(res);
             ankerl::nanobench::doNotOptimizeAway(mps);
         });
-        // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("mps enL custom", [&] {
-        //     mps_enL_custom(mps_enL, mps, enL);
+        // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(100).run("mps enL tblis", [&] {
+        //     mps_enL_tblis(mps_enL, mps, enL, get_arch());
         //     ankerl::nanobench::doNotOptimizeAway(mps_enL);
         // });
-        // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(10).run("mps enL eigen", [&] {
-        //     mps_enL_eigen(mps_enL, mps, enL);
+        // ankerl::nanobench::Bench().warmup(5).epochs(5).minEpochIterations(100).run("mps enL gemm", [&] {
+        //     mps_enL_gemm(mps_enL, mps, enL);
         //     ankerl::nanobench::doNotOptimizeAway(mps_enL);
         // });
 

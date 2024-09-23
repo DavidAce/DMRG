@@ -176,7 +176,7 @@ std::tuple<double, double, double> tools::finite::env::get_optimal_mixing_factor
                                                                                   EnvExpandMode envExpandMode) {
     assert_edges_ene(state, model, edges);
     assert_edges_var(state, model, edges);
-    auto                                t    = state.get_multisite_mps(sites);
+    auto                                t0   = state.get_multisite_mps(sites);
     auto                                env1 = edges.get_multisite_env_ene_blk(sites);
     auto                                env2 = edges.get_multisite_env_var_blk(sites);
     auto                                mpos = model.get_mpo(sites);
@@ -185,10 +185,10 @@ std::tuple<double, double, double> tools::finite::env::get_optimal_mixing_factor
     for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
     for(const auto &mpo : mpos) H2.emplace_back(mpo.get().MPO2());
 
-    auto H1t = tools::common::contraction::matrix_vector_product(t, H1, env1.L, env1.R);
-    auto H2t = tools::common::contraction::matrix_vector_product(t, H2, env2.L, env2.R);
+    auto H1t = tools::common::contraction::matrix_vector_product(t0, H1, env1.L, env1.R);
+    auto H2t = tools::common::contraction::matrix_vector_product(t0, H2, env2.L, env2.R);
     // Define the krylov subspace
-    auto v0   = tenx::VectorMap(t);
+    auto v0   = tenx::VectorMap(t0);
     auto H1v0 = tenx::VectorMap(H1t);
     auto H2v0 = tenx::VectorMap(H2t);
 
@@ -196,8 +196,8 @@ std::tuple<double, double, double> tools::finite::env::get_optimal_mixing_factor
     Eigen::VectorXcd v1 = (H1v0 - v0 * v0.dot(H1v0)).normalized();                     // Normalized residual vector
     Eigen::VectorXcd v2 = (H2v0 - v0 * v0.dot(H2v0) - v1 * v1.dot(H2v0)).normalized(); // Normalized residual vector
 
-    Eigen::Tensor<cplx, 3> t1     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v1.data(), t.dimensions());
-    Eigen::Tensor<cplx, 3> t2     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v2.data(), t.dimensions());
+    Eigen::Tensor<cplx, 3> t1     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v1.data(), t0.dimensions());
+    Eigen::Tensor<cplx, 3> t2     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(v2.data(), t0.dimensions());
     auto                   H1t1   = tools::common::contraction::matrix_vector_product(t1, H1, env1.L, env1.R);
     auto                   H1t2   = tools::common::contraction::matrix_vector_product(t2, H1, env1.L, env1.R);
     auto                   H2t1   = tools::common::contraction::matrix_vector_product(t1, H2, env2.L, env2.R);
@@ -271,7 +271,7 @@ std::tuple<double, double, double> tools::finite::env::get_optimal_mixing_factor
     Eigen::VectorXd col     = evecs3.col(minIdx).real();
     // if(col.coeff(0) < 0.0) col.array() *= -1.0;
     Eigen::VectorXcd       vf     = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
-    Eigen::Tensor<cplx, 3> tf     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(vf.data(), t.dimensions());
+    Eigen::Tensor<cplx, 3> tf     = Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(vf.data(), t0.dimensions());
     auto                   vfH1vf = tools::common::contraction::expectation_value(tf, H1, env1.L, env1.R);
     auto                   vfH2vf = tools::common::contraction::expectation_value(tf, H2, env2.L, env2.R);
     tools::log->info("final state <H> = {:.16f}, <H²> = {:.16f}, Var(H) = {:.3e}", vfH1vf, vfH2vf, vfH2vf - vfH1vf * vfH1vf);
@@ -279,8 +279,8 @@ std::tuple<double, double, double> tools::finite::env::get_optimal_mixing_factor
     return {col.coeff(0), col.coeff(1), col.coeff(2)};
 }
 
-EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                                 const EdgesFinite &edges, EnvExpandMode envExpandMode) {
+EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1(const std::vector<size_t> &sites, const StateFinite &state,
+                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz) {
     assert_edges_ene(state, model, edges);
     assert_edges_var(state, model, edges);
     auto res         = EnvExpansionResult();
@@ -293,15 +293,200 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vect
     const auto &mpsR = state.get_mps_site(res.posR);
     res.dimL_old     = mpsL.dimensions();
     res.dimR_old     = mpsR.dimensions();
+    auto t0          = state.get_multisite_mps(sites);
+    auto t1          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto t2          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto v0          = tenx::VectorMap(t0);
+    auto v1          = tenx::VectorMap(t1);
+    auto v2          = tenx::VectorMap(t2);
 
-    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query, just return
+    auto                                env1 = edges.get_multisite_env_ene_blk(sites);
+    auto                                mpos = model.get_mpo(sites);
+    std::vector<Eigen::Tensor<cplx, 4>> H1;
+    std::vector<Eigen::Tensor<cplx, 4>> H2;
+    for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
 
-    auto t0 = state.get_multisite_mps(sites);
-    auto t1 = Eigen::Tensor<cplx, 3>(t0.dimensions());
-    auto t2 = Eigen::Tensor<cplx, 3>(t0.dimensions());
-    auto v0 = tenx::VectorMap(t0);
-    auto v1 = tenx::VectorMap(t1);
-    auto v2 = tenx::VectorMap(t2);
+    auto H1t0 = tools::common::contraction::matrix_vector_product(t0, H1, env1.L, env1.R);
+    // Define the krylov subspace
+    auto H1v0 = tenx::VectorMap(H1t0);
+
+    // Gram schmidt
+    v1 = (H1v0 - v0 * v0.dot(H1v0)).normalized();
+
+    auto H1t1   = tools::common::contraction::matrix_vector_product(t1, H1, env1.L, env1.R);
+    auto H1v1   = tenx::VectorMap(H1t1);
+    auto v0H1v0 = v0.dot(H1v0);
+    auto v1H1v0 = v1.dot(H1v0);
+    auto v0H1v1 = std::conj(v1H1v0);
+    auto v1H1v1 = v1.dot(H1v1);
+
+    auto K1 = Eigen::Matrix2cd{
+        {v0H1v0, v0H1v1},
+        {v1H1v0, v1H1v1},
+    };
+
+    auto   solver = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K1, Eigen::ComputeEigenvectors);
+    auto   evals  = solver.eigenvalues();
+    auto   evecs  = solver.eigenvectors();
+    long   optIdx = 0;
+    double optVal = 0;
+    switch(ritz) {
+        case OptRitz::SR: {
+            optVal = evals.minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::SM: {
+            optVal = evals.cwiseAbs().minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LR: {
+            optVal = evals.maxCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LM: {
+            optVal = evals.cwiseAbs().maxCoeff(&optIdx);
+            break;
+        }
+        default: {
+            // Take the closest to the current energy
+            optVal = (evals.array() - std::real(v0H1v0)).cwiseAbs().minCoeff(&optIdx);
+            optVal = evals.coeff(optIdx);
+            break;
+        }
+    }
+
+    Eigen::VectorXd col = evecs.col(optIdx).normalized().real();
+    if(col.hasNaN()) {
+        res.mixed_blk = t0;
+        res.alpha_mps = 1.0;
+        res.alpha_ene = 0.0;
+        res.alpha_var = 0.0;
+    } else {
+        res.mixed_blk = Eigen::Tensor<cplx, 3>(t0.dimensions());
+        res.alpha_mps = col.coeff(0);
+        res.alpha_ene = col.coeff(1);
+        res.alpha_var = 0.0;
+        auto vf       = tenx::VectorMap(res.mixed_blk);
+        vf            = (res.alpha_mps * v0 + res.alpha_ene * v1).normalized();
+    }
+
+    tools::log->debug("mixed state result: <H> = {:.16f}", optVal);
+
+    return res;
+}
+EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(const std::vector<size_t> &sites, const StateFinite &state,
+                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz) {
+    assert_edges_ene(state, model, edges);
+    assert_edges_var(state, model, edges);
+    auto res         = EnvExpansionResult();
+    res.sites        = sites;
+    res.dims_old     = state.get_mps_dims(sites);
+    res.bond_old     = state.get_bond_dims(sites);
+    res.posL         = sites.front();
+    res.posR         = sites.back();
+    const auto &mpsL = state.get_mps_site(res.posL);
+    const auto &mpsR = state.get_mps_site(res.posR);
+    res.dimL_old     = mpsL.dimensions();
+    res.dimR_old     = mpsR.dimensions();
+    auto t0          = state.get_multisite_mps(sites);
+    auto t2          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto v0          = tenx::VectorMap(t0);
+    auto v2          = tenx::VectorMap(t2);
+
+    auto                                env1 = edges.get_multisite_env_ene_blk(sites);
+    auto                                env2 = edges.get_multisite_env_var_blk(sites);
+    auto                                mpos = model.get_mpo(sites);
+    std::vector<Eigen::Tensor<cplx, 4>> H2;
+    for(const auto &mpo : mpos) H2.emplace_back(mpo.get().MPO2());
+
+    auto H2t0 = tools::common::contraction::matrix_vector_product(t0, H2, env2.L, env2.R);
+    // Define the krylov subspace
+    auto H2v0 = tenx::VectorMap(H2t0);
+
+    // Gram schmidt
+    v2 = (H2v0 - v0 * v0.dot(H2v0)).normalized();
+
+    auto H2t2 = tools::common::contraction::matrix_vector_product(t2, H2, env2.L, env2.R);
+    auto H2v2 = tenx::VectorMap(H2t2);
+
+    auto v0H2v0 = v0.dot(H2v0);
+    auto v2H2v0 = v2.dot(H2v0);
+    auto v2H2v2 = v2.dot(H2v2);
+    auto v0H2v2 = std::conj(v2H2v0);
+
+    auto K2 = Eigen::Matrix2cd{
+        {v0H2v0, v0H2v2},
+        {v2H2v0, v2H2v2},
+    };
+
+    auto   solver = Eigen::SelfAdjointEigenSolver<Eigen::Matrix2cd>(K2, Eigen::ComputeEigenvectors);
+    auto   evals  = solver.eigenvalues();
+    auto   evecs  = solver.eigenvectors();
+    long   optIdx = 0;
+    double optVal = 0;
+    switch(ritz) {
+        case OptRitz::SR: {
+            optVal = evals.minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::SM: {
+            optVal = evals.cwiseAbs().minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LR: {
+            optVal = evals.maxCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LM: {
+            optVal = evals.cwiseAbs().maxCoeff(&optIdx);
+            break;
+        }
+        default: {
+            // Take the closest to the current H2
+            optVal = (evals.array() - std::real(v0H2v0)).cwiseAbs().minCoeff(&optIdx);
+            optVal = evals.coeff(optIdx);
+            break;
+        }
+    }
+
+    Eigen::VectorXd col = evecs.col(optIdx).normalized().real();
+    if(col.hasNaN()) {
+        res.mixed_blk = t0;
+        res.alpha_mps = 1.0;
+        res.alpha_ene = 0.0;
+        res.alpha_var = 0.0;
+    } else {
+        res.mixed_blk = Eigen::Tensor<cplx, 3>(t0.dimensions());
+        res.alpha_mps = col.coeff(0);
+        res.alpha_ene = 0.0;
+        res.alpha_var = col.coeff(1);
+        auto vf       = tenx::VectorMap(res.mixed_blk);
+        vf            = (res.alpha_mps * v0 + res.alpha_var * v2).normalized();
+    }
+    tools::log->debug("mixed state result: <H²> = {:.16f}", optVal);
+    return res;
+}
+
+EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(const std::vector<size_t> &sites, const StateFinite &state,
+                                                                                const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz) {
+    assert_edges_ene(state, model, edges);
+    assert_edges_var(state, model, edges);
+    auto res         = EnvExpansionResult();
+    res.sites        = sites;
+    res.dims_old     = state.get_mps_dims(sites);
+    res.bond_old     = state.get_bond_dims(sites);
+    res.posL         = sites.front();
+    res.posR         = sites.back();
+    const auto &mpsL = state.get_mps_site(res.posL);
+    const auto &mpsR = state.get_mps_site(res.posR);
+    res.dimL_old     = mpsL.dimensions();
+    res.dimR_old     = mpsR.dimensions();
+    auto t0          = state.get_multisite_mps(sites);
+    auto t1          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto t2          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto v0          = tenx::VectorMap(t0);
+    auto v1          = tenx::VectorMap(t1);
+    auto v2          = tenx::VectorMap(t2);
 
     auto                                env1 = edges.get_multisite_env_ene_blk(sites);
     auto                                env2 = edges.get_multisite_env_var_blk(sites);
@@ -329,14 +514,12 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vect
     auto H1v2   = tenx::VectorMap(H1t2);
     auto H2v1   = tenx::VectorMap(H2t1);
     auto H2v2   = tenx::VectorMap(H2t2);
-    auto H1_on  = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::ENE));
-    auto H2_on  = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::VAR));
     auto v0H1v0 = v0.dot(H1v0);
-    auto v1H1v0 = v1.dot(H1v0) * H1_on;
-    auto v1H1v1 = v1.dot(H1v1) * H1_on;
-    auto v1H1v2 = v1.dot(H1v2) * H1_on * H2_on;
-    auto v2H1v0 = v2.dot(H1v0) * H2_on;
-    auto v2H1v2 = v2.dot(H1v2) * H2_on * H2_on;
+    auto v1H1v0 = v1.dot(H1v0);
+    auto v1H1v1 = v1.dot(H1v1);
+    auto v1H1v2 = v1.dot(H1v2);
+    auto v2H1v0 = v2.dot(H1v0);
+    auto v2H1v2 = v2.dot(H1v2);
 
     auto v0H1v1 = std::conj(v1H1v0);
     auto v0H1v2 = std::conj(v2H1v0);
@@ -347,13 +530,6 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vect
         {v1H1v0, v1H1v1, v1H1v2},
         {v2H1v0, v2H1v1, v2H1v2},
     };
-
-    auto solver1 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K1, Eigen::ComputeEigenvectors);
-    auto evals1  = solver1.eigenvalues();
-    auto evecs1  = solver1.eigenvectors();
-    tools::log->info("K1   : \n{}\n", linalg::matrix::to_string(K1.real(), 8));
-    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs1, 8));
-    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals1, 8));
 
     auto v0H2v0 = v0.dot(H2v0);
     auto v1H2v0 = v1.dot(H2v0);
@@ -372,66 +548,207 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vect
         {v2H2v0, v2H2v1, v2H2v2},
     };
 
-    auto solver2 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K2, Eigen::ComputeEigenvectors);
-    auto evals2  = solver2.eigenvalues();
-    auto evecs2  = solver2.eigenvectors();
-    tools::log->info("K2   : \n{}\n", linalg::matrix::to_string(K2.real(), 8));
-    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs2, 8));
-    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals2, 8));
-    long   optK2Idx = 0;
-    auto   optK2Val = evals2.minCoeff(&optK2Idx);
-    auto   oldK2Val = std::real(K2(0, 0));
-    double K2_reduc = optK2Val / oldK2Val;
+    auto   K3     = Eigen::Matrix3cd(K2 - K1 * K1);
+    auto   solver = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K3, Eigen::ComputeEigenvectors);
+    auto   evals  = solver.eigenvalues();
+    auto   evecs  = solver.eigenvectors();
+    long   optIdx = 0;
+    double optVal = 0;
+    switch(ritz) {
+        case OptRitz::SR: {
+            optVal = evals.minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::SM: {
+            optVal = evals.cwiseAbs().minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LR: {
+            optVal = evals.maxCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LM: {
+            optVal = evals.cwiseAbs().maxCoeff(&optIdx);
+            break;
+        }
+        default: {
+            // Take the closest to the current VarH
+            optVal = (evals.array() - std::real(v0H2v0 - v0H1v0 * v0H1v0)).cwiseAbs().minCoeff(&optIdx);
+            optVal = evals.coeff(optIdx);
+            break;
+        }
+    }
 
-    auto K3      = Eigen::Matrix3cd(K2 - K1 * K1);
-    auto solver3 = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K3, Eigen::ComputeEigenvectors);
-    auto evals3  = solver3.eigenvalues();
-    auto evecs3  = solver3.eigenvectors();
-    tools::log->info("K3   : \n{}\n", linalg::matrix::to_string(K3.real(), 8));
-    tools::log->info("evecs: \n{}\n", linalg::matrix::to_string(evecs3, 8));
-    tools::log->info("evals: \n{}\n", linalg::matrix::to_string(evals3, 8));
-    long   optK3Idx = 0;
-    auto   optK3Val = evals3.minCoeff(&optK3Idx);
-    auto   oldK3Val = std::real(K3(0, 0));
-    double K3_reduc = optK3Val / oldK3Val;
+    Eigen::VectorXd col = evecs.col(optIdx).normalized().real();
+    if(col.hasNaN()) {
+        res.mixed_blk = t0;
+        res.alpha_mps = 1.0;
+        res.alpha_ene = 0.0;
+        res.alpha_var = 0.0;
+    } else {
+        res.mixed_blk = Eigen::Tensor<cplx, 3>(t0.dimensions());
+        res.alpha_mps = col.coeff(0);
+        res.alpha_ene = col.coeff(1);
+        res.alpha_var = col.coeff(2);
+        auto vf       = tenx::VectorMap(res.mixed_blk);
+        vf            = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
+    }
 
-    auto solver4 = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(K1, K2,  Eigen::ComputeEigenvectors|Eigen::Ax_lBx);
-    auto evals4  = solver4.eigenvalues();
-    auto evecs4  = solver4.eigenvectors();
-    tools::log->info("evecs4: \n{}\n", linalg::matrix::to_string(evecs4, 8));
-    tools::log->info("evals4: \n{}\n", linalg::matrix::to_string(evals4, 8));
-    long   optK4Idx = 0;
-    auto   optK4Val = evals4.cwiseAbs().maxCoeff(&optK4Idx);
-    auto   oldK4Val = 1.0 / std::real(v0H1v0);
-    double K4_reduc = optK4Val / oldK4Val;
+    tools::log->debug("mixed state result: <H²>-<H>² = {:.16f}", optVal);
+    return res;
+}
 
+EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(const std::vector<size_t> &sites, const StateFinite &state,
+                                                                                const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz) {
+    auto algo = state.get_algorithm();
+    assert_edges_ene(state, model, edges);
+    assert_edges_var(state, model, edges);
+    auto res         = EnvExpansionResult();
+    res.sites        = sites;
+    res.dims_old     = state.get_mps_dims(sites);
+    res.bond_old     = state.get_bond_dims(sites);
+    res.posL         = sites.front();
+    res.posR         = sites.back();
+    const auto &mpsL = state.get_mps_site(res.posL);
+    const auto &mpsR = state.get_mps_site(res.posR);
+    res.dimL_old     = mpsL.dimensions();
+    res.dimR_old     = mpsR.dimensions();
+    auto t0          = state.get_multisite_mps(sites);
+    auto t1          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto t2          = Eigen::Tensor<cplx, 3>(t0.dimensions());
+    auto v0          = tenx::VectorMap(t0);
+    auto v1          = tenx::VectorMap(t1);
+    auto v2          = tenx::VectorMap(t2);
 
-    // Decide to optimize either K2 = <H²> or K3 = <H²> - E²
-    // if(K2_reduc < K3_reduc) {
-        // tools::log->debug("expansion minimizes K2");
-        Eigen::VectorXd col = evecs4.col(optK4Idx).normalized().real();
-        res.mixed_blk       = Eigen::Tensor<cplx, 3>(t0.dimensions());
-        res.alpha_mps       = col.coeff(0);
-        res.alpha_ene       = col.coeff(1);
-        res.alpha_var       = col.coeff(2);
-        auto vf             = tenx::VectorMap(res.mixed_blk);
-        vf                  = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
-    // } else {
-    //     tools::log->debug("expansion minimizes K3");
-    //     Eigen::VectorXd col = evecs3.col(optK3Idx).real();
-    //     res.mixed_blk       = Eigen::Tensor<cplx, 3>(t0.dimensions());
-    //     res.alpha_mps       = col.coeff(0);
-    //     res.alpha_ene       = col.coeff(1);
-    //     res.alpha_var       = col.coeff(2);
-    //     auto vf             = tenx::VectorMap(res.mixed_blk);
-    //     vf                  = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
-    // }
+    auto                                env1 = edges.get_multisite_env_ene_blk(sites);
+    auto                                env2 = edges.get_multisite_env_var_blk(sites);
+    auto                                mpos = model.get_mpo(sites);
+    std::vector<Eigen::Tensor<cplx, 4>> H1;
+    std::vector<Eigen::Tensor<cplx, 4>> H2;
+    for(const auto &mpo : mpos) H1.emplace_back(mpo.get().MPO());
+    for(const auto &mpo : mpos) H2.emplace_back(mpo.get().MPO2());
 
-    auto vfH1vf = tools::common::contraction::expectation_value(res.mixed_blk, H1, env1.L, env1.R);
-    auto vfH2vf = tools::common::contraction::expectation_value(res.mixed_blk, H2, env2.L, env2.R);
-    tools::log->info("final state <H> = {:.16f}, <H²> = {:.16f}, Var(H) = {:.3e}", vfH1vf, vfH2vf, vfH2vf - vfH1vf * vfH1vf);
+    auto H1t0 = tools::common::contraction::matrix_vector_product(t0, H1, env1.L, env1.R);
+    auto H2t0 = tools::common::contraction::matrix_vector_product(t0, H2, env2.L, env2.R);
+    // Define the krylov subspace
+    auto H1v0 = tenx::VectorMap(H1t0);
+    auto H2v0 = tenx::VectorMap(H2t0);
+
+    // Gram schmidt
+    v1 = (H1v0 - v0 * v0.dot(H1v0)).normalized();
+    v2 = (H2v0 - v0 * v0.dot(H2v0) - v1 * v1.dot(H2v0)).normalized();
+
+    auto H1t1   = tools::common::contraction::matrix_vector_product(t1, H1, env1.L, env1.R);
+    auto H1t2   = tools::common::contraction::matrix_vector_product(t2, H1, env1.L, env1.R);
+    auto H2t1   = tools::common::contraction::matrix_vector_product(t1, H2, env2.L, env2.R);
+    auto H2t2   = tools::common::contraction::matrix_vector_product(t2, H2, env2.L, env2.R);
+    auto H1v1   = tenx::VectorMap(H1t1);
+    auto H1v2   = tenx::VectorMap(H1t2);
+    auto H2v1   = tenx::VectorMap(H2t1);
+    auto H2v2   = tenx::VectorMap(H2t2);
+    auto v0H1v0 = v0.dot(H1v0);
+    auto v1H1v0 = v1.dot(H1v0);
+    auto v1H1v1 = v1.dot(H1v1);
+    auto v1H1v2 = v1.dot(H1v2);
+    auto v2H1v0 = v2.dot(H1v0);
+    auto v2H1v2 = v2.dot(H1v2);
+
+    auto v0H1v1 = std::conj(v1H1v0);
+    auto v0H1v2 = std::conj(v2H1v0);
+    auto v2H1v1 = std::conj(v1H1v2);
+
+    auto K1 = Eigen::Matrix3cd{
+        {v0H1v0, v0H1v1, v0H1v2},
+        {v1H1v0, v1H1v1, v1H1v2},
+        {v2H1v0, v2H1v1, v2H1v2},
+    };
+
+    auto v0H2v0 = v0.dot(H2v0);
+    auto v1H2v0 = v1.dot(H2v0);
+    auto v2H2v0 = v2.dot(H2v0);
+    auto v1H2v1 = v1.dot(H2v1);
+    auto v1H2v2 = v1.dot(H2v2);
+    auto v2H2v2 = v2.dot(H2v2);
+
+    auto v0H2v1 = std::conj(v1H2v0);
+    auto v0H2v2 = std::conj(v2H2v0);
+    auto v2H2v1 = std::conj(v1H2v2);
+
+    auto K2 = Eigen::Matrix3cd{
+        {v0H2v0, v0H2v1, v0H2v2},
+        {v1H2v0, v1H2v1, v1H2v2},
+        {v2H2v0, v2H2v1, v2H2v2},
+    };
+
+    auto   solver = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(K1, K2, Eigen::ComputeEigenvectors | Eigen::Ax_lBx);
+    auto   evals  = solver.eigenvalues();
+    auto   evecs  = solver.eigenvectors();
+    long   optIdx = 0;
+    double optVal = 0;
+    switch(ritz) {
+        case OptRitz::SR: {
+            optVal = evals.minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::SM: {
+            optVal = evals.cwiseAbs().minCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LR: {
+            optVal = evals.maxCoeff(&optIdx);
+            break;
+        }
+        case OptRitz::LM: {
+            optVal = evals.cwiseAbs().maxCoeff(&optIdx);
+            break;
+        }
+        default: {
+            // Take the closest to the current GsiH
+            optVal = (evals.array() - std::real(v0H1v0 / v0H2v0)).cwiseAbs().minCoeff(&optIdx);
+            optVal = evals.coeff(optIdx);
+            break;
+        }
+    }
+
+    Eigen::VectorXd col = evecs.col(optIdx).normalized().real();
+    if(col.hasNaN()) {
+        res.mixed_blk = t0;
+        res.alpha_mps = 1.0;
+        res.alpha_ene = 0.0;
+        res.alpha_var = 0.0;
+    } else {
+        res.mixed_blk = Eigen::Tensor<cplx, 3>(t0.dimensions());
+        res.alpha_mps = col.coeff(0);
+        res.alpha_ene = col.coeff(1);
+        res.alpha_var = col.coeff(2);
+        auto vf       = tenx::VectorMap(res.mixed_blk);
+        vf            = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized();
+    }
+    tools::log->debug("mixed state result: <H>/<H²> = {:.16f}", optVal);
 
     return res;
+}
+
+EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                 const EdgesFinite &edges, OptAlgo algo, OptRitz ritz) {
+    switch(algo) {
+        case OptAlgo::DMRG: {
+            return internal::get_optimally_mixed_block_H1(sites, state, model, edges, ritz);
+        }
+        case OptAlgo::DMRGX: {
+            return internal::get_optimally_mixed_block_VarH(sites, state, model, edges, ritz);
+        }
+        case OptAlgo::HYBRID_DMRGX: {
+            return internal::get_optimally_mixed_block_VarH(sites, state, model, edges, ritz);
+        }
+        case OptAlgo::XDMRG: {
+            return internal::get_optimally_mixed_block_H2(sites, state, model, edges, ritz);
+        }
+        case OptAlgo::GDMRG: {
+            return internal::get_optimally_mixed_block_GsiH(sites, state, model, edges, ritz);
+        }
+        default: return {};
+    }
 }
 
 void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_PR,
@@ -842,8 +1159,8 @@ EnvExpansionResult tools::finite::env::expand_environment_backward(StateFinite &
     return res;
 }
 
-EnvExpansionResult tools::finite::env::expand_environment_forward_nsite(StateFinite &state, const ModelFinite &model, EdgesFinite &edges,
-                                                                        EnvExpandMode envExpandMode, svd::config svd_cfg) {
+EnvExpansionResult tools::finite::env::expand_environment_forward_nsite(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, OptAlgo algo,
+                                                                        OptRitz ritz, svd::config svd_cfg) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("expand_environment_forward_nsite: All lengths not equal: state {} | model {} | edges {}", state.get_length(),
                                     model.get_length(), edges.get_length());
@@ -853,7 +1170,6 @@ EnvExpansionResult tools::finite::env::expand_environment_forward_nsite(StateFin
     if(state.active_sites.empty()) throw except::logic_error("No active sites for environment expansion");
 
     // Determine which bond to expand
-    // std::vector<size_t> pos_expanded;
     std::vector<size_t> pos_active_and_expanded;
     if(state.get_direction() > 0) {
         auto pos = state.active_sites.back();
@@ -877,9 +1193,8 @@ EnvExpansionResult tools::finite::env::expand_environment_forward_nsite(StateFin
     }
 
     // Define the left and right mps that will get modified
-    auto res = get_optimally_mixed_block(pos_active_and_expanded, state, model, edges, envExpandMode);
+    auto res = get_optimally_mixed_block(pos_active_and_expanded, state, model, edges, algo, ritz);
 
-    if(envExpandMode == EnvExpandMode::NONE) return res; // Position query
     const auto &mpsL = state.get_mps_site(res.posL);
     const auto &mpsR = state.get_mps_site(res.posR);
     res.ene_old      = tools::finite::measure::energy(state, model, edges);
@@ -898,8 +1213,8 @@ EnvExpansionResult tools::finite::env::expand_environment_forward_nsite(StateFin
     res.dims_new = state.get_mps_dims(pos_active_and_expanded);
     res.bond_new = state.get_bond_dims(pos_active_and_expanded);
 
-    tools::log->debug("Environment expansion forward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {}", pos_active_and_expanded,
-                      flag2str(envExpandMode), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), res.bond_old,
+    tools::log->debug("Environment expansion forward pos {} | {} {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {}", pos_active_and_expanded,
+                      enum2sv(algo), enum2sv(ritz), res.alpha_ene, res.alpha_var, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), res.bond_old,
                       res.bond_new);
     state.clear_cache();
     state.clear_measurements();

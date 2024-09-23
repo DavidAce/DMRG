@@ -159,13 +159,11 @@ void xdmrg::init_energy_target(std::optional<double> energy_density_target) {
             // throw std::logic_error("status.opt_ritz == OptRitz::SR should be handled with fdmrg instead of xdmrg");
         }
         case OptRitz::LR: {
-            tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
             status.energy_tgt = 0.0;
             break;
             // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
         }
         case OptRitz::LM: {
-            tools::log->warn("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
             status.energy_tgt = 0.0;
             break;
             // throw std::logic_error("status.opt_ritz == OptRitz::LR should be handled with fdmrg instead of xdmrg");
@@ -322,8 +320,7 @@ void xdmrg::run_algorithm() {
         update_truncation_error_limit(); // Updates the truncation error limit if the state is being truncated
         update_eigs_tolerance();         // Updates the tolerance on the iterative eigensolver
         update_dmrg_blocksize();         // Updates the number sites used in dmrg steps using the information typical scale
-        try_retargeting();
-        try_projection(); // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
+        try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
         // try_moving_sites(); // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         // expand_environment(EnvExpandMode::VAR , EnvExpandSide::BACKWARD);
 
@@ -356,7 +353,7 @@ void xdmrg::update_state() {
     // Expand the environment to grow the bond dimension in 1-site dmrg
     // if(opt_meta.expand_mode != EnvExpandMode::NONE and tensors.active_sites.size() == 1) {
     if(opt_meta.expand_mode != EnvExpandMode::NONE) {
-        expand_environment(opt_meta.expand_mode, opt_meta.expand_side);
+        expand_environment(opt_meta.expand_mode, opt_meta.expand_side, opt_meta.optAlgo, opt_meta.optRitz);
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
         opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);
         opt_meta.optSolver    = opt_meta.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
@@ -366,7 +363,7 @@ void xdmrg::update_state() {
 
     // Run the optimization
     auto initial_state = opt::get_opt_initial_mps(tensors, opt_meta);
-    auto opt_state     = opt::find_excited_state(tensors, initial_state, status, opt_meta);
+    auto opt_state     = opt::get_updated_state(tensors, initial_state, status, opt_meta);
 
     // Determine the quality of the optimized state.
     opt_state.set_relchange(opt_state.get_variance() / var_latest);
@@ -385,38 +382,15 @@ void xdmrg::update_state() {
     opt_state.set_optexit(opt_meta.optExit);
     /* clang-format on */
 
-    // Estimate the convergence rate (requires nev > 1)
-    double convr = std::numeric_limits<double>::quiet_NaN();
-    if(opt_state.get_optcost() == OptCost::VARIANCE and settings::xdmrg::try_shifting_when_degen > 0) {
-        // auto ev0   = opt_state.get_eigs_eigval();
-        // auto ev1   = opt_state.next_evs.front().eigs_eigval;
-        // auto evn   = std::pow(tensors.model->get_energy_upper_bound(), 2.0);
-        // auto kappa = (evn - ev0) / (ev1 - ev0);
-        // auto gamma = (std::sqrt(kappa) - 1) / (std::sqrt(kappa) + 1);
-
-        // Compare the progress in the objective function
-        auto old_eigvalue = initial_state.get_variance() + std::pow(initial_state.get_energy(), 2.0); // Plain H²
-        auto new_eigvalue = opt_state.get_eigs_eigval();                                              // Should also be plain H²
-        auto num_matvecs  = static_cast<double>(opt_state.get_mv());
-        auto time_eigs    = opt_state.get_time();
-        if(new_eigvalue < old_eigvalue and num_matvecs > 0 and time_eigs > 0.0) {
-            convr = (1.0 - new_eigvalue / old_eigvalue) / num_matvecs / time_eigs;
-            tools::log->info("H² {:.3e} -> {:.3e} in {:<10} matvecs: convr {:.3e}", old_eigvalue, new_eigvalue, num_matvecs, convr);
-        }
-
-        // convr      = std::log(0.5) / std::log(gamma);
-    }
-    for(auto site : opt_state.get_sites()) dmrg_degeneracy_score.at(site) = convr;
-
-    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optCost), enum2sv(opt_meta.optSolver),
+    tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(opt_meta.optAlgo), enum2sv(opt_meta.optSolver),
                       flag2str(opt_meta.optExit), var_latest, opt_state.get_variance(), opt_state.get_relchange() * 100);
     if(opt_state.get_relchange() > 1000) tools::log->warn("Variance increase by x {:.2e}", opt_state.get_relchange());
 
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("Optimization result: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
-                          "sites {} | conv {:.2f} | {:20} | {} | time {:.2e} s",
+                          "sites {} | {:20} | {} | time {:.2e} s",
                           opt_state.get_name(), opt_state.get_energy(), opt_state.get_variance(), opt_state.get_eigs_rnorm(), opt_state.get_overlap(),
-                          opt_state.get_sites(), convr, fmt::format("[{}][{}]", enum2sv(opt_state.get_optcost()), enum2sv(opt_state.get_optsolver())),
+                          opt_state.get_sites(), fmt::format("[{}][{}]", enum2sv(opt_state.get_optalgo()), enum2sv(opt_state.get_optsolver())),
                           flag2str(opt_state.get_optexit()), opt_state.get_time());
     }
 
@@ -456,7 +430,6 @@ void xdmrg::update_state() {
 
     last_optsolver = opt_state.get_optsolver();
     last_optalgo   = opt_state.get_optalgo();
-    last_optcost   = opt_state.get_optcost();
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
@@ -526,25 +499,6 @@ void xdmrg::set_energy_shift_mpo() {
     if constexpr(settings::debug) tensors.assert_validity();
     if(std::abs(tensors.model->get_energy_shift_mpo() - status.energy_tgt) > 1e-15)
         throw except::runtime_error("Energy shift mismatch: {:.16f} != {:.16f}", tensors.model->get_energy_shift_mpo(), status.energy_tgt);
-}
-
-void xdmrg::try_retargeting() {
-    if(not tensors.position_is_inward_edge()) return;
-    if(status.algorithm_has_stuck_for == 0) return;
-    if(settings::xdmrg::try_shifting_when_degen <= 0) return;
-    auto convmax = num::nanmax(dmrg_degeneracy_score);
-    if(std::isnan(convmax)) return;
-    tools::log->info("convergence difficulty score: {:.1f} (limit {:.1f}) | {::.1f}", convmax, settings::xdmrg::try_shifting_when_degen, dmrg_degeneracy_score);
-    if(convmax > settings::xdmrg::try_shifting_when_degen) {
-        auto mu                                = 0.0;
-        auto sig                               = tensors.model->get_energy_upper_bound() / 100.0;
-        settings::xdmrg::energy_spectrum_shift = rnd::normal(mu, sig);
-        status.energy_tgt                      = settings::xdmrg::energy_spectrum_shift;
-        dmrg_degeneracy_score                  = std::vector(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
-        tools::finite::mps::normalize_state(*tensors.state, svd::config(settings::xdmrg::bond_min, status.trnc_max), NormPolicy::ALWAYS);
-        clear_convergence_status();
-        set_energy_shift_mpo();
-    }
 }
 
 void xdmrg::update_time_step() {

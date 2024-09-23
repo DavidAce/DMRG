@@ -8,11 +8,25 @@ class EdgesFinite;
 class EnvEne;
 class EnvVar;
 enum class EnvExpandMode;
+enum class OptAlgo;
+enum class OptRitz;
+enum class EnvExpandMode;
 struct EnvExpansionResult;
 
 namespace tools::finite::env {
-    extern EnvExpansionResult                 get_optimally_mixed_block(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
-                                                                        const EdgesFinite &edges, EnvExpandMode envExpandMode);
+    extern EnvExpansionResult get_optimally_mixed_block(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                        const EdgesFinite &edges, OptAlgo algo, OptRitz ritz);
+    namespace internal {
+        extern EnvExpansionResult get_optimally_mixed_block_H1(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                               const EdgesFinite &edges, OptRitz ritz);
+        extern EnvExpansionResult get_optimally_mixed_block_H2(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                               const EdgesFinite &edges, OptRitz ritz);
+        extern EnvExpansionResult get_optimally_mixed_block_VarH(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                 const EdgesFinite &edges, OptRitz ritz);
+        extern EnvExpansionResult get_optimally_mixed_block_GsiH(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
+                                                                 const EdgesFinite &edges, OptRitz ritz);
+    }
+
     extern std::tuple<double, double, double> get_optimal_mixing_factors(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
                                                                          const EdgesFinite &edges, EnvExpandMode envExpandMode);
     extern std::array<double, 2> get_optimal_mixing_factor_ene(const std::vector<size_t> &sites, const StateFinite &state, const ModelFinite &model,
@@ -29,7 +43,7 @@ namespace tools::finite::env {
                                                              svd::config svd_cfg);
     extern EnvExpansionResult    expand_environment_forward_old(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
                                                                 svd::config svd_cfg);
-    extern EnvExpansionResult    expand_environment_forward_nsite(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
+    extern EnvExpansionResult    expand_environment_forward_nsite(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, OptAlgo algo, OptRitz ritz,
                                                                   svd::config svd_cfg);
     extern EnvExpansionResult    expand_environment_forward_1site(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, EnvExpandMode envExpandMode,
                                                                   svd::config svd_cfg);

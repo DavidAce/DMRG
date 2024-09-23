@@ -302,6 +302,7 @@ void settings::load(Loader &dmrg_config) {
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                                    , xdmrg::on);
+    dmrg_config.load_parameter("xdmrg::algo"                                  , xdmrg::algo);
     dmrg_config.load_parameter("xdmrg::ritz"                                  , xdmrg::ritz);
     dmrg_config.load_parameter("xdmrg::energy_spectrum_shift"                 , xdmrg::energy_spectrum_shift);
     dmrg_config.load_parameter("xdmrg::energy_density_target"                 , xdmrg::energy_density_target);
@@ -312,8 +313,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::print_freq "                           , xdmrg::print_freq);
     dmrg_config.load_parameter("xdmrg::store_wavefn"                          , xdmrg::store_wavefn);
     dmrg_config.load_parameter("xdmrg::max_states"                            , xdmrg::max_states);
-    dmrg_config.load_parameter("xdmrg::try_directx2_when_stuck"               , xdmrg::try_directx2_when_stuck);
-    dmrg_config.load_parameter("xdmrg::try_shifting_when_degen"               , xdmrg::try_shifting_when_degen);
 
     //Timers
     dmrg_config.load_parameter("timer::level"      , timer::level     );

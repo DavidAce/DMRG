@@ -143,7 +143,8 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double residual_norm               (const Eigen::Tensor<cplx, 3> &mps,
                                                              const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
                                                              const env_pair<const EnvVar &> &envs);
-    [[nodiscard]] extern double residual_norm                (const TensorsFinite & tensors);
+    [[nodiscard]] extern double residual_norm_H1             (const TensorsFinite & tensors);
+    [[nodiscard]] extern double residual_norm_H2             (const TensorsFinite & tensors);
 
     [[nodiscard]] extern double residual_norm_full           (const StateFinite &state, const ModelFinite &model);
 

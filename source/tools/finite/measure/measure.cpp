@@ -744,10 +744,17 @@ double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, 
     return residual_norm(mps, mpo_vec, envs.L.get_block(), envs.R.get_block());
 }
 
-double tools::finite::measure::residual_norm(const TensorsFinite &tensors) {
+double tools::finite::measure::residual_norm_H1(const TensorsFinite &tensors) {
     const auto &mps = tensors.get_state().get_multisite_mps();
     const auto &mpo = tensors.get_model().get_mpo_active();
     const auto &env = tensors.get_edges().get_ene_active();
+    return residual_norm(mps, mpo, env);
+}
+
+double tools::finite::measure::residual_norm_H2(const TensorsFinite &tensors) {
+    const auto &mps = tensors.get_state().get_multisite_mps();
+    const auto &mpo = tensors.get_model().get_mpo_active();
+    const auto &env = tensors.get_edges().get_var_active();
     return residual_norm(mps, mpo, env);
 }
 

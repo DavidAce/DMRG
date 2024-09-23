@@ -239,44 +239,34 @@ enum class LogPolicy {
 };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
-enum class OptCost {
-    /*! Choose the objective function for the optimization.
-     * Below, H and |psi> are the effective Hamiltonian and state corresponding to
-     * a one or more lattice sites.
-     */
-    ENERGY,   /*!< Keep an energy eigenstate H|psi> = E|psi> (ground state or excited state)   */
-    VARIANCE, /*!< Keep the smallest eigenstate of (H-E)^2|psi> = Var(H) |psi>, where E is a target energy */
-    OVERLAP   /*!< Among all eigenstates of H, keep the state which maximizes the overlap with the current state |<psi'|psi>| -> 1 */
-};
 
 /*! Choose the algorithm for the optimization.
  *
- * Note that H and |psi> are the effective Hamiltonian and state corresponding to
- * a one or more lattice sites.
+ * In the descriptions below, H and |v> are the local effective Hamiltonians and states.
  */
 enum class OptAlgo {
-    DIRECT,   /*!< Apply the eigensolver directly on H|psi> (fdmrg) or (H-E)^2|psi> (xdmrg) */
-    DIRECTZ,  /*!< Try using Zero-site DMRG */
-    DIRECTX2, /*!< For xdmrg with ritz SM: try H|psi> first, then H²|psi>. May resolve level spacing issues */
-    SUBSPACE, /*!< Find a state |psi> = λ_0|psi_0> + λ_1|psi_1>... by finding the ground state of of (H-E)^2_ij = <psi_i|(H-E)^2|psi_j> , where psi_i,psi_j are
-                 eigenstates of H which span the current state */
-    SHIFTINV, /*!< Find a mid-spectrum eigenstate of H using shift-invert (only compatible with OptCost::ENERGY).  */
-    MPSEIGS   /*!< Apply all MPO's onto all MPS (all L sites) in the matrix-vector product of a matrix-free eigenvalue solver  */
-};            //
+    DMRG,         /*!< Plain DMRG that solves the eigenvalue problem H|v>=E|v> for some given  */
+    DMRGX,        /*!< Find an eigenvector of H that maximizes the overlap:  |v_new> = max_k <v_old | v_k> */
+    HYBRID_DMRGX, /*!< Minimize the variance of |v_new> = sum_{k in K} λ_k|v_k>..., where K is a basis of H_eff eigenvectors satisfying <v_old | v_k> != 0 */
+    XDMRG,        /*!< Solve the folded eigenvalue problem (H-Eshift)²|v>  */
+    GDMRG,        /*!< Solve the generalized shift-invert problem (H-Eshift)|v> = (1/E)(H-Eshift)²|v> */
+};
+
 enum class OptSolver {
     EIG, /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
     EIGS /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
 };
 
-/*! Choose the target energy eigenpair */
+/*! Choose the target eigenpair */
 enum class OptRitz {
     NONE, /*!< No eigenpair is targeted (e.g. time evolution) */
     LR,   /*!< Largest Real eigenvalue */
     LM,   /*!< Largest Absolute eigenvalue */
     SR,   /*!< Smallest Real eigenvalue */
     SM,   /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
-    IS,   /*!< Initial State energy. MPO² Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
-    TE    /*!< Target Energy density in normalized units [0,1]. MPO² Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
+    IS,   /*!< Initial State energy. Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
+    TE,    /*!< Target Energy density in normalized units [0,1]. Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
+    // CE,    /*!< Closest to the current energy  */
 };
 
 enum class OptWhen : int {
@@ -597,7 +587,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         LogPolicy,
         RandomizerMode,
         OptType,
-        OptCost,
         OptAlgo,
         OptSolver,
         OptRitz,
@@ -915,18 +904,12 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptType::REAL)                                      return "REAL";
         if(item == OptType::CPLX)                                      return "CPLX";
     }
-    if constexpr(std::is_same_v<T,OptCost>){
-        if(item == OptCost::ENERGY  )                                  return "ENERGY";
-        if(item == OptCost::VARIANCE)                                  return "VARIANCE";
-        if(item == OptCost::OVERLAP)                                   return "OVERLAP";
-    }
     if constexpr(std::is_same_v<T,OptAlgo>){
-        if(item == OptAlgo::DIRECT)                                    return "DIRECT";
-        if(item == OptAlgo::DIRECTZ)                                   return "DIRECTZ";
-        if(item == OptAlgo::DIRECTX2)                                  return "DIRECTX2";
-        if(item == OptAlgo::SUBSPACE)                                  return "SUBSPACE";
-        if(item == OptAlgo::SHIFTINV)                                  return "SHIFTINV";
-        if(item == OptAlgo::MPSEIGS)                                   return "MPSEIGS";
+        if(item == OptAlgo::DMRG)                                      return "DMRG";
+        if(item == OptAlgo::DMRGX)                                     return "DMRGX";
+        if(item == OptAlgo::HYBRID_DMRGX)                              return "HYBRID_DMRGX";
+        if(item == OptAlgo::XDMRG)                                     return "XDMRG";
+        if(item == OptAlgo::GDMRG)                                     return "GDMRG";
     }
     if constexpr(std::is_same_v<T,OptSolver>){
         if(item == OptSolver::EIG)                                     return "EIG";
@@ -962,8 +945,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == EigsIterGainPolicy::VARSAT)                          return "VARSAT";
         if(item == EigsIterGainPolicy::SATURATED)                       return "SATURATED";
         if(item == EigsIterGainPolicy::STUCK)                           return "STUCK";
-        if(item == EigsIterGainPolicy::FIN_BOND)                      return "FIN_BOND";
-        if(item == EigsIterGainPolicy::FIN_TRNC)                      return "FIN_TRNC";
+        if(item == EigsIterGainPolicy::FIN_BOND)                        return "FIN_BOND";
+        if(item == EigsIterGainPolicy::FIN_TRNC)                        return "FIN_TRNC";
     }
     return "UNRECOGNIZED ENUM";
 }
@@ -1005,8 +988,8 @@ constexpr auto sv2enum(std::string_view item) {
         FileResumePolicy,
         LogPolicy,
         RandomizerMode,
+        OptAlgo,
         OptType,
-        OptCost,
         OptSolver,
         OptRitz,
         OptWhen,
@@ -1048,8 +1031,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("SAT_VAR")     != std::string_view::npos)  policy |= BlockSizePolicy::SAT_VAR;
         if(item.find("SAT_ALGO")    != std::string_view::npos)  policy |= BlockSizePolicy::SAT_ALGO;
         if(item.find("STK_ALGO")    != std::string_view::npos)  policy |= BlockSizePolicy::STK_ALGO;
-        if(item.find("FIN_BOND")  != std::string_view::npos)  policy |= BlockSizePolicy::FIN_BOND;
-        if(item.find("FIN_TRNC")  != std::string_view::npos)  policy |= BlockSizePolicy::FIN_TRNC;
+        if(item.find("FIN_BOND")    != std::string_view::npos)  policy |= BlockSizePolicy::FIN_BOND;
+        if(item.find("FIN_TRNC")    != std::string_view::npos)  policy |= BlockSizePolicy::FIN_TRNC;
         return policy;
 
     }
@@ -1059,8 +1042,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("VARSAT")         != std::string_view::npos) policy |= EigsIterGainPolicy::VARSAT;
         if(item.find("SATURATED")      != std::string_view::npos) policy |= EigsIterGainPolicy::SATURATED;
         if(item.find("STUCK")          != std::string_view::npos) policy |= EigsIterGainPolicy::STUCK;
-        if(item.find("FIN_BOND")     != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_BOND;
-        if(item.find("FIN_TRNC")     != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_TRNC;
+        if(item.find("FIN_BOND")       != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_BOND;
+        if(item.find("FIN_TRNC")       != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_TRNC;
         return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -1342,22 +1325,17 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "REAL")                                  return OptType::REAL;
         if(item == "CPLX")                                  return OptType::CPLX;
     }
-    if constexpr(std::is_same_v<T,OptCost>){
-        if(item == "ENERGY")                                return OptCost::ENERGY;
-        if(item == "VARIANCE")                              return OptCost::VARIANCE;
-        if(item == "OVERLAP")                               return OptCost::OVERLAP;
-    }
+
     if constexpr(std::is_same_v<T,OptAlgo>){
-        if(item == "DIRECT")                                return OptAlgo::DIRECT;
-        if(item == "DIRECTZ")                               return OptAlgo::DIRECTZ;
-        if(item == "DIRECTX2")                              return OptAlgo::DIRECTX2;
-        if(item == "SUBSPACE")                              return OptAlgo::SUBSPACE;
-        if(item == "SHIFTINV")                              return OptAlgo::SHIFTINV;
-        if(item == "MPSEIGS")                               return OptAlgo::MPSEIGS;
+        if(item == "DMRG")                                  return OptAlgo::DMRG;
+        if(item == "DMRGX")                                 return OptAlgo::DMRGX;
+        if(item == "HYBRID_DMRGX")                          return OptAlgo::HYBRID_DMRGX;
+        if(item == "XDMRG")                                 return OptAlgo::XDMRG;
+        if(item == "GDMRG")                                 return OptAlgo::GDMRG;
     }
     if constexpr(std::is_same_v<T,OptSolver>){
-        if(item == "EIG")                                  return OptSolver::EIG;
-        if(item == "EIGS")                                 return OptSolver::EIGS;
+        if(item == "EIG")                                   return OptSolver::EIG;
+        if(item == "EIGS")                                  return OptSolver::EIGS;
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == "NEVER")                                 return OptWhen::NEVER;

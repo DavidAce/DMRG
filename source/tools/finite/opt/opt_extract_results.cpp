@@ -36,23 +36,7 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.is_basis_vector = true;
                 if constexpr(settings::debug) tools::log->trace("Extracting result: idx {} | eigval {:.16f}", idx, eigvals(idx));
                 mps.set_name(fmt::format("eigenvector {} [{:^8}]", idx, solver.config.tag));
-                const auto &old_mps = tensors.state->get_mps_site();
-                if(meta.optAlgo == OptAlgo::DIRECTZ) {
-                    auto bond = Eigen::TensorMap<const Eigen::Tensor<cplx, 2>>(eigvecs.col(idx).data(), tenx::array2{old_mps.get_chiR(), old_mps.get_chiR()});
-                    Eigen::Tensor<cplx, 0> trace  = bond.conjugate().contract(bond, tenx::idx({0}, {0})).trace();
-                    auto                   tensor = Eigen::Tensor<cplx, 3>(old_mps.get_M_bare().contract(bond, tenx::idx({2}, {0})));
-                    mps.set_tensor(tensor);
-                    // fmt::print("trace  : {:.16f}\n", trace.coeff(0));
-                    // fmt::print("eigval : {:.16f}\n", eigvals[idx]);
-                    // fmt::print("norm   : {:.16f}\n",eigvecs.col(idx).norm());
-                    // for(size_t bidx = 0; bidx < bond.dimension(0); ++bidx) {
-                    //     fmt::print("{:.10f} -> {:.10f}\n", old_mps.get_LC()[bidx].real(), bond(bidx, bidx).real());
-                    // }
-                    // fmt::print("bond old: \n{}\n", linalg::tensor::to_string(tenx::asDiagonal(old_mps.get_LC()), 6));
-                    // fmt::print("bond new: \n{}\n", linalg::tensor::to_string(bond, 6));
-                } else {
-                    mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
-                }
+                mps.set_tensor(eigvecs.col(idx).normalized(), dims_mps); // eigvecs are not always well normalized when we get them from eig::solver
                 mps.set_sites(initial_mps.get_sites());
                 mps.set_eshift(initial_mps.get_eshift()); // Will set energy if also given the eigval
                 mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));
@@ -70,7 +54,6 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 mps.set_eigs_tol(solver.result.meta.tol);
                 mps.set_eigs_ritz(solver.result.meta.ritz);
                 mps.set_eigs_shift(solver.result.meta.sigma);
-                mps.set_optcost(meta.optCost);
                 mps.set_optalgo(meta.optAlgo);
                 mps.set_optsolver(meta.optSolver);
                 if(solver.result.meta.residual_norms.size() > udx) mps.set_eigs_rnorm(solver.result.meta.residual_norms.at(udx));
@@ -81,26 +64,12 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
                 auto vh2v    = tools::finite::measure::expval_hamiltonian_squared(mps.get_tensor(), mpos, envv);
                 auto rnormH  = tools::finite::measure::residual_norm(mps.get_tensor(), mpos, enve);
                 auto rnormH2 = tools::finite::measure::residual_norm(mps.get_tensor(), mpos, envv);
-                mps.set_rnorm_H(rnormH);
+                mps.set_rnorm_H1(rnormH);
                 mps.set_rnorm_H2(rnormH2);
 
                 // When using PRIMME_DYNAMIC with nev > 1, I have noticed that the eigenvalues are sometimes repeated,
                 // so it looks like an exact degeneracy. This is probably a bug somewhere (maybe in PRIMME).
-                // We should therefore re-calculate the eigenvalue manually below
                 mps.set_eigs_eigval(eigvals[idx]);
-                switch(meta.optCost) {
-                    case OptCost::OVERLAP:
-                    case OptCost::ENERGY: {
-                        mps.set_eigs_eigval(std::real(vh1v));
-                        break;
-                    }
-                    case OptCost::VARIANCE: {
-                        // tools::log->info("-- eigval idx {}: vh2v {:.16f} | eigv {:.16f} | diff {:.3e}", idx, std::real(vh2v), eigvals[idx],
-                        //                  std::real(vh2v) - eigvals[idx]);
-                        mps.set_eigs_eigval(std::real(vh2v));
-                        break;
-                    }
-                }
 
                 double energy   = std::real(vh1v) + tensors.get_model().get_energy_shift_mpo();
                 double variance = std::real(vh2v) - std::abs(vh1v * vh1v);
@@ -158,7 +127,6 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 mps.set_eigs_eigval(eigvals[idx]);
                 mps.set_eigs_ritz(solver.result.meta.ritz);
                 mps.set_eigs_shift(solver.result.meta.sigma);
-                mps.set_optcost(meta.optCost);
                 mps.set_optalgo(meta.optAlgo);
                 mps.set_optsolver(meta.optSolver);
 
@@ -168,29 +136,14 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
                 auto envv    = tensors.get_edges().get_var_active();
                 auto vh1v    = tools::finite::measure::expval_hamiltonian(mps.get_tensor(), mpos, enve);
                 auto vh2v    = tools::finite::measure::expval_hamiltonian_squared(mps.get_tensor(), mpos, envv);
-                auto rnormH  = tools::finite::measure::residual_norm(mps.get_tensor(), mpos, enve);
+                auto rnormH1 = tools::finite::measure::residual_norm(mps.get_tensor(), mpos, enve);
                 auto rnormH2 = tools::finite::measure::residual_norm(mps.get_tensor(), mpos, envv);
-
-                mps.set_rnorm_H(rnormH);
+                mps.set_rnorm_H1(rnormH1);
                 mps.set_rnorm_H2(rnormH2);
 
                 // When using PRIMME_DYNAMIC with nev > 1, I have noticed that the eigenvalues are sometimes repeated,
                 // so it looks like an exact degeneracy. This is probably a bug somewhere (maybe in PRIMME).
-                // We should therefore re-calculate the eigenvalue manually below
                 mps.set_eigs_eigval(eigvals[idx]);
-                switch(meta.optCost) {
-                    case OptCost::OVERLAP:
-                    case OptCost::ENERGY: {
-                        mps.set_eigs_eigval(std::real(vh1v));
-                        break;
-                    }
-                    case OptCost::VARIANCE: {
-                        // tools::log->info("-- eigval idx {}: vh2v {:.16f} | eigv {:.16f} | diff {:.3e}", idx, std::real(vh2v), eigvals[idx],
-                                         // std::real(vh2v) - eigvals[idx]);
-                        mps.set_eigs_eigval(std::real(vh2v));
-                        break;
-                    }
-                }
 
                 double energy   = std::real(vh1v) + tensors.get_model().get_energy_shift_mpo();
                 double variance = std::real(vh2v) - std::abs(vh1v * vh1v);

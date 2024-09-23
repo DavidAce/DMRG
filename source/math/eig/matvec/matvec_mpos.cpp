@@ -703,48 +703,54 @@ void MatVecMPOS<T>::CalcPc(T shift) {
             MatrixType blockB = get_diagonal_block(offset, extent, mpos_B, envL_B, envR_B);
             MatrixType blockI = blockA - blockB * shift; // This is what we invert
 
-            // b.diagonal().array() -= shift;
-            // if(b.rows() <= 128) {
-            //     b = Eigen::FullPivLU<MatrixType>(b).solve(MatrixType::Identity(extent, extent));
-            // } else if( b.rows() <= 1024) {
-            //     b = Eigen::PartialPivLU<MatrixType>(b).solve(MatrixType::Identity(extent, extent));
-            // }else {
             bool lltSuccess  = false;
             bool ldltSuccess = false;
-            if(auto llt = Eigen::LLT<MatrixType, Eigen::Lower>(blockI); llt.info() == Eigen::Success) {
-                blockI     = llt.solve(MatrixType::Identity(extent, extent));
-                lltSuccess = llt.info() == Eigen::Success;
-                if(!lltSuccess) {
-                    blockI = blockA - blockB * shift; // Reset
-                    eig::log->info("llt solve failed on block {}/{}", blkidx, nblocks);
+            bool luSuccess   = false;
+            bool qrSuccess   = false;
+            switch(factorization) {
+                case eig::Factorization::NONE: {
+                    eig::log->warn("MatvecMPOS::CalcPc(): No factorization has been set for the preconditioner");
+                    break;
                 }
-            }
-            if(!lltSuccess) {
-                eig::log->info("llt compute failed on block {}/{} ... trying ldlt", blkidx, nblocks);
-                if(auto ldlt = Eigen::LDLT<MatrixType, Eigen::Lower>(blockI); ldlt.info() == Eigen::Success) {
-                    blockI      = ldlt.solve(MatrixType::Identity(extent, extent));
-                    ldltSuccess = ldlt.info() == Eigen::Success;
-                    if(!ldltSuccess) {
+                case eig::Factorization::LLT: {
+                    if(auto llt = Eigen::LLT<MatrixType, Eigen::Lower>(blockI); llt.info() == Eigen::Success) {
+                        blockI     = llt.solve(MatrixType::Identity(extent, extent));
+                        lltSuccess = llt.info() == Eigen::Success;
+                        if(lltSuccess) break;
                         blockI = blockA - blockB * shift; // Reset
-                        eig::log->info("ldlt solve failed on block {}/{}", blkidx, nblocks);
+                        eig::log->info("llt solve failed on block {}/{}", blkidx, nblocks);
+                        [[fallthrough]];
                     }
                 }
+                case eig::Factorization::LDLT: {
+                    if(auto ldlt = Eigen::LDLT<MatrixType, Eigen::Lower>(blockI); ldlt.info() == Eigen::Success) {
+                        blockI      = ldlt.solve(MatrixType::Identity(extent, extent));
+                        ldltSuccess = ldlt.info() == Eigen::Success;
+                        if(ldltSuccess) break;
+                        blockI = blockA - blockB * shift; // Reset
+                        eig::log->info("ldlt solve failed on block {}/{}", blkidx, nblocks);
+                        [[fallthrough]];
+                    }
+                }
+                case eig::Factorization::LU: {
+                    auto lu   = Eigen::PartialPivLU<MatrixType>(blockI);
+                    blockI    = lu.solve(MatrixType::Identity(extent, extent));
+                    luSuccess = true;
+                    break;
+                }
+                case eig::Factorization::QR: {
+                    auto qr   = Eigen::HouseholderQR<MatrixType>(blockI);
+                    blockI    = qr.solve(MatrixType::Identity(extent, extent));
+                    qrSuccess = true;
+                    break;
+                }
             }
-            if(!lltSuccess and !ldltSuccess) {
-                // auto lusolver = Eigen::FullPivLU<MatrixType>(b);
-                // eig::log->info("llt and ldlt failed on block {}/{} ... trying FullPivLU | isInvertible {}", blkidx, nblocks, lusolver.isInvertible());
-                // auto lusolver = Eigen::FullPivLU<MatrixType>(b);
-                // auto qrsolver = Eigen::ColPivHouseholderQR<MatrixType>(blockI);
-                blockI = Eigen::ColPivHouseholderQR<MatrixType>(blockI).inverse(); // Should work on any matrix
-                // if(qrsolver.info() == Eigen::Success) {
-                //     b = lusolver.inverse(); // Should work on any matrix
-                // } else {
-                //     eig::log->info("llt and ldlt failed on block {}/{} ... trying diagonal preconditioner", blkidx, nblocks);
-                //     blockI = MatrixType(blockA.diagonal().cwiseInverse().asDiagonal());
-                // }
-            }
-            // }
 
+            if(!lltSuccess and !ldltSuccess and !luSuccess and !qrSuccess) {
+                eig::log->warn("factorization {} (and others) failed on block {}/{} ... resorting to Eigen::ColPivHouseholderQR",
+                               eig::FactorizationToString(factorization), blkidx, nblocks);
+                blockI = Eigen::ColPivHouseholderQR<MatrixType>(blockI).inverse(); // Should work on any matrix
+            }
 #pragma omp ordered
             {
                 denseJcbBlocks.emplace_back(offset, blockI); //
@@ -757,186 +763,7 @@ void MatVecMPOS<T>::CalcPc(T shift) {
             "MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | diagonal blocksize {} | nblocks {} ... done (avg sparsity {:.3e})",
             jcbBlockSize, nblocks, spavg);
     }
-    //     if(preconditioner == eig::Preconditioner::JACOBI) {
-    //     } else if(preconditioner == eig::Preconditioner::BLOCK_JACOBI) {
-    //         long maxsize   = std::clamp(jcbMaxBlockSize, 1l, size_mps);
-    //         auto trip      = std::vector<Eigen::Triplet<T, long>>();
-    //         long blocksize = std::min(maxsize, shape_mps[0] * shape_mps[1]);
-    //         long nblocks   = 1 + ((size_mps - 1) / blocksize); // ceil: note that the last block may be smaller than blocksize!
-    //         eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | diagonal blocksize {} | nblocks {} ...", blocksize,
-    //         nblocks); trip.reserve(blocksize * blocksize * nblocks);
-    // #pragma omp parallel for ordered
-    //         for(long block = 0; block < nblocks; ++block) {
-    //             long offset = block * blocksize;
-    //             long extent = std::min((block + 1) * blocksize - offset, size_mps - offset);
-    //             auto b      = get_diagonal_block(offset, extent);
-    //             auto llt    = Eigen::LLT<MatrixType, Eigen::Lower>(b.template cast<T>());
-    //             if(llt.info() == Eigen::Success) {
-    //                 MatrixType bi = llt.solve(MatrixType::Identity(extent, extent));
-    //                 if(llt.info() == Eigen::Success) { b = std::move(bi); }
-    //             }
-    //             if(llt.info() != Eigen::Success) {
-    //                 eig::log->info("llt failed on block {}/{}", block, nblocks);
-    //                 b = MatrixType(b.diagonal().cwiseInverse().asDiagonal());
-    //             }
-    // #pragma omp ordered
-    //             {
-    //                 // MatrixType b = get_diagonal_block(offset, extent).llt().solve(Id);
-    //                 diagblock.emplace_back(offset, b);
-    //                 // for(long I = 0; I < b.rows(); ++I) {
-    //                 //     for(long J = 0; J < b.cols(); ++J) {
-    //                 //         // Fill lower
-    //                 //         if(std::abs(b(I, J)) < std::numeric_limits<Scalar>::epsilon()) continue; // Skip small values
-    //                 //         trip.emplace_back(Eigen::Triplet<T, long>{J + offset, I + offset, b(J, I)});
-    //                 //         trip.emplace_back(Eigen::Triplet<T, long>{I + offset, J + offset, b(I, J)});
-    //                 //     }
-    //                 // }
-    //             }
-    //         }
-    // eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | diagonal blocksize {} | nblocks {} ... done", blocksize,
-    //                 nblocks);
 
-    // auto mask = std::vector<long>(size_mps);
-    // auto row0 = get_row(0).cwiseAbs();
-    // auto rowm = row0.mean();
-    // for(long idx = 0; idx < row0.size(); ++idx) {
-    //     if(row0[idx] > rowm)
-    //         mask[idx] = 1;
-    //     else
-    //         mask[idx] = 0;
-    // }
-    //
-    // auto       diag0 = get_diagonal_new(0);
-    // VectorType diagW = VectorType::Zero(diag0.size());
-    // long       count = 0;
-    // for(long off = 1l; off < size_mps and count <= maxoff; ++off) {
-    //     if(mask[static_cast<size_t>(off)] == 0) continue;
-    //     auto diag = get_diagonal_new(off);
-    //     for(long idx = 0l; idx + off < size_mps; ++idx) {
-    //         auto elem = diag[idx];
-    //         if(std::abs(elem) < 10 * std::numeric_limits<double>::epsilon()) continue; // Skip small values
-    //         diagW[idx] += std::abs(elem);
-    //         diagW[idx + off] = std::abs(elem);
-    //         // // // Fill upper
-    //         // if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, elem)); }
-    //         // if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, elem)); }
-    //         // Fill lower
-    //         // if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, elem)); }
-    //         // if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, std::conj(elem))); }
-    //     }
-    //     count++;
-    // }
-    // Fill the diagonal
-    // if(shift != 0.0) diag0.array() -= shift;
-    // for(long idx = 0l; idx < size_mps; ++idx) {
-    //     auto elem = std::abs(diag0[idx]) + std::abs(diagW[idx]);
-    //     if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx, elem)); }
-    //     if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx, elem)); }
-    // }
-
-    // Get the diagonal
-    // auto diag0 = get_diagonal_new(0);
-    // VectorType diagW = VectorType::Zero(diag0.size());
-    // for(long off = 1l; off < maxoff; ++off) {
-    //     auto diag = get_diagonal_new(off);
-    //     for(long idx = 0l; idx + off < size_mps; ++idx) {
-    //         auto elem = diag[idx];
-    //         diagW[idx] += std::abs(elem);
-    //         if(std::abs(elem) < 10 * std::numeric_limits<double>::epsilon()) continue; // Skip small values
-    //         // // // Fill upper
-    //         // if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, elem)); }
-    //         // if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx + off, elem)); }
-    //         // Fill lower
-    //         if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, elem)); }
-    //         if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx + off, idx, std::conj(elem))); }
-    //     }
-    // }
-    // // Fill the diagonal
-    // if(shift != 0.0) diag0.array() -= shift;
-    // for(long idx = 0l; idx < size_mps; ++idx) {
-    //     auto elem = std::abs(diag0[idx]) + std::abs((diagW[idx]));
-    //     if constexpr(std::is_same<T, real>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx, elem)); }
-    //     if constexpr(std::is_same<T, cplx>::value) { trip.emplace_back(Eigen::Triplet<T, long>(idx, idx, elem)); }
-    // }
-
-    // diagband.setFromTriplets(trip.begin(), trip.end()); // Set the upper part only, since the matrix is hermitian
-    // diagband.makeCompressed();
-    // diagband.setFromTriplets(trip.begin(), trip.end(), [](const auto &a, [[maybe_unused]] const auto &b) { return a; });
-    // diagband = get_sparse_matrix();
-    // if(rows() <= 4096) {
-    //     auto file         = h5pp::File("matrix.h5", h5pp::FileAccess::READWRITE);
-    //     auto mat          = get_matrix();
-    //     auto mat_shf      = get_matrix_shf();
-    //     auto num          = 0;
-    //     auto shf          = 0;
-    //     auto dsetname     = fmt::format("matrix-{}", num);
-    //     auto dsetname_shf = fmt::format("matrix-shf-{}", shf);
-    //     while(file.linkExists(dsetname)) dsetname = fmt::format("matrix-{}", ++num);
-    //     while(file.linkExists(dsetname_shf)) dsetname_shf = fmt::format("matrix-shf-{}", ++shf);
-    //     file.writeDataset(mat, dsetname);
-    //     file.writeDataset(mat_shf, dsetname_shf);
-    //     file.writeAttribute(shape_mps, dsetname, "shape");
-    //     file.writeAttribute(shape_mps, dsetname_shf, "shape");
-    //     tools::log->info("saving matrix {}", dsetname);
-    // }
-    // if(rows() <= 4096) {
-    //     MatrixType A = get_matrix();
-    //     MatrixType JBllt     = MatrixType::Zero(size_mps, size_mps);
-    //     for(long block = 0; block < nblocks; ++block) {
-    //         MatrixType b = get_diagonal_block(block * blocksize, blocksize);
-    //         JBllt.block(block * blocksize, block * blocksize, blocksize, blocksize)  = b.llt().solve(Id);
-    //     VectorType D = A.diagonal();
-    //     auto evA     = cond(A);
-    //     auto evDinvA = cond(D.cwiseInverse().asDiagonal() * A);
-    //     // auto evBinvA = cond(diagband * A);
-    //     auto evJBinvA_llt = cond(JBllt * A);
-    //     //
-    //     tools::log->info("cond(A)         = {:24.16f} / {:24.16f} = {:.3e}", evA.maxCoeff(), evA.minCoeff(), std::abs(evA.maxCoeff() / evA.minCoeff()));
-    //     tools::log->info("cond(D⁻1 A)     = {:24.16f} / {:24.16f} = {:.3e}", evDinvA.maxCoeff(), evDinvA.minCoeff(),
-    //                      std::abs(evDinvA.maxCoeff() / evDinvA.minCoeff()));
-    //     // tools::log->info("cond(B⁻1 A)     = {:24.16f} / {:24.16f} = {:.3e}", evBinvA.maxCoeff(), evBinvA.minCoeff(),
-    //     //                  std::abs(evBinvA.maxCoeff() / evBinvA.minCoeff()));
-    //     tools::log->info("cond(JBllt A)   = {:24.16f} / {:24.16f} = {:.3e}", evJBinvA_llt.maxCoeff(), evJBinvA_llt.minCoeff(),
-    //                      std::abs(evJBinvA_llt.maxCoeff() / evJBinvA_llt.minCoeff()));
-    // }
-
-    // Analyze the matrix if it is small enough
-    // eig::log->info("diagband is hermitian: {}", diagband.isApprox(diagband.adjoint()));
-    // eig::log->info("diagband has eigvals :");
-    // for(const auto &ev : diagband.toDense().template selfadjointView<Eigen::Lower>().eigenvalues()) tools::log->info("{:20.16f}", ev);
-
-    // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner ... compressing");
-    // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the cg preconditioner ... computing");
-    // cgSolver.setTolerance(1e-4);
-    // cgSolver.compute(diagband);
-    // if(cgSolver.info() != Eigen::Success) {
-    // eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner | bandwidth {} | shift {:.3e} ...", jcbMaxBlockSize, shift);
-    // lltSolver.compute(diagband);
-    // eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the llt preconditioner | bandwidth {} | shift {:.3e} ... info:{}", jcbMaxBlockSize, shift,
-    // static_cast<int>(lltSolver.info()));
-
-    // if(lltSolver.info() != Eigen::Success) {
-    //     eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the qr preconditioner | bandwidth {} | shift {:.3e} ...", jcbMaxBlockSize, shift);
-    //     qrSolver.compute(diagband);
-    //     eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the qr preconditioner | bandwidth {} | shift {:.3e}... info:{}", jcbMaxBlockSize, shift,
-    //                     static_cast<int>(qrSolver.info()));
-    // }
-    // if(lltSolver.info() != Eigen::Success) {
-    //     eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the ldlt preconditioner | bandwidth {} | shift {:.3e} ...", jcbMaxBlockSize, shift);
-    //     ldltSolver.compute(diagband);
-    //     eig::log->info("MatVecMPOS<T>::CalcPc(): calculating the ldlt preconditioner | bandwidth {} | shift {:.3e} ... info:{}", jcbMaxBlockSize, shift,
-    //                    static_cast<int>(ldltSolver.info()));
-    // }
-    // if((lltSolver.info() != Eigen::Success) and size_mps <= 3000) {
-    //     // Analyze the matrix if it is small enough
-    //     eig::log->info("diagband is hermitian: {}", diagband.isApprox(diagband.adjoint()));
-    //     eig::log->info("diagband has eigvals :");
-    //     for(const auto &ev : diagband.toDense().template selfadjointView<Eigen::Lower>().eigenvalues()) tools::log->info("{:20.16f}", ev);
-    // }
-
-    // } else {
-    //     throw except::runtime_error("Unknown preconditioner: {}", eig::PreconditionerToString(preconditioner));
-    // }
     readyCalcPc = true;
 }
 

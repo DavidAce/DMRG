@@ -78,13 +78,13 @@ namespace settings {
  *          where E are the energy eigenvalues from step 1.
  *
  */
-opt_mps tools::finite::opt::internal::optimize_variance_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps,
+opt_mps tools::finite::opt::internal::optimize_subspace_variance(const TensorsFinite &tensors, const opt_mps &initial_mps,
                                                                  [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
     tools::log->trace("Optimizing subspace");
     auto t_sub = tid::tic_scope("subspace");
     initial_mps.validate_initial_mps();
-    if(meta.optAlgo != OptAlgo::SUBSPACE)
-        throw except::runtime_error("optimize_variance_subspace: Expected OptAlgo [{}]. Got [{}]", enum2sv(OptAlgo::SUBSPACE), enum2sv(meta.optCost));
+    if(meta.optAlgo != OptAlgo::HYBRID_DMRGX)
+        throw except::runtime_error("optimize_subspace_variance: Expected OptAlgo [{}]. Got [{}]", enum2sv(OptAlgo::HYBRID_DMRGX), enum2sv(meta.optAlgo));
 
     // Handy references
     const auto &model = *tensors.model;
@@ -118,7 +118,7 @@ opt_mps tools::finite::opt::internal::optimize_variance_subspace(const TensorsFi
                 // Use as initial guess
                 meta.optRitz = OptRitz::SM;
                 sub_mps.validate_initial_mps();
-                return optimize_variance_eigs(tensors, sub_mps, status, meta);
+                return optimize_folded_spectrum(tensors, sub_mps, status, meta);
             }
         }
     }

@@ -2,12 +2,14 @@ add_source_target(dmrg-tools-finite-opt
         TARGET_SOURCES
             find_subspace.cpp
             filter_subspace.cpp
-            optimize_overlap.cpp
             optimize_energy.cpp
             optimize_energy_eig.cpp
-            optimize_variance.cpp
-            optimize_variance_subspace.cpp
-            optimize_variance_eig.cpp
+            optimize_overlap.cpp
+            optimize_subspace_variance.cpp
+            optimize_folded_spectrum.cpp
+            optimize_folded_spectrum_eig.cpp
+            optimize_generalized_shift_invert.cpp
+            optimize_generalized_shift_invert_eig.cpp
             opt.cpp
             opt_mps.cpp
             opt_meta.cpp

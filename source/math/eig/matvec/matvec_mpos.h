@@ -45,30 +45,20 @@ class MatVecMPOS {
     bool fullsystem = false;
 
     std::vector<Eigen::Tensor<T, 4>> mpos_A, mpos_B, mpos_A_shf, mpos_B_shf;
-    // Eigen::Tensor<T, 3>                      mpoTL, mpoLR; // Top left and lower right after svd.
-    // Eigen::Tensor<T, 3>                      mpoTR, mpoLL; // Top right and lower left after svd.
-    Eigen::Tensor<T, 3> envL_A, envR_A, envL_B, envR_B;
-    std::array<long, 3> shape_mps;
-    long                size_mps;
-    std::vector<long>   spindims;
-    eig::Form           form = eig::Form::SYMM;
-    eig::Side           side = eig::Side::R;
-    VectorType          jcbDiagA, jcbDiagB;                   // The diagonals of matrices A and B for block jacobi preconditioning (for jcbMaxBlockSize == 1)
-    VectorType          denseJcbDiagonal;                     // The inverted diagonals used when jcBMaxBlockSize == 1
+    Eigen::Tensor<T, 3>              envL_A, envR_A, envL_B, envR_B;
+    std::array<long, 3>              shape_mps;
+    long                             size_mps;
+    std::vector<long>                spindims;
+    eig::Form                        form = eig::Form::SYMM;
+    eig::Side                        side = eig::Side::R;
+    VectorType                       jcbDiagA, jcbDiagB;      // The diagonals of matrices A and B for block jacobi preconditioning (for jcbMaxBlockSize == 1)
+    VectorType                       denseJcbDiagonal;        // The inverted diagonals used when jcBMaxBlockSize == 1
     std::vector<std::pair<long, SparseType>> sparseJcbBlocks; // inverted blocks for the block Jacobi preconditioner stored as sparse matrices
     std::vector<std::pair<long, MatrixType>> denseJcbBlocks;  // inverted blocks for the block Jacobi preconditioner stored as dense matrices
-    // Eigen::LLT<MatrixType, Eigen::Lower>     lltSolver; // The solver for the diagonal band preconditioner
-    // Eigen::SimplicialLLT<SparseType, Eigen::Lower> lltSolver; // The solver for the diagonal band preconditioner
-    // Eigen::SimplicialLDLT<SparseType, Eigen::Lower> ldltSolver; // The solver for the diagonal band preconditioner
-    // Eigen::SimplicialLDLT<SparseType, Eigen::Lower> bandSolver; // The solver for the diagonal band preconditioner
-    // Eigen::SparseLU<SparseType, Eigen::COLAMDOrdering<int>> lltSolver; // The solver for the diagonal band preconditioner
-    // Eigen::IncompleteLUT<T>                    lltSolver;
-    // Eigen::ConjugateGradient<SparseType, Eigen::Lower | Eigen::Upper> cgSolver; // The solver for the diagonal band preconditioner
-    // Eigen::BiCGSTAB<SparseTypeRowM> bandSolver; // The solver for the diagonal band preconditioner
-    SparseType        sparseMatrix;
-    VectorType        solverGuess;
-    std::vector<long> get_k_smallest(const VectorType &vec, size_t k) const;
-    std::vector<long> get_k_largest(const VectorType &vec, size_t k) const;
+    SparseType                               sparseMatrix;
+    VectorType                               solverGuess;
+    std::vector<long>                        get_k_smallest(const VectorType &vec, size_t k) const;
+    std::vector<long>                        get_k_largest(const VectorType &vec, size_t k) const;
 
     T get_matrix_element(long I, long J, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const;
     VectorType get_diagonal_new(long offset, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,

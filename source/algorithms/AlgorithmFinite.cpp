@@ -29,7 +29,6 @@
 AlgorithmFinite::AlgorithmFinite(OptRitz opt_ritz, AlgorithmType algo_type) : AlgorithmBase(opt_ritz, algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
-    dmrg_degeneracy_score.resize(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
     dmrg_eigs_tol = settings::precision::eigs_tol_max;
 }
 
@@ -37,7 +36,6 @@ AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz 
     : AlgorithmBase(std::move(h5ppFile_), opt_ritz, algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
-    dmrg_degeneracy_score.resize(tensors.get_length<size_t>(), std::numeric_limits<double>::quiet_NaN());
     dmrg_eigs_tol = settings::precision::eigs_tol_max;
 }
 
@@ -102,7 +100,6 @@ void AlgorithmFinite::run()
 
 void AlgorithmFinite::run_rbds_analysis() {
     if(settings::strategy::rbds_rate == 0) return;
-    last_optcost   = std::nullopt;
     last_optsolver = std::nullopt;
     tools::log     = tools::Logger::setLogger(fmt::format("{}-rbds", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse bond dimension scaling with rate bond rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
@@ -150,7 +147,6 @@ void AlgorithmFinite::run_rbds_analysis() {
 
 void AlgorithmFinite::run_rtes_analysis() {
     if(settings::strategy::rtes_rate <= 1.0) return;
-    last_optcost   = std::nullopt;
     last_optsolver = std::nullopt;
     tools::log     = tools::Logger::setLogger(fmt::format("{}-rtes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} reverse truncation error scaling with growth rate [{}] of model [{}] for state [{}]", status.algo_type_sv(),
@@ -238,16 +234,13 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Set the target eigenvalue
     m1.optRitz = status.opt_ritz;
+    m1.optAlgo = settings::xdmrg::algo;
 
     // Set the default svd limits
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
     // Set up handy quantities
     auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
-
-    // When nearly degenerate we prefer many iterations over many sites
-    auto position       = static_cast<size_t>(std::max<long>(0l, tensors.get_position<long>()));
-    bool has_degeneracy = dmrg_degeneracy_score[position] >= 0.5 * settings::xdmrg::try_shifting_when_degen;
 
     // Copy settings
     m1.min_sites    = std::min(tensors.get_length<size_t>(), settings::strategy::dmrg_min_blocksize);
@@ -286,33 +279,15 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE | EnvExpandMode::VAR : EnvExpandMode::ENE;
     // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
 
-    m1.optCost = status.algo_type == AlgorithmType::xDMRG ? OptCost::VARIANCE : OptCost::ENERGY;
-    m1.optAlgo = OptAlgo::DIRECT;
-
-    m1.optSolver        = OptSolver::EIGS;
+    m1.optSolver        = OptSolver::EIGS; // Choose the iterative solver by default (the exact solver is defaulted to if the problem is too large)
     m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
     if(status.iter < settings::strategy::iter_max_warmup) {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
         m1.max_sites        = settings::strategy::dmrg_max_blocksize;
     } else {
-        m1.max_sites = has_degeneracy ? 1 : dmrg_blocksize; // When nearly degenerate we prefer many iterations over many sites
+        m1.max_sites = dmrg_blocksize;
     }
-
-    if(status.algo_type == AlgorithmType::xDMRG and settings::xdmrg::try_directx2_when_stuck and tensors.get_position<long>() >= 0) {
-        if(has_degeneracy and not var_isconverged and var_latest < 1e-7) {
-            // Try this desperate measure for one iteration...
-            // m1.max_sites        = 1; // tensors.get_length<size_t>();
-            // m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
-            ; // 2 << (m1.max_sites - 1);
-            m1.optAlgo = OptAlgo::DIRECTX2;
-            // m1.eigs_iter_max = 5000000;
-        }
-    }
-
-    // m1.optAlgo = OptAlgo::DIRECTX2;
-    // m1.eigs_iter_max = 5000000;
-    // m1.max_sites = 20;
 
     // Set up the problem size here
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, m1.label);
@@ -322,57 +297,34 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
 
-    bool full_system_optimization = m1.chosen_sites.size() == tensors.get_length<size_t>();
-    if(status.algo_type == AlgorithmType::xDMRG and                                   //
-       status.algorithm_has_stuck_for > 1 and                                         //
-       status.variance_mpo_saturated_for > settings::strategy::iter_max_saturated and //
-       status.trnc_limit_has_reached_min and                                          //
-       status.bond_limit_has_reached_max and                                          //
-       settings::xdmrg::try_shifting_when_degen > 0 and                               //
-       m1.problem_size > settings::precision::eig_max_size and                        //
-       not full_system_optimization)                                                  //
-    {
-        m1.eigs_nev = std::max(m1.eigs_nev.value_or(1), 2);
-    }
 
-    // if(full_system_optimization and status.algo_type == AlgorithmType::xDMRG and var_latest < 1e-8) {
-    //     m1.optCost = OptCost::ENERGY;
-    //     m1.optRitz = OptRitz::SM;
-    // }
-
-    // if(m1.optSolver == OptSolver::EIGS and m1.chosen_sites.size() == 1 and tensors.state->get_direction() < 0) {
-    // #pragma message "testing DIRECTZ"
-    //         m1.eigs_ncv = std::max(m1.eigs_ncv.value_or(32), 32);
-    //         m1.eigs_tol = 1e-12;
-    //         m1.optAlgo  = OptAlgo::DIRECTZ;
-    //     }
 
     // m1.eigs_nev = settings::precision::eigs_nev_max;
     // m1.eigs_ncv = std::max(m1.eigs_ncv.value_or(32), 32);
     // m1.eigs_tol = 1e-12;
 
-    if(var_isconverged) {
-        m1.expand_mode = EnvExpandMode::NONE; // No need to expand
-    }
+    // if(var_isconverged) {
+    //     m1.expand_mode = EnvExpandMode::NONE; // No need to expand
+    // }
     m1.validate();
 
     return m1;
 }
 
-void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, std::optional<svd::config> svd_cfg) {
+void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, OptAlgo algo, OptRitz ritz, std::optional<svd::config> svd_cfg) {
     // Set a good initial value to start with
     // if(status.env_expansion_alpha == 0.0) status.env_expansion_alpha = std::min(settings::strategy::env_expansion_alpha_max, status.energy_variance_lowest);
     // alpha = alpha.value_or(status.env_expansion_alpha);
     // if(alpha.value() <= 0) return;
     if(not svd_cfg.has_value()) {
-        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 5/4: status.bond_lim;
+        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 5 / 4 : status.bond_lim;
         auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim * 1e-1 : status.trnc_lim;
         // auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim : status.bond_lim;
         // auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim : status.trnc_lim;
         svd_cfg = svd::config(bond_lim, trnc_lim);
     }
 
-    auto res = tensors.expand_environment(envexpMode, envexpSide, svd_cfg.value());
+    auto res = tensors.expand_environment(envexpMode, envexpSide, algo, ritz,  svd_cfg.value());
     if(not res.ok) {
         tools::log->debug("Expansion canceled");
         return;
@@ -627,8 +579,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    // status.algorithm_has_stuck_for    = 0;
-    // status.algorithm_saturated_for    = 0;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
@@ -732,8 +684,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    // status.algorithm_has_stuck_for    = 0;
-    // status.algorithm_saturated_for    = 0;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
@@ -874,10 +826,8 @@ void AlgorithmFinite::update_eigs_tolerance() {
 
     tools::log->info("Updated eigs tolerance: {:8.2e} -> {:8.2e} | reasons: {}", dmrg_eigs_tol, etol_new, fmt::join(reason, " | "));
     dmrg_eigs_tol = etol_new;
-    // status.trnc_lim                   = trnc_new;
-    // status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    // status.algorithm_has_stuck_for = 0;
-    // status.algorithm_saturated_for = 0;
+    status.algorithm_has_stuck_for = 0;
+    status.algorithm_saturated_for = 0;
     // Last sanity check before leaving here
     if(dmrg_eigs_tol < eigs_tol_min) throw except::logic_error("dmrg_eigs_tol is smaller than eigs_tol_min ! {:8.2e} > {:8.2e}", dmrg_eigs_tol, eigs_tol_min);
 }
@@ -1546,24 +1496,17 @@ void          AlgorithmFinite::print_status() {
     auto bonds_string = fmt::format("{}", bonds_merged);
     report += fmt::format("{0:<{1}} ", bonds_string, bonds_padlen);
 
-    if(last_optcost and last_optsolver and last_optalgo) {
-        std::string short_optalgo, short_optcost;
+    if(last_optsolver and last_optalgo) {
+        std::string short_optalgo;
         switch(last_optalgo.value()) {
-            case OptAlgo::DIRECT: short_optalgo = "DIR"; break;
-            case OptAlgo::DIRECTZ: short_optalgo = "DRZ"; break;
-            case OptAlgo::DIRECTX2: short_optalgo = "DX2"; break;
-            case OptAlgo::MPSEIGS: short_optalgo = "MPS"; break;
-            case OptAlgo::SHIFTINV: short_optalgo = "SHI"; break;
-            case OptAlgo::SUBSPACE: short_optalgo = "SUB"; break;
+            case OptAlgo::DMRG: short_optalgo = "DMRG"; break;
+            case OptAlgo::DMRGX: short_optalgo = "DMRGX"; break;
+            case OptAlgo::HYBRID_DMRGX: short_optalgo = "HDMRGX"; break;
+            case OptAlgo::XDMRG: short_optalgo = "XDMRG"; break;
+            case OptAlgo::GDMRG: short_optalgo = "GDMRG"; break;
             default: short_optalgo = "???";
         }
-        switch(last_optcost.value()) {
-            case OptCost::OVERLAP: short_optcost = "OVE"; break;
-            case OptCost::ENERGY: short_optcost = "ENE"; break;
-            case OptCost::VARIANCE: short_optcost = "VAR"; break;
-            default: short_optcost = "???";
-        }
-        report += fmt::format("opt:[{}|{}|{}] ", short_optcost, short_optalgo, enum2sv(last_optsolver.value()));
+        report += fmt::format("opt:[{}|{}] ", short_optalgo, enum2sv(last_optsolver.value()));
     }
     std::string stat = fmt::format("sat:{:<1}", status.algorithm_saturated_for);
     if(status.algorithm_has_stuck_for > 0) { stat = fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for); }

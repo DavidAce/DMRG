@@ -5,12 +5,12 @@
 
 namespace tools::finite::opt {
     OptMeta::OptMeta()
-        : optCost(OptCost::VARIANCE), optAlgo(OptAlgo::DIRECT), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optWhen(OptWhen::ALWAYS),
-          optRitz(OptRitz::SR), optExit(OptExit::NONE), expand_mode(EnvExpandMode::VAR), expand_side(EnvExpandSide::FORWARD){}
+        : optAlgo(OptAlgo::DMRG), optRitz(OptRitz::SR), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optWhen(OptWhen::ALWAYS), optExit(OptExit::NONE),
+          expand_mode(EnvExpandMode::VAR), expand_side(EnvExpandSide::FORWARD) {}
 
-    OptMeta::OptMeta(OptRitz ritz, OptCost mode) : OptMeta() {
+    OptMeta::OptMeta(OptAlgo algo, OptRitz ritz) : OptMeta() {
+        optAlgo = algo;
         optRitz = ritz;
-        optCost = mode;
     }
 
     bool OptMeta::should_proceed(OptExit previous_exit) const {
@@ -37,7 +37,6 @@ namespace tools::finite::opt {
         res += label;
         res += fmt::format(" | site {}", chosen_sites);
         res += fmt::format(" | dims {} = {}", problem_dims, problem_size);
-        res += fmt::format(" | cost {}", enum2sv(optCost));
         res += fmt::format(" | solv {}", enum2sv(optSolver));
         res += fmt::format(" | type {}", enum2sv(optType));
         res += fmt::format(" | ritz {}", enum2sv(optRitz));

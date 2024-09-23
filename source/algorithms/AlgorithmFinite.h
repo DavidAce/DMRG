@@ -24,8 +24,7 @@ class AlgorithmFinite : public AlgorithmBase {
     size_t                             iter_last_bond_reduce = 0;
     std::optional<std::vector<size_t>> sites_mps, sites_mpo; // Used when moving sites
     protected:
-    std::vector<double> dmrg_degeneracy_score; // Measures the convergence difficulty at each site
-    int                 get_eigs_iter_max() const;
+    int get_eigs_iter_max() const;
 
     public:
     // Inherit the constructor of class_algorithm_base
@@ -35,7 +34,6 @@ class AlgorithmFinite : public AlgorithmBase {
     TensorsFinite tensors; // State, model and edges
 
     size_t                   projected_iter = 0; /*!< The last iteration when projection was tried */
-    std::optional<OptCost>   last_optcost   = std::nullopt;
     std::optional<OptAlgo>   last_optalgo   = std::nullopt;
     std::optional<OptSolver> last_optsolver = std::nullopt;
 
@@ -46,7 +44,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         set_parity_shift_mpo(std::optional<std::string> target_axis = std::nullopt);
     void         set_parity_shift_mpo_squared(std::optional<std::string> target_axis = std::nullopt);
     void         try_moving_sites();
-    void expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide = EnvExpandSide::FORWARD, std::optional<svd::config> svd_cfg = std::nullopt);
+    void expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, OptAlgo algo, OptRitz ritz, std::optional<svd::config> svd_cfg = std::nullopt);
     void move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void set_energy_shift_mpo(); // We override this in xdmrg
     void         rebuild_tensors();

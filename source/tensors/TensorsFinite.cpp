@@ -523,7 +523,7 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
     normalize_state(svd_cfg, NormPolicy::IFNEEDED);
 }
 
-EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, svd::config svd_cfg) {
+EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, OptAlgo algo, OptRitz ritz, svd::config svd_cfg) {
     // if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
     auto t_exp     = tid::tic_scope("exp_env");
     auto expresult = EnvExpansionResult();
@@ -543,7 +543,7 @@ EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode
             break;
         }
         case EnvExpandSide::FORWARD: {
-            expresult = tools::finite::env::expand_environment_forward_nsite(*state, *model, *edges, envExpandMode, svd_cfg);
+            expresult = tools::finite::env::expand_environment_forward_nsite(*state, *model, *edges, algo, ritz, svd_cfg);
             break;
         }
     }
