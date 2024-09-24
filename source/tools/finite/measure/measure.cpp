@@ -23,11 +23,12 @@
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
+#include "tools/common/split.h"
 #include "tools/finite/mpo.h"
+#include "tools/finite/mps.h"
 #include "tools/finite/ops.h"
 #include <fmt/ranges.h>
-#include <tools/common/split.h>
-#include <tools/finite/mps.h>
+
 namespace settings {
     constexpr bool debug_expval = false;
 }
@@ -758,20 +759,18 @@ double tools::finite::measure::residual_norm_H2(const TensorsFinite &tensors) {
     return residual_norm(mps, mpo, env);
 }
 
-double tools::finite::measure::residual_norm_full(const StateFinite &state, const ModelFinite &model) {
+double tools::finite::measure::residual_norm_full(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
     // Calculate the residual_norm r = |Hv - Ev|, where H is the full Hamiltonian and v is the full mps
+    // Note that the full residual norm is equal to the sqrt(Var(H)) = Std(H)
     tools::log->info("Calculating residual norm with full system");
-    auto                                Hstate = state;
-    std::vector<Eigen::Tensor<cplx, 4>> mpos;
-    for(const auto &mpo : model.MPO) mpos.emplace_back(mpo->MPO());
-    tools::log->info("Applying MPOs");
-    ops::apply_mpos(Hstate, mpos, model.MPO.front()->get_MPO_edge_left(), model.MPO.back()->get_MPO_edge_right());
-    tools::log->info("Creating Ht tensor");
-    auto Ht = mps2tensor(Hstate);
-    tools::log->info("Creating t tensor");
-    auto t  = mps2tensor(state);
-    auto Hv = tenx::VectorMap(Ht);
-    auto v  = tenx::VectorMap(t);
+    auto sites = num::range<size_t>(0, state.get_length());
+    auto t     = state.get_multisite_mps(sites);
+    std::vector<Eigen::Tensor<cplx,4>> mpos;
+    for(const auto & mpo : model.get_mpo(sites)) mpos.emplace_back(mpo.get().MPO());
+    auto envs  = edges.get_env_ene_blk(sites.front(), sites.back());
+    auto Ht    = tools::common::contraction::matrix_vector_product(t, mpos, envs.L, envs.R);
+    auto Hv    = tenx::VectorMap(Ht);
+    auto v     = tenx::VectorMap(t);
     tools::log->info("Calculating (Hv - v.dot(Hv) * v).norm() | v.size() == {} | Hv.size() == {}", v.size(), Hv.size());
     if(v.size() != Hv.size()) throw except::logic_error("Size mismatch: v.size() == {} | Hv.size() == {}", v.size(), Hv.size());
     return (Hv - v.dot(Hv) * v).norm();

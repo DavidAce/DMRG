@@ -146,7 +146,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double residual_norm_H1             (const TensorsFinite & tensors);
     [[nodiscard]] extern double residual_norm_H2             (const TensorsFinite & tensors);
 
-    [[nodiscard]] extern double residual_norm_full           (const StateFinite &state, const ModelFinite &model);
+    [[nodiscard]] extern double residual_norm_full           (const StateFinite &state, const ModelFinite &model, const EdgesFinite & edges);
 
 
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state, const std::vector<LocalObservableOp> & ops);

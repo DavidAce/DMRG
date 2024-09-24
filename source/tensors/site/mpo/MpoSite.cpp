@@ -122,7 +122,7 @@ const Eigen::Tensor<cplx_t, 4> &MpoSite::MPO_t() const {
 
 Eigen::Tensor<cplx, 4> MpoSite::MPO_energy_shifted_view(double energy_shift_per_site) const {
     if(has_mpo() and all_mpo_parameters_have_been_set and energy_shift_per_site == energy_shift_mpo) return mpo_internal;
-    auto mpo_build = get_mpo(energy_shift_per_site);
+    auto mpo_build = get_mpo(cplx(energy_shift_per_site, 0.0));
     mpo_build      = get_parity_shifted_mpo(mpo_build);
     mpo_build      = apply_edge_left(mpo_build, get_MPO_edge_left(mpo_build));
     mpo_build      = apply_edge_right(mpo_build, get_MPO_edge_right(mpo_build));
@@ -394,23 +394,23 @@ Eigen::Tensor<cplx, 4> MpoSite::get_parity_shifted_mpo_squared(const Eigen::Tens
     auto id = qm::spin::half::id;
     auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo2);
 
-Eigen::Tensor<cplx, 4> mpo2_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
-mpo2_with_parity_shift_op.setZero();
-mpo2_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
-mpo2_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
-mpo2_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-return mpo2_with_parity_shift_op;
+    Eigen::Tensor<cplx, 4> mpo2_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
+    mpo2_with_parity_shift_op.setZero();
+    mpo2_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
+    mpo2_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
+    mpo2_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+    return mpo2_with_parity_shift_op;
 
-// #pragma message "Remove this test below for shifting both parity sectors"
-//     Eigen::Tensor<cplx, 4> mpo2_with_both_parity_shifts_op(d0 + 4, d1 + 4, d2, d3);
-//     mpo2_with_both_parity_shifts_op.setZero();
-//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
-//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
-//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 2, d1 + 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-//     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 3, d1 + 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
-//
-//     return mpo2_with_both_parity_shifts_op;
+    // #pragma message "Remove this test below for shifting both parity sectors"
+    //     Eigen::Tensor<cplx, 4> mpo2_with_both_parity_shifts_op(d0 + 4, d1 + 4, d2, d3);
+    //     mpo2_with_both_parity_shifts_op.setZero();
+    //     mpo2_with_both_parity_shifts_op.slice(tenx::array4{0, 0, 0, 0}, mpo_build.dimensions())             = mpo_build;
+    //     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
+    //     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+    //     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 2, d1 + 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+    //     mpo2_with_both_parity_shifts_op.slice(tenx::array4{d0 + 3, d1 + 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+    //
+    //     return mpo2_with_both_parity_shifts_op;
 }
 
 void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {

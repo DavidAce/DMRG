@@ -304,6 +304,17 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared(Mpo
     }
 }
 
+std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_mpos_energy_shifted_view(double energy_per_site) const {
+    std::vector<Eigen::Tensor<cplx, 4>> mpos;
+    mpos.reserve(MPO.size());
+    for(const auto &mpo : MPO) mpos.emplace_back(mpo->MPO_energy_shifted_view(energy_per_site));
+    return tools::finite::mpo::get_compressed_mpos(mpos, settings::precision::use_compressed_mpo);
+}
+// std::vector<Eigen::Tensor<cplx, 4>>                ModelFinite::get_mpos_squared_shifted_view(double energy_per_site, MposWithEdges withEdges =
+// MposWithEdges::OFF) const{
+//
+// }
+
 void ModelFinite::set_energy_shift_mpo(double energy_shift) {
     if(std::abs(get_energy_shift_mpo() - energy_shift) <= std::numeric_limits<double>::epsilon()) { return; }
     tools::log->trace("Shifting MPO energy: {:.16f}", energy_shift);

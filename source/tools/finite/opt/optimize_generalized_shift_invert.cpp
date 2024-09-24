@@ -157,12 +157,9 @@ namespace tools::finite::opt {
         cfg.primme_targetShifts.clear();
 
         // Overrides from default
-        const auto &state               = *tensors.state;
-        const auto &model               = *tensors.model;
-        const auto &edges               = *tensors.edges;
-        const auto &mpos                = model.get_mpo_active();
-        const auto &enve                = edges.get_ene_active();
-        const auto &envv                = edges.get_var_active();
+        const auto &mpos                = tensors.get_model().get_mpo_active();
+        const auto &enve                = tensors.get_edges().get_ene_active();
+        const auto &envv                = tensors.get_edges().get_var_active();
         auto        hamiltonian_squared = MatVecMPOS<Scalar>(mpos, enve, envv);
         eigs_generalized_shift_invert_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
     }

@@ -78,6 +78,9 @@ class ModelFinite {
     [[nodiscard]] std::vector<Eigen::Tensor<cplx_t, 4>>              get_all_mpo_tensors_t(MposWithEdges withEdges = MposWithEdges::OFF);
     [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_compressed_mpos(MposWithEdges withEdges = MposWithEdges::OFF);
     [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_compressed_mpos_squared(MposWithEdges withEdges = MposWithEdges::OFF);
+    [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_mpos_energy_shifted_view(double energy_per_site) const;
+    // [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_mpos_squared_shifted_view(double energy_per_site, MposWithEdges withEdges =
+    // MposWithEdges::OFF) const;
 
     [[nodiscard]] bool                  has_energy_shifted_mpo() const; // For shifted energy MPO's
     [[nodiscard]] double                get_energy_shift_mpo() const;

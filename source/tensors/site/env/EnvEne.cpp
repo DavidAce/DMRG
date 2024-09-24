@@ -114,7 +114,7 @@ void EnvEne::refresh(const EnvEne &env, const MpsSite &mps, const MpoSite &mpo) 
         unique_id_mpo = mpo.get_unique_id();
 
         if constexpr(settings::debug) {
-            if(unique_id_bef == get_unique_id()) tools::log->warn("Refreshing {} env{}({}): id did not change: {}", tag, side, get_position(), unique_id_bef);
+            if(unique_id_bef == get_unique_id()) tools::log->debug("Refreshing {} env{}({}): id did not change: {}", tag, side, get_position(), unique_id_bef);
             //                throw except::logic_error("Refreshing {} env{}({}): failed: id did not change: {}", tag, side, get_position(),
             //                unique_id_bef);
         }
