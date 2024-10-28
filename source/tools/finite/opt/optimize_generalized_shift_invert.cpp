@@ -32,7 +32,15 @@ namespace tools::finite::opt {
             const auto H_ptr = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
             H_ptr->MultBx(x, ldx, y, ldy, blockSize, primme, ierr);
         }
-
+        template<typename Scalar>
+        void preconditioner_jacobi(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+            if(x == nullptr) return;
+            if(y == nullptr) return;
+            if(primme == nullptr) return;
+            const auto H_ptr      = static_cast<MatVecMPOS<Scalar> *>(primme->matrix);
+            H_ptr->preconditioner = eig::Preconditioner::JACOBI;
+            H_ptr->MultPc(x, ldx, y, ldy, blockSize, primme, ierr);
+        }
         template<typename Scalar>
         struct opt_mps_init_t {
             Eigen::Tensor<Scalar, 3> mps = {};
@@ -125,7 +133,7 @@ namespace tools::finite::opt {
     void eigs_manager_generalized_shift_invert(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::solver solver;
         auto       &cfg           = solver.config;
-        cfg.loglevel              = 1;
+        cfg.loglevel              = 2;
         cfg.compute_eigvecs       = eig::Vecs::ON;
         cfg.tol                   = meta.eigs_tol.value_or(settings::precision::eigs_tol_min); // 1e-12 is good. This Sets "eps" in primme, see link above.
         cfg.maxIter               = meta.eigs_iter_max.value_or(settings::precision::eigs_iter_max);
@@ -154,13 +162,18 @@ namespace tools::finite::opt {
 
         cfg.primme_massMatrixMatvec = gsi::massMatrixMatvec<Scalar>;
         cfg.primme_projection       = meta.primme_projection.value_or("primme_proj_RR");
-        cfg.primme_targetShifts.clear();
+        //cfg.primme_targetShifts.clear();
+        cfg.primme_targetShifts = {meta.eigv_target.value_or(0.0)};
+        cfg.primme_preconditioner = gsi::preconditioner_jacobi<Scalar>;
+        cfg.jcbMaxBlockSize       = meta.eigs_jcbMaxBlockSize;
+
 
         // Overrides from default
         const auto &mpos                = tensors.get_model().get_mpo_active();
         const auto &enve                = tensors.get_edges().get_ene_active();
         const auto &envv                = tensors.get_edges().get_var_active();
         auto        hamiltonian_squared = MatVecMPOS<Scalar>(mpos, enve, envv);
+        hamiltonian_squared.factorization=eig::Factorization::LLT;
         eigs_generalized_shift_invert_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
     }
 

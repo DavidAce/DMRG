@@ -2,6 +2,7 @@
 #include "matvec_mpos.h"
 #include "../log.h"
 #include "config/settings.h"
+#include "debug/info.h"
 #include "general/sfinae.h"
 #include "math/eig/solver.h"
 #include "math/linalg/matrix.h"
@@ -20,6 +21,7 @@
 #include <primme/primme.h>
 #include <queue>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <unsupported/Eigen/src/IterativeSolvers/IncompleteLU.h>
 
 #if defined(DMRG_ENABLE_TBLIS)
     #include <tblis/tblis.h>
@@ -203,7 +205,7 @@ int MatVecMPOS<T>::cols() const {
     return safe_cast<int>(size_mps);
 }
 
-std::vector<long> indices(long x, long rank, long size) {
+std::vector<long> get_offset(long x, long rank, long size) {
     std::vector<long> indices(rank);
     for(int i = 0; i < rank; i++) {
         indices[i] = x % size;
@@ -213,20 +215,20 @@ std::vector<long> indices(long x, long rank, long size) {
 }
 
 template<size_t rank>
-constexpr std::array<long, rank> indices(long flatindex, const std::array<long, rank> &dimensions) {
+constexpr std::array<long, rank> get_offset(long flatindex, const std::array<long, rank> &dimensions) {
     std::array<long, rank> indices;
     for(size_t i = 0; i < rank; i++) {
-        indices[i] = flatindex % dimensions[i];
-        flatindex /= dimensions[i];
+        indices[i] = flatindex % (dimensions[i]);
+        flatindex /= (dimensions[i]);
     }
     return indices;
 }
 
-std::vector<long> indices(long flatindex, size_t rank, const std::vector<long> &dimensions) {
+std::vector<long> get_offset(long flatindex, size_t rank, const std::vector<long> &dimensions) {
     std::vector<long> indices(rank);
     for(size_t i = 0; i < rank; i++) {
-        indices[i] = flatindex % dimensions[i];
-        flatindex /= dimensions[i];
+        indices[i] = flatindex % (dimensions[i]);
+        flatindex /= (dimensions[i]);
     }
     return indices;
 }
@@ -309,11 +311,11 @@ T MatVecMPOS<T>::get_matrix_element(long I, long J, const std::vector<Eigen::Ten
     auto colindices = std::array<long, 3>{};
 
     if(I == J) {
-        rowindices = indices(I, shape_mps);
+        rowindices = get_offset(I, shape_mps);
         colindices = rowindices;
     } else {
-        rowindices = indices(I, shape_mps);
-        colindices = indices(J, shape_mps);
+        rowindices = get_offset(I, shape_mps);
+        colindices = get_offset(J, shape_mps);
     }
     auto ir = rowindices[0];
     auto jr = rowindices[1];
@@ -321,9 +323,8 @@ T MatVecMPOS<T>::get_matrix_element(long I, long J, const std::vector<Eigen::Ten
     auto ic = colindices[0];
     auto jc = colindices[1];
     auto kc = colindices[2];
-
     // Index i is special, since it is composed of all the mpo physical indices.
-    // auto idxs  = indices(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
+    // auto idxs  = get_offset(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
     // mpos
 
     bool shouldBeZero = false;
@@ -342,8 +343,8 @@ T MatVecMPOS<T>::get_matrix_element(long I, long J, const std::vector<Eigen::Ten
     //     // if(pd & 1) { shouldBeZero = true; } // popcount difference is odd
     // }
 
-    auto irxs  = indices(ir, MPOS.size(), spindims); // Maps ir to tensor indices to select the upper physical indices in the mpos
-    auto icxs  = indices(ic, MPOS.size(), spindims); // Maps ic to tensor indices to select the lower physical indices in the mpos
+    auto irxs  = get_offset(ir, MPOS.size(), spindims); // Maps ir to tensor indices to select the upper physical indices in the mpos
+    auto icxs  = get_offset(ic, MPOS.size(), spindims); // Maps ic to tensor indices to select the lower physical indices in the mpos
     auto mpo_i = Eigen::Tensor<Scalar, 4>();
     auto temp  = Eigen::Tensor<Scalar, 4>();
 
@@ -387,6 +388,9 @@ T MatVecMPOS<T>::get_matrix_element(long I, long J, const std::vector<Eigen::Ten
     auto envR_k_map = Eigen::Map<const VectorType>(envR_k.data(), envR_k.size());
     auto mpo_i_map  = Eigen::Map<const MatrixType>(mpo_i.data(), mpo_i.dimension(0), mpo_i.dimension(1));
     return envL_j_map.transpose() * mpo_i_map * envR_k_map;
+    // eig::log->info("({:3}, {:3}) = [{:3} {:3} {:3}]  [{:3} {:3} {:3}] = {:.16f}", I, J, ir, jr, kr, ic, jc, kc, result);
+
+    // return result;
     // Eigen::Tensor<Scalar, 6> elem(1, 1, 1, 1, 1, 1);
     // elem = envL_j.contract(mpo_i, tenx::idx({2}, {0})).contract(envR_k, tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
     // return elem.coeff(0);
@@ -402,19 +406,86 @@ typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_diagonal_new(long offset, 
     return res;
 }
 
+template<auto rank>
+constexpr long ravel_multi_index(const std::array<long, rank> &multi_index, const std::array<long, rank> &dimensions, char order = 'F') noexcept {
+    assert(order == 'F' or order == 'C');
+    if(order == 'F') {
+        long index   = 0;
+        long dimprod = 1;
+        for(size_t i = 0; i < rank; ++i) {
+            index += multi_index[i] * dimprod;
+            dimprod *= dimensions[i];
+        }
+        return index;
+    }
+    if(order == 'C') {
+        long index = 0;
+        for(size_t i = 0; i < rank; ++i) index = index * dimensions[i] + multi_index[i];
+        return index;
+    }
+
+    return -1;
+}
+
+template<auto rank>
+constexpr std::array<long, rank> get_extent(long N, const std::array<long, rank> &dimensions, const std::array<long, rank> &offsets = {0}) {
+    // Finds the largest subindex extents of a linear index, guaranteed to be i
+    long offset   = ravel_multi_index(offsets, dimensions);
+    long maxcount = std::reduce(dimensions.begin(), dimensions.end(), 1l, std::multiplies<long>());
+    assert(N + offset <= maxcount);
+    // if(N == maxcount) { return dimensions; }
+    if(N + offset > maxcount) throw except::logic_error("N ({}) is outside of bounds for dimensions {}", N, dimensions);
+    std::array<long, rank> extents;
+    extents.fill(1);
+    for(size_t i = 0; i < rank; i++) {
+        long count  = std::reduce(extents.begin(), extents.end(), 1l, std::multiplies<long>());
+        long newdim = std::min(static_cast<long>(std::ceil(static_cast<double>(N) / static_cast<double>(count))), dimensions[i]);
+        assert(newdim >= 0);
+        long newcount = count * newdim;
+        if(newcount + offset <= maxcount) extents[i] = newdim;
+        // extents[i] = std::min(static_cast<long>(std::ceil(static_cast<double>(N) / static_cast<double>(count))), (dimensions[i] - offsets[i]));
+    }
+    return extents;
+}
+
+template<auto rank>
+constexpr std::array<long, rank> get_extent(const std::array<long, rank> &I0, const std::array<long, rank> &IN, const std::array<long, rank> &dimensions) {
+    // Finds the largest subindex extents of a linear index, guaranteed to be i
+    auto extent = dimensions;
+    if(I0 == IN) {
+        extent.fill(1);
+        return extent;
+    }
+    auto INN = get_offset(1l + ravel_multi_index(IN, dimensions), dimensions);
+    if(INN == std::array<long, rank>{0}) INN = dimensions;
+    for(long idx = rank - 1; idx >= 0; --idx) {
+        extent[idx] = std::clamp(INN[idx] - I0[idx] + 1, 1l, dimensions[idx] - I0[idx]);
+        if(INN[idx] > I0[idx]) break;
+    }
+    return extent;
+}
+
+long round_dn(long num, long multiple) { return (num / multiple) * multiple; }
+
+long round_up(long num, long multiple) {
+    if(multiple == 0) return num;
+    long remainder = num % multiple;
+    if(remainder == 0) return num;
+    return num + multiple - remainder;
+}
+
 template<typename T>
-typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS,
-                                                                     const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const {
-    if(MPOS.empty()) return MatrixType::Ones(extent, extent);
+typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block_old(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS,
+                                                                         const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const {
+    if(MPOS.empty()) return MatrixType::Identity(extent, extent);
+    extent = std::min(extent, size_mps - offset);
+    if(offset >= size_mps) { return {}; }
     auto res = MatrixType(extent, extent);
-    if(offset >= size_mps) { return res; }
-    extent = std::min(extent, size_mps);
 #pragma omp parallel for collapse(2)
     for(long J = 0; J < extent; J++) {
         for(long I = J; I < extent; I++) {
             if(I + offset >= size_mps) continue;
             if(J + offset >= size_mps) continue;
-            // res.template selfadjointView<Eigen::Lower>()(I, J) = get_matrix_element(I + offset, J + offset); // Lower part is sufficient
             auto elem = get_matrix_element(I + offset, J + offset, MPOS, ENVL, ENVR);
             res(I, J) = elem;
             if constexpr(std::is_same_v<T, cplx>)
@@ -424,6 +495,278 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
         }
     }
     return res;
+}
+
+template<typename T>
+typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS,
+                                                                     const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const {
+    if(MPOS.empty()) return MatrixType::Identity(extent, extent);
+    extent = std::min(extent, size_mps - offset);
+    if(offset >= size_mps) { return {}; }
+    auto t_old = tid::ur("old");
+    auto t_new = tid::ur("new");
+
+    if(MPOS.size() > 1) {
+        auto res = MatrixType(extent, extent);
+        t_old.tic();
+#pragma omp parallel for collapse(2)
+        for(long J = 0; J < extent; J++) {
+            for(long I = J; I < extent; I++) {
+                if(I + offset >= size_mps) continue;
+                if(J + offset >= size_mps) continue;
+                auto elem = get_matrix_element(I + offset, J + offset, MPOS, ENVL, ENVR);
+                res(I, J) = elem;
+                if constexpr(std::is_same_v<T, cplx>)
+                    res(J, I) = std::conj(elem);
+                else
+                    res(J, I) = elem;
+            }
+        }
+        t_old.toc();
+        return res;
+    } else {
+        // t_new.tic();
+        MatrixType resC(extent, extent);
+        resC.setZero();
+        long J0 = offset;
+        long JN = offset + extent - 1;
+        long JY = J0;
+        while(JY <= JN) {
+            long I0 = JY;
+            long IN = offset + extent - 1;
+            long R0 = std::clamp(round_dn(I0, shape_mps[0] * shape_mps[1]), 0l, size_mps - 1);
+            long RN = std::clamp(round_up(IN, shape_mps[0] * shape_mps[1]), 0l, size_mps - 1);
+            long C0 = JY;
+            long CN = JY;
+            if(R0 == C0) {
+                // We are at a tensor dimension boundary, so we can actually calculate more columns when we start from here
+                // There is no point in taking too many columns though, since we discard the top right triangle of the sub block
+                CN = std::clamp(round_up(C0 + 1, shape_mps[0] * shape_mps[1]) - 1, C0, JN);
+            }
+            auto R0_ijk = get_offset(R0, shape_mps);
+            auto RN_ijk = get_offset(RN, shape_mps);
+            auto C0_ijk = get_offset(C0, shape_mps);
+            auto CN_ijk = get_offset(CN, shape_mps);
+            auto R_ext  = get_extent(R0_ijk, RN_ijk, shape_mps);
+            auto C_ext  = get_extent(C0_ijk, CN_ijk, shape_mps);
+
+            std::array<long, 2> ext_blk2 = {R_ext[0] * R_ext[1] * R_ext[2], C_ext[0] * C_ext[1] * C_ext[2]};
+            std::array<long, 3> off_envl = {R0_ijk[1], C0_ijk[1], 0};
+            std::array<long, 3> ext_envl = {R_ext[1], C_ext[1], MPOS.front().dimension(0)};
+            std::array<long, 3> off_envr = {R0_ijk[2], C0_ijk[2], 0};
+            std::array<long, 3> ext_envr = {R_ext[2], C_ext[2], MPOS.front().dimension(1)};
+            std::array<long, 4> off_mpos = {off_envl[2], off_envr[2], R0_ijk[0], C0_ijk[0]};
+            std::array<long, 4> ext_mpos = {ext_envl[2], ext_envr[2], R_ext[0], C_ext[0]};
+
+            std::array<long, 2> off_resC = {I0 - offset, JY - offset};
+            std::array<long, 2> ext_resC = {IN - I0 + 1, CN - C0 + 1};
+
+            auto  blockC  = Eigen::Tensor<T, 2>(ext_blk2);
+            auto &threads = tenx::threads::get();
+
+            blockC.device(*threads->dev) = ENVL.slice(off_envl, ext_envl)
+                                               .contract(MPOS.front().slice(off_mpos, ext_mpos), tenx::idx({2}, {0}))
+                                               .contract(ENVR.slice(off_envr, ext_envr), tenx::idx({2}, {2}))
+                                               .shuffle(tenx::array6{2, 0, 4, 3, 1, 5})
+                                               .reshape(ext_blk2);
+
+            resC.block(off_resC[0], off_resC[1], ext_resC[0], ext_resC[1]) =
+                Eigen::Map<MatrixType>(blockC.data(), blockC.dimension(0), blockC.dimension(1)).block(I0 - R0, JY - C0, ext_resC[0], ext_resC[1]);
+            // MatrixType matC = resC.block(off_resC[0], off_resC[1], ext_resC[0], ext_resC[1]);
+            // MatrixType matF = res.block(off_resC[0], off_resC[1], ext_resC[0], ext_resC[1]);
+            // if(!matC.isApprox(matF)) {
+            //     eig::log->info("I0       {}", I0);
+            //     eig::log->info("J0       {}", J0);
+            //     eig::log->info("IN       {}", IN);
+            //     eig::log->info("JN       {}", JN);
+            //     eig::log->info("R0       {}", R0);
+            //     eig::log->info("RN       {}", RN);
+            //     eig::log->info("C0       {}", C0);
+            //     eig::log->info("CN       {}", CN);
+            //     eig::log->info("R0_ijk   {}", R0_ijk);
+            //     eig::log->info("RN_ijk   {}", RN_ijk);
+            //     eig::log->info("C0_ijk   {}", C0_ijk);
+            //     eig::log->info("CN_ijk   {}", CN_ijk);
+            //     eig::log->info("R_ext    {}", R_ext);
+            //     eig::log->info("C_ext    {}", C_ext);
+            //     eig::log->info("ext_blk6 {}", ext_blk6);
+            //     eig::log->info("ext_blk2 {}", ext_blk2);
+            //     eig::log->info("off_envl {}", off_envl);
+            //     eig::log->info("ext_envl {}", ext_envl);
+            //     eig::log->info("off_envr {}", off_envr);
+            //     eig::log->info("ext_envr {}", ext_envr);
+            //     eig::log->info("off_mpos {}", off_mpos);
+            //     eig::log->info("ext_mpos {}", ext_mpos);
+            //     eig::log->info("off_resC {}", off_resC);
+            //     eig::log->info("ext_resC {}", ext_resC);
+            //     for(long r = 0; r < matC.rows(); ++r) {
+            //         VectorType vecC = matC.row(r);
+            //         VectorType vecF = matF.row(r);
+            //         eig::log->info("({},{}:{}):  {} | {} ", r, JY, JY + CN - C0 + 1, vecC, vecF);
+            //     }
+            //     throw except::logic_error("matC and matF mismatch");
+            // }
+            JY += (CN - C0 + 1);
+        }
+        return resC.template selfadjointView<Eigen::Lower>();
+    }
+}
+
+template<typename T>
+typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset, long extent, T shift, const std::vector<Eigen::Tensor<T, 4>> &MPOS_A,
+                                                                     const Eigen::Tensor<T, 3> &ENVL_A, const Eigen::Tensor<T, 3> &ENVR_A,
+                                                                     const std::vector<Eigen::Tensor<T, 4>> &MPOS_B, const Eigen::Tensor<T, 3> &ENVL_B,
+                                                                     const Eigen::Tensor<T, 3> &ENVR_B) const {
+    if(MPOS_A.empty()) return MatrixType::Identity(extent, extent);
+    extent = std::min(extent, size_mps - offset);
+    if(offset >= size_mps) { return {}; }
+    auto t_old = tid::ur("old");
+    auto t_new = tid::ur("new");
+
+    if(MPOS_A.size() > 1) {
+        auto res = MatrixType(extent, extent);
+        t_old.tic();
+#pragma omp parallel for collapse(2)
+        for(long J = 0; J < extent; J++) {
+            for(long I = J; I < extent; I++) {
+                if(I + offset >= size_mps) continue;
+                if(J + offset >= size_mps) continue;
+                // res.template selfadjointView<Eigen::Lower>()(I, J) = get_matrix_element(I + offset, J + offset); // Lower part is sufficient
+                auto elemA = get_matrix_element(I + offset, J + offset, MPOS_A, ENVL_A, ENVR_A);
+                auto elemB = get_matrix_element(I + offset, J + offset, MPOS_B, ENVL_B, ENVR_B);
+                auto elem  = elemA - shift * elemB;
+                res(I, J)  = elem;
+                if constexpr(std::is_same_v<T, cplx>)
+                    res(J, I) = std::conj(elem);
+                else
+                    res(J, I) = elem;
+            }
+        }
+        return res;
+        t_old.toc();
+    } else {
+        // auto dbg = MatrixType(extent, extent);
+        // #pragma omp parallel for collapse(2)
+        // for(long J = 0; J < extent; J++) {
+        //     for(long I = J; I < extent; I++) {
+        //         if(I + offset >= size_mps) continue;
+        //         if(J + offset >= size_mps) continue;
+        //         // res.template selfadjointView<Eigen::Lower>()(I, J) = get_matrix_element(I + offset, J + offset); // Lower part is sufficient
+        //         auto elemA = get_matrix_element(I + offset, J + offset, MPOS_A, ENVL_A, ENVR_A);
+        //         auto elemB = get_matrix_element(I + offset, J + offset, MPOS_B, ENVL_B, ENVR_B);
+        //         auto elem  = elemA - shift * elemB;
+        //         dbg(I, J)  = elem;
+        //         if constexpr(std::is_same_v<T, cplx>)
+        //             dbg(J, I) = std::conj(elem);
+        //         else
+        //             dbg(J, I) = elem;
+        //     }
+        // }
+
+        // t_new.tic();
+        MatrixType res(extent, extent);
+        res.setZero();
+        long J0 = offset;
+        long JN = offset + extent - 1;
+        long JY = J0;
+        while(JY <= JN) {
+            long I0 = JY;
+            long IN = offset + extent - 1;
+            long R0 = std::clamp(round_dn(I0, shape_mps[0] * shape_mps[1]), 0l, size_mps - 1);
+            long RN = std::clamp(round_up(IN, shape_mps[0] * shape_mps[1]), 0l, size_mps - 1);
+            long C0 = JY;
+            long CN = JY;
+            if(R0 == C0) {
+                // We are at a tensor dimension boundary, so we can actually calculate more columns when we start from here
+                // There is no point in taking too many columns though, since we discard the top right triangle of the sub block
+                CN = std::clamp(round_up(C0 + 1, shape_mps[0] * shape_mps[1]) - 1, C0, JN);
+            }
+
+            auto R0_ijk   = get_offset(R0, shape_mps);
+            auto RN_ijk   = get_offset(RN, shape_mps);
+            auto C0_ijk   = get_offset(C0, shape_mps);
+            auto CN_ijk   = get_offset(CN, shape_mps);
+            auto R_ext    = get_extent(R0_ijk, RN_ijk, shape_mps);
+            auto C_ext    = get_extent(C0_ijk, CN_ijk, shape_mps);
+            auto ext_blk2 = std::array<long, 2>{R_ext[0] * R_ext[1] * R_ext[2], C_ext[0] * C_ext[1] * C_ext[2]};
+            auto off_res  = std::array<long, 2>{I0 - offset, JY - offset};
+            auto ext_res  = std::array<long, 2>{IN - I0 + 1, CN - C0 + 1};
+
+            auto get_tile2 = [&](const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) -> MatrixType {
+                if(MPOS.empty()) {
+                    auto block = MatrixType(ext_res[0], ext_res[1]);
+                    block.setZero();
+                    // Set 1's along the diagonal of the supermatrix
+                    for(long R = 0; R < block.rows(); ++R) {
+                        for(long C = 0; C < block.cols(); ++C) {
+                            long I = I0 - R;
+                            long J = JY - C;
+                            if(I == J) block(R, C) = 1;
+                        }
+                    }
+
+                    return block;
+                }
+                std::array<long, 3> off_envl = {R0_ijk[1], C0_ijk[1], 0};
+                std::array<long, 3> ext_envl = {R_ext[1], C_ext[1], MPOS.front().dimension(0)};
+                std::array<long, 3> off_envr = {R0_ijk[2], C0_ijk[2], 0};
+                std::array<long, 3> ext_envr = {R_ext[2], C_ext[2], MPOS.front().dimension(1)};
+                std::array<long, 4> off_mpos = {off_envl[2], off_envr[2], R0_ijk[0], C0_ijk[0]};
+                std::array<long, 4> ext_mpos = {ext_envl[2], ext_envr[2], R_ext[0], C_ext[0]};
+
+                auto  block   = Eigen::Tensor<T, 2>(ext_blk2);
+                auto &threads = tenx::threads::get();
+
+                block.device(*threads->dev) = ENVL.slice(off_envl, ext_envl)
+                                                  .contract(MPOS.front().slice(off_mpos, ext_mpos), tenx::idx({2}, {0}))
+                                                  .contract(ENVR.slice(off_envr, ext_envr), tenx::idx({2}, {2}))
+                                                  .shuffle(tenx::array6{2, 0, 4, 3, 1, 5})
+                                                  .reshape(ext_blk2);
+                return Eigen::Map<MatrixType>(block.data(), ext_blk2[0], ext_blk2[1]).block(I0 - R0, JY - C0, ext_res[0], ext_res[1]);
+            };
+
+            res.block(off_res[0], off_res[1], ext_res[0], ext_res[1]) = get_tile2(MPOS_A, ENVL_A, ENVR_A) - get_tile2(MPOS_B, ENVL_B, ENVR_B) * shift;
+
+            // MatrixType blkres = res.block(off_res[0], off_res[1], ext_res[0], ext_res[1]);
+            // MatrixType blkdbg = dbg.block(off_res[0], off_res[1], ext_res[0], ext_res[1]);
+            // if(!blkres.isApprox(blkdbg)) {
+            //     eig::log->info("I0       {}", I0);
+            //     eig::log->info("J0       {}", J0);
+            //     eig::log->info("IN       {}", IN);
+            //     eig::log->info("JN       {}", JN);
+            //     eig::log->info("R0       {}", R0);
+            //     eig::log->info("RN       {}", RN);
+            //     eig::log->info("C0       {}", C0);
+            //     eig::log->info("CN       {}", CN);
+            //     eig::log->info("R0_ijk   {}", R0_ijk);
+            //     eig::log->info("RN_ijk   {}", RN_ijk);
+            //     eig::log->info("C0_ijk   {}", C0_ijk);
+            //     eig::log->info("CN_ijk   {}", CN_ijk);
+            //     eig::log->info("R_ext    {}", R_ext);
+            //     eig::log->info("C_ext    {}", C_ext);
+            //     eig::log->info("ext_blk2 {}", ext_blk2);
+            //     // eig::log->info("ext_blk6 {}", ext_blk6);
+            //     // eig::log->info("off_envl {}", off_envl);
+            //     // eig::log->info("ext_envl {}", ext_envl);
+            //     // eig::log->info("off_envr {}", off_envr);
+            //     // eig::log->info("ext_envr {}", ext_envr);
+            //     // eig::log->info("off_mpos {}", off_mpos);
+            //     // eig::log->info("ext_mpos {}", ext_mpos);
+            //     // eig::log->info("off_resC {}", off_resC);
+            //     // eig::log->info("ext_resC {}", ext_resC);
+            //     for(long r = 0; r < blkres.rows(); ++r) {
+            //         VectorType vecC = blkres.row(r);
+            //         VectorType vecF = blkdbg.row(r);
+            //         eig::log->info("({},{}:{}):  {} | {} ", r, JY, JY + CN - C0 + 1, vecC, vecF);
+            //     }
+            //     throw except::logic_error("matC and matF mismatch");
+            // }
+            JY += (CN - C0 + 1);
+        }
+
+        // t_new.toc();
+        return res.template selfadjointView<Eigen::Lower>();
+    }
 }
 
 template<typename T>
@@ -459,11 +802,11 @@ typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_col(long col_idx, const st
 //             continue;
 //         }
 //         if(offset == 0) {
-//             rowindices = indices(diagidx, shape_mps);
+//             rowindices = get_offset(diagidx, shape_mps);
 //             colindices = rowindices;
 //         } else {
-//             rowindices = indices(diagidx, shape_mps);
-//             colindices = indices(diagidx + offset, shape_mps);
+//             rowindices = get_offset(diagidx, shape_mps);
+//             colindices = get_offset(diagidx + offset, shape_mps);
 //         }
 //         auto ir = rowindices[0];
 //         auto jr = rowindices[1];
@@ -473,10 +816,10 @@ typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_col(long col_idx, const st
 //         auto kc = colindices[2];
 //
 //         // Index i is special, since it is composed of all the mpo physical indices.
-//         // auto idxs  = indices(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
+//         // auto idxs  = get_offset(i, mpos.size(), mpos.front().dimension(2)); // Maps i to tensor indices to select the physical indices in the
 //         // mpos
-//         auto irxs   = indices(ir, mpos_A.size(), spindims); // Maps ir to tensor indices to select the upper phsical indices in the mpos
-//         auto icxs   = indices(ic, mpos_A.size(), spindims); // Maps ic to tensor indices to select the lower phsical indices in the mpos
+//         auto irxs   = get_offset(ir, mpos_A.size(), spindims); // Maps ir to tensor indices to select the upper phsical indices in the mpos
+//         auto icxs   = get_offset(ic, mpos_A.size(), spindims); // Maps ic to tensor indices to select the lower phsical indices in the mpos
 //         auto mpo_i  = Eigen::Tensor<Scalar, 4>();
 //         auto temp   = Eigen::Tensor<Scalar, 4>();
 //         bool isZero = false;
@@ -685,54 +1028,122 @@ void MatVecMPOS<T>::CalcPc(T shift) {
     // long jcbBlockSize = std::min(jcbMaxBlockSize, shape_mps[0] * shape_mps[1]);
     long jcbBlockSize = jcbMaxBlockSize;
     if(jcbBlockSize == 1) {
-        eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the jacobi preconditioner ... ");
+        eig::log->trace("MatVecMPOS<T>::CalcPc(): calculating the jacobi preconditioner ... (shift = {:.16f})", shift);
         jcbDiagA = get_diagonal_new(0, mpos_A, envL_A, envR_A);
         jcbDiagB = get_diagonal_new(0, mpos_B, envL_B, envR_B);
-        eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the jacobi preconditioner ... done");
+        eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the jacobi preconditioner ... done (shift = {:.16f})", shift);
     } else if(jcbBlockSize > 1) {
-        // if(jcbBlockSize < shape_mps[0]) jcbBlockSize = std::min(shape_mps[0], 2048l); // Make sure we cover index 0, otherwise the blocks may not be psd
         long nblocks = 1 + ((size_mps - 1) / jcbBlockSize); // ceil: note that the last block may be smaller than blocksize!
-        eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | diagonal blocksize {} | nblocks {} ...", jcbBlockSize, nblocks);
+
+        eig::log->debug("MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | size {} | diagonal blocksize {} | nblocks {} ...", size_mps,
+                        jcbBlockSize, nblocks);
         std::vector<double> sparsity;
+        auto                m_rss = debug::mem_hwm_in_mb();
+        auto                t_jcb = tid::ur("jcb");
+        t_jcb.tic();
+
 #pragma omp parallel for ordered schedule(dynamic, 1)
         for(long blkidx = 0; blkidx < nblocks; ++blkidx) {
             long offset = blkidx * jcbBlockSize;
             long extent = std::min((blkidx + 1) * jcbBlockSize - offset, size_mps - offset);
+            eig::log->trace("calculating block {}/{}", blkidx, nblocks);
+            MatrixType blockI = get_diagonal_block(offset, extent, shift, mpos_A, envL_A, envR_A, mpos_B, envL_B, envR_B);
+            double     sp     = static_cast<double>(blockI.cwiseAbs().count()) / static_cast<double>(blockI.size());
 
-            MatrixType blockA = get_diagonal_block(offset, extent, mpos_A, envL_A, envR_A);
-            MatrixType blockB = get_diagonal_block(offset, extent, mpos_B, envL_B, envR_B);
-            MatrixType blockI = blockA - blockB * shift; // This is what we invert
+            // auto       blockA    = get_diagonal_block_old(offset, extent, mpos_A, envL_A, envR_A);
+            // auto       blockB    = get_diagonal_block_old(offset, extent, mpos_B, envL_B, envR_B);
+            // MatrixType blockIdbg = blockA - blockB * shift; // Reset
+            //
+            // if(!blockI.isApprox(blockIdbg, 1e-12)) { throw except::runtime_error("blockI != blockIdbg"); }
 
-            bool lltSuccess  = false;
-            bool ldltSuccess = false;
-            bool luSuccess   = false;
-            bool qrSuccess   = false;
+            eig::log->trace("calculating block {}/{} ... done", blkidx, nblocks);
+            auto bicg         = std::make_unique<BICGType>();
+            auto cg           = std::make_unique<CGType>();
+            auto llt          = std::make_unique<LLTType>();
+            auto ldlt         = std::make_unique<LDLTType>();
+            auto sparseRM     = std::make_unique<SparseRowM>();
+            auto sparseCM     = std::make_unique<SparseType>();
+            auto blockPtr     = std::make_unique<MatrixType>();
+            bool lltSuccess   = false;
+            bool ldltSuccess  = false;
+            bool luSuccess    = false;
+            bool qrSuccess    = false;
+            bool bicgSuccess  = false;
+            bool cgSuccess    = false;
+            bool solveSuccess = false;
             switch(factorization) {
                 case eig::Factorization::NONE: {
                     eig::log->warn("MatvecMPOS::CalcPc(): No factorization has been set for the preconditioner");
                     break;
                 }
                 case eig::Factorization::LLT: {
-                    if(auto llt = Eigen::LLT<MatrixType, Eigen::Lower>(blockI); llt.info() == Eigen::Success) {
-                        blockI     = llt.solve(MatrixType::Identity(extent, extent));
-                        lltSuccess = llt.info() == Eigen::Success;
-                        if(lltSuccess) break;
-                        blockI = blockA - blockB * shift; // Reset
-                        eig::log->info("llt solve failed on block {}/{}", blkidx, nblocks);
-                        [[fallthrough]];
+                    eig::log->trace("llt factorizing block {}/{} ... ", blkidx, nblocks);
+                    if(blockI(0, 0) > 0) {
+                        llt->compute(blockI);
+                    } else {
+                        llt->compute(-blockI); // Can sometimes be negative definite in the generalized problem
                     }
+                    lltSuccess = llt->info() == Eigen::Success;
+                    // if(lltSuccess) {
+                    //     blockI = llt->solve(MatrixType::Identity(extent, extent));
+                    //     solveSuccess = llt->info() == Eigen::Success;
+                    //     if(!solveSuccess) {
+                    //         blockI = get_diagonal_block(offset, extent, shift, mpos_A, envL_A, envR_A, mpos_B, envL_B, envR_B); // Reset...
+                    //     }
+                    // }
+                    eig::log->trace("llt factorizing block {}/{} ... info {}", blkidx, nblocks, static_cast<int>(llt->info()));
+
+                    // if(!mpos_B.empty()) {
+                    //     auto sol = Eigen::SelfAdjointEigenSolver<MatrixType>(blockI, Eigen::EigenvaluesOnly);
+                    //     eig::log->info("llt factorization block {}/{} ... info {} | diag min {:.16f} max {:.16f} | eig min {:.16f} max {:.16f}",
+                    //                    blkidx, nblocks, static_cast<int>(llt->info()), blockI.diagonal().minCoeff(), blockI.diagonal().maxCoeff(),
+                    //                    sol.eigenvalues().minCoeff(), sol.eigenvalues().maxCoeff());
+                    // }
+                    if(lltSuccess) break;
+
+                    // blockI = get_diagonal_block(offset, extent, shift, mpos_A, envL_A, envR_A, mpos_B, envL_B, envR_B);
+                    auto sol = Eigen::SelfAdjointEigenSolver<MatrixType>(blockI, Eigen::EigenvaluesOnly);
+                    eig::log->info(
+                        "llt factorization failed on block {}/{} ... info {} | diag min {:.16f} max {:.16f} | eig min {:.16f} max {:.16f} | trying ldlt",
+                        blkidx, nblocks, static_cast<int>(llt->info()), blockI.diagonal().minCoeff(), blockI.diagonal().maxCoeff(),
+                        sol.eigenvalues().minCoeff(), sol.eigenvalues().maxCoeff());
+                    [[fallthrough]];
+
+                    // if(auto llt = Eigen::LLT<MatrixType, Eigen::Lower>(blockI); llt.info() == Eigen::Success) {
+                    //     blockI     = llt.solve(MatrixType::Identity(extent, extent));
+                    //     lltSuccess = llt.info() == Eigen::Success;
+                    //     if(lltSuccess) break;
+                    //     blockI = blockA - blockB * shift; // Reset
+                    //     eig::log->info("llt solve failed on block {}/{}", blkidx, nblocks);
+                    // }
+                    // [[fallthrough]];
                 }
                 case eig::Factorization::LDLT: {
-                    if(auto ldlt = Eigen::LDLT<MatrixType, Eigen::Lower>(blockI); ldlt.info() == Eigen::Success) {
-                        blockI      = ldlt.solve(MatrixType::Identity(extent, extent));
-                        ldltSuccess = ldlt.info() == Eigen::Success;
-                        if(ldltSuccess) break;
-                        blockI = blockA - blockB * shift; // Reset
-                        eig::log->info("ldlt solve failed on block {}/{}", blkidx, nblocks);
-                        [[fallthrough]];
-                    }
+                    eig::log->trace("ldlt factorizing block {}/{}", blkidx, nblocks);
+
+                    ldlt->compute(blockI);
+                    ldltSuccess = ldlt->info() == Eigen::Success;
+                    if(ldltSuccess) break;
+                    // blockI = blockA - blockB * shift; // Reset
+                    // blockI = get_diagonal_block(offset, extent, shift, mpos_A, envL_A, envR_A, mpos_B, envL_B, envR_B);
+
+                    eig::log->debug("ldlt factorization failed on block {}/{}: info {}", blkidx, nblocks, static_cast<int>(ldlt->info()));
+                    [[fallthrough]];
+                    // if(auto ldlt = Eigen::LDLT<MatrixType, Eigen::Lower>(blockI); ldlt.info() == Eigen::Success) {
+                    //     blockI      = ldlt.solve(MatrixType::Identity(extent, extent));
+                    //     ldltSuccess = ldlt.info() == Eigen::Success;
+                    //     if(ldltSuccess) break;
+                    //     blockI = blockA - blockB * shift; // Reset
+                    //     eig::log->info("ldlt solve failed on block {}/{}", blkidx, nblocks);
+                    // }
+                    // [[fallthrough]];
                 }
                 case eig::Factorization::LU: {
+                    // for(auto cidx = 0; cidx < blockI.cols(); ++cidx) {
+                    //     VectorType col   = blockI.col(cidx).cwiseAbs();
+                    //     blockI.col(cidx) = (col.array() < 2.0 * col.mean()).select(0, blockI.col(cidx)).eval();
+                    // }
+                    // blockI = blockI.template selfadjointView<Eigen::Lower>();
                     auto lu   = Eigen::PartialPivLU<MatrixType>(blockI);
                     blockI    = lu.solve(MatrixType::Identity(extent, extent));
                     luSuccess = true;
@@ -744,24 +1155,98 @@ void MatVecMPOS<T>::CalcPc(T shift) {
                     qrSuccess = true;
                     break;
                 }
+                case eig::Factorization::ILUT: {
+                    double mean       = blockI.cwiseAbs().mean();
+                    double droptol    = 1e-2; // Drops elements smaller than droptol*rowwise().cwiseAbs().mean()
+                    int    fillfactor = 10;   // if the original matrix has nnz nonzeros, LU matrix has at most nnz * fillfactor nonseros
+                    // sparseI = blockI.sparseView(mean, 1e-6);
+                    *sparseRM = blockI.sparseView(mean, 1e-3);
+                    sparseRM->makeCompressed();
+                    eig::log->trace("bf sparseI block {}/{}: nnz: {:.3e}", blkidx, nblocks,
+                                    static_cast<double>(sparseRM->nonZeros()) / static_cast<double>(sparseRM->size()));
+                    bicg->setMaxIterations(1000);
+                    bicg->setTolerance(1e-3);
+                    bicg->preconditioner().setDroptol(droptol);
+                    bicg->preconditioner().setFillfactor(fillfactor);
+                    bicg->compute(*sparseRM);
+                    bicgSuccess = bicg->info() == Eigen::Success;
+                    eig::log->trace("bicg compute block {}/{}: info {}", blkidx, nblocks, static_cast<int>(bicg->info()));
+                    // if(ilutSuccess) {
+                    //     sparseI       = bicg.solve(id);
+                    //     // ilutSuccess = bicg.info() == Eigen::Success;
+                    //     // sparseI.makeCompressed();
+                    // eig::log->info("af sparse block {}/{}: {:.3e}", blkidx, nblocks, static_cast<double>(sparseI.nonZeros()) / sparseI.size());
+                    // }
+                    if(!bicgSuccess) {
+                        eig::log->info("cg solve failed on block {}/{}: {}", blkidx, nblocks, static_cast<int>(bicg->info()));
+                        // Take the diagonal of blockI instead
+                        sparseRM->resize(0, 0);
+                        blockI = MatrixType(blockI.diagonal().cwiseInverse().asDiagonal());
+                        break;
+                    }
+                    break;
+                }
+                case eig::Factorization::ILDLT: {
+                    double mean = blockI.cwiseAbs().mean();
+                    // double droptol    = 1e-2; // Drops elements smaller than droptol*rowwise().cwiseAbs().mean()
+                    // int    fillfactor = 10;   // if the original matrix has nnz nonzeros, LDLT matrix has at most nnz * fillfactor nonseros
+                    *sparseCM = blockI.sparseView(mean, 0.5);
+                    // sparseCM = blockI.sparseView();
+                    sparseCM->makeCompressed();
+                    // *blockPtr = blockI;
+                    eig::log->info("bf sparseI block {}/{}: nnz: {:.3e}", blkidx, nblocks,
+                                   static_cast<double>(sparseCM->nonZeros()) / static_cast<double>(sparseCM->size()));
+                    // eig::log->info("cg compute block {}/{} ", blkidx, nblocks);
+                    // cg->setMaxIterations(100);
+                    cg->setTolerance(1e-3);
+                    // cg->preconditioner().setInitialShift(droptol);
+                    // cg->preconditioner().setFillfactor(fillfactor);
+                    cg->compute(*sparseCM);
+                    cgSuccess = cg->info() == Eigen::Success;
+                    eig::log->trace("cg compute block {}/{}: info {}", blkidx, nblocks, static_cast<int>(cg->info()));
+                    if(!cgSuccess) {
+                        eig::log->info("cg solve failed on block {}/{}: {}", blkidx, nblocks, static_cast<int>(cg->info()));
+                        // Take the diagonal of blockI instead
+                        sparseCM->resize(0, 0);
+                        blockI = MatrixType(blockI.diagonal().cwiseInverse().asDiagonal());
+                        break;
+                    }
+                    break;
+                }
             }
 
-            if(!lltSuccess and !ldltSuccess and !luSuccess and !qrSuccess) {
+            if(!lltSuccess and !ldltSuccess and !luSuccess and !qrSuccess and factorization != eig::Factorization::ILUT and
+               factorization != eig::Factorization::ILDLT) {
                 eig::log->warn("factorization {} (and others) failed on block {}/{} ... resorting to Eigen::ColPivHouseholderQR",
                                eig::FactorizationToString(factorization), blkidx, nblocks);
-                blockI = Eigen::ColPivHouseholderQR<MatrixType>(blockI).inverse(); // Should work on any matrix
+                blockI       = Eigen::ColPivHouseholderQR<MatrixType>(blockI).inverse(); // Should work on any matrix
+                solveSuccess = true;
             }
 #pragma omp ordered
             {
-                denseJcbBlocks.emplace_back(offset, blockI); //
-                double sp = static_cast<double>(blockI.cwiseAbs().count()) / static_cast<double>(blockI.size());
                 sparsity.emplace_back(sp);
+
+                if(solveSuccess) {
+                    denseJcbBlocks.emplace_back(offset, blockI); //
+                } else if(lltSuccess and llt->rows() > 0) {
+                    lltJcbBlocks.emplace_back(offset, std::move(llt));
+                } else if(ldltSuccess and ldlt->rows() > 0) {
+                    ldltJcbBlocks.emplace_back(offset, std::move(ldlt));
+                } else if(bicgSuccess and bicg->rows() > 0) {
+                    bicgstabJcbBlocks.emplace_back(offset, std::move(sparseRM), std::move(bicg));
+                } else if(cgSuccess and cg->rows() > 0) {
+                    cgJcbBlocks.emplace_back(offset, std::move(sparseCM), std::move(cg));
+                } else if(sparseRM->size() > 0) {
+                    sparseJcbBlocks.emplace_back(offset, *sparseRM);
+                }
             }
         }
+        t_jcb.toc();
         auto spavg = std::accumulate(sparsity.begin(), sparsity.end(), 0.0) / static_cast<double>(sparsity.size());
         eig::log->debug(
-            "MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | diagonal blocksize {} | nblocks {} ... done (avg sparsity {:.3e})",
-            jcbBlockSize, nblocks, spavg);
+            "MatVecMPOS<T>::CalcPc(): calculating the block jacobi preconditioner | size {} | diagonal blocksize {} | nblocks {} ... done | t {:.3e} s | avg "
+            "sparsity {:.3e} | mem +{:.3e} MB",
+            size_mps, jcbBlockSize, nblocks, t_jcb.get_last_interval(), spavg, debug::mem_hwm_in_mb() - m_rss);
     }
 
     readyCalcPc = true;
@@ -771,9 +1256,14 @@ template<typename T>
 void MatVecMPOS<T>::MultPc([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
                            [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
     for(int i = 0; i < *blockSize; i++) {
+        T shift = primme->ShiftsForPreconditioner[i];
+        if(!mpos_B.empty())
+            shift = std::abs(primme->stats.estimateMaxEVal) > std::abs(primme->stats.estimateMinEVal) ? primme->stats.estimateMaxEVal
+                                                                                                      : primme->stats.estimateMinEVal;
         T *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
         T *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
-        MultPc(mps_in_ptr, mps_out_ptr, primme->ShiftsForPreconditioner[i]);
+        MultPc(mps_in_ptr, mps_out_ptr, shift);
+        // MultPc(mps_in_ptr, mps_out_ptr, primme->ShiftsForPreconditioner[i]);
     }
     *err = 0;
 }
@@ -785,19 +1275,12 @@ void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_
     auto mps_out = Eigen::Map<VectorType>(mps_out_, size_mps);
 
     if(jcbMaxBlockSize == 1) {
-        if(not readyCalcPc) { CalcPc(0.0); }
+        if(not readyCalcPc) { CalcPc(shift); }
         auto token = t_multPc->tic_token();
 
         // Diagonal jacobi preconditioner
-        denseJcbDiagonal = ((jcbDiagA.array()).cwiseInverse().cwiseProduct(jcbDiagB.array())).matrix();
-        // Use a small cutoff for small differences following Eq 2.11 in https://sdm.lbl.gov/~kewu/ps/thesis.pdf
-        //         diagshf                   = (diagonal.array() - shift).cwiseAbs();
-        static constexpr auto eps = std::numeric_limits<double>::epsilon();
-        for(auto &d : denseJcbDiagonal) {
-            if(d >= 0 and d <= +eps) d = +eps;
-            if(d <= 0 and d >= -eps) d = -eps;
-        }
-        mps_out = denseJcbDiagonal.array().cwiseProduct(mps_in.array());
+        denseJcbDiagonal = (jcbDiagA.array() - shift * jcbDiagB.array()).matrix();
+        mps_out          = denseJcbDiagonal.array().cwiseInverse().cwiseProduct(mps_in.array());
         num_pc++;
     } else if(jcbMaxBlockSize > 1) {
         if(not readyCalcPc) { CalcPc(shift); }
@@ -815,7 +1298,34 @@ void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_
             long extent                               = block.rows();
             mps_out.segment(offset, extent).noalias() = block.template selfadjointView<Eigen::Lower>() * mps_in.segment(offset, extent);
         }
-
+#pragma omp parallel for
+        for(size_t idx = 0; idx < lltJcbBlocks.size(); ++idx) {
+            const auto &[offset, solver] = lltJcbBlocks[idx];
+            long extent                  = solver->rows();
+            auto mps_out_segment         = Eigen::Map<VectorType>(mps_out_ + offset, extent);
+            auto mps_in_segment          = Eigen::Map<const VectorType>(mps_in_ + offset, extent);
+            mps_out_segment.noalias()    = solver->solve(mps_in_segment);
+        }
+#pragma omp parallel for
+        for(size_t idx = 0; idx < ldltJcbBlocks.size(); ++idx) {
+            const auto &[offset, solver] = ldltJcbBlocks[idx];
+            long extent                  = solver->rows();
+            auto mps_out_segment         = Eigen::Map<VectorType>(mps_out_ + offset, extent);
+            auto mps_in_segment          = Eigen::Map<const VectorType>(mps_in_ + offset, extent);
+            mps_out_segment.noalias()    = solver->solve(mps_in_segment);
+        }
+        // #pragma omp parallel for
+        for(size_t idx = 0; idx < bicgstabJcbBlocks.size(); ++idx) {
+            const auto &[offset, sparseI, solver]     = bicgstabJcbBlocks[idx];
+            long extent                               = solver->rows();
+            mps_out.segment(offset, extent).noalias() = solver->solveWithGuess(mps_in.segment(offset, extent), mps_out.segment(offset, extent));
+        }
+        // #pragma omp parallel for
+        for(size_t idx = 0; idx < cgJcbBlocks.size(); ++idx) {
+            const auto &[offset, sparseI, solver]     = cgJcbBlocks[idx];
+            long extent                               = solver->rows();
+            mps_out.segment(offset, extent).noalias() = solver->solveWithGuess(mps_in.segment(offset, extent), mps_out.segment(offset, extent));
+        }
         num_pc++;
     }
 }
@@ -886,7 +1396,26 @@ void MatVecMPOS<T>::set_side(const eig::Side side_) {
 }
 template<typename T>
 void MatVecMPOS<T>::set_jcbMaxBlockSize(std::optional<long> size) {
-    if(size.has_value()) jcbMaxBlockSize = std::clamp(size.value(), 1l, size_mps);
+    if(size.has_value()) {
+        // We want the block sizes to be roughly equal, so we reduce the block size until the remainder is zero or larger than 80% of the block size
+        // This ensures that the last block isn't too much smaller than the other ones
+        jcbMaxBlockSize = std::clamp(size.value(), 1l, size_mps);
+        long newsize    = jcbMaxBlockSize;
+        long rem        = num::mod(size_mps, newsize);
+        auto bestsize   = std::pair<long, long>{rem, newsize};
+        while(newsize >= jcbMaxBlockSize / 2) {
+            rem = num::mod(size_mps, newsize);
+            if(rem > bestsize.first or rem == 0) { bestsize = std::pair<long, long>{rem, newsize}; }
+            if(rem == 0) break;              // All equal size
+            if(rem > 4 * newsize / 5) break; // The last is at least 80% the size of the others
+            newsize -= 2;
+        }
+        if(bestsize.second != jcbMaxBlockSize) {
+            // eig::log->warn("ADJUSTED BLOCK SIZE TO {}",bestsize.second);
+            jcbMaxBlockSize = std::clamp(bestsize.second, jcbMaxBlockSize / 2, size_mps);
+        }
+        // jcbMaxBlockSize = std::clamp(size.value(), 1l, size_mps);
+    }
 }
 
 template<typename T>

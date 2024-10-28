@@ -61,25 +61,32 @@ enum class BlockSizePolicy {
     allow_bitops
 };
 
-enum class EigsIterGainPolicy : int {
-    NEVER     = 0,  /*! Never increase eigs iterations  <*/
-    ITERATION = 1,  /*! Increase eigs iterations every itertaion    <*/
-    VARSAT    = 2,  /*! Increase when the energy variance has saturated  <*/
-    SATURATED = 4,  /*! Increase when the algorithm has saturated  <*/
-    STUCK     = 8,  /*! Increase when the algorithm is stuck  <*/
-    FIN_BOND  = 16, /*! Increase only when the bond dimension has reached its maximum   <*/
-    FIN_TRNC  = 32, /*! Increase only when the truncation error has reached its minimum   <*/
+/*! \brief Policy that determines when a quantity should increase or improve
+ *  For example, when the number of eigs iterations should increase, or when
+ *  the mps block size should increase, or jacobi preconditioner block size
+ */
+enum class GainPolicy : int {
+
+    NEVER     = 0,  /*!< Never increase eigs iterations  */
+    HALFSWEEP = 1,  /*!< every halfsweep    */
+    FULLSWEEP = 2,  /*!< every halfsweep    */
+    SAT_VAR   = 4,  /*!< when the energy variance has saturated  */
+    SAT_ALGO  = 8,  /*!< when the algorithm has saturated  */
+    STK_ALGO  = 16, /*!< when the algorithm is stuck  */
+    FIN_BOND  = 32, /*!< only when the bond dimension has reached its maximum   */
+    FIN_TRNC  = 64, /*!< only when the truncation error has reached its minimum   */
     allow_bitops
 };
 
 enum class UpdatePolicy {
     NEVER     = 0,  /*!< Never update */
     WARMUP    = 1,  /*!< Update during warmup */
-    ITERATION = 2,  /*!< Update every iteration */
+    HALFSWEEP = 2,  /*!< Update every iteration */
     FULLSWEEP = 4,  /*!< Update every second iteration (left to right + right to left sweep) */
     TRUNCATED = 8,  /*!< Update whenever the state is truncated */
-    SATURATED = 16, /*!< Update when the algorithm is saturated */
-    STUCK     = 32, /*!< Update when the algorithm is stuck */
+    SAT_VAR   = 16, /*!< when the algorithm has saturated  <*/
+    SAT_ALGO  = 32, /*!< Update when the algorithm is saturated */
+    STK_ALGO  = 64, /*!< Update when the algorithm is stuck */
     allow_bitops
 };
 
@@ -208,13 +215,19 @@ enum class StoragePolicy : int {
 };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
+
 enum class EnvExpandMode : int {
-    NONE = 0, /*!< No subspace expansion H */
-    ENE  = 1, /*!< Subspace expansion using H */
-    VAR  = 2, /*!< Subspace expansion using H² */
+    NONE     = 0,  /*!< No environment expansion */
+    H1       = 1,  /*!< environment expansion using H (valid with SSITE, ignored otherwise) */
+    H2       = 2,  /*!< environment expansion using H²  (valid with SSITE, ignored otherwise)  */
+    SSITE    = 4,  /*!< strictly single site expansion */
+    NSITE    = 8,  /*!< nsite expansion (given by the local info scale "icom") */
+    BACKWARD = 16, /*!< Expand the trailing environment as in the original DMRG3S algorithm */
+    FORWARD  = 32, /*!< Expand the forward environment before optimization */
+    DEFAULT  = H1 | H2 | NSITE | FORWARD,
     allow_bitops
 };
-enum class EnvExpandSide { BACKWARD, FORWARD };
+
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class ResumePolicy {
     IF_MAX_ITERS,
@@ -265,7 +278,7 @@ enum class OptRitz {
     SR,   /*!< Smallest Real eigenvalue */
     SM,   /*!< Smallest magnitude eigenvalue. MPO² Energy shift == 0. Use this to find an eigenstate with energy closest to 0) */
     IS,   /*!< Initial State energy. Energy shift == Initial state energy. Targets an eigenstate with energy near that of the initial state */
-    TE,    /*!< Target Energy density in normalized units [0,1]. Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
+    TE,   /*!< Target Energy density in normalized units [0,1]. Energy shift == settings::xdmrg::energy_density_target * (EMIN+EMAX) + EMIN.  */
     // CE,    /*!< Closest to the current energy  */
 };
 
@@ -449,8 +462,8 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
 
 template<typename T>
 std::string flag2str(const T &item) noexcept {
-    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, EigsIterGainPolicy, StoragePolicy, BlockSizePolicy, UpdatePolicy, SaturationPolicy,
-                                        ProjectionPolicy, EnvExpandMode>);
+    static_assert(enum_sfinae::is_any_v<T, OptExit, OptWhen, GainPolicy, StoragePolicy, BlockSizePolicy, UpdatePolicy, SaturationPolicy, ProjectionPolicy,
+                                        EnvExpandMode>);
 
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T, OptExit>) {
@@ -505,11 +518,11 @@ std::string flag2str(const T &item) noexcept {
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
         if(has_flag(item, UpdatePolicy::WARMUP)) v.emplace_back("WARMUP");
-        if(has_flag(item, UpdatePolicy::ITERATION)) v.emplace_back("ITERATION");
+        if(has_flag(item, UpdatePolicy::HALFSWEEP)) v.emplace_back("ITERATION");
         if(has_flag(item, UpdatePolicy::FULLSWEEP)) v.emplace_back("FULLSWEEP");
         if(has_flag(item, UpdatePolicy::TRUNCATED)) v.emplace_back("TRUNCATED");
-        if(has_flag(item, UpdatePolicy::SATURATED)) v.emplace_back("SATURATED");
-        if(has_flag(item, UpdatePolicy::STUCK)) v.emplace_back("STUCK");
+        if(has_flag(item, UpdatePolicy::SAT_ALGO)) v.emplace_back("SATURATED");
+        if(has_flag(item, UpdatePolicy::STK_ALGO)) v.emplace_back("STUCK");
         if(v.empty()) return "NEVER";
     }
     if constexpr(std::is_same_v<T, SaturationPolicy>) {
@@ -534,17 +547,23 @@ std::string flag2str(const T &item) noexcept {
         if(v.empty()) return "NEVER";
     }
     if constexpr(std::is_same_v<T, EnvExpandMode>) {
-        if(has_flag(item, EnvExpandMode::ENE)) v.emplace_back("ENE");
-        if(has_flag(item, EnvExpandMode::VAR)) v.emplace_back("VAR");
+        if(has_flag(item, EnvExpandMode::H1)) v.emplace_back("H1");
+        if(has_flag(item, EnvExpandMode::H2)) v.emplace_back("H2");
+        if(has_flag(item, EnvExpandMode::SSITE)) v.emplace_back("SSITE");
+        if(has_flag(item, EnvExpandMode::NSITE)) v.emplace_back("NSITE");
+        if(has_flag(item, EnvExpandMode::BACKWARD)) v.emplace_back("BACKWARD");
+        if(has_flag(item, EnvExpandMode::FORWARD)) v.emplace_back("FORWARD");
+        if(has_flag(item, EnvExpandMode::DEFAULT)) v.emplace_back("DEFAULT");
         if(v.empty()) return "NONE";
     }
-    if constexpr(std::is_same_v<T, EigsIterGainPolicy>) {
-        if(has_flag(item, EigsIterGainPolicy::ITERATION)) v.emplace_back("ITERATION");
-        if(has_flag(item, EigsIterGainPolicy::VARSAT)) v.emplace_back("VARSAT");
-        if(has_flag(item, EigsIterGainPolicy::SATURATED)) v.emplace_back("SATURATED");
-        if(has_flag(item, EigsIterGainPolicy::STUCK)) v.emplace_back("STUCK");
-        if(has_flag(item, EigsIterGainPolicy::FIN_BOND)) v.emplace_back("FIN_BOND");
-        if(has_flag(item, EigsIterGainPolicy::FIN_TRNC)) v.emplace_back("FIN_TRNC");
+    if constexpr(std::is_same_v<T, GainPolicy>) {
+        if(has_flag(item, GainPolicy::HALFSWEEP)) v.emplace_back("HALFSWEEP");
+        if(has_flag(item, GainPolicy::FULLSWEEP)) v.emplace_back("FULLSWEEP");
+        if(has_flag(item, GainPolicy::SAT_VAR)) v.emplace_back("SAT_VAR");
+        if(has_flag(item, GainPolicy::SAT_ALGO)) v.emplace_back("SAT_ALGO");
+        if(has_flag(item, GainPolicy::STK_ALGO)) v.emplace_back("STK_ALGO");
+        if(has_flag(item, GainPolicy::FIN_BOND)) v.emplace_back("FIN_BOND");
+        if(has_flag(item, GainPolicy::FIN_TRNC)) v.emplace_back("FIN_TRNC");
         if(v.empty()) return "NEVER";
     }
     return std::accumulate(std::begin(v), std::end(v), std::string(),
@@ -579,7 +598,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         CopyPolicy,
         ResetReason,
         EnvExpandMode,
-        EnvExpandSide,
         NormPolicy,
         ResumePolicy,
         FileCollisionPolicy,
@@ -593,7 +611,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         OptWhen,
         OptExit,
         OptMark,
-        EigsIterGainPolicy,
+        GainPolicy,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -652,11 +670,11 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
         if(item == UpdatePolicy::NEVER)                          return "NEVER";
         if(item == UpdatePolicy::WARMUP)                         return "WARMUP";
-        if(item == UpdatePolicy::ITERATION)                      return "ITERATION";
+        if(item == UpdatePolicy::HALFSWEEP)                      return "ITERATION";
         if(item == UpdatePolicy::FULLSWEEP)                      return "FULLSWEEP";
         if(item == UpdatePolicy::TRUNCATED)                      return "TRUNCATED";
-        if(item == UpdatePolicy::SATURATED)                      return "SATURATED";
-        if(item == UpdatePolicy::STUCK)                          return "STUCK";
+        if(item == UpdatePolicy::SAT_ALGO)                      return "SATURATED";
+        if(item == UpdatePolicy::STK_ALGO)                          return "STUCK";
     }
     if constexpr(std::is_same_v<T, SaturationPolicy>) {
         if(item == SaturationPolicy::val)                        return "val";
@@ -745,12 +763,14 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == ResetReason::BOND_UPDATE)                            return "BOND_UPDATE";
     }
     if constexpr(std::is_same_v<T, EnvExpandMode>) {
-        if(item == EnvExpandMode::ENE)                                  return "ENE";
-        if(item == EnvExpandMode::VAR)                                  return "VAR";
-    }
-    if constexpr(std::is_same_v<T, EnvExpandSide>) {
-        if(item == EnvExpandSide::BACKWARD)                             return "BACKWARD";
-        if(item == EnvExpandSide::FORWARD)                              return "FORWARD";
+        if(item == EnvExpandMode::NONE)                                 return "NONE";
+        if(item == EnvExpandMode::H1)                                   return "H1";
+        if(item == EnvExpandMode::H2)                                   return "H2";
+        if(item == EnvExpandMode::SSITE)                                return "SSITE";
+        if(item == EnvExpandMode::NSITE)                                return "NSITE";
+        if(item == EnvExpandMode::BACKWARD)                             return "BACKWARD";
+        if(item == EnvExpandMode::FORWARD)                              return "FORWARD";
+        if(item == EnvExpandMode::DEFAULT)                              return "DEFAULT";
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == NormPolicy::ALWAYS)                                  return "ALWAYS";
@@ -939,14 +959,15 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptExit::FAIL_ERROR)                                return "FAIL_ERROR";
         if(item == OptExit::NONE)                                      return "NONE";
     }
-    if constexpr(std::is_same_v<T,EigsIterGainPolicy>){
-        if(item == EigsIterGainPolicy::NEVER)                           return "NEVER";
-        if(item == EigsIterGainPolicy::ITERATION)                       return "ITERATION";
-        if(item == EigsIterGainPolicy::VARSAT)                          return "VARSAT";
-        if(item == EigsIterGainPolicy::SATURATED)                       return "SATURATED";
-        if(item == EigsIterGainPolicy::STUCK)                           return "STUCK";
-        if(item == EigsIterGainPolicy::FIN_BOND)                        return "FIN_BOND";
-        if(item == EigsIterGainPolicy::FIN_TRNC)                        return "FIN_TRNC";
+    if constexpr(std::is_same_v<T,GainPolicy>){
+        if(item == GainPolicy::NEVER)                                  return "NEVER";
+        if(item == GainPolicy::HALFSWEEP)                              return "HALFSWEEP";
+        if(item == GainPolicy::FULLSWEEP)                              return "FULLSWEEP";
+        if(item == GainPolicy::SAT_VAR)                                return "SAT_VAR";
+        if(item == GainPolicy::SAT_ALGO)                               return "SAT_ALGO";
+        if(item == GainPolicy::STK_ALGO)                               return "STK_ALGO";
+        if(item == GainPolicy::FIN_BOND)                               return "FIN_BOND";
+        if(item == GainPolicy::FIN_TRNC)                               return "FIN_TRNC";
     }
     return "UNRECOGNIZED ENUM";
 }
@@ -981,7 +1002,6 @@ constexpr auto sv2enum(std::string_view item) {
         CopyPolicy,
         ResetReason,
         EnvExpandMode,
-        EnvExpandSide,
         NormPolicy,
         ResumePolicy,
         FileCollisionPolicy,
@@ -995,7 +1015,7 @@ constexpr auto sv2enum(std::string_view item) {
         OptWhen,
         OptExit,
         OptMark,
-        EigsIterGainPolicy,
+        GainPolicy,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -1036,14 +1056,17 @@ constexpr auto sv2enum(std::string_view item) {
         return policy;
 
     }
-    if constexpr(std::is_same_v<T,EigsIterGainPolicy>){
-        auto policy = EigsIterGainPolicy::NEVER;
-        if(item.find("ITERATION")      != std::string_view::npos) policy |= EigsIterGainPolicy::ITERATION;
-        if(item.find("VARSAT")         != std::string_view::npos) policy |= EigsIterGainPolicy::VARSAT;
-        if(item.find("SATURATED")      != std::string_view::npos) policy |= EigsIterGainPolicy::SATURATED;
-        if(item.find("STUCK")          != std::string_view::npos) policy |= EigsIterGainPolicy::STUCK;
-        if(item.find("FIN_BOND")       != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_BOND;
-        if(item.find("FIN_TRNC")       != std::string_view::npos) policy |= EigsIterGainPolicy::FIN_TRNC;
+    if constexpr(std::is_same_v<T,GainPolicy>){
+        auto policy = GainPolicy::NEVER;
+        if(item.find("HALFSWEEP")   != std::string_view::npos) policy |= GainPolicy::HALFSWEEP;
+        if(item.find("FULLSWEEP")   != std::string_view::npos) policy |= GainPolicy::FULLSWEEP;
+        if(item.find("SAT_VAR")     != std::string_view::npos) policy |= GainPolicy::SAT_VAR;
+        if(item.find("SAT_ALGO")    != std::string_view::npos) policy |= GainPolicy::SAT_ALGO;
+        if(item.find("STK_ALGO")    != std::string_view::npos) policy |= GainPolicy::STK_ALGO;
+        if(item.find("FIN_BOND")    != std::string_view::npos) policy |= GainPolicy::FIN_BOND;
+        if(item.find("FIN_TRNC")    != std::string_view::npos) policy |= GainPolicy::FIN_TRNC;
+
+
         return policy;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -1063,11 +1086,11 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
         auto policy = UpdatePolicy::NEVER;
         if(item.find("WARMUP")     != std::string_view::npos) policy |= UpdatePolicy::WARMUP;
-        if(item.find("ITERATION")  != std::string_view::npos) policy |= UpdatePolicy::ITERATION;
+        if(item.find("ITERATION")  != std::string_view::npos) policy |= UpdatePolicy::HALFSWEEP;
         if(item.find("FULLSWEEP")  != std::string_view::npos) policy |= UpdatePolicy::FULLSWEEP;
         if(item.find("TRUNCATED")  != std::string_view::npos) policy |= UpdatePolicy::TRUNCATED;
-        if(item.find("SATURATED")  != std::string_view::npos) policy |= UpdatePolicy::SATURATED;
-        if(item.find("STUCK")      != std::string_view::npos) policy |= UpdatePolicy::STUCK;
+        if(item.find("SATURATED")  != std::string_view::npos) policy |= UpdatePolicy::SAT_ALGO;
+        if(item.find("STUCK")      != std::string_view::npos) policy |= UpdatePolicy::STK_ALGO;
         return policy;
     }
     if constexpr(std::is_same_v<T, SaturationPolicy>) {
@@ -1161,12 +1184,15 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "BOND_UPDATE")                           return ResetReason::BOND_UPDATE;
     }
     if constexpr(std::is_same_v<T, EnvExpandMode>) {
-        if(item == "ENE")                                   return EnvExpandMode::ENE;
-        if(item == "VAR")                                   return EnvExpandMode::VAR;
-    }
-    if constexpr(std::is_same_v<T, EnvExpandSide>) {
-        if(item == "BACKWARD")                              return EnvExpandSide::BACKWARD;
-        if(item == "FORWARD")                               return EnvExpandSide::FORWARD;
+        auto policy = EnvExpandMode::NONE;
+        if(item.find("H1")       != std::string_view::npos) policy |= EnvExpandMode::H1;
+        if(item.find("H2")       != std::string_view::npos) policy |= EnvExpandMode::H2;
+        if(item.find("SSITE")    != std::string_view::npos) policy |= EnvExpandMode::SSITE;
+        if(item.find("NSITE")    != std::string_view::npos) policy |= EnvExpandMode::NSITE;
+        if(item.find("BACKWARD") != std::string_view::npos) policy |= EnvExpandMode::BACKWARD;
+        if(item.find("FORWARD")  != std::string_view::npos) policy |= EnvExpandMode::FORWARD;
+        if(item.find("DEFAULT")  != std::string_view::npos) policy |= EnvExpandMode::DEFAULT;
+        return policy;
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS")                                return NormPolicy::ALWAYS;

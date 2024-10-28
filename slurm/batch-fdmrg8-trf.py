@@ -19,7 +19,7 @@ config_ranges = {
     "model::model_type": ['ising_majorana'],
     "model::model_size": ['32','48','64'],
     "model::ising_majorana::g": ['0.500'],
-    "model::ising_majorana::delta": ['+3.00', '+4.00', '+5.00', '+6.00','+9.00'],
+    "model::ising_majorana::delta": ['-9.00','-6.00','-3.00',  '+3.00', '+4.00', '+5.00', '+6.00','+9.00'],
     "storage::output_filepath": [get_output_filepath],
     "storage::resume_policy": ['IF_UNSUCCESSFUL'],
     "storage::file_collision_policy": ['REVIVE'],

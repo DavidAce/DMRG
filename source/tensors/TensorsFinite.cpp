@@ -38,9 +38,9 @@ TensorsFinite::TensorsFinite() : state(std::make_unique<StateFinite>()), model(s
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-TensorsFinite::~TensorsFinite()                                 = default; // default dtor
-TensorsFinite:: TensorsFinite(TensorsFinite &&other)            = default; // default move ctor
-TensorsFinite  &TensorsFinite::operator=(TensorsFinite &&other) = default; // default move assign
+TensorsFinite::~TensorsFinite()                                = default; // default dtor
+TensorsFinite::TensorsFinite(TensorsFinite &&other)            = default; // default move ctor
+TensorsFinite &TensorsFinite::operator=(TensorsFinite &&other) = default; // default move assign
 
 TensorsFinite::TensorsFinite(const TensorsFinite &other)
     : state(std::make_unique<StateFinite>(*other.state)), model(std::make_unique<ModelFinite>(*other.model)),
@@ -523,29 +523,28 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
     normalize_state(svd_cfg, NormPolicy::IFNEEDED);
 }
 
-EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode, EnvExpandSide envExpandSide, OptAlgo algo, OptRitz ritz, svd::config svd_cfg) {
+EnvExpansionResult TensorsFinite::expand_environment(EnvExpandMode envExpandMode, OptAlgo algo, OptRitz ritz, size_t blocksize, svd::config svd_cfg) {
     // if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
     auto t_exp     = tid::tic_scope("exp_env");
     auto expresult = EnvExpansionResult();
     if(get_position<long>() < 0) {
-        expresult.msg ="Negative position";
+        expresult.msg = "Negative position";
         return {};
     }
     if(active_sites.empty()) activate_sites({get_position<size_t>()});
     rebuild_edges(); // Use fresh edges
     if constexpr(settings::debug) assert_validity();
-    switch(envExpandSide) {
-        case EnvExpandSide::BACKWARD: {
-            if(get_position<long>() >= 0) {
-                // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-                expresult = tools::finite::env::expand_environment_backward(*state, *model, *edges, envExpandMode, svd_cfg);
-            }
-            break;
-        }
-        case EnvExpandSide::FORWARD: {
-            expresult = tools::finite::env::expand_environment_forward_nsite(*state, *model, *edges, algo, ritz, svd_cfg);
-            break;
-        }
+    if(!has_flag(envExpandMode, EnvExpandMode::SSITE) and !has_flag(envExpandMode, EnvExpandMode::NSITE)) envExpandMode |= EnvExpandMode::NSITE;
+
+    // TODO: It seems when the stuck algorithm goes into GDMRG, then SSITE does not work with H² expansion.
+    // TODO: Probably GDMRG needs SSITE|H1 expansion, (which seems to work fine).
+
+    if(has_flag(envExpandMode, EnvExpandMode::NSITE)) {
+        expresult = tools::finite::env::expand_environment_nsite(*state, *model, *edges, envExpandMode, algo, ritz, blocksize, svd_cfg);
+    } else if(has_flag(envExpandMode, EnvExpandMode::SSITE)) {
+        // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+        // with improved mixing parameter selection
+        expresult = tools::finite::env::expand_environment_1site(*state, *model, *edges, envExpandMode, algo, ritz, svd_cfg);
     }
     if(expresult.ok) clear_measurements();
     if constexpr(settings::debug) assert_validity();

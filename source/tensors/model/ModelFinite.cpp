@@ -696,7 +696,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
 }
 
 Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
-    /*! We use edges without particle content to get a hamiltonian for a subsystem.
+    /*! We use edges without particle content to get a hamiltonian for a subsystem (as opposed to an effective hamiltonian for a subsystem).
      *  To get an effective hamiltonian with particle-full edges, use TensorsFinite::get_effective_hamiltonian.
      */
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");

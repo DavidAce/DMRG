@@ -130,11 +130,21 @@ Eigen::Tensor<cplx, 4> MpoSite::MPO_energy_shifted_view(double energy_shift_per_
 }
 
 Eigen::Tensor<cplx, 4> MpoSite::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
-    return get_mpo(energy_shift_mpo, nbody, skip);
+    auto mpo_build = get_mpo(energy_shift_mpo, nbody, skip);
+    mpo_build      = get_parity_shifted_mpo(mpo_build);
+    mpo_build      = apply_edge_left(mpo_build, get_MPO_edge_left(mpo_build));
+    mpo_build      = apply_edge_right(mpo_build, get_MPO_edge_right(mpo_build));
+    return mpo_build;
+    // return get_mpo(energy_shift_mpo, nbody, skip);
 }
 
 Eigen::Tensor<cplx_t, 4> MpoSite::MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
-    return get_mpo_t(energy_shift_mpo, nbody, skip);
+    auto mpo_build = get_mpo_t(energy_shift_mpo, nbody, skip);
+    mpo_build      = get_parity_shifted_mpo(mpo_build);
+    mpo_build      = apply_edge_left(mpo_build, get_MPO_edge_left(mpo_build));
+    mpo_build      = apply_edge_right(mpo_build, get_MPO_edge_right(mpo_build));
+    return mpo_build;
+    // return get_mpo_t(energy_shift_mpo, nbody, skip);
 }
 
 const Eigen::Tensor<cplx, 4> &MpoSite::MPO2() const {
@@ -350,7 +360,7 @@ std::tuple<OptRitz, int, std::string_view> MpoSite::get_parity_shift_mpo() const
 Eigen::Tensor<cplx, 4> MpoSite::get_parity_shifted_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_build) const {
     if(std::abs(parity_shift_sign_mpo2) != 1.0) return mpo_build;
     if(parity_shift_axus_mpo2.empty()) return mpo_build;
-    // This redefines H --> H² + Q(σ), where
+    // This redefines H² --> H² + Q(σ), where
     //      * Q(σ) = 0.5 * ( I - q*prod(σ) )
     //      * σ is a pauli matrix (usually σ^z)
     //      * 0.5 is a scalar that we multiply on the left edge as well.
@@ -442,7 +452,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
     auto                     ldim = mpo.dimension(0);
     Eigen::Tensor<Scalar, 1> ledge(ldim);
     if(ldim == 1) {
-        // Thin edge (it was probably already applied to the left-most MPO
+        // Thin edge (it was probably already applied to the left-most MPO)
         ledge.setConstant(cplx(1.0, 0.0));
     } else {
         ledge.setZero();

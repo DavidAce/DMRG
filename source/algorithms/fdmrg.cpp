@@ -299,7 +299,7 @@ void fdmrg::update_state() {
 
     // Expand the environment to grow the bond dimension in 1-site dmrg
     if(opt_meta.expand_mode != EnvExpandMode::NONE) {
-        expand_environment(opt_meta.expand_mode, opt_meta.expand_side, opt_meta.optAlgo, opt_meta.optRitz);
+        expand_environment(opt_meta.expand_mode, opt_meta.optAlgo, opt_meta.optRitz);
         // update_environment_expansion_alpha();
         // The expansion may have changed the problem size!
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);

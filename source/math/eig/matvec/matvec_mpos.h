@@ -55,16 +55,36 @@ class MatVecMPOS {
     VectorType                       denseJcbDiagonal;        // The inverted diagonals used when jcBMaxBlockSize == 1
     std::vector<std::pair<long, SparseType>> sparseJcbBlocks; // inverted blocks for the block Jacobi preconditioner stored as sparse matrices
     std::vector<std::pair<long, MatrixType>> denseJcbBlocks;  // inverted blocks for the block Jacobi preconditioner stored as dense matrices
-    SparseType                               sparseMatrix;
-    VectorType                               solverGuess;
-    std::vector<long>                        get_k_smallest(const VectorType &vec, size_t k) const;
-    std::vector<long>                        get_k_largest(const VectorType &vec, size_t k) const;
+
+    using BICGType = Eigen::BiCGSTAB<SparseRowM, Eigen::IncompleteLUT<Scalar>>;
+    std::vector<std::tuple<long, std::unique_ptr<SparseRowM>, std::unique_ptr<BICGType>>> bicgstabJcbBlocks; // Solvers for the block Jacobi preconditioner
+
+    // using CGType = Eigen::ConjugateGradient<SparseType, Eigen::Lower | Eigen::Upper, Eigen::SimplicialLLT<SparseType>>;
+    using CGType = Eigen::ConjugateGradient<SparseType, Eigen::Lower | Eigen::Upper, Eigen::IncompleteCholesky<Scalar, Eigen::Lower | Eigen::Upper>>;
+    std::vector<std::tuple<long, std::unique_ptr<SparseType>, std::unique_ptr<CGType>>> cgJcbBlocks; // Solvers for the block Jacobi preconditioner
+
+    using LLTType = Eigen::LLT<MatrixType, Eigen::Lower>;
+    std::vector<std::tuple<long, std::unique_ptr<LLTType>>> lltJcbBlocks; // Solvers for the block Jacobi preconditioner
+
+    using LDLTType = Eigen::LDLT<MatrixType, Eigen::Lower>;
+    std::vector<std::tuple<long, std::unique_ptr<LDLTType>>> ldltJcbBlocks; // Solvers for the block Jacobi preconditioner
+
+    SparseType        sparseMatrix;
+    VectorType        solverGuess;
+    std::vector<long> get_k_smallest(const VectorType &vec, size_t k) const;
+    std::vector<long> get_k_largest(const VectorType &vec, size_t k) const;
 
     T get_matrix_element(long I, long J, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const;
     VectorType get_diagonal_new(long offset, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,
                                 const Eigen::Tensor<T, 3> &ENVR) const;
+    MatrixType get_diagonal_block_old(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,
+                                  const Eigen::Tensor<T, 3> &ENVR) const;
     MatrixType get_diagonal_block(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,
                                   const Eigen::Tensor<T, 3> &ENVR) const;
+    MatrixType get_diagonal_block(long offset, long extent, T shift, const std::vector<Eigen::Tensor<T, 4>> &MPOS_A, const Eigen::Tensor<T, 3> &ENVL_A,
+                                  const Eigen::Tensor<T, 3> &ENVR_A, const std::vector<Eigen::Tensor<T, 4>> &MPOS_B, const Eigen::Tensor<T, 3> &ENVL_B,
+                                  const Eigen::Tensor<T, 3> &ENVR_B) const;
+
     // VectorType get_diagonal_old(long offset) const;
     VectorType get_row(long row_idx, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const;
     VectorType get_col(long col_idx, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL, const Eigen::Tensor<T, 3> &ENVR) const;

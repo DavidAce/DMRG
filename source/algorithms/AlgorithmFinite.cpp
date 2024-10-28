@@ -205,18 +205,20 @@ int AlgorithmFinite::get_eigs_iter_max() const {
     if(settings::strategy::etol_decrease_when != UpdatePolicy::NEVER) return safe_cast<int>(eigs_iter_max);
     auto iter_min = std::min(safe_cast<double>(eigs_iter_min), safe_cast<double>(eigs_iter_max));
     auto iter_max = std::max(safe_cast<double>(eigs_iter_min), safe_cast<double>(eigs_iter_max));
-    if(eigs_iter_gain_policy == EigsIterGainPolicy::NEVER) return safe_cast<int>(iter_min);
-    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::FIN_BOND) and !status.bond_limit_has_reached_max) return safe_cast<int>(iter_min);
-    if(has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::FIN_TRNC) and !status.trnc_limit_has_reached_min) return safe_cast<int>(iter_min);
-    bool   gain_iteration   = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::ITERATION) and status.iter > 0;
-    bool   gain_varsat      = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::VARSAT) and status.variance_mpo_saturated_for > 0;
-    bool   gain_saturated   = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::SATURATED) and status.algorithm_saturated_for > 0;
-    bool   gain_stuck       = has_flag(eigs_iter_gain_policy, EigsIterGainPolicy::STUCK) and status.algorithm_has_stuck_for > 0;
-    size_t iteration        = gain_iteration ? status.iter : 0;
+    if(eigs_iter_gain_policy == GainPolicy::NEVER) return safe_cast<int>(iter_min);
+    if(has_flag(eigs_iter_gain_policy, GainPolicy::FIN_BOND) and !status.bond_limit_has_reached_max) return safe_cast<int>(iter_min);
+    if(has_flag(eigs_iter_gain_policy, GainPolicy::FIN_TRNC) and !status.trnc_limit_has_reached_min) return safe_cast<int>(iter_min);
+    bool   gain_halfsweep   = has_flag(eigs_iter_gain_policy, GainPolicy::HALFSWEEP) and status.iter > 0;
+    bool   gain_fullsweep   = has_flag(eigs_iter_gain_policy, GainPolicy::FULLSWEEP) and status.iter > 0;
+    bool   gain_varsat      = has_flag(eigs_iter_gain_policy, GainPolicy::SAT_VAR) and status.variance_mpo_saturated_for > 0;
+    bool   gain_saturated   = has_flag(eigs_iter_gain_policy, GainPolicy::SAT_ALGO) and status.algorithm_saturated_for > 0;
+    bool   gain_stuck       = has_flag(eigs_iter_gain_policy, GainPolicy::STK_ALGO) and status.algorithm_has_stuck_for > 0;
+    size_t halfsweep        = gain_halfsweep ? status.iter : 0;
+    size_t fullsweep        = gain_fullsweep ? status.iter / 2 : 0;
     size_t iter_varsat      = gain_varsat ? status.variance_mpo_saturated_for : 0;
     size_t iter_saturated   = gain_saturated ? status.algorithm_saturated_for : 0;
     size_t iter_stuck       = gain_stuck ? status.algorithm_has_stuck_for : 0;
-    size_t iter_no_progress = std::max({iteration, iter_varsat, iter_saturated, iter_stuck});
+    size_t iter_no_progress = std::max({halfsweep, fullsweep, iter_varsat, iter_saturated, iter_stuck});
     double iter_multiplier  = std::max(1.0, safe_cast<double>(std::pow(eigs_iter_gain, iter_no_progress)));
     double iter_extra       = iter_min * iter_multiplier; // Run more when stuck
     auto   result           = std::min(iter_extra, iter_max);
@@ -248,45 +250,55 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.subspace_tol = settings::precision::target_subspace_error;
     // m1.primme_projection = "primme_proj_refined"; // converges as [refined < harmonic < RR] (in iterations) (sometimes by a lot) with ~1-10% more time
     // m1.primme_method = "PRIMME_DYNAMIC";
-    m1.primme_method = "PRIMME_GD_Olsen_plusK"; // The fastest when using a preconditioner, since it uses the least matvecs
-    // m1.primme_method = "PRIMME_JD_Olsen_plusK";
-    // m1.primme_method = "PRIMME_RQI";
-    m1.eigs_nev = settings::precision::eigs_nev_min;
+    m1.primme_method = "PRIMME_GD_Olsen_plusK"; // PRIMME_GD_Olsen_plusK is fastest when using a preconditioner, since it uses the least matvecs
+    m1.eigs_nev      = settings::precision::eigs_nev_min;
     if(status.algorithm_has_stuck_for > 0) {
         m1.eigs_nev = std::clamp(static_cast<int>(1 + status.algorithm_has_stuck_for), settings::precision::eigs_nev_min, settings::precision::eigs_nev_max);
     }
     m1.eigv_target = 0.0;                           // We always target 0 when OptCost::VARIANCE
     m1.eigs_ncv    = settings::precision::eigs_ncv; // Sets to log2(problem_size) if a nonpositive value is given here
-    // #pragma message "Revert the envexpandmode to var"
     // if(status.algo_type == AlgorithmType::xDMRG and status.algorithm_has_stuck_for > 0) { m1.expand_mode = EnvExpandMode::ENE | EnvExpandMode::VAR; }
     // Set up a multiplier for number of iterations
     m1.eigs_iter_max = get_eigs_iter_max() * m1.eigs_nev.value();
     m1.eigs_tol      = dmrg_eigs_tol;
     if(settings::strategy::etol_decrease_when == UpdatePolicy::NEVER) {
         // Increase the precision of the eigenvalue solver as variance decreases, and when stuck
-        m1.eigs_tol = std::clamp(status.energy_variance_lowest * 10, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
-        if(status.algorithm_has_stuck_for > 1 and status.bond_limit_has_reached_max and status.trnc_limit_has_reached_min)
-            m1.eigs_tol = settings::precision::eigs_tol_min;
+        double matrix_norm = std::max(1.0, eigval_upper_bound);
+        double target_tol  = var_latest / matrix_norm;
+        if(status.algorithm_saturated_for > 0) { target_tol = var_latest / matrix_norm; }
+        if(status.algorithm_has_stuck_for > 0) { target_tol = status.energy_variance_lowest / matrix_norm; }
+        if(status.algorithm_has_stuck_for > 2) target_tol = settings::precision::eigs_tol_min;
+        if(m1.optAlgo == OptAlgo::GDMRG) {
+            target_tol = std::sqrt(settings::precision::eigs_tol_min); // GDMRG seems happy with higher tol, following the residual norm = sqrt(VarH)
+            // target_tol = std::clamp(target_tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
+        }
+        // else {
+        //     // double matrix_norm = eigval_upper_bound;
+        //     // target_tol         = target_tol / matrix_norm;
+        // }
+        target_tol  = std::clamp(target_tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
+        m1.eigs_tol = target_tol;
     }
 
-    m1.eigs_jcbMaxBlockSize = 32;
-    if(status.algorithm_has_stuck_for >= 1) { m1.eigs_jcbMaxBlockSize = 64; }
-    if(status.algorithm_has_stuck_for >= 2) { m1.eigs_jcbMaxBlockSize = 128; }
-
     // Set up the subspace (environment) expansion
-    m1.expand_side = EnvExpandSide::FORWARD;
-    // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::VAR : EnvExpandMode::ENE;
-    m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE | EnvExpandMode::VAR : EnvExpandMode::ENE;
-    // m1.expand_mode = status.algo_type == AlgorithmType::xDMRG ? EnvExpandMode::ENE : EnvExpandMode::ENE;
-
+    m1.expand_mode      = settings::strategy::dmrg_env_expand_mode;
     m1.optSolver        = OptSolver::EIGS; // Choose the iterative solver by default (the exact solver is defaulted to if the problem is too large)
     m1.max_problem_size = settings::strategy::dmrg_max_prob_size;
     if(status.iter < settings::strategy::iter_max_warmup) {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
-        m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
-        m1.max_sites        = settings::strategy::dmrg_max_blocksize;
+        // m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
+        m1.max_sites = settings::strategy::dmrg_min_blocksize;
+        m1.optRitz   = OptRitz::SM;
+        m1.optAlgo   = OptAlgo::XDMRG;
+        m1.eigs_tol  = std::min(1e-8, settings::precision::eigs_tol_max);
     } else {
-        m1.max_sites = dmrg_blocksize;
+        // m1.max_sites = dmrg_blocksize;
+        m1.max_sites = settings::strategy::dmrg_min_blocksize;
+        if(m1.optAlgo == OptAlgo::GDMRG and status.algorithm_has_stuck_for > 1 and not var_isconverged) {
+            m1.optRitz  = OptRitz::LM;
+            m1.optAlgo  = OptAlgo::GDMRG;
+            m1.eigs_tol = std::sqrt(settings::precision::eigs_tol_min);
+        }
     }
 
     // Set up the problem size here
@@ -294,45 +306,48 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
+    m1.eigs_jcbMaxBlockSize = settings::precision::eigs_jcb_min_blocksize;
+
+    if(status.algorithm_saturated_for + status.algorithm_has_stuck_for > 0) {
+        using namespace settings::precision;
+        double jcbBlockSizeLog2_20pcnt = std::ceil(std::lerp(std::log2(eigs_jcb_min_blocksize), std::log2(eigs_jcb_max_blocksize), 0.20));
+        double jcbBlockSizeLog2_50pcnt = std::ceil(std::lerp(std::log2(eigs_jcb_min_blocksize), std::log2(eigs_jcb_max_blocksize), 0.50));
+        double jcbBlockSizeLog2_80pcnt = std::ceil(std::lerp(std::log2(eigs_jcb_min_blocksize), std::log2(eigs_jcb_max_blocksize), 0.80));
+        if(status.algorithm_saturated_for > 0) { m1.eigs_jcbMaxBlockSize = static_cast<long>(std::pow(2, jcbBlockSizeLog2_20pcnt)); }
+        if(status.algorithm_has_stuck_for > 0) { m1.eigs_jcbMaxBlockSize = static_cast<long>(std::pow(2, jcbBlockSizeLog2_50pcnt)); }
+        if(status.algorithm_has_stuck_for > 2) { m1.eigs_jcbMaxBlockSize = static_cast<long>(std::pow(2, jcbBlockSizeLog2_80pcnt)); }
+        if(status.algorithm_has_stuck_for > 4) { m1.eigs_jcbMaxBlockSize = eigs_jcb_max_blocksize; }
+    }
+
     // Do eig instead of eigs when it's cheap (e.g. near the edges or early in the simulation)
     m1.optSolver = m1.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;
 
-
-
-    // m1.eigs_nev = settings::precision::eigs_nev_max;
-    // m1.eigs_ncv = std::max(m1.eigs_ncv.value_or(32), 32);
-    // m1.eigs_tol = 1e-12;
-
-    // if(var_isconverged) {
-    //     m1.expand_mode = EnvExpandMode::NONE; // No need to expand
-    // }
     m1.validate();
 
     return m1;
 }
 
-void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, OptAlgo algo, OptRitz ritz, std::optional<svd::config> svd_cfg) {
+void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, OptAlgo algo, OptRitz ritz, std::optional<svd::config> svd_cfg) {
     // Set a good initial value to start with
     // if(status.env_expansion_alpha == 0.0) status.env_expansion_alpha = std::min(settings::strategy::env_expansion_alpha_max, status.energy_variance_lowest);
     // alpha = alpha.value_or(status.env_expansion_alpha);
     // if(alpha.value() <= 0) return;
     if(not svd_cfg.has_value()) {
-        auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim * 5 / 4 : status.bond_lim;
-        auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim * 1e-1 : status.trnc_lim;
-        // auto bond_lim = envexpSide == EnvExpandSide::FORWARD ? status.bond_lim : status.bond_lim;
-        // auto trnc_lim = envexpSide == EnvExpandSide::FORWARD ? status.trnc_lim : status.trnc_lim;
-        svd_cfg = svd::config(bond_lim, trnc_lim);
+        auto bond_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.bond_lim * 10 / 9 : status.bond_lim;
+        auto trnc_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.trnc_lim * 0.5 : status.trnc_lim;
+        svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
 
-    auto res = tensors.expand_environment(envexpMode, envexpSide, algo, ritz,  svd_cfg.value());
+    auto res = tensors.expand_environment(envexpMode, algo, ritz, dmrg_blocksize, svd_cfg.value());
     if(not res.ok) {
         tools::log->debug("Expansion canceled");
         return;
     }
-    tools::log->debug("Expanded environment {} {} | bond {} {} | αₑ:{:.2e} αᵥ:{:.2e} | var {:.3e} -> {:.3e} | ene {:.16f} -> {:.16f}", flag2str(envexpMode),
-                      enum2sv(envexpSide), res.posL, res.posR, res.alpha_ene, res.alpha_var, res.var_old, res.var_new, res.ene_old, res.ene_new);
+    tools::log->debug("Expanded environment {} | bond {} {} | α₀:{:.2e} αₑ:{:.2e} αᵥ:{:.2e} | var {:.3e} -> {:.3e} | ene {:.16f} -> {:.16f}",
+                      flag2str(envexpMode), res.posL, res.posR, res.alpha_mps, res.alpha_h1v, res.alpha_h2v, res.var_old, res.var_new, res.ene_old,
+                      res.ene_new);
     using namespace settings::strategy;
-    status.env_expansion_alpha = !std::isnan(res.alpha_ene) ? res.alpha_ene : res.alpha_var;
+    status.env_expansion_alpha = !std::isnan(res.alpha_h1v) ? res.alpha_h1v : res.alpha_h2v;
 }
 
 void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
@@ -495,12 +510,24 @@ void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_
     // We can get a rough order of magnitude estimate of the largest eigenvalue by adding the absolute value of all the
     // Hamiltonian couplings and fields.
     if(not energy_upper_bound) energy_upper_bound = tensors.model->get_energy_upper_bound();
-    double energy_abs                 = std::abs(energy_upper_bound.value());
+    double max_eigval = std::abs(energy_upper_bound.value());
+    switch(settings::xdmrg::algo) {
+        case OptAlgo::HYBRID_DMRGX:
+        case OptAlgo::XDMRG:
+        case OptAlgo::GDMRG: {
+            // Estimate the largest eigenvalue of H²
+            max_eigval = std::pow(energy_upper_bound.value(), 2);
+#pragma message "remove the line below"
+            max_eigval *= 0.1;
+        }
+        default: break;
+    }
     double digits10                   = std::numeric_limits<double>::digits10;
-    double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_abs)));
-    double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
-    status.energy_variance_max_digits = safe_cast<size_t>(max_digits);
+    double eigval_exp                 = std::max(0.0, std::log10(max_eigval));
+    double max_digits                 = std::max(0.0, digits10 - eigval_exp);
+    status.energy_variance_max_digits = safe_cast<size_t>(std::round(max_digits));
     status.energy_variance_prec_limit = std::pow(10.0, -max_digits);
+    eigval_upper_bound                = max_eigval;
     tools::log->info("Estimated limit on energy variance precision: {:.3e} | energy upper bound {:.3f}", status.energy_variance_prec_limit,
                      energy_upper_bound.value());
 }
@@ -543,11 +570,11 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     bool                          is_next_iter      = true; // Should be checked
     bool                          is_even_iter      = status.iter % 2 == 0;
     bool                          grow_if_on_warmup = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::WARMUP);
-    bool                          grow_if_next_iter = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::ITERATION);
+    bool                          grow_if_next_iter = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::HALFSWEEP);
     bool                          grow_if_even_iter = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::FULLSWEEP);
     bool                          grow_if_truncated = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::TRUNCATED);
-    bool                          grow_if_saturated = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::SATURATED);
-    bool                          grow_if_has_stuck = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::STUCK);
+    bool                          grow_if_saturated = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::SAT_ALGO);
+    bool                          grow_if_has_stuck = has_flag(settings::strategy::bond_increase_when, UpdatePolicy::STK_ALGO);
     std::vector<std::string_view> reason;
     if(grow_if_on_warmup and is_on_warmup) reason.emplace_back("warmup");
     if(grow_if_truncated and is_truncated) reason.emplace_back("truncated");
@@ -579,8 +606,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updated bond dimension limit: {} -> {} | reason: {}", status.bond_lim, bond_new, fmt::join(reason, " | "));
     status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_has_stuck_for    = 0;
+    // status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
@@ -592,9 +619,9 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdatePolicy when
     if(when == UpdatePolicy::NEVER) return;
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
     size_t iter_since_reduce = std::max(status.iter, iter_last_bond_reduce) - std::min(status.iter, iter_last_bond_reduce);
-    bool   reduce_saturated  = when == UpdatePolicy::SATURATED and status.algorithm_saturated_for > 0;
+    bool   reduce_saturated  = when == UpdatePolicy::SAT_ALGO and status.algorithm_saturated_for > 0;
     bool   reduce_truncated  = when == UpdatePolicy::TRUNCATED and tensors.state->is_truncated(status.trnc_lim);
-    bool   reduce_iteration  = when == UpdatePolicy::ITERATION and iter_since_reduce >= 1;
+    bool   reduce_iteration  = when == UpdatePolicy::HALFSWEEP and iter_since_reduce >= 1;
     if(reduce_saturated or reduce_truncated or reduce_iteration or iter_since_reduce >= 20) {
         write_to_file(storage_event, CopyPolicy::OFF);
 
@@ -655,9 +682,9 @@ void AlgorithmFinite::update_truncation_error_limit() {
     bool                          is_next_iter      = true; // Should be checked
     bool                          is_even_iter      = status.iter % 2 == 0;
     bool                          drop_if_truncated = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::TRUNCATED);
-    bool                          drop_if_saturated = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::SATURATED);
-    bool                          drop_if_has_stuck = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::STUCK);
-    bool                          drop_if_next_iter = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::ITERATION);
+    bool                          drop_if_saturated = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::SAT_ALGO);
+    bool                          drop_if_has_stuck = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::STK_ALGO);
+    bool                          drop_if_next_iter = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::HALFSWEEP);
     bool                          drop_if_even_iter = has_flag(settings::strategy::trnc_decrease_when, UpdatePolicy::FULLSWEEP);
     std::vector<std::string_view> reason;
     if(drop_if_truncated and is_truncated) reason.emplace_back("truncated");
@@ -684,8 +711,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = std::abs(status.trnc_lim - status.trnc_min) < std::numeric_limits<double>::epsilon();
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    // status.algorithm_has_stuck_for    = std::min(status.algorithm_has_stuck_for - 1ul, 0ul); // Decrement by one, avoid wrap-around
+    // status.algorithm_saturated_for    = std::min(status.algorithm_saturated_for - 1ul, 0ul); // Decrement by one, avoid wrap-around
 
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
@@ -799,9 +826,9 @@ void AlgorithmFinite::update_eigs_tolerance() {
     bool is_has_stuck      = status.algorithm_has_stuck_for > 0;
     bool is_next_iter      = true; // Should be checked
     bool is_even_iter      = status.iter % 2 == 0;
-    bool drop_if_saturated = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::SATURATED);
-    bool drop_if_has_stuck = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::STUCK);
-    bool drop_if_next_iter = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::ITERATION);
+    bool drop_if_saturated = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::SAT_ALGO);
+    bool drop_if_has_stuck = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::STK_ALGO);
+    bool drop_if_next_iter = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::HALFSWEEP);
     bool drop_if_even_iter = has_flag(settings::strategy::etol_decrease_when, UpdatePolicy::FULLSWEEP);
 
     std::vector<std::string_view> reason;
@@ -826,8 +853,8 @@ void AlgorithmFinite::update_eigs_tolerance() {
 
     tools::log->info("Updated eigs tolerance: {:8.2e} -> {:8.2e} | reasons: {}", dmrg_eigs_tol, etol_new, fmt::join(reason, " | "));
     dmrg_eigs_tol = etol_new;
-    status.algorithm_has_stuck_for = 0;
-    status.algorithm_saturated_for = 0;
+    // status.algorithm_has_stuck_for = 0;
+    // status.algorithm_saturated_for = 0;
     // Last sanity check before leaving here
     if(dmrg_eigs_tol < eigs_tol_min) throw except::logic_error("dmrg_eigs_tol is smaller than eigs_tol_min ! {:8.2e} > {:8.2e}", dmrg_eigs_tol, eigs_tol_min);
 }
@@ -1187,9 +1214,12 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
         if(tools::log->level() <= spdlog::level::trace) {
             std::vector<double> times;
             std::vector<double> energies;
+            std::vector<double> eigvals;
             std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(times), [](const log_entry &h) -> double { return h.time; });
             std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(energies),
                            [](const log_entry &h) -> double { return h.energy; });
+            std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(eigvals),
+                           [](const log_entry &h) -> double { return h.variance - h.energy * h.energy; });
             tools::log->trace("Energy variance convergence details:");
             tools::log->trace(" -- sensitivity     = {:7.4e}", saturation_sensitivity.value());
             tools::log->trace(" -- threshold       = {:7.4e}", threshold.value());
@@ -1199,6 +1229,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->trace(" -- sat             = {}", report.Y_sat);
             tools::log->trace(" -- val             = {::7.4e}", report.Y_vec);
             tools::log->trace(" -- ene             = {::7.4e}", energies);
+            tools::log->trace(" -- eig             = {::7.4e}", eigvals);
             tools::log->trace(" -- time            = {::7.4e}", times);
             tools::log->trace(" -- avg             = {::7.4e}", report.Y_avg);
             tools::log->trace(" -- med             = {::7.4e}", report.Y_med);
@@ -1438,6 +1469,7 @@ void AlgorithmFinite::write_to_file(const T &data, std::string_view name, Storag
     status.event = StorageEvent::NONE;
 }
 
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<real, 3> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
 template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cplx, 2> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
 template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cplx, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
 template void AlgorithmFinite::write_to_file(const Eigen::Tensor<real, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);

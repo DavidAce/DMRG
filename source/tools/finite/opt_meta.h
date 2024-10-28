@@ -13,7 +13,6 @@ enum class OptWhen;
 enum class OptExit;
 enum class OptRitz;
 enum class EnvExpandMode;
-enum class EnvExpandSide;
 
 namespace tools::finite::opt {
     struct OptMeta {
@@ -24,7 +23,6 @@ namespace tools::finite::opt {
         OptWhen       optWhen;
         OptExit       optExit;
         EnvExpandMode expand_mode;
-        EnvExpandSide expand_side;
         size_t        max_sites        = 2;
         size_t        min_sites        = 1;
         long          max_problem_size = 0;

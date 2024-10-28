@@ -10,6 +10,7 @@
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/stat.h"
+#include "math/svd.h"
 #include "math/tenx.h"
 #include "qm/mpo.h"
 #include "tensors/model/ModelFinite.h"
@@ -232,6 +233,19 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
                           min_cost_idx, side, eig_sizes, eig_max_size, mat_costs, chiL, chiR, entanglement_entropy_log2, state.get_cache_sizes(), mat_time,
                           eig_time, sites);
     // if(debug::mem_hwm_in_mb() > 10000) throw except::runtime_error("Exceeded 5G high water mark after eig");
+
+    // auto mmps                            = state.get_multisite_mps(sites);
+    // auto dims                            = mmps.dimensions();
+    // auto mmps2                           = Eigen::Tensor<real, 2>(mmps.reshape(tenx::array2{dims[0], dims[1] * dims[2]}).real());
+    // auto svd_solver                      = svd::solver();
+    // auto [u, sv, v]                      = svd_solver.decompose(mmps2);
+    // double entanglement_entropy_log2_new = 0;
+    // for(long sidx = 0; sidx < sv.size(); ++sidx) {
+    //     auto sval = sv[sidx];
+    //     if(sval > 0) entanglement_entropy_log2_new += -sval * sval * std::log2(sval * sval); // We use log base 2 for information
+    // }
+    // tools::log->info("old: {:.16f} | new:{:.16f} | diff: {:.16f}", entanglement_entropy_log2, entanglement_entropy_log2_new,
+    //                  entanglement_entropy_log2 - entanglement_entropy_log2_new);
 
     return entanglement_entropy_log2;
 }

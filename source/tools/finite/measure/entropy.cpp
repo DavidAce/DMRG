@@ -201,8 +201,8 @@ struct Amplitude {
 
                     temp.resize(size);
                     temp.device(*threads->dev) = ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
-                    ampl                      = std::move(temp);    // Update the current amplitude
-                    pos                       = mps_pos; // Update the current site
+                    ampl                       = std::move(temp); // Update the current amplitude
+                    pos                        = mps_pos;         // Update the current site
 
                     // Add to cache
                     cidx = get_idx_from_unsorted_cache(cache, pos + 1);
@@ -275,8 +275,8 @@ struct Amplitude {
                                           to_string());
                     temp.resize(size);
                     temp.device(*threads->dev) = mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
-                    ampl                      = std::move(temp);    // Update the current amplitude
-                    pos                       = mps_pos; // Update the current site
+                    ampl                       = std::move(temp); // Update the current amplitude
+                    pos                        = mps_pos;         // Update the current site
 
                     // Add to cache
                     cidx = get_idx_from_unsorted_cache(cache, state_size - pos);
@@ -376,7 +376,7 @@ size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, st
                                       const AmplitudesT &amplitudes) {
     if(namp.size() != amplitudes.size()) throw except::logic_error("Size mistmatch: namp {} != amplitudes {}", namp.size(), amplitudes.size());
     if(nflg.size() != nmax + 1) throw except::logic_error("nflg.size() != nmax+1");
-    auto t_next = tid::tic_token("next",tid::level::highest);
+    auto t_next = tid::tic_token("next", tid::level::highest);
     // aidx is the current index in abit
     // nbit is the number of bits at this index, i.e. nbit = abit[aidx].
     if(nbit == namp[aidx]) {
@@ -446,7 +446,7 @@ template<Side side, typename AmplitudesT, typename CacheT>
 std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
     // Here we compute the probability of finding
 
-    auto                t_prob    = tid::tic_scope("probability",tid::level::highest);
+    auto                t_prob    = tid::tic_scope("probability", tid::level::highest);
     auto                state_pos = state.get_position<long>();
     auto                state_len = state.get_length<long>();
     std::vector<double> probability(safe_cast<size_t>(state_len + 1), 0.0);

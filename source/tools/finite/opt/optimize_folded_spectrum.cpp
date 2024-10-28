@@ -9,17 +9,21 @@
 #include "math/eig/matvec/matvec_mpo.h"
 #include "math/eig/matvec/matvec_mpos.h"
 #include "math/eig/matvec/matvec_zero.h"
+#include "math/num.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
+#include "tensors/site/env/EnvVar.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
-#include "tools/finite/measure.h"
+// #include "tools/finite/measure.h"
+// #include "tools/finite/multisite.h"
+#include "math/tenx.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
-#include <math/num.h>
+#include <h5pp/h5pp.h>
 #include <primme/primme.h>
 
 namespace tools::finite::opt {
@@ -166,6 +170,66 @@ namespace tools::finite::opt {
             return eig::view::get_eigvals<double>(solver.result).cwiseAbs().maxCoeff();
         }
 
+        // template<typename Scalar>
+        // double max_gradient(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo1, const Eigen::Tensor<Scalar, 3> &en1L,
+        //                     const Eigen::Tensor<Scalar, 3> &en1R, const Eigen::Tensor<Scalar, 4> &mpo2, const Eigen::Tensor<Scalar, 3> &en2L,
+        //                     const Eigen::Tensor<Scalar, 3> &en2R) {
+        //     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+        //     auto v           = Eigen::Map<const VectorType>(mps.data(), mps.size());
+        //
+        //     // auto H1t    = tools::common::contraction::matrix_vector_product(mps, mpo1, en1L, en1R);
+        //     // auto Hv     = Eigen::Map<const VectorType>(H1t.data(), H1t.size());
+        //     // auto vHv    = v.dot(Hv);
+        //     auto H2t = tools::common::contraction::matrix_vector_product(mps, mpo2, en2L, en2R);
+        //     auto H2v = Eigen::Map<const VectorType>(H2t.data(), H2t.size());
+        //     // auto vH2v   = v.dot(H2v);
+        //     // auto norm_1 = 1.0 / v.norm();
+        //     auto pref = std::is_same_v<Scalar, real> ? 2.0 : 1.0; // Factor 2 for real
+        //     // auto grad   = pref * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
+        //     auto grad = pref * H2v;
+        //     return grad.template lpNorm<Eigen::Infinity>();
+        // }
+        //
+        // double max_gradient(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
+        //     auto t_grad = tid::tic_token("grad");
+        //
+        //     if(tensors.is_real()) {
+        //         Eigen::Tensor<real, 3> mpsr = mps.real();
+        //         Eigen::Tensor<real, 3> en1L = tensors.get_multisite_env_ene_blk().L.real();
+        //         Eigen::Tensor<real, 3> en1R = tensors.get_multisite_env_ene_blk().R.real();
+        //         Eigen::Tensor<real, 3> en2L = tensors.get_multisite_env_var_blk().L.real();
+        //         Eigen::Tensor<real, 3> en2R = tensors.get_multisite_env_var_blk().R.real();
+        //         Eigen::Tensor<real, 4> mpo1 = tensors.get_multisite_mpo().real();
+        //         Eigen::Tensor<real, 4> mpo2 = tensors.get_multisite_mpo_squared().real();
+        //         return max_gradient(mpsr, mpo1, en1L, en1R, mpo2, en2L, en2R);
+        //     } else {
+        //         const auto &en1  = tensors.get_multisite_env_ene_blk();
+        //         const auto &en2  = tensors.get_multisite_env_var_blk();
+        //         const auto &mpo1 = tensors.get_multisite_mpo();
+        //         const auto &mpo2 = tensors.get_multisite_mpo_squared();
+        //         return max_gradient(mps, mpo1, en1.L, en1.R, mpo2, en2.L, en2.R);
+        //     }
+
+        //    auto v = Eigen::Map<const Eigen::VectorXcd>(mps.data(), mps.size());
+        //
+        //    auto en1 = tensors.get_multisite_env_ene_blk();
+        //    auto H1t = tools::common::contraction::matrix_vector_product(mps, tensors.get_multisite_mpo(), en1.L, en1.R);
+        //    auto Hv  = Eigen::Map<const Eigen::VectorXcd>(H1t.data(), H1t.size());
+        //    auto vHv = v.dot(Hv);
+        //
+        //    auto en2  = tensors.get_multisite_env_var_blk();
+        //    auto H2t  = tools::common::contraction::matrix_vector_product(mps, tensors.get_multisite_mpo_squared(), en2.L, en2.R);
+        //    auto H2v  = Eigen::Map<const Eigen::VectorXcd>(H2t.data(), H2t.size());
+        //    auto vH2v = v.dot(H2v);
+        //
+        //    double var    = std::abs(vH2v - vHv * vHv);
+        //    auto   var_1  = 1.0 / var / std::log(10);
+        //    auto   norm_1 = 1.0 / v.norm();
+        //    auto   pref   = tensors.is_real() ? 1.0 : 2.0;
+        //    auto   grad   = pref * var_1 * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v); // Factor 2 for complex
+        //    return grad.template lpNorm<Eigen::Infinity>();
+        // }
+
     }
 
     template<typename MatVecType>
@@ -241,6 +305,37 @@ namespace tools::finite::opt {
         const auto &envv                  = tensors.get_edges().get_var_active();
         auto        hamiltonian_squared   = MatVecMPOS<Scalar>(mpos, envv);
         hamiltonian_squared.factorization = eig::Factorization::LLT; // H² is positive definite so this should work for the preconditioner
+
+        // if(tensors.active_problem_size() >= 4096 and tensors.state->get_direction() == 1) {
+        //     auto matrix    = hamiltonian_squared.get_matrix();
+        //     auto shape     = hamiltonian_squared.get_shape_mps();
+        //     auto h5file    = h5pp::File("hamtemp.h5", h5pp::FileAccess::REPLACE);
+        //     h5file.writeDataset(matrix, "matrix");
+        //     h5file.writeAttribute(shape, "matrix", "shape");
+        //
+        //     auto   posL       = tensors.active_sites.front();
+        //     auto   posR       = tensors.active_sites.back();
+        //     auto   LL         = tensors.state->get_mps_site(posL).get_L();
+        //     auto   RL         = posL == posR ? tensors.state->get_mps_site(posR).get_LC() :tensors.state->get_mps_site(posR).get_L() ;
+        //     EnvVar envvL      = envv.L;
+        //     EnvVar envvR      = envv.R;
+        //     envvL.get_block() = envv.L.get_block()
+        //                             .contract(tenx::asDiagonal(LL), tenx::idx({0}, {0}))
+        //                             .contract(tenx::asDiagonal(LL), tenx::idx({0}, {0}))
+        //                             .shuffle(tenx::array3{1, 2, 0});
+        //     envvR.get_block() = envv.R.get_block()
+        //                             .contract(tenx::asDiagonal(RL), tenx::idx({0}, {1}))
+        //                             .contract(tenx::asDiagonal(RL), tenx::idx({0}, {1}))
+        //                             .shuffle(tenx::array3{1, 2, 0});
+        //     auto envv_temp = env_pair<const EnvVar &>(envvL, envvR);
+        //     auto hamiltonian_temp = MatVecMPOS<Scalar>(mpos, envv_temp);
+        //     auto matrix_temp      = hamiltonian_temp.get_matrix();
+        //     auto shape_temp       = hamiltonian_temp.get_shape_mps();
+        //     h5file.writeDataset(matrix_temp, "matrix_temp");
+        //     h5file.writeAttribute(shape_temp, "matrix_temp", "shape");
+        //     exit(0);
+        // }
+
         eigs_folded_spectrum_executor(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
     }
 

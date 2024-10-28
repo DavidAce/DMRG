@@ -472,7 +472,8 @@ namespace tools::finite::h5 {
         h5file.writeDataset(data, data_path, layout);
         tools::common::h5::save::set_save_attrs(h5file, data_path, sinfo);
     }
-
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 3> &data, std::string_view data_name,
+                             std::string_view prefix);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
                              std::string_view prefix);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 2> &data, std::string_view data_name,
@@ -502,7 +503,8 @@ namespace tools::finite::h5 {
         save::data(h5file, sinfo, data, data_name, prefix);
         tools::common::h5::tmp::copy_from_tmp(h5file, sinfo.iter, sinfo.step, sinfo.storage_event, copy_policy);
     }
-
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 3> &data, std::string_view data_name,
+                             CopyPolicy copy_policy);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,

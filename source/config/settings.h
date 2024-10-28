@@ -225,6 +225,8 @@ namespace settings {
         inline size_t              dmrg_min_blocksize          = 1;                                      /*!< Minimum number of sites in a dmrg optimization step. */
         inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
         inline long                dmrg_max_prob_size          = 1024*2*1024;                            /*!< Restricts the dmrg blocksize to keep the problem size below this limit. Problem size = chiL * (spindim ** blocksize) * chiR */
+        inline EnvExpandMode       dmrg_env_expand_mode        = EnvExpandMode::DEFAULT;                 /*!< Select options for environment expansion (aka subspace expansion) [NONE H1, H2, SSITE, NSITE, BACKWARD, FORWARD, DEFAULT(H1 | H2 | NSITE | FORWARD)] */
+        inline long                dmrg_env_expand_iter        = 20;                                     /*!< How many iterations to use in the nsite environment expansion (ignored in 1-site expansion) */
         inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
@@ -248,13 +250,17 @@ namespace settings {
         inline size_t             eigs_iter_min                   = 1000;                        /*!< Minimum number of iterations for eigenvalue solver. */
         inline size_t             eigs_iter_max                   = 100000;                      /*!< Maximum number of iterations for eigenvalue solver. */
         inline double             eigs_iter_gain                  = 2     ;                      /*!< Increase number of iterations on OptSolver::EIGS by gain^(iters without progress) */
-        inline EigsIterGainPolicy eigs_iter_gain_policy           = EigsIterGainPolicy::VARSAT;  /*!< Bitflag for when to increase the eigensolver iterations. Choose one or more: [NEVER, ITERATION, VARSAT, SATURATED, STUCK, FIN_BOND, FIN_TRNC] */
+        inline GainPolicy         eigs_iter_gain_policy           = GainPolicy::SAT_VAR;         /*!< Bitflag for when to increase the eigensolver iterations. Choose one or more: [NEVER, ITERATION, VARSAT, SATURATED, STUCK, FIN_BOND, FIN_TRNC] */
         inline double             eigs_tol_min                    = 1e-14 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline double             eigs_tol_max                    = 1e-8 ;                      /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double             eigs_tol_max                    = 1e-8 ;                       /*!< Precision tolerance for halting the eigenvalue solver. */
         inline int                eigs_ncv                        = 0     ;                      /*!< Basis size (krylov space) in the eigensolver. Set ncv <= 0 for automatic selection */
         inline int                eigs_nev_min                    = 1     ;                      /*!< The minimum number of eigenpairs to request on OptSolver::EIGS */
         inline int                eigs_nev_max                    = 8     ;                      /*!< The maximum number of eigenpairs to request on OptSolver::EIGS when stuck (increases slowly) (ncv may have to increase accordingly) */
         inline long               eigs_max_size_shift_invert      = 4096  ;                      /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
+
+        inline long               eigs_jcb_min_blocksize          = 128   ;                      /*!< Minimum block size used in the block-jacobi preconditioner */
+        inline long               eigs_jcb_max_blocksize          = 4096  ;                      /*!< Maximum block size used in the block-jacobi preconditioner (increases up to max when stuck) */
+
 
         inline double             svd_truncation_min              = 1e-14 ;                      /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
         inline double             svd_truncation_max              = 1e-6  ;                      /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
@@ -416,6 +422,7 @@ namespace settings {
         inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
         inline OptAlgo    algo                          = OptAlgo::GDMRG;          /*!< Choose the type of DMRG algorithm [DMRG DMRGX, HYBRID_DMRGX, XDMRG, GDMRG]  */
         inline OptRitz    ritz                          = OptRitz::SM;             /*!< Select which eigenpair to target [LR (largest real), SR(largest real) SM(smallest magnitude) IS(initial state) TE(target energy density) CE(current energy)] */
+
         inline double     energy_spectrum_shift         = 1e-10 ;                  /*!< (Used with ritz == OptRitz::SM) Shift the energy eigenvalue spectrum by this amount: H -> H - shift   */
         inline double     energy_density_target         = 0.5;                     /*!< (Used with ritz == OptRitz::TE) Target energy in [0-1], Target energy = energy_density_target * (EMAX+EMIN) + EMIN. */
         inline size_t     iter_min                      = 4;                       /*!< Min number of iterations. One iterations moves L steps. */

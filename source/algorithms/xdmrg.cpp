@@ -327,6 +327,13 @@ void xdmrg::run_algorithm() {
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
+
+        if(tensors.get_position<long>() == tensors.get_length<long>()/2-1) {
+            auto chosen_sites = num::range<size_t>(tensors.get_position<size_t>(), tensors.get_position<size_t>()+2);
+            tensors.activate_sites(chosen_sites);
+            Eigen::Tensor<real,3> mmps = tensors.get_multisite_mps().real();
+            write_to_file(mmps, "mmps", StorageEvent::NONE);
+        }
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
@@ -353,7 +360,7 @@ void xdmrg::update_state() {
     // Expand the environment to grow the bond dimension in 1-site dmrg
     // if(opt_meta.expand_mode != EnvExpandMode::NONE and tensors.active_sites.size() == 1) {
     if(opt_meta.expand_mode != EnvExpandMode::NONE) {
-        expand_environment(opt_meta.expand_mode, opt_meta.expand_side, opt_meta.optAlgo, opt_meta.optRitz);
+        expand_environment(opt_meta.expand_mode, opt_meta.optAlgo, opt_meta.optRitz);
         opt_meta.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state);
         opt_meta.problem_size = tools::finite::multisite::get_problem_size(*tensors.state);
         opt_meta.optSolver    = opt_meta.problem_size <= settings::precision::eig_max_size ? OptSolver::EIG : OptSolver::EIGS;

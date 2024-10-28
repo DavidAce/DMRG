@@ -21,6 +21,8 @@ class AlgorithmFinite : public AlgorithmBase {
     private:
     long                               dmrg_blocksize        = 1; // Number of sites in a DMRG step. This is updated by the information per scale mass center
     double                             dmrg_eigs_tol         = 1e-12; // Tolerance for the iterative eigenvalue solver
+    double                             eigval_upper_bound    = 1;
+    size_t                             info_mass_center      = 1;
     size_t                             iter_last_bond_reduce = 0;
     std::optional<std::vector<size_t>> sites_mps, sites_mpo; // Used when moving sites
     protected:
@@ -44,7 +46,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         set_parity_shift_mpo(std::optional<std::string> target_axis = std::nullopt);
     void         set_parity_shift_mpo_squared(std::optional<std::string> target_axis = std::nullopt);
     void         try_moving_sites();
-    void expand_environment(EnvExpandMode envexpMode, EnvExpandSide envexpSide, OptAlgo algo, OptRitz ritz, std::optional<svd::config> svd_cfg = std::nullopt);
+    void expand_environment(EnvExpandMode envexpMode, OptAlgo algo, OptRitz ritz, std::optional<svd::config> svd_cfg = std::nullopt);
     void move_center_point(std::optional<long> num_moves = std::nullopt);
     virtual void set_energy_shift_mpo(); // We override this in xdmrg
     void         rebuild_tensors();

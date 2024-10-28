@@ -359,9 +359,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.correctionParams.maxInnerIterations = -1; // Up to the remaining matvecs
     primme.maxBlockSize                        = config.primme_maxBlockSize.value_or(1);
     primme.maxBasisSize                        = getBasisSize(primme.n, primme.numEvals, config.maxNcv);
-    primme.minRestartSize                      = config.primme_minRestartSize.value_or(primme.maxBasisSize / 2 -1);
+    primme.minRestartSize                      = config.primme_minRestartSize.value_or(std::max(1,primme.maxBasisSize / 2 -1));
     // Make sure the basis is bigger than minRestartSize + maxPrevRetain, where the latter will be set to max(2,maxBlockSize) in primme_set_method
-    primme.maxBasisSize = std::clamp(primme.maxBasisSize, primme.minRestartSize + std::max(2, primme.maxBlockSize + 1), primme.n);
+    primme.maxBasisSize = std::clamp(primme.maxBasisSize, 1 + primme.minRestartSize + std::max(2, primme.maxBlockSize), primme.n);
 
     // Shifts
     switch(primme.target) {

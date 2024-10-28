@@ -32,6 +32,7 @@ long settings::get_bond_max(AlgorithmType algo_type) {
         default: return 64;
     }
 }
+
 OptRitz settings::get_ritz(AlgorithmType algo_type) {
     switch(algo_type) {
         case AlgorithmType::fDMRG: return settings::fdmrg::ritz;
@@ -99,18 +100,18 @@ void settings::load(Loader &dmrg_config) {
 
     dmrg_config.load_parameter("input::seed"                                  , input::seed);
 
-    dmrg_config.load_parameter("storage::output_filepath"                     , storage::output_filepath);
-    dmrg_config.load_parameter("storage::output_append_seed"                  , storage::output_append_seed);
-    dmrg_config.load_parameter("storage::storage_interval"                    , storage::storage_interval);
-    dmrg_config.load_parameter("storage::use_temp_dir"                        , storage::use_temp_dir);
-    dmrg_config.load_parameter("storage::copy_from_temp_freq"                 , storage::copy_from_temp_freq);
-    dmrg_config.load_parameter("storage::temp_dir"                            , storage::temp_dir);
-    dmrg_config.load_parameter("storage::compression_level"                   , storage::compression_level);
-    dmrg_config.load_parameter("storage::resume_policy"                       , storage::resume_policy);
-    dmrg_config.load_parameter("storage::file_collision_policy"               , storage::file_collision_policy);
-    dmrg_config.load_parameter("storage::file_resume_policy"                  , storage::file_resume_policy);
-    dmrg_config.load_parameter("storage::file_resume_name"                    , storage::file_resume_name);
-    dmrg_config.load_parameter("storage::file_resume_iter"                    , storage::file_resume_iter);
+    dmrg_config.load_parameter("storage::output_filepath"                                       , storage::output_filepath);
+    dmrg_config.load_parameter("storage::output_append_seed"                                    , storage::output_append_seed);
+    dmrg_config.load_parameter("storage::storage_interval"                                      , storage::storage_interval);
+    dmrg_config.load_parameter("storage::use_temp_dir"                                          , storage::use_temp_dir);
+    dmrg_config.load_parameter("storage::copy_from_temp_freq"                                   , storage::copy_from_temp_freq);
+    dmrg_config.load_parameter("storage::temp_dir"                                              , storage::temp_dir);
+    dmrg_config.load_parameter("storage::compression_level"                                     , storage::compression_level);
+    dmrg_config.load_parameter("storage::resume_policy"                                         , storage::resume_policy);
+    dmrg_config.load_parameter("storage::file_collision_policy"                                 , storage::file_collision_policy);
+    dmrg_config.load_parameter("storage::file_resume_policy"                                    , storage::file_resume_policy);
+    dmrg_config.load_parameter("storage::file_resume_name"                                      , storage::file_resume_name);
+    dmrg_config.load_parameter("storage::file_resume_iter"                                      , storage::file_resume_iter);
     dmrg_config.load_parameter("storage::mps::state_emid::policy"                               , storage::mps::state_emid::policy);
     dmrg_config.load_parameter("storage::mps::state_emin::policy"                               , storage::mps::state_emin::policy);
     dmrg_config.load_parameter("storage::mps::state_emax::policy"                               , storage::mps::state_emax::policy);
@@ -197,6 +198,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::dmrg_min_blocksize"                 , strategy::dmrg_min_blocksize);
     dmrg_config.load_parameter("strategy::dmrg_max_blocksize"                 , strategy::dmrg_max_blocksize);
     dmrg_config.load_parameter("strategy::dmrg_max_prob_size"                 , strategy::dmrg_max_prob_size);
+    dmrg_config.load_parameter("strategy::dmrg_env_expand_mode"               , strategy::dmrg_env_expand_mode);
+    dmrg_config.load_parameter("strategy::dmrg_env_expand_iter"               , strategy::dmrg_env_expand_iter);
     dmrg_config.load_parameter("strategy::target_axis"                        , strategy::target_axis);
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
@@ -221,6 +224,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eigs_nev_min"                      , precision::eigs_nev_min);
     dmrg_config.load_parameter("precision::eigs_nev_max"                      , precision::eigs_nev_max);
     dmrg_config.load_parameter("precision::eigs_max_size_shift_invert"        , precision::eigs_max_size_shift_invert);
+    dmrg_config.load_parameter("precision::eigs_jcb_min_blocksize"            , precision::eigs_jcb_min_blocksize);
+    dmrg_config.load_parameter("precision::eigs_jcb_max_blocksize"            , precision::eigs_jcb_max_blocksize);
     dmrg_config.load_parameter("precision::svd_truncation_min"                , precision::svd_truncation_min);
     dmrg_config.load_parameter("precision::svd_truncation_max"                , precision::svd_truncation_max);
     dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);

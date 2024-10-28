@@ -6,7 +6,7 @@
 namespace tools::finite::opt {
     OptMeta::OptMeta()
         : optAlgo(OptAlgo::DMRG), optRitz(OptRitz::SR), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optWhen(OptWhen::ALWAYS), optExit(OptExit::NONE),
-          expand_mode(EnvExpandMode::VAR), expand_side(EnvExpandSide::FORWARD) {}
+          expand_mode(EnvExpandMode::DEFAULT) {}
 
     OptMeta::OptMeta(OptAlgo algo, OptRitz ritz) : OptMeta() {
         optAlgo = algo;
@@ -42,7 +42,6 @@ namespace tools::finite::opt {
         res += fmt::format(" | ritz {}", enum2sv(optRitz));
         res += fmt::format(" | algo {}", enum2sv(optAlgo));
         res += fmt::format(" | expm {}", flag2str(expand_mode));
-        res += fmt::format(" | exps {}", enum2sv(expand_side));
         if(eigv_target) res += fmt::format(" (tgt: {:.3e})", eigv_target.value());
         if(eigs_nev) res += fmt::format(" | nev {}", eigs_nev.value());
         if(eigs_ncv) res += fmt::format(" | ncv {}", eigs_ncv.value());
