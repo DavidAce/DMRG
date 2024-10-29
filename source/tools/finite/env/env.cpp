@@ -1105,33 +1105,45 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             // We have
             //      * mpsL is AC(i), or B(i) during multisite dmrg
             //      * mpsR is B(i+1) and belongs in envR later in the optimization step
-            auto                  &mpoR = model.get_mpo(res.posR);
+            auto &mpoL = model.get_mpo(res.posL);
+            auto &mpoR = model.get_mpo(res.posR);
+            // Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M();
             Eigen::Tensor<cplx, 3> MR_PR =
                 mpsR.get_M() * mpsR.get_M().constant(cplx(res.alpha_mps, 0.0)); // mpsR is going into the environment, enriched with PR.
             long PRdim1 = 0;
             if(res.alpha_h1v != 0) {
+                // auto                  &envL    = edges.get_env_eneL(res.posL);
                 auto &envR    = edges.get_env_eneR(res.posR);
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
-                Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
-                // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, -1);
+                // Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
+                // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
+                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, -1);
+                // Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
-                MR_PR                            = std::move(MR_PR_tmp);
+                // ML_PL                            = std::move(ML_PL_tmp);
+                MR_PR = std::move(MR_PR_tmp);
                 PRdim1 += PR.dimension(1);
                 res.env_ene = envR;
             }
             if(res.alpha_h2v != 0) {
+                // auto                  &envL    = edges.get_env_varL(res.posL);
                 auto &envR    = edges.get_env_varR(res.posR);
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
-                Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
+                // Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
+                // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
+                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
                 // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
+                // Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
-                MR_PR                            = std::move(MR_PR_tmp);
+                // ML_PL                            = std::move(ML_PL_tmp);
+                MR_PR = std::move(MR_PR_tmp);
                 PRdim1 += PR.dimension(1);
                 res.env_var = envR;
             }
             Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
             Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
             merge_expansion_term_PR(state, mpsL, ML_P0, mpsR, MR_PR, svd_cfg);
+            // merge_expansion_term_PR(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
             state.clear_measurements();
             state.clear_cache();
 
@@ -1147,9 +1159,9 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M() * mpsL.get_M().constant(cplx(res.alpha_mps, 0.0));
             long                   PLdim2 = 0;
             if(res.alpha_h1v != 0) {
-                auto &envL    = edges.get_env_eneL(res.posL);
-                long  chi_max = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
-                Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, chi_max);
+                auto                  &envL    = edges.get_env_eneL(res.posL);
+                long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
+                Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, chi_max);
                 // Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, -1);
                 Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 ML_PL                            = std::move(ML_PL_tmp);
@@ -1157,9 +1169,9 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
                 res.env_ene = envL;
             }
             if(res.alpha_h2v != 0) {
-                auto &envL    = edges.get_env_varL(res.posL);
-                long  chi_max = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
-                Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, chi_max);
+                auto                  &envL    = edges.get_env_varL(res.posL);
+                long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
+                Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, chi_max);
                 // Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, -1);
                 Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 ML_PL                            = std::move(ML_PL_tmp);

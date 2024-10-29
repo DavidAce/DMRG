@@ -32,7 +32,7 @@ config_ranges = {
     "strategy::dmrg_blocksize_policy": ["ICOM"],
     "strategy::dmrg_min_blocksize": ["1"],
     "strategy::dmrg_max_blocksize": ["8"],
-    "strategy::dmrg_env_expand_mode": ["H1|H2|SSITE|BACKWARD"],
+    "strategy::dmrg_env_expand_mode": ["H1|H2|SSITE|FORWARD"],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
     "strategy::bond_increase_when": ["SATURATED"],
     "strategy::bond_increase_rate": ["2.0"],
@@ -69,7 +69,7 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config['filename'])
 
-batch_setup = get_xdmrg_batch_setup('xdmrg4-exp-1site-back')
+batch_setup = get_xdmrg_batch_setup('xdmrg4-exp-1site-forw')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
 move_directories(batch_setup=batch_setup, config_paths=config_paths)
