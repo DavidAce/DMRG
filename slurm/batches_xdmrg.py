@@ -408,8 +408,8 @@ def get_xdmrg_batch_setup(projectname):
                 'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
         },
-        'xdmrg4-exp-nsite-forw': {
-            'description': "xDMRG using 1-site forward expansion."
+        'xdmrg4-exp-2site-forw': {
+            'description': "xDMRG using 2-site forward expansion."
                            "Forward, backward, 1site, nsite (n==icom)"
                            "The seeds encode the Hamiltonian parameters"
                            " Eg:  1|600|0000|00000"
@@ -417,16 +417,73 @@ def get_xdmrg_batch_setup(projectname):
                            "The seeds start with 1 for negative delta, and 2 for positive."
                            "The second digit represents the d-value."
                            "The remaining digits reveal are the decimals of g.",
-            'projectname': 'xdmrg4-exp-1site-forw',
+            'projectname': 'xdmrg4-exp-2site-forw',
             'batch': {
                 'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
                 'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
+                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
                 'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
                 'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
-        }
+        },
+        'xdmrg4-exp-3site-forw': {
+            'description': "xDMRG using 2-site forward expansion."
+                           "Forward, backward, 1site, nsite (n==icom)"
+                           "The seeds encode the Hamiltonian parameters"
+                           " Eg:  1|600|0000|00000"
+                           "     +-| d | g  | extra "
+                           "The seeds start with 1 for negative delta, and 2 for positive."
+                           "The second digit represents the d-value."
+                           "The remaining digits reveal are the decimals of g.",
+            'projectname': 'xdmrg4-exp-3site-forw',
+            'batch': {
+                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
+                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+            }
+        },
+        'xdmrg4-exp-4site-forw': {
+            'description': "xDMRG using 2-site forward expansion."
+                           "Forward, backward, 1site, nsite (n==icom)"
+                           "The seeds encode the Hamiltonian parameters"
+                           " Eg:  1|600|0000|00000"
+                           "     +-| d | g  | extra "
+                           "The seeds start with 1 for negative delta, and 2 for positive."
+                           "The second digit represents the d-value."
+                           "The remaining digits reveal are the decimals of g.",
+            'projectname': 'xdmrg4-exp-4site-forw',
+            'batch': {
+                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
+                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+            }
+        },
+        'xdmrg4-exp-isite-forw': {
+            'description': "xDMRG using n-site (up to icom) forward expansion."
+                           "Forward, backward, 1site, nsite (n==icom)"
+                           "The seeds encode the Hamiltonian parameters"
+                           " Eg:  1|600|0000|00000"
+                           "     +-| d | g  | extra "
+                           "The seeds start with 1 for negative delta, and 2 for positive."
+                           "The second digit represents the d-value."
+                           "The remaining digits reveal are the decimals of g.",
+            'projectname': 'xdmrg4-exp-isite-forw',
+            'batch': {
+                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
+                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+            }
+        },
     }
 
     return batch_setup[projectname]
