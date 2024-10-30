@@ -64,10 +64,9 @@ config_ranges = {
 
 configs = get_config_product(config_ranges, config_paths)
 for config in configs:
-    # Write the config file
+    # Set up the config file
     config['filename'] = get_config_filename(config, config_ranges, config_paths)
-    config_template = config_paths['config_template']
-    write_config_file(config, config_template, config['filename'])
+    config['template'] = config_paths['config_template']
 
 batch_setup = get_xdmrg_batch_setup('xdmrg4-exp-1site-back')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)

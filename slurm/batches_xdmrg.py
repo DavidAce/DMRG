@@ -381,12 +381,12 @@ def get_xdmrg_batch_setup(projectname):
                            "The remaining digits reveal are the decimals of g.",
             'projectname': 'xdmrg4-exp-1site-back',
             'batch': {
-                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
-                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
-                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
-                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+                'L16|d+0.50|g0.100': {'seed_extent': [500], 'seed_offset': [2_050_0100_000000], },
+                'L16|d+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'L20|d-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'L20|d-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                'L20|d+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'L20|d+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
         },
         'xdmrg4-exp-1site-forw': {
@@ -400,12 +400,13 @@ def get_xdmrg_batch_setup(projectname):
                            "The remaining digits reveal are the decimals of g.",
             'projectname': 'xdmrg4-exp-1site-forw',
             'batch': {
-                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
-                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
-                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
-                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+                'L16|d+0.50|g0.100': {'seed_extent': [500], 'seed_offset': [2_050_0100_000000], },
+                'L16|d+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'L20|d-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'L20|d-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                'L20|d+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'L20|d+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+
             }
         },
         'xdmrg4-exp-2site-forw': {
@@ -419,12 +420,12 @@ def get_xdmrg_batch_setup(projectname):
                            "The remaining digits reveal are the decimals of g.",
             'projectname': 'xdmrg4-exp-2site-forw',
             'batch': {
-                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
-                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
-                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
-                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+                'L16|d+0.50|g0.100': {'seed_extent': [500], 'seed_offset': [2_050_0100_000000], },
+                'L16|d+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'L20|d-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'L20|d-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                'L20|d+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'L20|d+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
         },
         'xdmrg4-exp-3site-forw': {
@@ -438,12 +439,12 @@ def get_xdmrg_batch_setup(projectname):
                            "The remaining digits reveal are the decimals of g.",
             'projectname': 'xdmrg4-exp-3site-forw',
             'batch': {
-                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
-                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
-                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
-                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+                'L16|d+0.50|g0.100': {'seed_extent': [500], 'seed_offset': [2_050_0100_000000], },
+                'L16|d+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'L20|d-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'L20|d-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                'L20|d+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'L20|d+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
         },
         'xdmrg4-exp-4site-forw': {
@@ -457,12 +458,12 @@ def get_xdmrg_batch_setup(projectname):
                            "The remaining digits reveal are the decimals of g.",
             'projectname': 'xdmrg4-exp-4site-forw',
             'batch': {
-                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
-                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
-                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
-                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+                'L16|d+0.50|g0.100': {'seed_extent': [500], 'seed_offset': [2_050_0100_000000], },
+                'L16|d+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'L20|d-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'L20|d-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                'L20|d+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'L20|d+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
         },
         'xdmrg4-exp-isite-forw': {
@@ -476,12 +477,12 @@ def get_xdmrg_batch_setup(projectname):
                            "The remaining digits reveal are the decimals of g.",
             'projectname': 'xdmrg4-exp-isite-forw',
             'batch': {
-                'd-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
-                'd-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
-                # 'd-2.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_200_0100_000000], },
-                # 'd+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
-                'd+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
-                'd+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
+                'L16|d+0.50|g0.100': {'seed_extent': [500], 'seed_offset': [2_050_0100_000000], },
+                'L16|d+2.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_200_0100_000000], },
+                'L20|d-4.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_400_0100_000000], },
+                'L20|d-3.00|g0.100': {'seed_extent': [500], 'seed_offset': [1_300_0100_000000], },
+                'L20|d+3.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_300_0100_000000], },
+                'L20|d+4.00|g0.100': {'seed_extent': [500], 'seed_offset': [2_400_0100_000000], },
             }
         },
     }

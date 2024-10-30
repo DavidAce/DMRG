@@ -442,15 +442,18 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
         auto oldVal = optVal;
         H2.MultAx(V.col(0).data(), H2V.col(0).data());
         optVal = std::real(V.col(0).dot(H2V.col(0)));
-        if(std::abs(oldVal - optVal) < 1e-14) {
-            tools::log->debug("saturated: no change {:.16f} -> {:.16f}", oldVal, optVal);
+        auto relval = std::abs((oldVal - optVal)/(0.5*(optVal+oldVal)));
+        if(relval < 1e-4) {
+            tools::log->debug("saturated: no rel change {:.16f} -> {:.16f} | rel change {:.3e}", oldVal, optVal,relval );
             break;
         }
-        rnorm = (H2V.col(0) - optVal * V.col(0)).norm();
+        rnorm = (H2V.col(0) - optVal * V.col(0)).template lpNorm<1>();
         if(rnorm < settings::precision::eigs_tol_min) {
             tools::log->debug("saturated: rnorm {:.3e} < tol {:.3e}", rnorm, settings::precision::eigs_tol_min);
             break;
         }
+        // tools::log->debug("mixed state result: <H²> = {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s", optVal,
+                  // sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
     }
 
     t_totals.toc();

@@ -270,12 +270,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         if(status.algorithm_has_stuck_for > 2) target_tol = settings::precision::eigs_tol_min;
         if(m1.optAlgo == OptAlgo::GDMRG) {
             target_tol = std::sqrt(settings::precision::eigs_tol_min); // GDMRG seems happy with higher tol, following the residual norm = sqrt(VarH)
-            // target_tol = std::clamp(target_tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
         }
-        // else {
-        //     // double matrix_norm = eigval_upper_bound;
-        //     // target_tol         = target_tol / matrix_norm;
-        // }
         target_tol  = std::clamp(target_tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
         m1.eigs_tol = target_tol;
     }

@@ -55,9 +55,8 @@ batch_setup = {
 
 configs = get_config_product(config_ranges, config_paths)
 for config in configs:
-    # Write the config file
-    config_filename = get_config_filename(config, config_ranges, config_paths)
-    config_template = config_paths['config_template']
-    write_config_file(config, config_template, config_filename)
+    # Set up the config file
+    config['filename'] = get_config_filename(config, config_ranges, config_paths)
+    config['template'] = config_paths['config_template']
 
 write_seed_files(batch_setup, config_paths)

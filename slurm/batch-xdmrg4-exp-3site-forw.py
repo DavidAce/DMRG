@@ -50,10 +50,10 @@ config_ranges = {
     "precision::use_parity_shifted_mpo": ["false"],
     "precision::use_parity_shifted_mpo_squared": ["true"],
     "model::model_type": ['ising_majorana'],
-    "model::model_size": ['20'],
+    "model::model_size": ['16', '20'],
     "model::ising_majorana::g": ['0.100'],
     "model::ising_majorana::delta": ['-4.00', '-3.00',
-                                     # '-2.00', '+2.00',
+                                     '+0.50', '+2.00',
                                      '+3.00', '+4.00'],
     "xdmrg::energy_spectrum_shift": ['0.0'],
     "xdmrg::iter_min": ['1'],
@@ -64,10 +64,9 @@ config_ranges = {
 
 configs = get_config_product(config_ranges, config_paths)
 for config in configs:
-    # Write the config file
+    # Set up the config file
     config['filename'] = get_config_filename(config, config_ranges, config_paths)
-    config_template = config_paths['config_template']
-    write_config_file(config, config_template, config['filename'])
+    config['template'] = config_paths['config_template']
 
 batch_setup = get_xdmrg_batch_setup('xdmrg4-exp-3site-forw')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)

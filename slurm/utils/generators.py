@@ -65,7 +65,7 @@ def write_batch_files(batch_setup, configs, config_paths):
                 # 'seed_status': [],
             }
 
-        # Now we need to now which seed set corresponds to this config file
+        # Now we need to know which seed set corresponds to this config file
         seed_keys = []
         for key in batch_setup['batch'].keys():
             if all(x in batch_filename for x in key.split('|')):
@@ -76,6 +76,10 @@ def write_batch_files(batch_setup, configs, config_paths):
         elif len(seed_keys) > 1:
             raise AssertionError(f'Found multiple seed keys matching config: {config_filepath.name}\n'
                                  f'\n{seed_keys=}')
+
+        # Write the config file
+        write_config_file(config, config['template'], config['filename'])
+
         batch = batch_setup['batch'][seed_keys[0]]
         print(batch)
         print(batchjson)
