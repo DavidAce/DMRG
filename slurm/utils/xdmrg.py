@@ -185,6 +185,9 @@ def write_batch_status(batch_filename):
             if platform.node() == "neumann":
                 status_file = "{}/{}/{}".format(batch['output_prfx'], batch['projectname'], status_file)
             else:
+                if not os.path.isfile(config_file):
+                    print(f'Config file not found: {config_file}')
+                    return batch
                 rclone.copyto(f'neumann:{batch["output_prfx"]}/{batch["projectname"]}/{status_file}',
                               f'{status_file}',
                               args=['-L', '--update'])

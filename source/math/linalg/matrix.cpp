@@ -19,3 +19,28 @@ template linalg::matrix::KroneckerResultType<Eigen::MatrixXd, Eigen::MatrixXd>
 
 template linalg::matrix::KroneckerResultType<Eigen::Matrix2cd, Eigen::Matrix2cd>
     linalg::matrix::kronecker(const Eigen::PlainObjectBase<Eigen::Matrix2cd> &A, const Eigen::PlainObjectBase<Eigen::Matrix2cd> &B, bool mirror);
+
+template<typename T>
+Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>  &Vconst ) {
+    // Orthonormalize with Modified Gram Schmidt
+    using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+    MatrixType V     = Vconst;
+    MatrixType Q     = MatrixType::Zero(V.rows(), V.cols());
+    MatrixType R     = MatrixType::Zero(V.cols(), V.cols());
+    for(long i = 0; i < V.cols(); ++i) {
+        Q.col(i) = V.col(i);
+        R(i, i)  = Q.col(i).norm();
+        if(std::abs(R(i, i)) < std::numeric_limits<real>::epsilon()) {
+            // tools::log->error("Q.col({}) is a zero vector:\n Q: \n{}\n", i, linalg::matrix::to_string(Q.real(), 8));
+            continue;
+        }
+        Q.col(i) /= R(i, i);
+        for(long j = i + 1; j < V.cols(); ++j) {
+            R(i, j) = Q.col(i).dot(V.col(j));
+            V.col(j) -= Q.col(i) * R(i, j);
+        }
+    }
+    return Q;
+}
+template Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> &V);
+template Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic> &V);

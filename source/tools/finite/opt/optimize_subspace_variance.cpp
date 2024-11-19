@@ -136,11 +136,12 @@ opt_mps tools::finite::opt::internal::optimize_subspace_variance(const TensorsFi
      *
      */
 
+    // Get the initial state expressed in the subspace
+    Eigen::VectorXcd subspace_vector = internal::subspace::get_vector_in_subspace(subspace, initial_mps.get_vector());
+
+    tools::log->trace("Starting subspace optimization");
     // We need the eigenvalues in a convenient format as well
     auto eigvals = internal::subspace::get_eigvals(subspace);
-
-    Eigen::VectorXcd subspace_vector = internal::subspace::get_vector_in_subspace(subspace, initial_mps.get_vector());
-    tools::log->trace("Starting EIGS optimization of subspace");
 
     /*
      *
@@ -153,13 +154,21 @@ opt_mps tools::finite::opt::internal::optimize_subspace_variance(const TensorsFi
     auto t_eigs = tid::tic_scope("eigs");
     switch(meta.optType) {
         case OptType::CPLX: {
-            tools::log->trace("Running EIGS subspace cplx");
+            tools::log->trace("Optimizing subspace EIGS|CPLX");
+            // auto H1_subspace = subspace::get_hamiltonian_in_subspace<cplx>(model, edges, subspace);
+            // auto H2_subspace = subspace::get_hamiltonian_squared_in_subspace<cplx>(model, edges, subspace);
+            // Eigen::MatrixXcd Var_subspace = H2_subspace - H1_subspace*H1_subspace;
+            // solver.eig<eig::Form::SYMM>(Var_subspace.data(), Var_subspace.rows(), 'I', 1, 1, 0.0, 1.0);
             auto H2_subspace = subspace::get_hamiltonian_squared_in_subspace<cplx>(model, edges, subspace);
             solver.eig<eig::Form::SYMM>(H2_subspace.data(), H2_subspace.rows(), 'I', 1, 1, 0.0, 1.0);
             break;
         }
         case OptType::REAL: {
-            tools::log->trace("Running EIGS subspace real");
+            tools::log->trace("Optimizing subspace EIGS|REAL");
+            // auto H1_subspace = subspace::get_hamiltonian_in_subspace<real>(model, edges, subspace);
+            // auto H2_subspace = subspace::get_hamiltonian_squared_in_subspace<real>(model, edges, subspace);
+            // Eigen::MatrixXd Var_subspace = H2_subspace - H1_subspace*H1_subspace;
+            // solver.eig<eig::Form::SYMM>(Var_subspace.data(), Var_subspace.rows(), 'I', 1, 1, 0.0, 1.0);
             auto H2_subspace = subspace::get_hamiltonian_squared_in_subspace<real>(model, edges, subspace);
             solver.eig<eig::Form::SYMM>(H2_subspace.data(), H2_subspace.rows(), 'I', 1, 1, 0.0, 1.0);
             break;

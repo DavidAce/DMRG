@@ -23,6 +23,9 @@ namespace eig {
         // Preconditioner
         std::optional<long> jcbMaxBlockSize = std::nullopt; // Block size used with the block Jacobi preconditioner
 
+        // Subspace tolerance in hybrid dmrg-x
+        std::optional<double> subspace_tol      = std::nullopt;
+
         // Solver properties
         std::optional<Form>    form            = std::nullopt;
         std::optional<Type>    type            = std::nullopt;
@@ -45,7 +48,6 @@ namespace eig {
         std::optional<double> logTime           = std::nullopt;
         std::optional<long>   logIter           = std::nullopt;
         bool                  timeLimitExceeded = false;
-
         // Primme settings
         std::optional<PrimmeMethod>                                                                                     primme_method           = std::nullopt;
         std::optional<std::string>                                                                                      primme_projection       = std::nullopt;
@@ -56,7 +58,7 @@ namespace eig {
         void                                                                                                           *primme_effective_ham    = nullptr;
         void                                                                                                           *primme_effective_ham_sq = nullptr;
         std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner   = std::nullopt;
-        std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_massMatrixMatvec   = std::nullopt;
+        std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_massMatrixMatvec = std::nullopt;
         std::optional<void (*)(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr)> primme_convTestFun =
             std::nullopt;
         // std::optional<primme_params> primme;

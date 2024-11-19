@@ -878,20 +878,85 @@ typename MatVecMPOS<T>::VectorType MatVecMPOS<T>::get_col(long col_idx, const st
 //     return res;
 // }
 
+// template<typename T>
+// void MatVecMPOS<T>::FactorOP() {
+//     throw except::runtime_error("MatVecMPOS<T>::FactorOP(): not implemented");
+// }
+
 template<typename T>
 void MatVecMPOS<T>::FactorOP() {
-    throw except::runtime_error("MatVecMPOS<T>::FactorOP(): not implemented");
+    auto t_token = t_factorOP->tic_token();
+    if(readyFactorOp) { return; }
+    if(factorization == eig::Factorization::NONE) {
+        readyFactorOp = true;
+        return;
+    }
+    MatrixType A_matrix = get_matrix();
+    if(not readyShift and std::abs(get_shift()) != 0.0) { A_matrix.diagonal() -= VectorType::Constant(rows(), get_shift()); }
+
+    if(factorization == eig::Factorization::LDLT) {
+        eig::log->debug("LDLT Factorization");
+        ldlt.compute(A_matrix);
+    } else if(factorization == eig::Factorization::LLT) {
+        eig::log->debug("LLT Factorization");
+        llt.compute(A_matrix);
+    } else if(factorization == eig::Factorization::LU) {
+        eig::log->debug("LU Factorization");
+        lu.compute(A_matrix);
+    } else if(factorization == eig::Factorization::NONE) {
+        /* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
+        if(not readyShift) throw std::runtime_error("Cannot FactorOP with Factorization::NONE: Shift value sigma has not been set on the MPO.");
+    }
+    eig::log->debug("Finished factorization");
+    readyFactorOp = true;
 }
 
 template<typename T>
-void MatVecMPOS<T>::MultOPv([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_, [[maybe_unused]] T eval) {
+void MatVecMPOS<T>::MultOPv([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_out_) {
     throw except::runtime_error("void MatVecMPOS<T>::MultOPv(...) not implemented");
 }
 
+// template<typename T>
+// void MatVecMPOS<T>::MultOPv([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
+//                             [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+//     throw except::runtime_error("MatVecMPOS<T>::MultOPv(...): not implemented");
+// }
 template<typename T>
-void MatVecMPOS<T>::MultOPv([[maybe_unused]] void *x, [[maybe_unused]] int *ldx, [[maybe_unused]] void *y, [[maybe_unused]] int *ldy,
-                            [[maybe_unused]] int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
-    throw except::runtime_error("MatVecMPOS<T>::MultOPv(...): not implemented");
+void MatVecMPOS<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
+    auto token = t_multOPv->tic_token();
+    switch(side) {
+        case eig::Side::R: {
+            for(int i = 0; i < *blockSize; i++) {
+                T *x_ptr = static_cast<T *>(x) + *ldx * i;
+                T *y_ptr = static_cast<T *>(y) + *ldy * i;
+                if(factorization == eig::Factorization::LDLT) {
+                    Eigen::Map<VectorType> x_map(x_ptr, *ldx);
+                    Eigen::Map<VectorType> y_map(y_ptr, *ldy);
+                    y_map.noalias() = ldlt.solve(x_map);
+                } else if(factorization == eig::Factorization::LLT) {
+                    Eigen::Map<VectorType> x_map(x_ptr, *ldx);
+                    Eigen::Map<VectorType> y_map(y_ptr, *ldy);
+                    y_map.noalias() = llt.solve(x_map);
+                } else if(factorization == eig::Factorization::LU) {
+                    Eigen::Map<VectorType> x_map(x_ptr, *ldx);
+                    Eigen::Map<VectorType> y_map(y_ptr, *ldy);
+                    y_map.noalias() = lu.solve(x_map);
+                } else {
+                    throw except::runtime_error("Invalid factorization: {}", eig::FactorizationToString(factorization));
+                }
+                num_op++;
+            }
+            break;
+        }
+        case eig::Side::L: {
+            throw std::runtime_error("Left sided matrix-free MultOPv has not been implemented");
+            break;
+        }
+        case eig::Side::LR: {
+            throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
+        }
+    }
+    *err = 0;
 }
 
 template<typename T>
@@ -1061,6 +1126,7 @@ void MatVecMPOS<T>::CalcPc(T shift) {
             auto cg           = std::make_unique<CGType>();
             auto llt          = std::make_unique<LLTType>();
             auto ldlt         = std::make_unique<LDLTType>();
+            auto lu           = std::make_unique<LUType>();
             auto sparseRM     = std::make_unique<SparseRowM>();
             auto sparseCM     = std::make_unique<SparseType>();
             auto blockPtr     = std::make_unique<MatrixType>();
@@ -1139,15 +1205,22 @@ void MatVecMPOS<T>::CalcPc(T shift) {
                     // [[fallthrough]];
                 }
                 case eig::Factorization::LU: {
+                    eig::log->trace("lu factorizing block {}/{}", blkidx, nblocks);
+                    lu->compute(blockI);
+                    luSuccess = true;
+                    break;
+
+
                     // for(auto cidx = 0; cidx < blockI.cols(); ++cidx) {
                     //     VectorType col   = blockI.col(cidx).cwiseAbs();
                     //     blockI.col(cidx) = (col.array() < 2.0 * col.mean()).select(0, blockI.col(cidx)).eval();
                     // }
                     // blockI = blockI.template selfadjointView<Eigen::Lower>();
-                    auto lu   = Eigen::PartialPivLU<MatrixType>(blockI);
-                    blockI    = lu.solve(MatrixType::Identity(extent, extent));
-                    luSuccess = true;
-                    break;
+
+                    // auto lu   = Eigen::PartialPivLU<MatrixType>(blockI);
+                    // blockI    = lu.solve(MatrixType::Identity(extent, extent));
+                    // luSuccess = true;
+                    // break;
                 }
                 case eig::Factorization::QR: {
                     auto qr   = Eigen::HouseholderQR<MatrixType>(blockI);
@@ -1232,6 +1305,8 @@ void MatVecMPOS<T>::CalcPc(T shift) {
                     lltJcbBlocks.emplace_back(offset, std::move(llt));
                 } else if(ldltSuccess and ldlt->rows() > 0) {
                     ldltJcbBlocks.emplace_back(offset, std::move(ldlt));
+                } else if(luSuccess and lu->rows() > 0) {
+                    luJcbBlocks.emplace_back(offset, std::move(lu));
                 } else if(bicgSuccess and bicg->rows() > 0) {
                     bicgstabJcbBlocks.emplace_back(offset, std::move(sparseRM), std::move(bicg));
                 } else if(cgSuccess and cg->rows() > 0) {
@@ -1277,7 +1352,6 @@ void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_
     if(jcbMaxBlockSize == 1) {
         if(not readyCalcPc) { CalcPc(shift); }
         auto token = t_multPc->tic_token();
-
         // Diagonal jacobi preconditioner
         denseJcbDiagonal = (jcbDiagA.array() - shift * jcbDiagB.array()).matrix();
         mps_out          = denseJcbDiagonal.array().cwiseInverse().cwiseProduct(mps_in.array());
@@ -1309,6 +1383,14 @@ void MatVecMPOS<T>::MultPc([[maybe_unused]] T *mps_in_, [[maybe_unused]] T *mps_
 #pragma omp parallel for
         for(size_t idx = 0; idx < ldltJcbBlocks.size(); ++idx) {
             const auto &[offset, solver] = ldltJcbBlocks[idx];
+            long extent                  = solver->rows();
+            auto mps_out_segment         = Eigen::Map<VectorType>(mps_out_ + offset, extent);
+            auto mps_in_segment          = Eigen::Map<const VectorType>(mps_in_ + offset, extent);
+            mps_out_segment.noalias()    = solver->solve(mps_in_segment);
+        }
+#pragma omp parallel for
+        for(size_t idx = 0; idx < luJcbBlocks.size(); ++idx) {
+            const auto &[offset, solver] = luJcbBlocks[idx];
             long extent                  = solver->rows();
             auto mps_out_segment         = Eigen::Map<VectorType>(mps_out_ + offset, extent);
             auto mps_in_segment          = Eigen::Map<const VectorType>(mps_in_ + offset, extent);
@@ -1411,7 +1493,7 @@ void MatVecMPOS<T>::set_jcbMaxBlockSize(std::optional<long> size) {
             newsize -= 2;
         }
         if(bestsize.second != jcbMaxBlockSize) {
-            // eig::log->warn("ADJUSTED BLOCK SIZE TO {}",bestsize.second);
+            eig::log->trace("Adjusted block size to {}", bestsize.second);
             jcbMaxBlockSize = std::clamp(bestsize.second, jcbMaxBlockSize / 2, size_mps);
         }
         // jcbMaxBlockSize = std::clamp(size.value(), 1l, size_mps);
@@ -1571,6 +1653,12 @@ long MatVecMPOS<T>::get_non_zeros() const {
     auto sp = get_sparse_matrix();
     return sp.nonZeros();
 }
+
+template<typename T>
+long MatVecMPOS<T>::get_jcbMaxBlockSize() const {
+    return jcbMaxBlockSize;
+}
+
 template<typename T>
 bool MatVecMPOS<T>::isReadyFactorOp() const {
     return readyFactorOp;

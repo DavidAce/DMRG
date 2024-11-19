@@ -309,6 +309,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::on"                                    , xdmrg::on);
     dmrg_config.load_parameter("xdmrg::algo"                                  , xdmrg::algo);
     dmrg_config.load_parameter("xdmrg::ritz"                                  , xdmrg::ritz);
+    dmrg_config.load_parameter("xdmrg::algo_warmup"                           , xdmrg::algo_warmup);
+    dmrg_config.load_parameter("xdmrg::ritz_warmup"                           , xdmrg::ritz_warmup);
     dmrg_config.load_parameter("xdmrg::energy_spectrum_shift"                 , xdmrg::energy_spectrum_shift);
     dmrg_config.load_parameter("xdmrg::energy_density_target"                 , xdmrg::energy_density_target);
     dmrg_config.load_parameter("xdmrg::iter_max"                              , xdmrg::iter_max);

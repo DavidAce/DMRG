@@ -80,7 +80,7 @@ namespace tools::finite::opt {
                 result.meta.last_eval  = *eval;
                 result.meta.last_rnorm = *rNorm;
 
-                *isconv = *rNorm < problemTol and (evals_saturated or rnorms_saturated) or *rNorm < primme->eps;
+                *isconv = *rNorm < problemTol and (evals_saturated or rnorms_saturated) or * rNorm < primme->eps;
                 if(*isconv == 1) {
                     tools::log->info("eval {:38.32f} ({:+8.3e}) | rnorm {:38.32f} ({:+8.3e}) | problemNorm {:.3e}", *eval, diff_evals_sum, *rNorm,
                                      diff_rnorms_sum, problemNorm);
@@ -257,9 +257,11 @@ namespace tools::finite::opt {
                 throw except::logic_error("optimize_folded_spectrum_eigs with PRIMME with sigma requires non-compressed MPO²");
         }
 
-        tools::log->debug("eigs_folded_spectrum_executor: Solving [H²x=λx] {} {} | ritz {} | shifts {} | maxIter {} | tol {:.2e} | init on | size {} | mps {}",
-                          eig::LibToString(solver.config.lib), eig::RitzToString(solver.config.ritz), solver.config.sigma, solver.config.primme_targetShifts,
-                          solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps());
+        tools::log->debug(
+            "eigs_folded_spectrum_executor: Solving [H²x=λx] {} {} | ritz {} | shifts {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | jcb {}",
+            eig::LibToString(solver.config.lib), eig::RitzToString(solver.config.ritz), solver.config.sigma, solver.config.primme_targetShifts,
+            solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(),
+            solver.config.jcbMaxBlockSize);
 
         auto init =
             folded_spectrum::get_initial_guess_mps<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope

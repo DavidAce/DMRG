@@ -47,17 +47,20 @@ enum class MergeEvent {
 };
 
 enum class BlockSizePolicy {
-    MIN       = 0,   /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
-    MAX       = 1,   /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
-    ICOM      = 2,   /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
-    ICOMPLUS1 = 4,   /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
-    SAT_ENT   = 8,   /*!< Set the block size when the entanglement entropy has saturated */
-    SAT_ICOM  = 16,  /*!< Set the block size when the information center of mass has saturated */
-    SAT_VAR   = 32,  /*!< Set the block size when the energy variance has saturated */
-    SAT_ALGO  = 64,  /*!< Set the block size when the algorithm status == saturated (implies all saturations) */
-    STK_ALGO  = 128, /*!< Set the block size when the algorithm status == stuck ( */
-    FIN_BOND  = 256, /*! Require that the bond dimension has reached its final (maximum) value before increasing the block size */
-    FIN_TRNC  = 512, /*! Require that the truncation error has reached its final (minimum) value before increasing the block size   */
+    MIN       = 0,          /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    MAX       = 1,          /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    ICOM      = 2,          /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
+    ICOMPLUS1 = 4,          /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
+    SAT_ENT   = 8,          /*!< Set the block size when the entanglement entropy has saturated */
+    SAT_ICOM  = 16,         /*!< Set the block size when the information center of mass has saturated */
+    SAT_VAR   = 32,         /*!< Set the block size when the energy variance has saturated */
+    SAT_ALGO  = 64,         /*!< Set the block size when the algorithm status == saturated (implies all saturations) */
+    STK_ALGO  = 128,        /*!< Set the block size when the algorithm status == stuck ( */
+    FIN_BOND  = 256,        /*!< Require that the bond dimension has reached its final (maximum) value before increasing the block size */
+    FIN_TRNC  = 512,        /*!< Require that the truncation error has reached its final (minimum) value before increasing the block size   */
+    EXP       = 1024,       /*!< Use the enlarged blocksize during environment expansion  */
+    OPT       = 2048,       /*!< Use the enlarged blocksize during the optimization step */
+    DEFAULT   = ICOM | EXP, /*!< The default choice usually works well */
     allow_bitops
 };
 
@@ -514,6 +517,9 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, BlockSizePolicy::STK_ALGO)) v.emplace_back("STK_ALGO");
         if(has_flag(item, BlockSizePolicy::FIN_BOND)) v.emplace_back("FIN_BOND");
         if(has_flag(item, BlockSizePolicy::FIN_TRNC)) v.emplace_back("FIN_TRNC");
+        if(has_flag(item, BlockSizePolicy::EXP)) v.emplace_back("EXP");
+        if(has_flag(item, BlockSizePolicy::OPT)) v.emplace_back("OPT");
+        if(has_flag(item, BlockSizePolicy::DEFAULT)) v.emplace_back("DEFAULT");
         if(v.empty()) return "MIN";
     }
     if constexpr(std::is_same_v<T, UpdatePolicy>) {
@@ -649,8 +655,11 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case BlockSizePolicy::SAT_VAR :                          return "SAT_VAR";
         case BlockSizePolicy::SAT_ALGO:                          return "SAT_ALGO";
         case BlockSizePolicy::STK_ALGO:                          return "STK_ALGO";
-        case BlockSizePolicy::FIN_BOND:                        return "FIN_BOND";
-        case BlockSizePolicy::FIN_TRNC:                        return "FIN_TRNC";
+        case BlockSizePolicy::FIN_BOND:                          return "FIN_BOND";
+        case BlockSizePolicy::FIN_TRNC:                          return "FIN_TRNC";
+        case BlockSizePolicy::EXP:                               return "EXP";
+        case BlockSizePolicy::OPT:                               return "OPT";
+        case BlockSizePolicy::DEFAULT:                           return "DEFAULT";
         default: return "BlockSizePolicy::BITFLAG";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
@@ -673,8 +682,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == UpdatePolicy::HALFSWEEP)                      return "ITERATION";
         if(item == UpdatePolicy::FULLSWEEP)                      return "FULLSWEEP";
         if(item == UpdatePolicy::TRUNCATED)                      return "TRUNCATED";
-        if(item == UpdatePolicy::SAT_ALGO)                      return "SATURATED";
-        if(item == UpdatePolicy::STK_ALGO)                          return "STUCK";
+        if(item == UpdatePolicy::SAT_ALGO)                       return "SATURATED";
+        if(item == UpdatePolicy::STK_ALGO)                       return "STUCK";
     }
     if constexpr(std::is_same_v<T, SaturationPolicy>) {
         if(item == SaturationPolicy::val)                        return "val";
@@ -1053,6 +1062,9 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("STK_ALGO")    != std::string_view::npos)  policy |= BlockSizePolicy::STK_ALGO;
         if(item.find("FIN_BOND")    != std::string_view::npos)  policy |= BlockSizePolicy::FIN_BOND;
         if(item.find("FIN_TRNC")    != std::string_view::npos)  policy |= BlockSizePolicy::FIN_TRNC;
+        if(item.find("OPT")         != std::string_view::npos)  policy |= BlockSizePolicy::OPT;
+        if(item.find("EXP")         != std::string_view::npos)  policy |= BlockSizePolicy::EXP;
+        if(item.find("DEFAULT")     != std::string_view::npos)  policy |= BlockSizePolicy::DEFAULT;
         return policy;
 
     }

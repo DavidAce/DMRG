@@ -83,7 +83,6 @@ namespace tools::finite::opt::internal{
         extern void
         filter_subspace(std::vector<opt_mps> & subspace, size_t max_accept);
 
-
         extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs);
         extern std::optional<size_t> get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> & eigvecs);
         extern std::vector<size_t>   get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, size_t max_eigvecs);
@@ -99,6 +98,10 @@ namespace tools::finite::opt::internal{
         extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
         extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
         extern TensorType<cplx,3> get_tensor_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims);
+        template <typename T>
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_hamiltonian_in_subspace(const ModelFinite & model,
+                                                                                                         const EdgesFinite & edges,
+                                                                                                         const std::vector<opt_mps> & eigvecs);
         template <typename T>
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_hamiltonian_squared_in_subspace(const ModelFinite & model,
                                                                                                          const EdgesFinite & edges,

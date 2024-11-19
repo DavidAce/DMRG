@@ -60,10 +60,15 @@ namespace eig {
             double               last_grad_max  = std::numeric_limits<double>::quiet_NaN();
             long                 last_grad_iter = 0;
             double               last_grad_time = 0;
+            long                 last_conv_iter = 0;
+            long                 last_conv_mvec = 0;
+            double               last_conv_time = 0;
             long                 last_log_iter  = 0;
             double               last_log_time  = 0;
             std::deque<double>   recent_evals;
             std::deque<double>   recent_rnorms;
+            bool                 subspace_ok = false; // Used for subspace convergence check in hybrid dmrg-x
+            double               problemNorm = std::numeric_limits<double>::quiet_NaN();
             Form                 form;
             Type                 type;
             std::string          tag;

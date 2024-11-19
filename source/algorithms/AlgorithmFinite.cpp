@@ -236,13 +236,13 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Set the target eigenvalue
     m1.optRitz = status.opt_ritz;
-    m1.optAlgo = settings::xdmrg::algo;
+    m1.optAlgo = status.algo_type == AlgorithmType::xDMRG ? settings::xdmrg::algo : OptAlgo::DMRG;
 
     // Set the default svd limits
     m1.svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
     // Set up handy quantities
-    auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
-    bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
+    // auto var_conv_thresh = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
+    // bool var_isconverged = status.variance_mpo_converged_for > 0 or var_latest < var_conv_thresh;
 
     // Copy settings
     m1.min_sites    = std::min(tensors.get_length<size_t>(), settings::strategy::dmrg_min_blocksize);
@@ -269,7 +269,9 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         if(status.algorithm_has_stuck_for > 0) { target_tol = status.energy_variance_lowest / matrix_norm; }
         if(status.algorithm_has_stuck_for > 2) target_tol = settings::precision::eigs_tol_min;
         if(m1.optAlgo == OptAlgo::GDMRG) {
-            target_tol = std::sqrt(settings::precision::eigs_tol_min); // GDMRG seems happy with higher tol, following the residual norm = sqrt(VarH)
+            // GDMRG seems happy with higher tol
+            // target_tol = std::sqrt(target_tol);
+            target_tol = std::max({target_tol, std::sqrt(settings::precision::eigs_tol_min) , 1e-8});
         }
         target_tol  = std::clamp(target_tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
         m1.eigs_tol = target_tol;
@@ -283,17 +285,15 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         // If early in the simulation we can use more sites with lower bond dimension o find a good starting point
         // m1.max_problem_size = settings::precision::eig_max_size; // Try to use full diagonalization instead (may resolve level spacing issues early on)
         m1.max_sites = settings::strategy::dmrg_min_blocksize;
-        m1.optRitz   = OptRitz::SM;
-        m1.optAlgo   = OptAlgo::XDMRG;
-        m1.eigs_tol  = std::min(1e-8, settings::precision::eigs_tol_max);
-    } else {
-        // m1.max_sites = dmrg_blocksize;
-        m1.max_sites = settings::strategy::dmrg_min_blocksize;
-        if(m1.optAlgo == OptAlgo::GDMRG and status.algorithm_has_stuck_for > 1 and not var_isconverged) {
-            m1.optRitz  = OptRitz::LM;
-            m1.optAlgo  = OptAlgo::GDMRG;
-            m1.eigs_tol = std::sqrt(settings::precision::eigs_tol_min);
+        if(status.algo_type == AlgorithmType::xDMRG) {
+            m1.optAlgo = settings::xdmrg::algo_warmup;
+            m1.optRitz = settings::xdmrg::ritz_warmup;
         }
+        auto tol    = std::min({1e-1 * var_latest, 1e-8, settings::precision::eigs_tol_max});
+        m1.eigs_tol = std::clamp(tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
+        // if(m1.optAlgo == OptAlgo::GDMRG) m1.eigs_tol = std::sqrt(settings::precision::eigs_tol_min);
+    } else {
+        m1.max_sites = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::OPT) ? dmrg_blocksize : m1.min_sites;
     }
 
     // Set up the problem size here
@@ -328,12 +328,14 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, OptAlgo algo,
     // alpha = alpha.value_or(status.env_expansion_alpha);
     // if(alpha.value() <= 0) return;
     if(not svd_cfg.has_value()) {
-        auto bond_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.bond_lim * 10 / 9 : status.bond_lim;
-        auto trnc_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.trnc_lim * 0.5 : status.trnc_lim;
+        // auto bond_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.bond_lim * 10 / 9 : status.bond_lim;
+        // auto trnc_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.trnc_lim * 0.5 : status.trnc_lim;
+        auto bond_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.bond_lim : status.bond_lim;
+        auto trnc_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.trnc_lim : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
-
-    auto res = tensors.expand_environment(envexpMode, algo, ritz, dmrg_blocksize, svd_cfg.value());
+    auto expand_blocksize = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::EXP) ? dmrg_blocksize : 1;
+    auto res              = tensors.expand_environment(envexpMode, algo, ritz, expand_blocksize, svd_cfg.value());
     if(not res.ok) {
         tools::log->debug("Expansion canceled");
         return;
@@ -512,8 +514,6 @@ void AlgorithmFinite::update_precision_limit(std::optional<double> energy_upper_
         case OptAlgo::GDMRG: {
             // Estimate the largest eigenvalue of H²
             max_eigval = std::pow(energy_upper_bound.value(), 2);
-#pragma message "remove the line below"
-            max_eigval *= 0.1;
         }
         default: break;
     }
@@ -1176,11 +1176,10 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
     if(saturation_sensitivity <= 0) return;
     if(not threshold) {
-        if(status.iter < settings::strategy::iter_max_warmup) {
-            threshold = settings::precision::variance_convergence_threshold;
-        } else {
+        if(status.algorithm_has_stuck_for > 0)
             threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
-        }
+        else
+            threshold = std::min(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     }
     saturation_sensitivity = std::max(saturation_sensitivity.value(), std::sqrt(status.trnc_lim)); // Large trnc causes noise that never saturates
     tools::log->trace("Checking convergence of variance mpo | convergence threshold {:.2e} | sensitivity {:.2e}", threshold.value(),

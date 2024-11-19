@@ -26,6 +26,10 @@
 #include <Eigen/SVD>
 #include <span>
 
+namespace settings {
+    constexpr bool debug_subsystem_entropy = false;
+}
+
 template<typename ContainerType>
 double count_finite(const ContainerType &arr) {
     double count = 0;
@@ -179,10 +183,10 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
 
     auto min_cost_itr = std::min_element(tot_costs.begin(), tot_costs.end());
     auto min_cost_idx = std::distance(tot_costs.begin(), min_cost_itr);
-    auto min_cost_val = tot_costs[min_cost_idx];
+    auto min_cost_val = tot_costs.at(min_cost_idx);
 
     if(std::isinf(min_cost_val)) {
-        tools::log->trace("mode ???: eig {} | mat {} | chi {} {} | sites {}", eig_sizes, mat_costs, chiL, chiR, sites);
+        tools::log->trace("mode ???: eig {} | mat {} | chi {} {} | sites {} | costs {}", eig_sizes, mat_costs, chiL, chiR, sites, min_cost_val);
         return std::numeric_limits<double>::quiet_NaN(); // No cost is smaller than max mat size
     }
 
@@ -228,7 +232,7 @@ double tools::finite::measure::subsystem_entanglement_entropy_log2(const StateFi
         if(e > 0) entanglement_entropy_log2 += -e * std::log2(e); // We use log base 2 for information
     }
     // if(eig_time > 1.0)
-    if constexpr(settings::debug)
+    if constexpr(settings::debug_subsystem_entropy)
         tools::log->trace("mode {} side {} | eig {} (max {}) | mat {} | chi {} {} | S {:.8f} | cch {::.2f} GB | mat {:.3e} s | eig {:.3e} s | sites {}",
                           min_cost_idx, side, eig_sizes, eig_max_size, mat_costs, chiL, chiR, entanglement_entropy_log2, state.get_cache_sizes(), mat_time,
                           eig_time, sites);

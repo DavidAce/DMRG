@@ -112,4 +112,7 @@ namespace linalg::matrix {
         Eigen::IOFormat f(prec, flags, sep, "\n", "[", "]", "[", "]");
         return to_string(m, f);
     }
+
+    template<typename T>
+    extern Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> modified_gram_schmidt(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> &V);
 }

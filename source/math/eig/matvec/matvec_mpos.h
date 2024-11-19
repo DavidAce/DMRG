@@ -34,8 +34,8 @@ class MatVecMPOS {
     using SparseRowM = Eigen::SparseMatrix<T, Eigen::RowMajor>;
     using MatrixT32  = Eigen::Matrix<T32, Eigen::Dynamic, Eigen::Dynamic>;
 
-    constexpr static bool         can_shift_invert = false;
-    constexpr static bool         can_shift        = false;
+    constexpr static bool         can_shift_invert = true;
+    constexpr static bool         can_shift        = true;
     constexpr static bool         can_precondition = true;
     constexpr static eig::Storage storage          = eig::Storage::MPS;
     eig::Factorization            factorization    = eig::Factorization::NONE;
@@ -69,6 +69,14 @@ class MatVecMPOS {
     using LDLTType = Eigen::LDLT<MatrixType, Eigen::Lower>;
     std::vector<std::tuple<long, std::unique_ptr<LDLTType>>> ldltJcbBlocks; // Solvers for the block Jacobi preconditioner
 
+    using LUType = Eigen::PartialPivLU<MatrixType>;
+    std::vector<std::tuple<long, std::unique_ptr<LUType>>> luJcbBlocks; // Solvers for the block Jacobi preconditioner
+
+    Eigen::LDLT<MatrixType>         ldlt; // Stores the ldlt matrix factorization on shift-invert
+    Eigen::LLT<MatrixType>          llt;  // Stores the llt matrix factorization on shift-invert
+    Eigen::PartialPivLU<MatrixType> lu;   // Stores the lu matrix factorization on shift-invert
+
+
     SparseType        sparseMatrix;
     VectorType        solverGuess;
     std::vector<long> get_k_smallest(const VectorType &vec, size_t k) const;
@@ -78,7 +86,7 @@ class MatVecMPOS {
     VectorType get_diagonal_new(long offset, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,
                                 const Eigen::Tensor<T, 3> &ENVR) const;
     MatrixType get_diagonal_block_old(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,
-                                  const Eigen::Tensor<T, 3> &ENVR) const;
+                                      const Eigen::Tensor<T, 3> &ENVR) const;
     MatrixType get_diagonal_block(long offset, long extent, const std::vector<Eigen::Tensor<T, 4>> &MPOS, const Eigen::Tensor<T, 3> &ENVL,
                                   const Eigen::Tensor<T, 3> &ENVR) const;
     MatrixType get_diagonal_block(long offset, long extent, T shift, const std::vector<Eigen::Tensor<T, 4>> &MPOS_A, const Eigen::Tensor<T, 3> &ENVL_A,
@@ -94,11 +102,11 @@ class MatVecMPOS {
     // void                             thomas(const long rows, const VectorType &x, const VectorType &dl, const VectorType &dm, const VectorType &du);
 
     // Shift stuff
-    std::complex<double>  sigma           = cplx(0.0, 0.0); // The shift
-    bool                  readyShift      = false;          // Flag to make sure the shift has occurred
-    constexpr static bool readyFactorOp   = false;          // Flag to check if factorization has occurred
-    bool                  readyCalcPc     = false;
-    long                  jcbMaxBlockSize = 1l; // Maximum Jacobi block size. The default is 1, which defaults to the diagonal preconditioner
+    std::complex<double> sigma           = cplx(0.0, 0.0); // The shift
+    bool                 readyShift      = false;          // Flag to make sure the shift has occurred
+    bool                 readyFactorOp   = false;          // Flag to check if factorization has occurred
+    bool                 readyCalcPc     = false;
+    long                 jcbMaxBlockSize = 1l; // Maximum Jacobi block size. The default is 1, which defaults to the diagonal preconditioner
     public:
     MatVecMPOS() = default;
     template<typename EnvType>
@@ -116,7 +124,7 @@ class MatVecMPOS {
     [[nodiscard]] int cols() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
     void FactorOP();                                    //  Factorizes (A-sigma*I) (or finds its diagonal elements)
-    void MultOPv(T *mps_in_, T *mps_out, T eval = 0.0); //  Applies the preconditioner as the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void MultOPv(T *mps_in_, T *mps_out); //  Applies the preconditioner as the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err); //  Applies the preconditioner
     void MultAx(T *mps_in_, T *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
@@ -159,9 +167,9 @@ class MatVecMPOS {
     [[nodiscard]] SparseType                              get_sparse_matrix() const;
     [[nodiscard]] double                                  get_sparsity() const;
     [[nodiscard]] long                                    get_non_zeros() const;
-
-    [[nodiscard]] bool isReadyShift() const;
-    [[nodiscard]] bool isReadyFactorOp() const;
+    [[nodiscard]] long                                    get_jcbMaxBlockSize() const;
+    [[nodiscard]] bool                                    isReadyShift() const;
+    [[nodiscard]] bool                                    isReadyFactorOp() const;
 
     // Timers
     std::unique_ptr<tid::ur> t_factorOP; // Factorization time

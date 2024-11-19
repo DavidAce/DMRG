@@ -329,6 +329,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1(co
         if(std::abs(oldVal - optVal) < 1e-14) break;
         rnorm = (H1V.col(0) - optVal * V.col(0)).norm();
         if(rnorm < settings::precision::eigs_tol_min) break;
+        if(numZeroRowsK1 > 0) { break; }
     }
 
     t_totals.toc();
@@ -347,7 +348,7 @@ template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_bl
 
 template<typename T>
 EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(const std::vector<size_t> &sites, const StateFinite &state,
-                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
+                                                                              const ModelFinite &model, const EdgesFinite &edges, [[maybe_unused]] OptRitz ritz,
                                                                               size_t maxiter) {
     auto t_multax = tid::ur("multax");
     auto t_totals = tid::ur("totals");
@@ -411,14 +412,16 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
         auto evecs  = solver.eigenvectors();
 
         // Eigenvalues are sorted in ascending order.
-        real tol         = std::clamp(std::pow(K2(0, 0).real(), 2.0), std::numeric_limits<real>::epsilon(), 1e-10);
-        long numZeroRows = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
-        long optIdx      = 0;
+        static constexpr auto eps         = std::numeric_limits<real>::epsilon();
+        real                  tol         = std::clamp(std::pow(K2(0, 0).real(), 2.0), eps, 1e-10);
+        long                  numZeroRows = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
+        long                  optIdx      = 0;
         if(numZeroRows > 0) {
             for(long i = 0; i < 3; ++i) { tools::log->debug("V.col({}).norm() = {:.16f}", i, V.col(i).norm()); }
             tools::log->debug("V.col(0).dot(V.col(1)) = {:.16f}", V.col(0).dot(V.col(1)));
             tools::log->debug("V.col(0).dot(V.col(2)) = {:.16f}", V.col(0).dot(V.col(2)));
             tools::log->debug("V.col(1).dot(V.col(2)) = {:.16f}", V.col(1).dot(V.col(2)));
+            tools::log->debug("V: \n{}\n", linalg::matrix::to_string(V, 8));
             tools::log->debug("K2: \n{}\n", linalg::matrix::to_string(K2, 8));
             tools::log->debug("evals: \n{}\n", linalg::matrix::to_string(evals, 8));
             tools::log->debug("evecs: \n{}\n", linalg::matrix::to_string(evecs, 8));
@@ -426,8 +429,8 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
             long                  maxEvecRow0Idx = 0;
             [[maybe_unused]] auto maxEvecRow0Val =
                 evecs.row(0).cwiseAbs().maxCoeff(&maxEvecRow0Idx); // Select the column that modifies the current state the least.
-            tools::log->debug("optIdx {} -> {} ", optIdx, maxEvecRow0Idx);
             optIdx = maxEvecRow0Idx;
+            tools::log->debug("optIdx {} -> {} ", optIdx, maxEvecRow0Idx);
         }
 
         Eigen::Vector3d col = evecs.col(optIdx).real();
@@ -437,14 +440,14 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
 
         // Define new vectors based on the best eigencolumn
         V.col(0) = (V * col).eval();
-
+        // tools::log->info("col {}: {}", optIdx, linalg::matrix::to_string(col.transpose(),8));
         // Check convergence
         auto oldVal = optVal;
         H2.MultAx(V.col(0).data(), H2V.col(0).data());
-        optVal = std::real(V.col(0).dot(H2V.col(0)));
-        auto relval = std::abs((oldVal - optVal)/(0.5*(optVal+oldVal)));
+        optVal      = std::real(V.col(0).dot(H2V.col(0)));
+        auto relval = std::abs((oldVal - optVal) / (0.5 * (optVal + oldVal)));
         if(relval < 1e-4) {
-            tools::log->debug("saturated: no rel change {:.16f} -> {:.16f} | rel change {:.3e}", oldVal, optVal,relval );
+            tools::log->debug("saturated: no rel change {:.16f} -> {:.16f} | rel change {:.3e}", oldVal, optVal, relval);
             break;
         }
         rnorm = (H2V.col(0) - optVal * V.col(0)).template lpNorm<1>();
@@ -452,13 +455,18 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
             tools::log->debug("saturated: rnorm {:.3e} < tol {:.3e}", rnorm, settings::precision::eigs_tol_min);
             break;
         }
-        // tools::log->debug("mixed state result: <H²> = {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s", optVal,
-                  // sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
+        if(numZeroRows > 0) {
+            tools::log->debug("saturated: V has zeroed rows");
+            break;
+        }
+        // tools::log->debug("mixed state result: <H²> = {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s",
+        // optVal, sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
     }
 
     t_totals.toc();
-    tools::log->debug("mixed state result: <H²> = {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s", optVal,
-                      sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
+    tools::log->debug(
+        "mixed state result: <H²> = {:.16f} | α: {:.3e} {:.3e} {:.3e} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s",
+        optVal, res.alpha_mps, res.alpha_h1v, res.alpha_h2v, sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
     res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
     return res;
 }
@@ -475,6 +483,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(
                                                                                 [[maybe_unused]] OptRitz ritz, size_t maxiter) {
     auto t_multax = tid::ur("multax");
     auto t_totals = tid::ur("totals");
+    t_totals.tic();
     assert_edges_ene(state, model, edges);
     assert_edges_var(state, model, edges);
     auto res         = EnvExpansionResult();
@@ -598,6 +607,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(
         if(std::abs(oldVal - optVal) < 1e-14) break;
         rnorm = (H2V.col(0) - optVal * V.col(0)).norm();
         if(rnorm < settings::precision::eigs_tol_min) break;
+        if(numZeroRows > 0) { break; }
     }
 
     t_totals.toc();
@@ -690,19 +700,41 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(
         K2(2, 2) = V.col(2).dot(H2V.col(2));
         K2       = K2.template selfadjointView<Eigen::Lower>();
 
-        auto solver = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(
-            K1.template selfadjointView<Eigen::Lower>(), K2.template selfadjointView<Eigen::Lower>(), Eigen::ComputeEigenvectors | Eigen::Ax_lBx);
-        auto evals = solver.eigenvalues();
-        auto evecs = solver.eigenvectors();
-
         real tol           = std::numeric_limits<real>::epsilon();
         long numZeroRowsK1 = (K1.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long numZeroRowsK2 = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long numZeroRows   = std::max({numZeroRowsK1, numZeroRowsK2});
 
-        long optIdx                         = 0;
-        bool saturated                      = 0;
-        std::tie(optIdx, optVal, saturated) = get_optimal_eigenvalue(numZeroRows, evals, optVal, ritz);
+        Eigen::Vector3d evals;
+        Eigen::Matrix3d evecs;
+        long optIdx    = 0;
+        bool saturated = 0;
+        if(numZeroRows == 0) {
+            auto solver = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(
+                K1.template selfadjointView<Eigen::Lower>(), K2.template selfadjointView<Eigen::Lower>(), Eigen::ComputeEigenvectors | Eigen::Ax_lBx);
+            evals = solver.eigenvalues().real();
+            evecs = solver.eigenvectors().real();
+            std::tie(optIdx, optVal, saturated) = get_optimal_eigenvalue(numZeroRows, evals, optVal, ritz);
+        } else {
+            auto K3     = Eigen::Matrix3cd(K2 - K1 * K1);
+            auto solver = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K3, Eigen::ComputeEigenvectors);
+            evals       = solver.eigenvalues().real();
+            evecs       = solver.eigenvectors().real();
+            for(long i = 0; i < 3; ++i) { tools::log->debug("V.col({}).norm() = {:.16f}", i, V.col(i).norm()); }
+            tools::log->debug("V.col(0).dot(V.col(1)) = {:.16f}", V.col(0).dot(V.col(1)));
+            tools::log->debug("V.col(0).dot(V.col(2)) = {:.16f}", V.col(0).dot(V.col(2)));
+            tools::log->debug("V.col(1).dot(V.col(2)) = {:.16f}", V.col(1).dot(V.col(2)));
+            tools::log->debug("K1: \n{}\n", linalg::matrix::to_string(K1, 8));
+            tools::log->debug("K2: \n{}\n", linalg::matrix::to_string(K2, 8));
+            tools::log->debug("evals: \n{}\n", linalg::matrix::to_string(evals, 8));
+            tools::log->debug("evecs: \n{}\n", linalg::matrix::to_string(evecs, 8));
+            tools::log->debug("numZeroRowsK3  {}", numZeroRows);
+            long                  maxEvecRow0Idx = 0;
+            [[maybe_unused]] auto maxEvecRow0Val =
+                evecs.row(0).cwiseAbs().maxCoeff(&maxEvecRow0Idx); // Select the column that modifies the current state the least.
+            tools::log->debug("optIdx {} -> {} ", optIdx, maxEvecRow0Idx);
+            optIdx = maxEvecRow0Idx;
+        }
 
         // Calculate the new variances
         // H1.MultAx(V.col(0).data(), H1V.col(0).data());
@@ -739,54 +771,16 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(
             tools::log->debug("saturated: rnorm {:.3e} < tol {:.3e}", rnorm, settings::precision::eigs_tol_min);
             break;
         }
-
-        // auto evecs              = Eigen::Matrix<cplx, 3, 3>();
-        // auto evals              = Eigen::Matrix<real, 3, 1>();
-        // auto ritz_internal      = ritz;
-        // bool switchtoVariance   = K1(1, 1) == 0.0 or K1(2, 2) == 0.0 or K2(1, 1) == 0.0 or K2(2, 2) == 0.0;
-        // long numZeroEigenvalues = 0;
-        // if(switchtoVariance) {
-        //     // Minimize variance instead
-        //     auto K3            = Eigen::Matrix3cd(K2 - K1 * K1);
-        //     auto solver        = Eigen::SelfAdjointEigenSolver<Eigen::Matrix3cd>(K3, Eigen::ComputeEigenvectors);
-        //     evals              = solver.eigenvalues();
-        //     evecs              = solver.eigenvectors();
-        //     ritz_internal      = OptRitz::SM;
-        //     numZeroEigenvalues = (K3(1, 1) == 0.0) + (K3(2, 2) == 0.0);
-        //
-        // } else {
-        //     auto solver = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(
-        //         K1.template selfadjointView<Eigen::Lower>(), K2.template selfadjointView<Eigen::Lower>(), Eigen::ComputeEigenvectors | Eigen::Ax_lBx);
-        //     evals = solver.eigenvalues();
-        //     evecs = solver.eigenvectors();
-        // }
-        //
-        //
-        // if(saturated) break;
-        // if(std::abs(oldVal - optVal) < 1e-14) break;
-        //
-        // oldVal = optVal;
-
-        // Eigen::Vector3d col = evecs.col(optIdx).normalized().real();
-        //
-        // if(col.hasNaN()) {
-        //     res.alpha_mps = 1.0;
-        //     res.alpha_h1v = 0.0;
-        //     res.alpha_h2v = 0.0;
-        //     break;
-        // } else {
-        //     res.alpha_mps = col.coeff(0);
-        //     res.alpha_h1v = col.coeff(1);
-        //     res.alpha_h2v = col.coeff(2);
-        //     v0            = (col.coeff(0) * v0 + col.coeff(1) * v1 + col.coeff(2) * v2).normalized().eval();
-        // }
-        // if(!std::isnan(oldVal)) rnorm = (H1v0 - oldVal * H2v0).norm();
-        // if(rnorm < settings::precision::eigs_tol_min) break;
+        if(numZeroRows > 0) {
+            tools::log->debug("saturated: V has zeroed rows");
+            break;
+        }
     }
-
     t_totals.toc();
-    tools::log->debug("mixed state result: <H>/<H²> = {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s", optVal,
-                      sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
+    tools::log->debug("mixed state result: <H>/<H²> = {:.16f} | α: {:.3e} {:.3e} {:.3e} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  "
+                      "t_totals {:.3e} s",
+                      optVal, res.alpha_mps, res.alpha_h1v, res.alpha_h2v, sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
+
     res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
     return res;
 }
@@ -1108,7 +1102,7 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             // We have
             //      * mpsL is AC(i), or B(i) during multisite dmrg
             //      * mpsR is B(i+1) and belongs in envR later in the optimization step
-            auto &mpoL = model.get_mpo(res.posL);
+            // auto &mpoL = model.get_mpo(res.posL);
             auto &mpoR = model.get_mpo(res.posR);
             // Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M();
             Eigen::Tensor<cplx, 3> MR_PR =
@@ -1119,8 +1113,8 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
                 auto &envR    = edges.get_env_eneR(res.posR);
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
                 // Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
-                // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
-                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, -1);
+                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
+                // Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, -1);
                 // Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
                 // ML_PL                            = std::move(ML_PL_tmp);
@@ -1133,8 +1127,8 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
                 auto &envR    = edges.get_env_varR(res.posR);
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
                 // Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
-                // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
-                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
+                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
+                // Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
                 // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
                 // Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
@@ -1339,9 +1333,8 @@ EnvExpansionResult tools::finite::env::expand_environment_nsite(StateFinite &sta
                           mpsR.get_position(), res.alpha_h1v, res.alpha_h2v);
         return res;
     }
-    tools::log->debug("Expanding {}({}) - {}({}) | αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position(),
-                      res.alpha_h1v, res.alpha_h2v);
-
+    tools::log->debug("Expanding {}({}) - {}({}) | α₀:{:.2e} αₑ:{:.2e} αᵥ:{:.2e}", mpsL.get_label(), mpsL.get_position(), mpsR.get_label(), mpsR.get_position(),
+                      res.alpha_mps, res.alpha_h1v, res.alpha_h2v);
     mps::merge_multisite_mps(state, res.mixed_blk, pos_active_and_expanded, state.get_position<long>(), MergeEvent::EXP, svd_cfg);
 
     res.dims_new = state.get_mps_dims(pos_active_and_expanded);

@@ -148,8 +148,8 @@ std::string getLogMessage(struct primme_params *primme, [[maybe_unused]] int *ba
     auto &eigvals    = result.get_eigvals<eig::Form::SYMM>();
     auto  get_eigval = [&](long idx) -> double {
         // double eigval      = std::numeric_limits<double>::quiet_NaN();
-        bool lockedValid = numLocked != nullptr and *numLocked > 0 and lockedEvals != nullptr;
-        bool basisValid  = basisSize != nullptr and *basisSize > 0 and basisEvals != nullptr;
+        bool lockedValid = numLocked != nullptr and * numLocked > 0 and lockedEvals != nullptr;
+        bool basisValid  = basisSize != nullptr and * basisSize > 0 and basisEvals != nullptr;
         if(lockedValid) {
             if(idx < *numLocked)
                 return static_cast<double *>(lockedEvals)[idx];
@@ -218,8 +218,8 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
             level = spdlog::level::debug;
         }
 
-        bool lockedValid = numLocked != nullptr and *numLocked > 0 and lockedEvals != nullptr and lockedNorms != nullptr;
-        bool basisValid  = basisSize != nullptr and *basisSize > 0 and basisEvals != nullptr and basisNorms != nullptr;
+        bool lockedValid = numLocked != nullptr and * numLocked > 0 and lockedEvals != nullptr and lockedNorms != nullptr;
+        bool basisValid  = basisSize != nullptr and * basisSize > 0 and basisEvals != nullptr and basisNorms != nullptr;
         if(lockedValid) {
             auto &eigvals = result.get_eigvals<eig::Form::SYMM>();
             for(size_t idx = 0; idx < static_cast<size_t>(*numLocked); ++idx) {
@@ -266,6 +266,14 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
                 eig::log->warn("primme: max time has been exceeded: {:.2f}", config.maxTime.value());
                 config.timeLimitExceeded = true;
             }
+            primme->maxMatvecs                          = 0;
+            primme->maxOuterIterations                  = 0;
+            primme->correctionParams.maxInnerIterations = -1;
+            // *ierr = 60;
+        }
+
+        // Terminate if the subspace is ok (in hybrid dmrg-x)
+        if(solver.result.meta.subspace_ok) {
             primme->maxMatvecs                          = 0;
             primme->maxOuterIterations                  = 0;
             primme->correctionParams.maxInnerIterations = -1;
@@ -354,12 +362,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.locking                     = config.primme_locking.value_or(1);                                            // Use locking by default
     primme.target                      = RitzToTarget(config.ritz.value_or(Ritz::primme_smallest));
     primme.projectionParams.projection = stringToProj(config.primme_projection.value_or("primme_proj_default"));
-    primme.maxMatvecs                  = config.maxIter.value_or(primme.maxMatvecs);
+    #pragma message "Decide what to do about maxmatvecs"
+    // primme.maxMatvecs                  = ;//config.maxIter.value_or(primme.maxMatvecs);
     primme.maxOuterIterations          = config.maxIter.value_or(primme.maxOuterIterations);
     primme.correctionParams.maxInnerIterations = -1; // Up to the remaining matvecs
     primme.maxBlockSize                        = config.primme_maxBlockSize.value_or(1);
     primme.maxBasisSize                        = getBasisSize(primme.n, primme.numEvals, config.maxNcv);
-    primme.minRestartSize                      = config.primme_minRestartSize.value_or(std::max(1,primme.maxBasisSize / 2 -1));
+    primme.minRestartSize                      = config.primme_minRestartSize.value_or(std::max(1, primme.maxBasisSize / 2 - 1));
     // Make sure the basis is bigger than minRestartSize + maxPrevRetain, where the latter will be set to max(2,maxBlockSize) in primme_set_method
     primme.maxBasisSize = std::clamp(primme.maxBasisSize, 1 + primme.minRestartSize + std::max(2, primme.maxBlockSize), primme.n);
 

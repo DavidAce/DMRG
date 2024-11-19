@@ -119,9 +119,9 @@ namespace tools::finite::opt {
                     "optimize_generalized_shift_invert_eigs: sigma shift is not supported: subtract the sigma/L at the global mpo level instead");
         }
 
-        tools::log->debug("eigs_generalized_shift_invert_executor: Solving [Hx=λH²x] {} {} | shifts {} | maxIter {} | tol {:.2e} | init on | size {} | mps {}",
+        tools::log->debug("eigs_generalized_shift_invert_executor: Solving [Hx=λH²x] {} {} | shifts {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | jcb {}",
                           eig::LibToString(solver.config.lib), eig::RitzToString(solver.config.ritz), solver.config.primme_targetShifts,
-                          solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps());
+                          solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(), solver.config.jcbMaxBlockSize);
 
         auto init = gsi::get_initial_guess_mps<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
         for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
