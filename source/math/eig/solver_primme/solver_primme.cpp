@@ -175,11 +175,14 @@ std::string getLogMessage(struct primme_params *primme, [[maybe_unused]] int *ba
         }
     };
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | Δλ {:7.4e}", std::abs(get_eigval(0) - get_eigval(1))) : "";
-    return fmt::format("iter {:>6} | mv {:>6}/{}| size {} | λ {:19.16f}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s | {} | {}",
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->maxMatvecs, primme->n, solver.result.meta.last_eval, msg_diff,
-                       result.meta.last_rnorm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
-                       static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::TypeToString(solver.config.type),
-                       eig::MethodToString(solver.config.primme_method));
+    std::string msg_jcb  = solver.config.jcbMaxBlockSize.has_value() ? fmt::format(" | jcb {}", solver.config.jcbMaxBlockSize.value()) : "";
+    std::string msg_mvec = primme->maxMatvecs == std::numeric_limits<PRIMME_INT>::max() ? "" : fmt::format("/{}", primme->maxMatvecs);
+    return fmt::format(
+        "iter {:>6} | mv {:>6}{} | size {}{} | λ {:19.16f}{} | rnorm {:8.2e} | eps {:8.2e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s| {} | {}",
+        primme->stats.numOuterIterations, primme->stats.numMatvecs, msg_mvec, primme->n, msg_jcb, solver.result.meta.last_eval, msg_diff,
+        result.meta.last_rnorm, primme->eps, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
+        static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::TypeToString(solver.config.type),
+        eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -362,9 +365,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.locking                     = config.primme_locking.value_or(1);                                            // Use locking by default
     primme.target                      = RitzToTarget(config.ritz.value_or(Ritz::primme_smallest));
     primme.projectionParams.projection = stringToProj(config.primme_projection.value_or("primme_proj_default"));
-    #pragma message "Decide what to do about maxmatvecs"
+#pragma message "Decide what to do about maxmatvecs"
     // primme.maxMatvecs                  = ;//config.maxIter.value_or(primme.maxMatvecs);
-    primme.maxOuterIterations          = config.maxIter.value_or(primme.maxOuterIterations);
+    primme.maxOuterIterations                  = config.maxIter.value_or(primme.maxOuterIterations);
     primme.correctionParams.maxInnerIterations = -1; // Up to the remaining matvecs
     primme.maxBlockSize                        = config.primme_maxBlockSize.value_or(1);
     primme.maxBasisSize                        = getBasisSize(primme.n, primme.numEvals, config.maxNcv);
