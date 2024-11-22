@@ -53,8 +53,8 @@ void xdmrg::resume() {
         try {
             tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
         } catch(const except::load_error &le) {
-            tools::log->error("{}", le.what());
-            continue;
+            tools::log->warn("Load error: {}", le.what());
+            // continue;
         }
 
         // Our first task is to decide on a state name for the newly loaded state

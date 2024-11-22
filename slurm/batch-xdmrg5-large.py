@@ -59,7 +59,7 @@ config_ranges = {
     "xdmrg::algo_warmup": ['XDMRG'],
     "xdmrg::ritz_warmup": ['SM'],
     "xdmrg::iter_min": ['10'],
-    "xdmrg::iter_max": ['500'],
+    "xdmrg::iter_max": ['2000'],
     "xdmrg::bond_max": ['8192'],
     "xdmrg::bond_min": ['48'],
 }

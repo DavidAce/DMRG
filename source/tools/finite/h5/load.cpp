@@ -45,7 +45,7 @@ namespace tools::finite::h5 {
                 tools::common::h5::load::timer(h5file, state_prefix, status);
                 tools::finite::h5::load::validate(h5file, state_prefix, tensors, status, algo_type);
             }
-        } catch(const std::exception &ex) { throw except::load_error("failed to load from state prefix [{}]: {}", state_prefix, ex.what()); }
+        } catch(const std::exception &ex) { throw except::load_error("error loading from state prefix [{}]: {}", state_prefix, ex.what()); }
     }
 
     void load::state(const h5pp::File &h5file, std::string_view state_prefix, StateFinite &state, MpsInfo &info) {
