@@ -19,7 +19,7 @@ config_ranges = {
     "console::loglevel": ['2'],
     "storage::output_filepath": [get_output_filepath],
     "storage::resume_policy": ['IF_UNSUCCESSFUL'],
-    "storage::file_collision_policy": ['REVIVE'],
+    "storage::file_collision_policy": ['REPLACE'],
     "storage::temp_dir": [config_paths['temp_dir']],
     "storage::mps::state_emid::policy": ["ITER|FINISH|REPLACE"],
     "storage::table::opdm::policy": ["FINISH|RBDS|RTES"],
