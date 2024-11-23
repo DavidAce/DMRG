@@ -413,7 +413,7 @@ namespace tools::h5io {
             auto path = srcKey.create_source_path(pathid);
             // auto path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
             // auto                   path = fmt::format("{}/{}", pathid.src_path, srcKey.name);
-            auto                   key  = fmt::format("{}|{}", srcParentPath, path);
+            auto key = fmt::format("{}|{}", srcParentPath, path);
             if(srcTableDb.find(key) == srcTableDb.end()) {
                 srcTableDb[key] = h5_src.getTableInfo(path);
                 if(srcTableDb[key].tableExists.value()) tools::logger::log->debug("Detected new source {}: {}", srcKey.classtag, key);
@@ -423,12 +423,24 @@ namespace tools::h5io {
                 auto &srcInfo = srcTableDb[key];
                 // We reuse the struct srcDsetDb[key] for every source file,
                 // but each time have to renew the following fields
+
+                auto expectedType = srcInfo.h5Type;
+
                 srcInfo.h5File      = h5_src.openFileHandle();
                 srcInfo.h5Dset      = std::nullopt;
+                srcInfo.h5Type      = std::nullopt;
                 srcInfo.numRecords  = std::nullopt;
                 srcInfo.tableExists = std::nullopt;
                 srcInfo.tablePath   = path;
                 h5pp::scan::readTableInfo(srcInfo, srcInfo.h5File.value(), options, h5_src.plists);
+
+                if(srcInfo.tableExists.has_value() and srcInfo.tableExists.value() and srcInfo.h5Type.has_value()) {
+                    if(expectedType.has_value() and !h5pp::type::H5Tequal_recurse(srcInfo.h5Type.value(), expectedType.value())) {
+                        tools::logger::log->warn("Table type mismatch!");
+                        // We have a mismatch! the type of the table may have changed. We should therefore read the table info from scratch
+                        srcInfo = h5_src.getTableInfo(path); // Clear
+                    }
+                }
             }
 
             auto &srcInfo = srcTableDb[key];
@@ -440,15 +452,13 @@ namespace tools::h5io {
                             // We should take the last N entries in these tables.
                             // Here we first take the iter attribute on the table, and then count table records with that iter value.
                             // The matching ones should be the last.
-                            auto iter_attr = h5_src.readAttribute<size_t>(srcInfo.tablePath.value(), "iter");
-                            auto iters = h5_src.readTableField<std::vector<size_t>>(srcInfo.tablePath.value(), {"iter"}, h5pp::TableSelection::ALL);
-                            auto count = std::count_if(iters.begin(), iters.end(), [& iter_attr](auto iter)->bool{return iter == iter_attr;});
+                            auto iter_attr       = h5_src.readAttribute<size_t>(srcInfo.tablePath.value(), "iter");
+                            auto iters           = h5_src.readTableField<std::vector<size_t>>(srcInfo.tablePath.value(), {"iter"}, h5pp::TableSelection::ALL);
+                            auto count           = std::count_if(iters.begin(), iters.end(), [&iter_attr](auto iter) -> bool { return iter == iter_attr; });
                             srcKey.expected_size = safe_cast<size_t>(count);
                         }
-                    }else {
-                        if(srcKey.expected_size == -1ul) {
-                            srcKey.expected_size = srcInfo.numRecords.value();
-                        }
+                    } else {
+                        if(srcKey.expected_size == -1ul) { srcKey.expected_size = srcInfo.numRecords.value(); }
                         if(srcInfo.numRecords.value() != srcKey.expected_size) {
                             if(srcInfo.numRecords.value() < srcKey.expected_size)
                                 throw except::range_error("Table size mismatch:\n"

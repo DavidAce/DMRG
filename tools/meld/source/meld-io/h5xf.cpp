@@ -142,7 +142,8 @@ namespace tools::h5xf {
             if(not srcInfo.dsetExists or not srcInfo.dsetExists.value()) continue;
             auto tgtName = h5pp::fs::path(srcInfo.dsetPath.value()).filename().string();
             auto tgtPath = std::string{};
-            if(srcKey.subgroup.empty()) tgtPath = h5pp::format("{}/{}", pathid.tgt_path, tgtName);
+            if(srcKey.subgroup.empty())
+                tgtPath = h5pp::format("{}/{}", pathid.tgt_path, tgtName);
             else
                 tgtPath = h5pp::format("{}/{}/{}", pathid.tgt_path, srcKey.subgroup, tgtName);
 
@@ -215,8 +216,45 @@ namespace tools::h5xf {
             // Determine the target index where to copy this record
             hsize_t index = tgtId.get_index(fileId.seed); // Positive if it has been read already, numeric_limits::max if it's new
             tools::logger::log->trace("Transferring table {} | src idx {} -> tgt idx {}", tgtPath, srcInfo.numRecords.value(), index);
-            auto t_copy = tid::tic_scope("copyTableRecords");
-            h5_tgt.copyTableRecords(srcInfo, tgtInfo, h5pp::TableSelection::LAST, index);
+            auto t_copy    = tid::tic_scope("copyTableRecords");
+            auto equalType = h5pp::type::H5Tequal_recurse(srcInfo.h5Type.value(), tgtInfo.h5Type.value());
+            if(equalType) {
+                h5_tgt.copyTableRecords(srcInfo, tgtInfo, h5pp::TableSelection::LAST, index);
+            } else {
+                const auto &tgtFnames = tgtInfo.fieldNames.value();
+                const auto &tgtFsizes = tgtInfo.fieldSizes.value();
+                const auto &tgtFofsts = tgtInfo.fieldOffsets.value();
+                const auto &srcFnames = srcInfo.fieldNames.value();
+                const auto &srcFsizes = srcInfo.fieldSizes.value();
+                const auto &srcFofsts = srcInfo.fieldOffsets.value();
+                auto        tbs       = h5pp::TableSelection::LAST;
+                auto [offset, extent] = h5pp::util::parseTableSelection(tbs, srcInfo.numRecords.value());
+                auto srcBuffer        = std::vector(extent * srcInfo.recordBytes.value(), std::byte{});
+                auto tgtBuffer        = std::vector(extent * tgtInfo.recordBytes.value(), std::byte{});
+                h5pp::hdf5::readTableRecords(srcBuffer, srcInfo, offset, extent);
+                for(hsize_t rec = 0; rec < extent; ++rec) {
+                    for(hsize_t tfidx = 0; tfidx < tgtFnames.size(); ++tfidx) { // Target field idx
+                        // Check if the target field name exists in the source
+                        auto &tgtFname = tgtFnames.at(tfidx);
+                        auto &tgtFsize = tgtFsizes.at(tfidx);
+                        auto &tgtFofst = tgtFofsts.at(tfidx);
+                        // Find the iterator to the corresponding fname in source
+                        auto srcFiter = std::find(srcFnames.begin(), srcFnames.end(), tgtFname);
+                        if(srcFiter == srcFnames.end()) continue;
+                        size_t sfidx = static_cast<size_t>(std::distance(srcFnames.begin(), srcFiter)); // Source field idx
+                        if(srcFsizes[sfidx] != tgtFsize) continue;
+                        // We have found the corresponding field index in source. Now copy that field to target
+                        auto &srcFname = srcFnames.at(sfidx);
+                        auto &srcFsize = srcFsizes.at(sfidx);
+                        auto &srcFofst = srcFofsts.at(sfidx);
+                        auto  srcBegin = srcBuffer.begin() + rec * srcInfo.recordBytes.value() + srcFofsts[sfidx];
+                        auto  srcEnd   = srcBegin + srcFsizes.at(sfidx);
+                        auto  tgtBegin = tgtBuffer.begin() + rec * tgtInfo.recordBytes.value() + tgtFofst;
+                        std::copy(srcBegin, srcEnd, tgtBegin);
+                    }
+                }
+                h5pp::hdf5::writeTableRecords(tgtBuffer, tgtInfo, index, 1);
+            }
             // Update the database
             tgtId.insert(fileId.seed, index);
         }
@@ -272,21 +310,24 @@ namespace tools::h5xf {
             if(indexfield) {
                 t_readTableFld.tic();
                 h5pp::hdf5::readTableField(srcIndices, srcInfo, {indexfield.value()});
+                tools::logger::log->trace("Retrieved index field {}", indexfield.value());
                 t_readTableFld.toc();
             }
             if(eventfield) {
                 t_readTableFld.tic();
                 h5pp::hdf5::readTableField(srcEvents, srcInfo, {eventfield.value()});
+                tools::logger::log->trace("Retrieved event field {}", eventfield.value());
                 t_readTableFld.toc();
             }
 
             for(size_t rec = 0; rec < record_extent; rec++) {
-                size_t srcIndex = rec + record_offset;
-                if(not srcIndices.empty())
-                    srcIndex = srcIndices[srcIndex]; // Replace with the desired index value -- this is only used to generate the target path
                 if(not srcEvents.empty()) {
-                    if(not seq::has(srcKey.eventkey, srcEvents[srcIndex])) continue; // Ignore this entry if it is not the desired event type
+                    if(not seq::has(srcKey.eventkey, srcEvents.at(rec))) {
+                        continue; // Ignore this entry if it is not the desired event type
+                    }
                 }
+                size_t srcIndex = rec + record_offset;                 // Used to generate a path with the correct index, eg. bond_<srcIndex>
+                if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Replace with the desired index value -- this is only used to generate the target path
                 auto tgtPath = pathid.create_target_path<KeyT>(tgtName, rec);
                 if(tgtTableDb.find(tgtPath) == tgtTableDb.end()) {
                     t_createTable.tic();
@@ -306,6 +347,7 @@ namespace tools::h5xf {
                     t_createTable.toc();
                 }
                 auto &tgtId   = tgtTableDb.at(tgtPath);
+                auto &tgtInfo = tgtId.info;
                 auto &tgtBuff = tgtId.buff;
                 // Determine the target index where to copy this record
                 // tgtInfo.numRecords is the total number of realizations registered until now
@@ -316,9 +358,45 @@ namespace tools::h5xf {
                                           srcInfo.numRecords.value(), srcKey.indexkey, rec, srcIndex, tgtIndex);
 
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
+                auto equalType = h5pp::type::H5Tequal_recurse(srcInfo.h5Type.value(), tgtInfo.h5Type.value());
                 t_buffer.tic();
-                tgtBuff.insert(srcReadBuffer.begin() + static_cast<long>(rec * srcInfo.recordBytes.value()),
-                               srcReadBuffer.begin() + static_cast<long>((rec + 1) * srcInfo.recordBytes.value()), tgtIndex);
+                if(equalType) {
+                    tgtBuff.insert(srcReadBuffer.begin() + static_cast<long>(rec * srcInfo.recordBytes.value()),
+                                   srcReadBuffer.begin() + static_cast<long>((rec + 1) * srcInfo.recordBytes.value()), tgtIndex);
+
+                } else {
+                    const auto &tgtFnames = tgtInfo.fieldNames.value();
+                    const auto &tgtFsizes = tgtInfo.fieldSizes.value();
+                    const auto &tgtFofsts = tgtInfo.fieldOffsets.value();
+                    const auto &srcFnames = srcInfo.fieldNames.value();
+                    const auto &srcFsizes = srcInfo.fieldSizes.value();
+                    const auto &srcFofsts = srcInfo.fieldOffsets.value();
+                    // auto        tbs       = h5pp::TableSelection::LAST;
+                    // auto [offset, extent] = h5pp::util::parseTableSelection(tbs, srcInfo.numRecords.value());
+                    auto mapBuffer        = std::vector(tgtInfo.recordBytes.value(), std::byte{});
+                    for(hsize_t tfidx = 0; tfidx < tgtFnames.size(); ++tfidx) { // Target field idx
+                        // Check if the target field name exists in the source
+                        auto &tgtFname = tgtFnames.at(tfidx);
+                        auto &tgtFsize = tgtFsizes.at(tfidx);
+                        auto &tgtFofst = tgtFofsts.at(tfidx);
+                        // Find the iterator to the corresponding fname in source
+                        auto srcFiter = std::find(srcFnames.begin(), srcFnames.end(), tgtFname);
+                        if(srcFiter == srcFnames.end()) continue;
+                        size_t sfidx = static_cast<size_t>(std::distance(srcFnames.begin(), srcFiter)); // Source field idx
+                        if(srcFsizes[sfidx] != tgtFsize) continue;
+                        // We have found the corresponding field index in source. Now copy that field to target
+                        auto &srcFname = srcFnames.at(sfidx);
+                        auto &srcFsize = srcFsizes.at(sfidx);
+                        auto &srcFofst = srcFofsts.at(sfidx);
+                        auto  srcBegin = srcReadBuffer.begin() + rec * srcInfo.recordBytes.value() + srcFofsts[sfidx];
+                        auto  srcEnd   = srcBegin + srcFsizes.at(sfidx);
+                        auto  tgtBegin = mapBuffer.begin() + tgtFofst;
+                        std::copy(srcBegin, srcEnd, tgtBegin);
+                    }
+                    tgtBuff.insert(mapBuffer.begin(),
+                                   mapBuffer.end(), tgtIndex);
+
+                }
                 t_buffer.toc();
                 if(srcInfo.reclaimInfo.has_value()) {
                     t_reclaim.tic();
