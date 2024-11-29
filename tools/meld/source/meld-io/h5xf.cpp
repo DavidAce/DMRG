@@ -30,11 +30,11 @@ namespace tools::h5xf {
                 dataInfo.dataRank = srcInfo.dsetRank;
                 dataInfo.h5Space  = srcInfo.h5Space;
             }
-            tgtInfo.resizePolicy               = h5pp::ResizePolicy::GROW;
-            tgtInfo.dsetSlab                   = h5pp::Hyperslab();
-            tgtInfo.dsetSlab->extent           = dataInfo.dataDims;
-            tgtInfo.dsetSlab->offset           = std::vector<hsize_t>(tgtInfo.dsetDims->size(), 0);
-            tgtInfo.dsetSlab->offset->at(axis) = index;
+            tgtInfo.resizePolicy = h5pp::ResizePolicy::GROW;
+            // tgtInfo.dsetSlab                   = h5pp::Hyperslab();
+            // tgtInfo.dsetSlab->extent           = dataInfo.dataDims;
+            // tgtInfo.dsetSlab->offset           = std::vector<hsize_t>(tgtInfo.dsetDims->size(), 0);
+            // tgtInfo.dsetSlab->offset->at(axis) = index;
 
             // Sometimes there is an extra entry at the end in the source data. We should ignore it.
             // if(tgtInfo.dsetSlab->extent->size() >= 3 and tgtInfo.dsetDims->size() >= 3)
@@ -43,20 +43,37 @@ namespace tools::h5xf {
             switch(ssel) {
                 case SlabSelect::FULL: {
                     // Select the hyperslab to copy from the source
-                    dataInfo.dataSlab                   = tgtInfo.dsetSlab;
-                    dataInfo.dataSlab->offset->at(axis) = 0;
+                    // dataInfo.dataSlab                   = tgtInfo.dsetSlab;
+                    dataInfo.dataSlab                   = h5pp::Hyperslab();
+                    dataInfo.dataSlab->extent           = dataInfo.dataDims;
+                    dataInfo.dataSlab->offset           = std::vector<hsize_t>(dataInfo.dataDims->size(), 0);
+                    dataInfo.dataSlab->offset->at(axis) = dataInfo.dataDims->at(axis) - 1; // Pick the last slice
+                    dataInfo.dataSlab->extent->at(axis) = 1;                               // A single slice
+
+                    tgtInfo.dsetSlab                   = h5pp::Hyperslab();
+                    tgtInfo.dsetSlab->extent           = dataInfo.dataSlab->extent;
+                    tgtInfo.dsetSlab->offset           = std::vector<hsize_t>(tgtInfo.dsetDims->size(), 0);
+                    tgtInfo.dsetSlab->offset->at(axis) = index;
+
                     break;
                 }
                 case SlabSelect::MIDCOL: {
-                    auto rows                           = dataInfo.dataDims.value().at(0);
-                    auto cols                           = dataInfo.dataDims.value().at(1);
-                    auto mcol                           = static_cast<decltype(cols)>(cols / 2);
-                    dataInfo.dataSlab                   = tgtInfo.dsetSlab;
-                    dataInfo.dataSlab->offset->at(0)    = 0;
-                    dataInfo.dataSlab->offset->at(1)    = mcol;
-                    dataInfo.dataSlab->offset->at(axis) = 0;
-                    dataInfo.dataSlab->extent->at(0)    = rows;
-                    dataInfo.dataSlab->extent->at(1)    = 1;
+                    auto rows = dataInfo.dataDims.value().at(0);
+                    auto cols = dataInfo.dataDims.value().at(1);
+                    auto mcol = static_cast<decltype(cols)>(cols / 2);
+                    // dataInfo.dataSlab                   = tgtInfo.dsetSlab;
+
+                    dataInfo.dataSlab                   = h5pp::Hyperslab();
+                    dataInfo.dataSlab->extent           = dataInfo.dataDims;
+                    dataInfo.dataSlab->offset           = std::vector<hsize_t>(dataInfo.dataDims->size(), 0);
+                    dataInfo.dataSlab->offset->at(axis) = dataInfo.dataDims->at(axis) - 1; // Pick the last slice
+                    dataInfo.dataSlab->extent->at(axis) = 1;                               // A single slice
+
+                    dataInfo.dataSlab->offset->at(0) = 0;
+                    dataInfo.dataSlab->offset->at(1) = mcol;
+                    // dataInfo.dataSlab->offset->at(axis) = 0;
+                    dataInfo.dataSlab->extent->at(0) = rows;
+                    dataInfo.dataSlab->extent->at(1) = 1;
 
                     tgtInfo.dsetSlab->offset->at(0)    = 0;
                     tgtInfo.dsetSlab->offset->at(1)    = 0;
@@ -109,6 +126,10 @@ namespace tools::h5xf {
                 auto data   = h5_src.readDataset<std::vector<std::byte>>(srcInfo); // Read the data into a generic buffer.
                 t_read.toc();
                 auto t_app = tid::tic_token("appendToDataset");
+                // tools::logger::log->info("appending\nsrc: {}\ntgt: {}", dataInfo.string(), tgtInfo.string());
+                // if(tgtInfo.dsetDims->back() > 1000) {
+                //     tools::logger::log->warn("tgt too large!");
+                // }
                 h5_tgt.appendToDataset(data, dataInfo, tgtInfo, static_cast<size_t>(axis));
             }
             // Restore previous settings
@@ -244,9 +265,9 @@ namespace tools::h5xf {
                         size_t sfidx = static_cast<size_t>(std::distance(srcFnames.begin(), srcFiter)); // Source field idx
                         if(srcFsizes[sfidx] != tgtFsize) continue;
                         // We have found the corresponding field index in source. Now copy that field to target
-                        auto &srcFname = srcFnames.at(sfidx);
-                        auto &srcFsize = srcFsizes.at(sfidx);
-                        auto &srcFofst = srcFofsts.at(sfidx);
+                        //auto &srcFname = srcFnames.at(sfidx);
+                        //auto &srcFsize = srcFsizes.at(sfidx);
+                        //auto &srcFofst = srcFofsts.at(sfidx);
                         auto  srcBegin = srcBuffer.begin() + rec * srcInfo.recordBytes.value() + srcFofsts[sfidx];
                         auto  srcEnd   = srcBegin + srcFsizes.at(sfidx);
                         auto  tgtBegin = tgtBuffer.begin() + rec * tgtInfo.recordBytes.value() + tgtFofst;
@@ -373,7 +394,7 @@ namespace tools::h5xf {
                     const auto &srcFofsts = srcInfo.fieldOffsets.value();
                     // auto        tbs       = h5pp::TableSelection::LAST;
                     // auto [offset, extent] = h5pp::util::parseTableSelection(tbs, srcInfo.numRecords.value());
-                    auto mapBuffer        = std::vector(tgtInfo.recordBytes.value(), std::byte{});
+                    auto mapBuffer = std::vector(tgtInfo.recordBytes.value(), std::byte{});
                     for(hsize_t tfidx = 0; tfidx < tgtFnames.size(); ++tfidx) { // Target field idx
                         // Check if the target field name exists in the source
                         auto &tgtFname = tgtFnames.at(tfidx);
@@ -385,17 +406,15 @@ namespace tools::h5xf {
                         size_t sfidx = static_cast<size_t>(std::distance(srcFnames.begin(), srcFiter)); // Source field idx
                         if(srcFsizes[sfidx] != tgtFsize) continue;
                         // We have found the corresponding field index in source. Now copy that field to target
-                        auto &srcFname = srcFnames.at(sfidx);
-                        auto &srcFsize = srcFsizes.at(sfidx);
-                        auto &srcFofst = srcFofsts.at(sfidx);
-                        auto  srcBegin = srcReadBuffer.begin() + rec * srcInfo.recordBytes.value() + srcFofsts[sfidx];
-                        auto  srcEnd   = srcBegin + srcFsizes.at(sfidx);
-                        auto  tgtBegin = mapBuffer.begin() + tgtFofst;
+                        // auto &srcFname = srcFnames.at(sfidx);
+                        // auto &srcFsize = srcFsizes.at(sfidx);
+                        // auto &srcFofst = srcFofsts.at(sfidx);
+                        auto srcBegin = srcReadBuffer.begin() + rec * srcInfo.recordBytes.value() + srcFofsts[sfidx];
+                        auto srcEnd   = srcBegin + srcFsizes.at(sfidx);
+                        auto tgtBegin = mapBuffer.begin() + tgtFofst;
                         std::copy(srcBegin, srcEnd, tgtBegin);
                     }
-                    tgtBuff.insert(mapBuffer.begin(),
-                                   mapBuffer.end(), tgtIndex);
-
+                    tgtBuff.insert(mapBuffer.begin(), mapBuffer.end(), tgtIndex);
                 }
                 t_buffer.toc();
                 if(srcInfo.reclaimInfo.has_value()) {

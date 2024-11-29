@@ -488,7 +488,8 @@ namespace tools::h5io {
                 }
                 //            tools::logger::log->info("<{}> : numRecords: {}", sfinae::type_name<KeyT>(), numRecords);
                 if(std::any_of(tableRecords.begin(), tableRecords.end(), [&tableRecords](auto rec) -> bool { return rec.second != tableRecords[0].second; }))
-                    throw except::runtime_error("unequal number of records in {} tables:\n{}\n", keys.front().classtag, fmt::join(tableRecords, "\n"));
+                    tools::logger::log->warn("unequal number of records in {} tables:\n{}\n{}\n", keys.front().classtag,h5_src.getFilePath(), fmt::join(tableRecords, "\n"));
+                    // throw except::runtime_error("unequal number of records in {} tables:\n{}\n", keys.front().classtag, fmt::join(tableRecords, "\n"));
             }
         }
         return keys;
@@ -540,7 +541,7 @@ namespace tools::h5io {
                     rtesKeys      = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.rtes, pathid, keys.rteses);
                     cronoKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
                 } catch(const std::runtime_error &ex) {
-                    tools::logger::log->error("key gather failed in [{}]: {}", pathid.src_path, ex.what());
+                    tools::logger::log->error("key gather failed in [{}|{}]: {}", h5_src.getFilePath(), pathid.src_path, ex.what());
                     saveFailedJob(h5_src, "key gathering failed", ex);
                     continue; // File is broken. Do not transfer.
                 }

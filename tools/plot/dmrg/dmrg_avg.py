@@ -38,8 +38,9 @@ def dmrg_avg(args):
                  },
                 'state_emid/subsystem_entanglement_entropies': {
                     'copy': True,
-                    'info-lattice': True,
-                 },
+                    'info-lattice': False,
+                    'info-per-scale': False,
+                },
             },
 
             'tables': {  # For data at the last time step
@@ -50,6 +51,8 @@ def dmrg_avg(args):
                 'state_emid/tables/bond_dimensions': 'ALL',
                 'state_emid/tables/opdm_spectrum': 'ALL',
                 'state_emid/tables/truncation_errors': 'ALL',
+                'state_emid/tables/information_center_of_mass': 'ALL',
+                'state_emid/tables/information_per_scale': 'ALL',
                 # If the following tables exist, save it under <tablename>/data
                 '__save_data__': ['mem_usage', 'measurements', 'opdm_spectrum'],
             },

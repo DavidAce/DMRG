@@ -268,17 +268,24 @@ def write_statistics_dset(meta, props, h5_tgt):
     if dsetname == 'subsystem_entanglement_entropies':
         if props.get(dsetprop).get('info-lattice'):
             # Calculate and store the information lattice for this matrix
-            print("subsystem_entanglement_entropies shape: ", np.shape(dsetnode))
-            infolattices = get_information_lattices(dsetnode[()])
-            infoperscale = get_information_per_scale(infolattices)
-            d0,d1,d2 = np.shape(infolattices)
-            tgt_node = h5_tgt.require_group(f'{dsetnode.parent.name}')
-            infolattices_dset = tgt_node.create_dataset(name='information_lattices', data=infolattices,
-                                                           dtype=np.float64, compression="gzip", compression_opts=3,
-                                                           chunks=(d0,d1,np.min([d2,50])), )
-            infoperscale_dset = tgt_node.create_dataset(name='information_per_scale', data=infoperscale,
-                                                           dtype=np.float64, compression="gzip", compression_opts=3,
-                                                           chunks=(d0,np.min([d2,50])), )
+            if not 'information_lattice' in dsetnode.parent:
+                infolattices = get_information_lattices(dsetnode[()])
+                d0, d1, d2 = np.shape(infolattices)
+                tgt_node = h5_tgt.require_group(f'{dsetnode.parent.name}')
+                tgt_node.create_dataset(name='information_lattices', data=infolattices,
+                                                            dtype=np.float64, compression="gzip", compression_opts=3,
+                                                            chunks=(d0, d1, np.min([d2, 50])), )
+
+
+        if props.get(dsetprop).get('info-per-scale'):
+            if not 'information_per_scale' in dsetnode.parent:
+                infolattices = dsetnode.parent['information_lattice'][()]
+                d0, d1, d2 = np.shape(infolattices)
+                infoperscale = get_information_per_scale(infolattices)
+                tgt_node = h5_tgt.require_group(f'{dsetnode.parent.name}')
+                tgt_node.create_dataset(name='information_per_scale', data=infoperscale,
+                                                               dtype=np.float64, compression="gzip", compression_opts=3,
+                                                               chunks=(d0,np.min([d2,50])), )
     if dsetname == 'number_probabilities':
         if dsetcopy:
             print(f'deep copying dset: {dsetname} {np.shape(dsetnode)}')
