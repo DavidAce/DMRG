@@ -1,4 +1,4 @@
-#define DMRG_ENABLE_TBLIS
+// #define DMRG_ENABLE_TBLIS
 #include "matvec_mpos.h"
 #include "../log.h"
 #include "config/settings.h"
@@ -23,11 +23,11 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <unsupported/Eigen/src/IterativeSolvers/IncompleteLU.h>
 
-#if defined(DMRG_ENABLE_TBLIS)
-    #include <tblis/tblis.h>
-    #include <tblis/util/thread.h>
-    #include <tci/tci_config.h>
-#endif
+// #if defined(DMRG_ENABLE_TBLIS)
+//     #include <tblis/tblis.h>
+//     #include <tblis/util/thread.h>
+//     #include <tci/tci_config.h>
+// #endif
 namespace eig {
 
 #ifdef NDEBUG
@@ -1035,44 +1035,46 @@ void MatVecMPOS<T>::MultBx(void *x, int *ldx, void *y, int *ldy, int *blockSize,
 //         if(vec[i] <= kth_element) { result.emplace_back(idx_pair{vec[i], i}); }
 //     return result;
 // }
-template<typename T>
-std::vector<long> MatVecMPOS<T>::get_k_smallest(const VectorType &vec, size_t k) const {
-    std::priority_queue<T> pq;
-    for(auto d : vec) {
-        if(pq.size() >= k && pq.top() > d) {
-            pq.push(d);
-            pq.pop();
-        } else if(pq.size() < k) {
-            pq.push(d);
-        }
-    }
-    Scalar            kth_element = pq.top();
-    std::vector<long> result;
-    for(long i = 0; i < vec.size(); i++)
-        if(vec[i] <= kth_element) { result.emplace_back(i); }
-    return result;
-}
 
-template<typename T>
-std::vector<long> MatVecMPOS<T>::get_k_largest(const VectorType &vec, size_t k) const {
-    using idx_pair = std::pair<Scalar, long>;
-    std::priority_queue<idx_pair, std::vector<idx_pair>, std::greater<idx_pair>> q;
-    for(long i = 0; i < vec.size(); ++i) {
-        if(q.size() < k)
-            q.emplace(vec[i], i);
-        else if(q.top().first < vec[i]) {
-            q.pop();
-            q.emplace(vec[i], i);
-        }
-    }
-    k = q.size();
-    std::vector<long> res(k);
-    for(size_t i = 0; i < k; ++i) {
-        res[k - i - 1] = q.top().second;
-        q.pop();
-    }
-    return res;
-}
+// template<typename T>
+// std::vector<long> MatVecMPOS<T>::get_k_smallest(const VectorType &vec, size_t k) const {
+//     std::priority_queue<T> pq;
+//     for(auto d : vec) {
+//         if(pq.size() >= k && pq.top() > d) {
+//             pq.push(d);
+//             pq.pop();
+//         } else if(pq.size() < k) {
+//             pq.push(d);
+//         }
+//     }
+//     Scalar            kth_element = pq.top();
+//     std::vector<long> result;
+//     for(long i = 0; i < vec.size(); i++)
+//         if(vec[i] <= kth_element) { result.emplace_back(i); }
+//     return result;
+// }
+//
+// template<typename T>
+// std::vector<long> MatVecMPOS<T>::get_k_largest(const VectorType &vec, size_t k) const {
+//     using idx_pair = std::pair<Scalar, long>;
+//     std::priority_queue<idx_pair, std::vector<idx_pair>, std::greater<idx_pair>> q;
+//     for(long i = 0; i < vec.size(); ++i) {
+//         if(q.size() < k)
+//             q.emplace(vec[i], i);
+//         else if(q.top().first < vec[i]) {
+//             q.pop();
+//             q.emplace(vec[i], i);
+//         }
+//     }
+//     k = q.size();
+//     std::vector<long> res(k);
+//     for(size_t i = 0; i < k; ++i) {
+//         res[k - i - 1] = q.top().second;
+//         q.pop();
+//     }
+//     return res;
+// }
+
 template<typename Derived>
 Eigen::Matrix<double, Eigen::Dynamic, 1> cond(const Eigen::MatrixBase<Derived> &m) {
     auto solver = Eigen::BDCSVD(m.eval());
@@ -1144,7 +1146,7 @@ void MatVecMPOS<T>::CalcPc(T shift) {
                 }
                 case eig::Factorization::LLT: {
                     eig::log->trace("llt factorizing block {}/{} ... ", blkidx, nblocks);
-                    if(blockI(0, 0) > 0) {
+                    if(std::real(blockI(0, 0)) > 0.0) {
                         llt->compute(blockI);
                     } else {
                         llt->compute(-blockI); // Can sometimes be negative definite in the generalized problem
@@ -1168,11 +1170,11 @@ void MatVecMPOS<T>::CalcPc(T shift) {
                     if(lltSuccess) break;
 
                     // blockI = get_diagonal_block(offset, extent, shift, mpos_A, envL_A, envR_A, mpos_B, envL_B, envR_B);
-                    auto sol = Eigen::SelfAdjointEigenSolver<MatrixType>(blockI, Eigen::EigenvaluesOnly);
-                    eig::log->info(
-                        "llt factorization failed on block {}/{} ... info {} | diag min {:.16f} max {:.16f} | eig min {:.16f} max {:.16f} | trying ldlt",
-                        blkidx, nblocks, static_cast<int>(llt->info()), blockI.diagonal().minCoeff(), blockI.diagonal().maxCoeff(),
-                        sol.eigenvalues().minCoeff(), sol.eigenvalues().maxCoeff());
+                    // auto sol = Eigen::SelfAdjointEigenSolver<MatrixType>(blockI, Eigen::EigenvaluesOnly);
+                    // eig::log->info(
+                    //     "llt factorization failed on block {}/{} ... info {} | diag min {:.16f} max {:.16f} | eig min {:.16f} max {:.16f} | trying ldlt",
+                    //     blkidx, nblocks, static_cast<int>(llt->info()), blockI.diagonal().real().minCoeff(), blockI.diagonal().real().maxCoeff(),
+                    //     sol.eigenvalues().minCoeff(), sol.eigenvalues().maxCoeff());
                     [[fallthrough]];
 
                     // if(auto llt = Eigen::LLT<MatrixType, Eigen::Lower>(blockI); llt.info() == Eigen::Success) {

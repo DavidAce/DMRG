@@ -10,6 +10,7 @@
 #include <numeric>
 #include <optional>
 #include <vector>
+#include <span>
 
 /*!
  *  \namespace stat
