@@ -1,11 +1,13 @@
 #pragma once
 
 #include "general/sfinae.h"
+#include <algorithm>
 #include <charconv>
 #include <functional>
 #include <optional>
 #include <string>
 #include <string_view>
+
 namespace text {
     extern std::string                   replace(std::string_view str, std::string_view from, std::string_view to);
     extern std::vector<std::string_view> split(std::string_view str, std::string_view dlm);
@@ -29,18 +31,18 @@ namespace text {
                 auto end = input.find_first_not_of(figits, bgn);
                 auto num = input.substr(bgn, end != std::string::npos ? end - bgn : end);
                 try {
-                    if constexpr(std::is_arithmetic_v<T>){
-                                            T value{};
-                    if(std::from_chars(num.data(), num.data() + num.size(), value).ec == std::errc{})
-                        return value;
-                    else
-                        return std::nullopt;
+                    if constexpr(std::is_arithmetic_v<T>) {
+                        T value{};
+                        if(std::from_chars(num.data(), num.data() + num.size(), value).ec == std::errc{})
+                            return value;
+                        else
+                            return std::nullopt;
                     }
-//                    if constexpr(std::is_same_v<T, unsigned>) return (T) std::abs(std::stoi(num.data()));
-//                    if constexpr(std::is_same_v<T, int>) return (T) std::stoi(num.data());
-//                    if constexpr(std::is_same_v<T, long>) return (T) std::stol(num.data());
-//                    if constexpr(std::is_same_v<T, size_t>) return (T) std::abs(std::stol(num.data()));
-//                    if constexpr(std::is_same_v<T, double>) return (T) std::stod(num.data());
+                    //                    if constexpr(std::is_same_v<T, unsigned>) return (T) std::abs(std::stoi(num.data()));
+                    //                    if constexpr(std::is_same_v<T, int>) return (T) std::stoi(num.data());
+                    //                    if constexpr(std::is_same_v<T, long>) return (T) std::stol(num.data());
+                    //                    if constexpr(std::is_same_v<T, size_t>) return (T) std::abs(std::stol(num.data()));
+                    //                    if constexpr(std::is_same_v<T, double>) return (T) std::stod(num.data());
                     if constexpr(std::is_same<T, std::string>::value) return num;
                 } catch(const std::exception &err) { std::printf("Failed to extract number from [%s]:%s", input.data(), err.what()); }
             }
