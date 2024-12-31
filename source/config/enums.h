@@ -47,20 +47,22 @@ enum class MergeEvent {
 };
 
 enum class BlockSizePolicy {
-    MIN       = 0,          /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
-    MAX       = 1,          /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
-    ICOM      = 2,          /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
-    ICOMPLUS1 = 4,          /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
-    SAT_ENT   = 8,          /*!< Set the block size when the entanglement entropy has saturated */
-    SAT_ICOM  = 16,         /*!< Set the block size when the information center of mass has saturated */
-    SAT_VAR   = 32,         /*!< Set the block size when the energy variance has saturated */
-    SAT_ALGO  = 64,         /*!< Set the block size when the algorithm status == saturated (implies all saturations) */
-    STK_ALGO  = 128,        /*!< Set the block size when the algorithm status == stuck ( */
-    FIN_BOND  = 256,        /*!< Require that the bond dimension has reached its final (maximum) value before increasing the block size */
-    FIN_TRNC  = 512,        /*!< Require that the truncation error has reached its final (minimum) value before increasing the block size   */
-    EXP       = 1024,       /*!< Use the enlarged blocksize during environment expansion  */
-    OPT       = 2048,       /*!< Use the enlarged blocksize during the optimization step */
-    DEFAULT   = ICOM | EXP, /*!< The default choice usually works well */
+    MIN       = 0,             /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    MAX       = 1,             /*!< Set the block size to dmrg_max_blocksize on special status (set by additional bitflags) */
+    ICOM      = 2,             /*!< Set the block size to the ceil of "information_center_of_mass" on special status (set by additional bitflags) */
+    ICOMPLUS1 = 4,             /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
+    ICOM150   = 8,             /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
+    ICOM200   = 16,            /*!< Set the block size to the ceil of "information_center_of_mass + 1" on special status (set by additional bitflags) */
+    SAT_ENT   = 32,            /*!< Set the block size when the entanglement entropy has saturated */
+    SAT_ICOM  = 64,            /*!< Set the block size when the information center of mass has saturated */
+    SAT_VAR   = 128,           /*!< Set the block size when the energy variance has saturated */
+    SAT_ALGO  = 256,           /*!< Set the block size when the algorithm status == saturated (implies all saturations) */
+    STK_ALGO  = 512,           /*!< Set the block size when the algorithm status == stuck ( */
+    FIN_BOND  = 1024,          /*!< Require that the bond dimension has reached its final (maximum) value before increasing the block size */
+    FIN_TRNC  = 2048,          /*!< Require that the truncation error has reached its final (minimum) value before increasing the block size   */
+    EXP       = 4096,          /*!< Use the enlarged blocksize during environment expansion  */
+    OPT       = 8192,          /*!< Use the enlarged blocksize during the optimization step */
+    DEFAULT   = ICOM150 | EXP, /*!< The default choice usually works well */
     allow_bitops
 };
 
@@ -510,6 +512,8 @@ std::string flag2str(const T &item) noexcept {
         if(has_flag(item, BlockSizePolicy::MAX)) v.emplace_back("MAX");
         if(has_flag(item, BlockSizePolicy::ICOM)) v.emplace_back("ICOM");
         if(has_flag(item, BlockSizePolicy::ICOMPLUS1)) v.emplace_back("ICOMPLUS1");
+        if(has_flag(item, BlockSizePolicy::ICOM150)) v.emplace_back("ICOM150");
+        if(has_flag(item, BlockSizePolicy::ICOM200)) v.emplace_back("ICOM200");
         if(has_flag(item, BlockSizePolicy::SAT_ENT)) v.emplace_back("SAT_ENT");
         if(has_flag(item, BlockSizePolicy::SAT_ICOM)) v.emplace_back("SAT_ICOM");
         if(has_flag(item, BlockSizePolicy::SAT_VAR)) v.emplace_back("SAT_VAR");
@@ -650,6 +654,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         case BlockSizePolicy::MAX :                              return "MAX";
         case BlockSizePolicy::ICOM :                             return "ICOM";
         case BlockSizePolicy::ICOMPLUS1 :                        return "ICOMPLUS1";
+        case BlockSizePolicy::ICOM150 :                          return "ICOM150";
+        case BlockSizePolicy::ICOM200 :                          return "ICOM200";
         case BlockSizePolicy::SAT_ENT :                          return "SAT_ENT";
         case BlockSizePolicy::SAT_ICOM :                         return "SAT_ICOM";
         case BlockSizePolicy::SAT_VAR :                          return "SAT_VAR";
@@ -1055,6 +1061,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("MAX")         != std::string_view::npos)  policy |= BlockSizePolicy::MAX;
         if(item.find("ICOM")        != std::string_view::npos)  policy |= BlockSizePolicy::ICOM;
         if(item.find("ICOMPLUS1")   != std::string_view::npos)  policy |= BlockSizePolicy::ICOMPLUS1;
+        if(item.find("ICOM150")     != std::string_view::npos)  policy |= BlockSizePolicy::ICOM150;
+        if(item.find("ICOM200")     != std::string_view::npos)  policy |= BlockSizePolicy::ICOM200;
         if(item.find("SAT_ENT")     != std::string_view::npos)  policy |= BlockSizePolicy::SAT_ENT;
         if(item.find("SAT_ICOM")    != std::string_view::npos)  policy |= BlockSizePolicy::SAT_ICOM;
         if(item.find("SAT_VAR")     != std::string_view::npos)  policy |= BlockSizePolicy::SAT_VAR;

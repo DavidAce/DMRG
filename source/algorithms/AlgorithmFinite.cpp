@@ -271,7 +271,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         if(m1.optAlgo == OptAlgo::GDMRG) {
             // GDMRG seems happy with higher tol
             // target_tol = std::sqrt(target_tol);
-            target_tol = std::max({target_tol, std::sqrt(settings::precision::eigs_tol_min) , 1e-8});
+            target_tol = std::max({target_tol, std::sqrt(settings::precision::eigs_tol_min), 1e-8});
         }
         target_tol  = std::clamp(target_tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
         m1.eigs_tol = target_tol;
@@ -782,16 +782,27 @@ void AlgorithmFinite::update_dmrg_blocksize() {
 
     bool has_icom      = has_flag(dmrg_blocksize_policy, BlockSizePolicy::ICOM);
     bool has_icomplus1 = has_flag(dmrg_blocksize_policy, BlockSizePolicy::ICOMPLUS1);
-    if((has_icom or has_icomplus1) and has_to_adjust) {
+    bool has_icom150   = has_flag(dmrg_blocksize_policy, BlockSizePolicy::ICOM150);
+    bool has_icom200   = has_flag(dmrg_blocksize_policy, BlockSizePolicy::ICOM200);
+    if((has_icom or has_icomplus1 or has_icom150 or has_icom200) and has_to_adjust) {
         /*! Update the number of sites used in dmrg updates.
          *  We try to match the blocksize to the "information center of mass", obtained from the information lattice.
          *  This should be a good blocksize to the correlations that exist in the state.
          */
-        auto   ip        = InfoPolicy{.bits_max_error = -0.5, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = std::max(status.trnc_lim, 1e-6)};
-        double icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
-        double blocksize = has_icomplus1 ? std::ceil(icom + 1) : std::ceil(icom);
-        dmrg_blocksize   = std::clamp<size_t>(static_cast<size_t>(blocksize), dmrg_min_blocksize, dmrg_max_blocksize);
-        tools::log->info("Set ICOM{} blocksize {} -> {}: icom = {:.3f}: {}", has_icomplus1 ? "+1" : "", old_bsize, dmrg_blocksize, icom,
+        auto        ip        = InfoPolicy{.bits_max_error = -0.5, .eig_max_size = 3200, .svd_max_size = 1024, .svd_trnc_lim = std::max(status.trnc_lim, 1e-6)};
+        double      icom      = tools::finite::measure::information_center_of_mass(*tensors.state, ip);
+        double      blocksize = std::max(1.0, icom);
+        std::string tag;
+        /* clang-format off */
+        if(has_icomplus1) {blocksize += 1;  tag = "+1";  }
+        if(has_icom150)   {blocksize *= 1.50;  tag = " x 1.5";  }
+        if(has_icom200)   {blocksize *= 2.00;  tag = " x 2.0";  }
+        /* clang-format on */
+
+        blocksize = std::ceil(blocksize);
+
+        dmrg_blocksize = std::clamp<size_t>(static_cast<size_t>(blocksize), dmrg_min_blocksize, dmrg_max_blocksize);
+        tools::log->info("Set ICOM{} blocksize {} -> {}: icom = {:.3f}: {}",tag, old_bsize, dmrg_blocksize, icom,
                          has_no_status ? "" : flag2str(reasons));
     } else {
         dmrg_blocksize = dmrg_min_blocksize;

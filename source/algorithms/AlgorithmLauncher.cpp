@@ -125,6 +125,8 @@ void AlgorithmLauncher::start_h5file() {
         h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::COLLISION_FAIL);
     }
     h5file->setCompressionLevel(settings::storage::compression_level);
+    if(h5file) h5file->writeDataset(false, "common/finished_all");
+
     // Put git metadata in file
     h5file->writeDataset(debug::datetime(), ".env/DMRG++/exec/datetime");
     h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
