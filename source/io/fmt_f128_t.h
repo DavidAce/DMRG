@@ -37,12 +37,9 @@ struct fmt::formatter<f128_t, Char> : fmt::formatter<f128_t::format_type, Char> 
         char prsnt = 'g';
         switch(specs_.type) {
                 /* clang-format off */
-            case fmt::presentation_type::exp_lower: {prsnt = 'e'; break  ;}
-            case fmt::presentation_type::exp_upper: {prsnt = 'E'; break  ;}
-            case fmt::presentation_type::fixed_lower: {prsnt = 'f'; break  ;}
-            case fmt::presentation_type::fixed_upper: {prsnt = 'F'; break  ;}
-            case fmt::presentation_type::general_lower: {prsnt = 'g'; break  ;}
-            case fmt::presentation_type::general_upper: {prsnt = 'G'; break  ;}
+            case fmt::presentation_type::exp: {prsnt = 'e'; break  ;}
+            case fmt::presentation_type::fixed: {prsnt = 'f'; break  ;}
+            case fmt::presentation_type::general: {prsnt = 'g'; break  ;}
             default: prsnt='g';
                 /* clang-format on */
         }

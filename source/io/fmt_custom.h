@@ -5,7 +5,7 @@
     #pragma message "{fmt} has been included as header-only library. This causes large compile-time overhead"
 #endif
 
-#if defined(FMT_CORE_H_) && !defined(FMT_USE_COMPLEX)
+#if (defined(FMT_FORMAT_H_) || defined(FMT_CORE_H_)) && !defined(FMT_USE_COMPLEX) && FMT_VERSION < 110000
     #define FMT_USE_COMPLEX 1
     #include <complex>
     #include <type_traits>
@@ -27,7 +27,7 @@ struct fmt::formatter<std::complex<T>, Char> : fmt::formatter<T, Char> {
 };
 
 #endif
-#if defined(FMT_CORE_H_) && !defined(FMT_USE_REFWRAP)
+#if (defined(FMT_FORMAT_H_) || defined(FMT_CORE_H_)) && !defined(FMT_USE_REFWRAP)
     #define FMT_USE_REFWRAP 1
     #include <type_traits>
 

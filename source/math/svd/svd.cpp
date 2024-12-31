@@ -1,6 +1,7 @@
 #include "math/svd.h"
 #include "tid/tid.h"
 #include <Eigen/QR>
+#include <fmt/ranges.h>
 
 #if defined(_OPENMP)
 
