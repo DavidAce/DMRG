@@ -18,7 +18,7 @@ namespace settings {
     inline constexpr bool verbose_lbit = false;
 }
 
-std::string format_mpo(const Eigen::Tensor<cplx_t, 4> &mpo, real_t J1_rand, const std::vector<real_t> &J2_rand, real_t J3_rand) {
+std::string format_mpo(const Eigen::Tensor<cx128, 4> &mpo, fp128 J1_rand, const std::vector<fp128> &J2_rand, fp128 J3_rand) {
     std::string str;
     using namespace qm::spin::half;
     auto ext = std::array<long, 4>{1, 1, 2, 2};
@@ -26,18 +26,18 @@ std::string format_mpo(const Eigen::Tensor<cplx_t, 4> &mpo, real_t J1_rand, cons
     for(long i = 0; i < mpo.dimension(0); i++) {
         for(long j = 0; j < mpo.dimension(1); j++) {
             auto                     off = std::array<long, 4>{i, j, 0, 0};
-            Eigen::Tensor<cplx_t, 2> mat = mpo.slice(off, ext).reshape(sh2);
-            if(tenx::MatrixMap(mat) == sz.cast<cplx_t>())
+            Eigen::Tensor<cx128, 2> mat = mpo.slice(off, ext).reshape(sh2);
+            if(tenx::MatrixMap(mat) == sz.cast<cx128>())
                 str.append("z   ");
-            else if(tenx::MatrixMap(mat) == id.cast<cplx_t>())
+            else if(tenx::MatrixMap(mat) == id.cast<cx128>())
                 str.append("i   ");
             else if(tenx::isZero(mat))
                 str.append("0   ");
             else {
-                if(tenx::MatrixMap(mat).isApprox(J1_rand * sz.cast<cplx_t>())) str.append(fmt::format("J1z "));
-                if(tenx::MatrixMap(mat).isApprox(J3_rand * sz.cast<cplx_t>())) str.append(fmt::format("J3z "));
+                if(tenx::MatrixMap(mat).isApprox(J1_rand * sz.cast<cx128>())) str.append(fmt::format("J1z "));
+                if(tenx::MatrixMap(mat).isApprox(J3_rand * sz.cast<cx128>())) str.append(fmt::format("J3z "));
                 for(const auto &[r, J2] : iter::enumerate(J2_rand)) {
-                    if(tenx::MatrixMap(mat).isApprox(J2 * sz.cast<cplx_t>())) str.append(fmt::format("J2{} ", r));
+                    if(tenx::MatrixMap(mat).isApprox(J2 * sz.cast<cx128>())) str.append(fmt::format("J2{} ", r));
                 }
             }
         }
@@ -107,9 +107,9 @@ LBit::TableMap LBit::get_parameters() const {
 
 std::any LBit::get_parameter(std::string_view name) const {
     /* clang-format off */
-    if     (name == "J1_rand")       return h5tb.param.J1_rand.to_floating_point<real_t>();
-    else if(name == "J2_rand")       return h5tb.param.J2_rand.to_floating_point<real_t>();
-    else if(name == "J3_rand")       return h5tb.param.J3_rand.to_floating_point<real_t>();
+    if     (name == "J1_rand")       return h5tb.param.J1_rand.to_floating_point<fp128>();
+    else if(name == "J2_rand")       return h5tb.param.J2_rand.to_floating_point<fp128>();
+    else if(name == "J3_rand")       return h5tb.param.J3_rand.to_floating_point<fp128>();
     else if(name == "J1_wdth")       return h5tb.param.J1_wdth;
     else if(name == "J2_wdth")       return h5tb.param.J2_wdth;
     else if(name == "J3_wdth")       return h5tb.param.J3_wdth;
@@ -229,21 +229,21 @@ void LBit::set_parameter(const std::string_view name, std::any value) {
             - M[F,F-1] = J3*n
 
   */
-Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cx128, 4> LBit::get_mpo_t(cx128 energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                          std::optional<std::vector<size_t>> skip) const {
     using namespace qm::spin::half;
     tools::log->debug("mpo({}): building lbit mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
 
-    //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<cplx_t, 2> Z   = tenx::TensorMap(sz).cast<cplx_t>();
-    Eigen::Tensor<cplx_t, 2> I   = tenx::TensorMap(id).cast<cplx_t>();
+    //    Eigen::Tensor<cx64, 2> n = tenx::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<cx128, 2> Z   = tenx::TensorMap(sz).cast<cx128>();
+    Eigen::Tensor<cx128, 2> I   = tenx::TensorMap(id).cast<cx128>();
     auto                     Rul = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
     long                     R   = safe_cast<long>(Rul);            // Range
     long                     F   = R + 2l;                          // Last index of mpo
 
-    Eigen::Tensor<cplx_t, 4> mpo_build_t;
+    Eigen::Tensor<cx128, 4> mpo_build_t;
     mpo_build_t.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_build_t.setZero();
 
@@ -255,13 +255,13 @@ Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::opti
         for(const auto &i : num::range<long>(2, R + 1)) { mpo_build_t.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
 
     mpo_build_t.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = Z;
-    mpo_build_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand.to_floating_point<real_t>() * Z - energy_shift_per_site * I;
+    mpo_build_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand.to_floating_point<fp128>() * Z - energy_shift_per_site * I;
 
     if(R >= 1)
         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.size())) {
-            mpo_build_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand.at(safe_cast<size_t>(i)).to_floating_point<real_t>() * Z;
+            mpo_build_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand.at(safe_cast<size_t>(i)).to_floating_point<fp128>() * Z;
         }
-    mpo_build_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<real_t>() * Z;
+    mpo_build_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<fp128>() * Z;
 
     if(tenx::hasNaN(mpo_build_t)) {
         print_parameter_names();
@@ -280,28 +280,28 @@ Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::opti
     //    if(nbody.value() == std::vector<size_t>{1, 2, 3}) return MPO_t();    // Everything is turned on
     size_t pos                        = get_position();
     auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
-    real_t J1_on                      = 0.0;
-    real_t J2_on                      = 0.0;
-    real_t J3_on                      = 0.0;
+    auto   J1_on                      = static_cast<fp128>(0.0);
+    auto   J2_on                      = static_cast<fp128>(0.0);
+    auto   J3_on                      = static_cast<fp128>(0.0);
     bool   adjust_for_double_counting = false;
     // Toggle on requested nbody terms
     for(const auto &n : nbody.value()) {
         if(n == 0) adjust_for_double_counting = true;
-        if(n == 1) J1_on = 1.0;
-        if(n == 2) J2_on = 1.0;
-        if(n == 3) J3_on = 1.0;
+        if(n == 1) J1_on = static_cast<fp128>(1.0);
+        if(n == 2) J2_on = static_cast<fp128>(1.0);
+        if(n == 3) J3_on = static_cast<fp128>(1.0);
     }
 
     // Decide whether to skip interactions. All the J2 values are taken later
-    auto J1_rand = h5tb.param.J1_rand.to_floating_point<real_t>();
-    auto J2_rand = h5tb.param.J2_rand.to_floating_point<real_t>();
-    auto J3_rand = h5tb.param.J3_rand.to_floating_point<real_t>();
+    auto J1_rand = h5tb.param.J1_rand.to_floating_point<fp128>();
+    auto J2_rand = h5tb.param.J2_rand.to_floating_point<fp128>();
+    auto J3_rand = h5tb.param.J3_rand.to_floating_point<fp128>();
     if(skip and not skip->empty()) {
         auto skip_this_pos = std::find(skip->begin(), skip->end(), get_position()) != skip->end();
         if(skip_this_pos) {
             // This site is skipped. No interactions should be contributed from here. Set all interactions to zero
-            J1_rand = 0.0;
-            J3_rand = 0.0;
+            J1_rand = static_cast<fp128>(0.0);
+            J3_rand = static_cast<fp128>(0.0);
             for(auto &J2r : J2_rand) J2r = 0;
         } else {
             // This site is not skipped, but we need to make sure not to interact with ones that are.
@@ -319,7 +319,7 @@ Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::opti
     using namespace qm::spin::half;
 
     for(const auto &r : J2_range) {
-        real_t J2_count = 1.0;
+        auto J2_count = static_cast<fp128>(1.0);
         if(r >= J2_rand.size()) break;
         if(adjust_for_double_counting) {
             // Calculate double counting compensation
@@ -348,19 +348,19 @@ Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::opti
             //      Since in this example, pos == 2, we should compute the counts for [2,3], [2,4] and [2,5] in this function.
             //      If r == 2 in this loop, we should compute [2,4]: 2, because this mpo contributes J[2,4] twice as seen above.
 
-            J2_count    = 0.0;     // For this particular r, for interaction from posL to posL+r
-            size_t posI = pos;     // "i" in the interaction J(i,j)
-            size_t posJ = pos + r; // "j" in the interaction J(i,j)
+            J2_count    = static_cast<fp128>(0.0); // For this particular r, for interaction from posL to posL+r
+            size_t posI = pos;                      // "i" in the interaction J(i,j)
+            size_t posJ = pos + r;                  // "j" in the interaction J(i,j)
             for(size_t posL = 0; posL < settings::model::model_size - 1ul; posL++) {
                 // posI and posJ are the left and right positions of a single 2-body interaction J(i,j).
                 // posL and posR are the left and right edges of the multisite mpo
                 size_t posR = posL + Rul;
                 if(posR >= settings::model::model_size) break;
-                if(posI >= posL and posJ <= posR) J2_count += 1.0; // Count if the interaction is in the multisite mpo
+                if(posI >= posL and posJ <= posR) J2_count += static_cast<fp128>(1.0); // Count if the interaction is in the multisite mpo
             }
-            J2_count = std::max(J2_count, static_cast<real_t>(1.0)); // Avoid dividing by zero!
+            J2_count = std::max(J2_count, static_cast<fp128>(1.0)); // Avoid dividing by zero!
         }
-        if(J2_count > 1.0) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", f128_t(J2_count), get_position());
+        if(J2_count > static_cast<fp128>(1.0)) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", f128_t(J2_count), get_position());
         J2_rand[r] /= J2_count;
     }
     mpo_build_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * Z - energy_shift_per_site * I);
@@ -378,10 +378,10 @@ Eigen::Tensor<cplx_t, 4> LBit::get_mpo_t(cplx_t energy_shift_per_site, std::opti
     return mpo_build_t;
 }
 
-Eigen::Tensor<cplx, 4> LBit::get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cx64, 4> LBit::get_mpo(cx64 energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                      [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     auto mpo_t = get_mpo_t(energy_shift_per_site, nbody, skip);
-    return mpo_t.unaryExpr([](auto z) { return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag())); });
+    return mpo_t.unaryExpr([](auto z) { return std::complex<fp64>(static_cast<fp64>(z.real()), static_cast<fp64>(z.imag())); });
 }
 
 // void LBit::build_mpo_t()
@@ -479,9 +479,9 @@ Eigen::Tensor<cplx, 4> LBit::get_mpo(cplx energy_shift_per_site, std::optional<s
 //     if(not all_mpo_parameters_have_been_set)
 //         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
 //
-//     //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
-//     Eigen::Tensor<cplx_t, 2> Z = tenx::TensorMap(sz).cast<cplx_t>();
-//     Eigen::Tensor<cplx_t, 2> I = tenx::TensorMap(id).cast<cplx_t>();
+//     //    Eigen::Tensor<cx64, 2> n = tenx::TensorCast(0.5 * (id + sz));
+//     Eigen::Tensor<cx128, 2> Z = tenx::TensorMap(sz).cast<cx128>();
+//     Eigen::Tensor<cx128, 2> I = tenx::TensorMap(id).cast<cx128>();
 //     long                     R = safe_cast<long>(settings::model::model_size - 1);
 //     long                     F = R + 2l;
 //     mpo_internal_t.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
@@ -495,14 +495,14 @@ Eigen::Tensor<cplx, 4> LBit::get_mpo(cplx energy_shift_per_site, std::optional<s
 //         for(const auto &i : num::range<long>(2, R + 1)) { mpo_internal_t.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
 //
 //     mpo_internal_t.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = Z;
-//     mpo_internal_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand.to_floating_point<real_t>() * Z - energy_shift_mpo * I;
+//     mpo_internal_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand.to_floating_point<fp128>() * Z - energy_shift_mpo * I;
 //
 //     if(R >= 1)
 //         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.size())) {
 //             mpo_internal_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
-//                 h5tb.param.J2_rand.at(safe_cast<size_t>(i)).to_floating_point<real_t>() * Z;
+//                 h5tb.param.J2_rand.at(safe_cast<size_t>(i)).to_floating_point<fp128>() * Z;
 //         }
-//     mpo_internal_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<real_t>() * Z;
+//     mpo_internal_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<fp128>() * Z;
 //
 //     if(tenx::hasNaN(mpo_internal_t)) {
 //         print_parameter_names();
@@ -528,7 +528,7 @@ void LBit::randomize_hamiltonian() {
     // even if J2_span is shorter than full range.
 
     using namespace settings::model::lbit;
-    auto expw  = std::vector<real_t>{}; // The exponentially decaying weights
+    auto expw  = std::vector<fp128>{}; // The exponentially decaying weights
     auto pos_i = get_position();
     for(size_t pos_j = pos_i; pos_j < settings::model::model_size; ++pos_j) {
         if(pos_j == pos_i) {
@@ -539,31 +539,31 @@ void LBit::randomize_hamiltonian() {
         }
     }
     tools::log->debug("Randomizing MPO({:2}): J1=N({:.3e},{:.3e}) | J2=N({:.3e},{:.3e})exp(-r/{}) | J3=N({:.3e},{:.3e})*{:.3e}", get_position(), J1_mean,
-                      J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, f128_t(expw.size() > 2 ? expw[2] : 0.0));
-    h5tb.param.J1_rand = rnd::random<real_t>(distribution, J1_mean, J1_wdth);
-    h5tb.param.J2_rand = rnd::random<real_t>(distribution, J2_mean, J2_wdth, expw);
-    h5tb.param.J3_rand = rnd::random<real_t>(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);
+                      J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, f128_t(expw.size() > 2 ? expw[2] : static_cast<fp128>(0.0)));
+    h5tb.param.J1_rand = rnd::random<fp128>(distribution, static_cast<fp128>(J1_mean), static_cast<fp128>(J1_wdth));
+    h5tb.param.J2_rand = rnd::random<fp128>(distribution, static_cast<fp128>(J2_mean), static_cast<fp128>(J2_wdth), expw);
+    h5tb.param.J3_rand = rnd::random<fp128>(distribution, static_cast<fp128>(J3_mean), static_cast<fp128>(J3_wdth)) * (expw.size() > 2 ? expw[2] : static_cast<fp128>(0.0));
 
     // Now we set J2_rand elements beyond J2_ctof to zero
     for(size_t r = 0; r < h5tb.param.J2_rand.size(); ++r) {
-        if(r > h5tb.param.J2_ctof) h5tb.param.J2_rand[r] = 0;
+        if(r > h5tb.param.J2_ctof) h5tb.param.J2_rand[r] = 0.0;
     }
 
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
 }
 
-// Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(energy_shift_mpo); }
+// Eigen::Tensor<cx64, 4> LBit::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(energy_shift_mpo); }
 //
-// Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view(double site_energy) const {
+// Eigen::Tensor<cx64, 4> LBit::MPO_energy_shifted_view(double site_energy) const {
 //     using namespace qm::spin::half;
 //     if(site_energy == 0) { return MPO(); }
-//     Eigen::Tensor<cplx, 4> temp                                        = MPO();
+//     Eigen::Tensor<cx64, 4> temp                                        = MPO();
 //     long                   row                                         = temp.dimension(0) - 1;
 //     long                   col                                         = 0;
-//     Eigen::Tensor<cplx, 2> Z                                           = tenx::TensorMap(sz);
-//     Eigen::Tensor<cplx, 2> I                                           = tenx::TensorMap(id);
-//     temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J1_rand.to_floating_point<real>()) * Z - site_energy *
+//     Eigen::Tensor<cx64, 2> Z                                           = tenx::TensorMap(sz);
+//     Eigen::Tensor<cx64, 2> I                                           = tenx::TensorMap(id);
+//     temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = static_cast<fp64>(h5tb.param.J1_rand.to_floating_point<fp64>()) * Z - site_energy *
 //     I; return temp;
 // }
 

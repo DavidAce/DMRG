@@ -39,7 +39,7 @@ namespace qm {
     [[nodiscard]] qm::Gate trace_idx(const qm::Gate & gate , const std::vector<long> & idx);
     [[nodiscard]] qm::Gate trace_pos(const qm::Gate & gate , const std::vector<size_t> & pos);
     [[nodiscard]] qm::Gate trace_pos(const qm::Gate & gate , size_t pos);
-    [[nodiscard]] cplx   trace(const qm::Gate & gate);
+    [[nodiscard]] cx64   trace(const qm::Gate & gate);
     template<auto N>
     [[nodiscard]] qm::Gate trace(const qm::Gate & gate , const std::array<Eigen::IndexPair<Eigen::Index>, N>  & idxpair);
 
@@ -50,14 +50,14 @@ namespace qm {
         template<typename scalar_t, typename alpha_t>
         Eigen::Tensor<scalar_t, 2> exp_internal(const Eigen::Tensor<scalar_t,2> & op_, alpha_t alpha) const;
         enum class Side {L, R};
-//        mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
-//        mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
-//        mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
-//        mutable std::optional<Eigen::Tensor<cplx,2>> trn = std::nullopt;
+//        mutable std::optional<std::vector<Eigen::Tensor<cx64,2>>> op_split;
+//        mutable std::optional<Eigen::Tensor<cx64,2>> cnj = std::nullopt;
+//        mutable std::optional<Eigen::Tensor<cx64,2>> adj = std::nullopt;
+//        mutable std::optional<Eigen::Tensor<cx64,2>> trn = std::nullopt;
 
         public:
-        Eigen::Tensor<cplx,2> op;
-        Eigen::Tensor<cplx_t,2> op_t;
+        Eigen::Tensor<cx64,2> op;
+        Eigen::Tensor<cx128,2> op_t;
         std::vector<size_t> pos;
         std::vector<long> dim;
         Gate() = default;
@@ -68,12 +68,12 @@ namespace qm {
             [[maybe_unused]] auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
             assert(pos.size() == dim.size());
             auto &threads = tenx::threads::get();
-            if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx_t>){
+            if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cx128>){
                 op.resize(tenx::array2{dim_prod, dim_prod});
-                op.device(*threads->dev) = op_.eval().unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
+                op.device(*threads->dev) = op_.eval().unaryExpr([](auto z){return std::complex<fp64>(static_cast<fp64>(z.real()), static_cast<fp64>(z.imag()));});
                 op_t.resize(tenx::array2{dim_prod, dim_prod});
-                op_t.device(*threads->dev) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
-            }else if (std::is_same_v<std::decay_t<typename T::Scalar>, cplx>){
+                op_t.device(*threads->dev) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<fp128>(z.real(), z.imag());}); // template .cast<cx128>();
+            }else if (std::is_same_v<std::decay_t<typename T::Scalar>, cx64>){
                 op.resize(tenx::array2{dim_prod, dim_prod});
                 op.device(*threads->dev) = op_.eval();
             }
@@ -82,18 +82,18 @@ namespace qm {
         Gate(const Eigen::EigenBase<T> & op_, std::vector<size_t> pos_, std::vector<long> dim_)
             : Gate(tenx::TensorCast(op_), std::move(pos_), std::move(dim_)) {}
 
-        explicit Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
-        explicit Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha);
-        explicit Gate(const Eigen::Tensor<cplx_t,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
-        explicit Gate(const Eigen::Tensor<cplx_t,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha);
+        explicit Gate(const Eigen::Tensor<cx64,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cx64 alpha);
+        explicit Gate(const Eigen::Tensor<cx64,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cx128 alpha);
+        explicit Gate(const Eigen::Tensor<cx128,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cx64 alpha);
+        explicit Gate(const Eigen::Tensor<cx128,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cx128 alpha);
 
-        [[nodiscard]] Gate exp(cplx alpha) const;
-        [[nodiscard]] Gate exp(cplx_t alpha) const;
+        [[nodiscard]] Gate exp(cx64 alpha) const;
+        [[nodiscard]] Gate exp(cx128 alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;
-        [[nodiscard]] Eigen::Tensor<cplx,2> conjugate() const;
-        [[nodiscard]] Eigen::Tensor<cplx,2> transpose() const;
-        [[nodiscard]] Eigen::Tensor<cplx,2> adjoint() const;
-        [[nodiscard]] Eigen::Tensor<cplx,2> unaryOp(GateOp unop) const;
+        [[nodiscard]] Eigen::Tensor<cx64,2> conjugate() const;
+        [[nodiscard]] Eigen::Tensor<cx64,2> transpose() const;
+        [[nodiscard]] Eigen::Tensor<cx64,2> adjoint() const;
+        [[nodiscard]] Eigen::Tensor<cx64,2> unaryOp(GateOp unop) const;
         [[nodiscard]] Gate insert(const Gate & other) const;
         [[nodiscard]] Gate connect_above(const Gate & other) const;
         [[nodiscard]] Gate connect_below(const Gate & other) const;
@@ -102,7 +102,7 @@ namespace qm {
         [[nodiscard]] Gate trace_idx(const std::vector<long> & idx_) const;
         [[nodiscard]] Gate trace_pos(const std::vector<size_t> & pos_) const;
         [[nodiscard]] Gate trace_pos(size_t pos_) const;
-        [[nodiscard]] cplx trace() const;
+        [[nodiscard]] cx64 trace() const;
         template<auto rank, Side s = Side::R>
         [[nodiscard]] std::array<long,rank> shape() const;
         template<auto rank>
@@ -138,8 +138,8 @@ namespace qm {
         public:
         std::deque<Swap>       swaps;
         std::deque<Rwap>       rwaps; // swaps sequence and reverse swap sequence
-        [[nodiscard]] SwapGate exp(cplx alpha) const;
-        [[nodiscard]] SwapGate exp(cplx_t alpha) const;
+        [[nodiscard]] SwapGate exp(cx64 alpha) const;
+        [[nodiscard]] SwapGate exp(cx128 alpha) const;
         void                   generate_swap_sequences();
         size_t                 cancel_swaps(std::deque<Rwap> &other_rwaps);
         size_t                 cancel_rwaps(std::deque<Swap> &other_swaps);
@@ -147,13 +147,13 @@ namespace qm {
 
     class MpoGate : public Gate {
         protected:
-        std::vector<Eigen::Tensor<cplx, 4>> ops;
+        std::vector<Eigen::Tensor<cx64, 4>> ops;
 
         public:
         [[nodiscard]] MpoGate                insert(const MpoGate &other) const;
         [[nodiscard]] MpoGate                insert(const Gate &other) const;
-        [[nodiscard]] Eigen::Tensor<cplx, 4> get_op();
-        [[nodiscard]] Eigen::Tensor<cplx, 4> get_op(const std::vector<size_t> &pos);
+        [[nodiscard]] Eigen::Tensor<cx64, 4> get_op();
+        [[nodiscard]] Eigen::Tensor<cx64, 4> get_op(const std::vector<size_t> &pos);
         [[nodiscard]] Gate                   split() const; /*!< Split into individual sites with svd */
     };
 }

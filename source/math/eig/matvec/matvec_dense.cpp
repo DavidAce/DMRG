@@ -63,8 +63,8 @@ void MatVecDense<Scalar>::FactorOP()
     if(readyFactorOp) return; // happens only once
     if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
     Eigen::Map<const MatrixType<Scalar>> A_matrix(A_ptr, L, L);
-    if constexpr(std::is_same_v<Scalar, real>) { dense_lu::lu_real.value().compute(A_matrix); }
-    if constexpr(std::is_same_v<Scalar, cplx>) { dense_lu::lu_cplx.value().compute(A_matrix); }
+    if constexpr(std::is_same_v<Scalar, fp64>) { dense_lu::lu_real.value().compute(A_matrix); }
+    if constexpr(std::is_same_v<Scalar, cx64>) { dense_lu::lu_cplx.value().compute(A_matrix); }
     readyFactorOp = true;
 }
 
@@ -231,8 +231,8 @@ void MatVecDense<Scalar>::set_shift(std::complex<double> sigma_) {
         A_ptr = A_stl.data();
     }
     Eigen::Map<MatrixType<Scalar>> A_matrix(A_stl.data(), L, L);
-    if constexpr(std::is_same_v<Scalar, real>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
-    if constexpr(std::is_same_v<Scalar, cplx>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * sigma;
+    if constexpr(std::is_same_v<Scalar, fp64>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
+    if constexpr(std::is_same_v<Scalar, cx64>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * sigma;
     readyShift = true;
 }
 
@@ -254,9 +254,9 @@ eig::Side MatVecDense<Scalar>::get_side() const {
 }
 template<typename Scalar>
 eig::Type MatVecDense<Scalar>::get_type() const {
-    if constexpr(std::is_same_v<Scalar, real>)
+    if constexpr(std::is_same_v<Scalar, fp64>)
         return eig::Type::REAL;
-    else if constexpr(std::is_same_v<Scalar, cplx>)
+    else if constexpr(std::is_same_v<Scalar, cx64>)
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");

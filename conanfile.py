@@ -25,29 +25,49 @@ class DMRGConan(ConanFile):
     exports_sources = "include/*"
     options = {
         "with_zlib" : [True, False],
-        "with_quadmath": [True, False]
+        "with_quadmath": [True, False],
+        "with_float128": [True, False]
     }
     default_options = {
         "with_zlib" : True,
-        "with_quadmath": True
+        "with_quadmath": True,
+        "with_float128": False
     }
 
     @property
     def _compilers_minimum_version(self):
         return {
-            "gcc": "7.4",
+            "gcc": "12",
             "Visual Studio": "15.7",
-            "clang": "6",
+            "clang": "16",
             "apple-clang": "10",
         }
 
-    def config_options(self):
-        if self.settings.compiler != "gcc" and self.options.with_quadmath:
-            self.output.warning("Quadmath disabled (requires a GCC compiler)")
-            self.options.with_quadmath = False
 
-        self.options["hdf5"].with_zlib = self.options.with_zlib
-        self.options["h5pp"].with_quadmath = self.options.with_quadmath
+
+    def validate(self):
+        if self.settings.compiler.get_safe("cppstd"):
+            check_min_cppstd(self, 23)
+        minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
+        if minimum_version:
+            if Version(self.settings.compiler.version) < minimum_version:
+                raise ConanInvalidConfiguration("DMRG++ requires C++23, which your compiler does not support.")
+        else:
+            self.output.warning("DMRG++ requires C++23. Your compiler is unknown. Assuming it supports C++23.")
+
+
+    def config_options(self):
+        if self.settings.compiler != "gcc":
+            self.options.rm_safe('with_quadmath')
+
+        self.options["hdf5"].with_zlib = self.options.get_safe('with_zlib')
+
+        if self.options.get_safe('with_quadmath'):
+            self.options["h5pp"].with_quadmath = self.options.with_quadmath
+
+        if self.options.get_safe('with_float128'):
+            self.options["h5pp"].with_float128 = self.options.with_float128
+
         self.options["ceres-solver"].use_glog = True
         self.options["ceres-solver"].use_CXX11_threads = True
         self.options["ceres-solver"].use_eigen_sparse = False
@@ -70,17 +90,6 @@ class DMRGConan(ConanFile):
         self.requires("pcg-cpp/cci.20220409")
         self.requires("tomlplusplus/3.4.0")
 
-
-
-    def validate(self):
-        if self.settings.compiler.get_safe("cppstd"):
-            check_min_cppstd(self, 17)
-        minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
-        if minimum_version:
-            if Version(self.settings.compiler.version) < minimum_version:
-                raise ConanInvalidConfiguration("DMRG++ requires C++17, which your compiler does not support.")
-        else:
-            self.output.warning("DMRG++ requires C++17. Your compiler is unknown. Assuming it supports C++17.")
 
 
 ### NOTE October 4, 2020 ####

@@ -24,22 +24,22 @@ namespace eig {
         void subtract_phase(std::vector<Scalar> &eigvecs, size_type L, int nev);
 
         // Functions for full diagonalization of explicit matrix
-        int dsyevd(real *matrix, size_type L);
-        int dsyevr(real *matrix, size_type L, char range, int il, int iu, double vl, double vu);
-        int dsyevx(real *matrix, size_type L, char range, int il, int iu, double vl, double vu);
-        int zheev(cplx *matrix, size_type L);
-        int zheevd(cplx *matrix, size_type L);
-        int zheevr(cplx *matrix, size_type L, char range, int il, int iu, double vl, double vu);
-        int dgeev(real *matrix, size_type L);
-        int zgeev(cplx *matrix, size_type L);
+        int dsyevd(fp64 *matrix, size_type L);
+        int dsyevr(fp64 *matrix, size_type L, char range, int il, int iu, double vl, double vu);
+        int dsyevx(fp64 *matrix, size_type L, char range, int il, int iu, double vl, double vu);
+        int zheev(cx64 *matrix, size_type L);
+        int zheevd(cx64 *matrix, size_type L);
+        int zheevr(cx64 *matrix, size_type L, char range, int il, int iu, double vl, double vu);
+        int dgeev(fp64 *matrix, size_type L);
+        int zgeev(cx64 *matrix, size_type L);
 
-        int dsygvd(real *matrixA, real *matrixB, size_type L);
-        int dsygvx(real *matrixA, real *matrixB, size_type L, char range, int il, int iu, double vl, double vu);
-        int zhegv(cplx *matrixA, cplx *matrixB, size_type L);
-        int zhegvd(cplx *matrixA, cplx *matrixB, size_type L);
-        int zhegvx(cplx *matrixA, cplx *matrixB, size_type L, char range, int il, int iu, double vl, double vu);
-        int dggev(real *matrixA, real *matrixB, size_type L);
-        int zggev(cplx *matrixA, cplx *matrixB, size_type L);
+        int dsygvd(fp64 *matrixA, fp64 *matrixB, size_type L);
+        int dsygvx(fp64 *matrixA, fp64 *matrixB, size_type L, char range, int il, int iu, double vl, double vu);
+        int zhegv(cx64 *matrixA, cx64 *matrixB, size_type L);
+        int zhegvd(cx64 *matrixA, cx64 *matrixB, size_type L);
+        int zhegvx(cx64 *matrixA, cx64 *matrixB, size_type L, char range, int il, int iu, double vl, double vu);
+        int dggev(fp64 *matrixA, fp64 *matrixB, size_type L);
+        int zggev(cx64 *matrixA, cx64 *matrixB, size_type L);
 
         void eig_init(Form form, Type type, Vecs compute_eigvecs, Dephase remove_phase_);
         template<Form form = Form::SYMM, typename Scalar>
@@ -58,7 +58,7 @@ namespace eig {
         // Functions for few eigensolutions
         template<typename Scalar>
         void eigs_init(size_type L, int nev, int ncv, Ritz ritz = Ritz::LM, Form form = Form::SYMM, Type type = Type::REAL, Side side = Side::R,
-                       std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Storage storage = Storage::DENSE, Vecs compute_eigvecs_ = Vecs::OFF,
+                       std::optional<cx64> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Storage storage = Storage::DENSE, Vecs compute_eigvecs_ = Vecs::OFF,
                        Dephase remove_phase_ = Dephase::OFF, Scalar *residual = nullptr, Lib lib = Lib::ARPACK);
 
         template<typename MatrixProductType>
@@ -66,12 +66,12 @@ namespace eig {
 
         template<typename Scalar, Storage storage = Storage::DENSE>
         void eigs(const Scalar *matrix, size_type L, int nev, int ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
-                  std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
+                  std::optional<cx64> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   Scalar *residual = nullptr);
 
         template<typename MatrixProductType>
         void eigs(MatrixProductType &matrix, int nev, int ncv, Ritz ritz = Ritz::SR, Form form = Form::SYMM, Side side = Side::R,
-                  std::optional<cplx> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
+                  std::optional<cx64> sigma = std::nullopt, Shinv shinv = Shinv::OFF, Vecs vecs = Vecs::ON, Dephase remove_phase = Dephase::OFF,
                   typename MatrixProductType::Scalar *residual = nullptr);
 
         template<typename MatrixProductType>

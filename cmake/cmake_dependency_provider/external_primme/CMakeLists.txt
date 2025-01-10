@@ -7,7 +7,7 @@ endif()
 include(ExternalProject)
 
 set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g ${CMAKE_CXX_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
-set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g ${CMAKE_C_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
+set(cxxflags "-O3 -DNDEBUG -std=c++23 -fPIC -g ${CMAKE_C_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
 
 if(BUILD_SHARED_LIBS)
     set(type solib)

@@ -10,7 +10,8 @@ include(cmake/Deprecation.cmake) # Warn if user passes deprecated settings
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 # Set options for this build
-option(DMRG_USE_QUADMATH "Use __float128 instead of long double for fLBIT time evolution" FALSE)
+option(DMRG_USE_QUADMATH "Use __float128 from quadmath.h for fLBIT time evolution" FALSE)
+option(DMRG_USE_FLOAT128 "Use std::float128_t for fLBIT time evolution" FALSE)
 option(DMRG_ENABLE_TBLIS "Use TBLIS for real-valued tensor contractions instead of Eigen3" FALSE)
 option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" FALSE)
 option(DMRG_BUILD_EXAMPLES "Build examples" FALSE)

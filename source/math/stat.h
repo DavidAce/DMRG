@@ -72,7 +72,7 @@ namespace stat {
         offset = std::clamp<size_t>(offset.value(), 0ul, X.size()-1);
         extent = extent.value_or(X.size()-offset.value());
         extent = std::clamp<size_t>(extent.value(), 0ul, X.size()-offset.value());
-        auto x = std::span<typename ContainerType::value_type>(X.begin()+offset.value(), extent.value());
+        auto x = std::span<typename ContainerType::value_type>(X.begin()+static_cast<std::ptrdiff_t>(offset.value()), extent.value());
         auto n  = static_cast<size_t>(x.size());
         if(n == 0) return std::numeric_limits<typename ContainerType::value_type>::quiet_NaN();
         std::sort(x.begin(), x.end());

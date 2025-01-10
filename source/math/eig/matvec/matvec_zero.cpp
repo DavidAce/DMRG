@@ -40,7 +40,7 @@ MatVecZero<T>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite
     auto &mpo = mpos_.front().get();
     if(!mps.isCenter()) throw except::runtime_error("MatVecZero: mps at pos {} must be a center matrix. Got {}", mps.get_position<long>(), mps.get_label());
     // Contract the bare mps and mpo into the environment
-    if constexpr(std::is_same_v<T, cplx>) {
+    if constexpr(std::is_same_v<T, cx64>) {
         envR = envs_.R.get_block();
         if constexpr(std::is_same_v<EnvType, EnvEne>) {
             envL = envs_.L.get_block()
@@ -84,13 +84,13 @@ MatVecZero<T>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite
     t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
-template MatVecZero<cplx>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
+template MatVecZero<cx64>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
                                       const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
-template MatVecZero<real>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
+template MatVecZero<fp64>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
                                       const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
-template MatVecZero<cplx>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
+template MatVecZero<cx64>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
                                       const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &envs_);
-template MatVecZero<real>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
+template MatVecZero<fp64>::MatVecZero(const std::vector<std::reference_wrapper<const MpsSite>> &mpss_,
                                       const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &envs_);
 
 template<typename T>
@@ -182,7 +182,7 @@ void MatVecZero<T>::set_shift(std::complex<double> shift) {
         std::array<long, 2> extent2{spindim, spindim};
         auto                id = tenx::TensorIdentity<T>(spindim);
         // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*shift]
-        if constexpr(std::is_same_v<T, real>)
+        if constexpr(std::is_same_v<T, fp64>)
             mpo.slice(offset4, extent4).reshape(extent2) += id * std::real(sigma_per_mpo - shift_per_mpo);
         else
             mpo.slice(offset4, extent4).reshape(extent2) += id * (sigma_per_mpo - shift_per_mpo);
@@ -208,7 +208,7 @@ void MatVecZero<T>::set_side(const eig::Side side_) {
 
 template<typename T>
 T MatVecZero<T>::get_shift() const {
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         return std::real(sigma);
     else
         return sigma;
@@ -224,9 +224,9 @@ eig::Side MatVecZero<T>::get_side() const {
 }
 template<typename T>
 eig::Type MatVecZero<T>::get_type() const {
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         return eig::Type::REAL;
-    else if constexpr(std::is_same_v<T, cplx>)
+    else if constexpr(std::is_same_v<T, cx64>)
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");

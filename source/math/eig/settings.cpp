@@ -22,7 +22,7 @@ void eig::settings::checkRitz()
     if(not ritz) throw except::runtime_error("Ritz has not been set");
     if(type == Type::CPLX or form == Form::NSYM) {
         if(ritz.value() == Ritz::LA or ritz.value() == Ritz::SA or ritz.value() == Ritz::BE) {
-            error_mesg.append("Invalid ritz for cplx or nonsym problem: ").append(RitzToString(ritz.value()));
+            error_mesg.append("Invalid ritz for cx64 or nonsym problem: ").append(RitzToString(ritz.value()));
             if(ritz.value() == Ritz::LA) error_mesg.append(" | Suggested ritz: LR");
             if(ritz.value() == Ritz::SA) error_mesg.append(" | Suggested ritz: SR");
             if(ritz.value() == Ritz::BE) error_mesg.append(" | Suggested ritz: LM");

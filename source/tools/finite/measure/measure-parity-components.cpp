@@ -14,7 +14,7 @@ namespace tools::finite::measure {
         //        auto t_spn                 = tid::tic_scope("spin", tid::level::highest);
         //        auto [mpo, L, R]           = qm::mpo::pauli_mpo(paulimatrix);
         //        auto                   mid = state.get_length<long>() / 2;
-        //        Eigen::Tensor<cplx, 3> temp;
+        //        Eigen::Tensor<cx64, 3> temp;
         //        tools::log->info("Labels: {}", state.get_labels());
         //        for(const auto &mps : state.mps_sites) {
         //            tools::common::contraction::contract_env_mps_mpo(temp, L, mps->get_M(), mpo);
@@ -43,6 +43,6 @@ namespace tools::finite::measure {
         //        solver.eig(L.data(), L.dimension(0));
         //        solver.config.tag = "zheevd";
         //        solver.eig<eig::Form::SYMM>(L.data(), L.dimension(0));
-        //        tools::log->info("Half spin product eigenvalues: \n{}\n", linalg::matrix::to_string(eig::view::get_eigvals<real>(solver.result), 16, 20));
+        //        tools::log->info("Half spin product eigenvalues: \n{}\n", linalg::matrix::to_string(eig::view::get_eigvals<fp64>(solver.result), 16, 20));
     }
 }

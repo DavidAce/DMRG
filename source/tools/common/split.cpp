@@ -106,13 +106,13 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
      *
      *
      */
-    if constexpr(std::is_same_v<Scalar, cplx>) {
+    if constexpr(std::is_same_v<Scalar, cx64>) {
         auto chiL = multisite_mps.dimension(1);
         auto chiR = multisite_mps.dimension(2);
         if(chiL * chiR > 512 * 512 and tenx::isReal(multisite_mps)) {
             auto t_real = tid::tic_scope("isReal", tid::level::highest);
             tools::log->debug("split_mps: converting to real: chiL({}) * chiR({}) > 512 * 512", chiL, chiR);
-            return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, svd_cfg);
+            return split_mps<fp64>(multisite_mps.real(), spin_dims, positions, center_position, svd_cfg);
         }
     }
 
@@ -272,7 +272,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &S_stash = mps_sites_As.back().get_S_stash();
         if(V_stash and S_stash) {
             auto V = Eigen::Tensor<Scalar, 3>();
-            if constexpr(std::is_same_v<Scalar, real>)
+            if constexpr(std::is_same_v<Scalar, fp64>)
                 V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data).real();
             else
                 V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data);
@@ -296,7 +296,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &S_stash = mps_sites_Bs.front().get_S_stash();
         if(U_stash and S_stash) {
             auto U = Eigen::Tensor<Scalar, 3>();
-            if constexpr(std::is_same_v<Scalar, real>)
+            if constexpr(std::is_same_v<Scalar, fp64>)
                 U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data).real();
             else
                 U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data);
@@ -341,9 +341,9 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     return mps_sites_As;
 }
 
-template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<real, 3> &multisite_mps, const std::vector<long> &spin_dims,
+template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<fp64, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                               const std::vector<size_t> &positions, long center_position, std::optional<svd::config> svd_cfg);
-template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<long> &spin_dims,
+template std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<cx64, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                               const std::vector<size_t> &positions, long center_position, std::optional<svd::config> svd_cfg);
 
 template<typename Scalar>
@@ -461,10 +461,10 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     return mps_sites;
 }
 
-template std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<real, 3> &multisite_mps, const std::vector<long> &spin_dims,
+template std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<fp64, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                                                 const std::vector<size_t> &positions, long center_position,
                                                                                 svd::config &svd_cfg);
-template std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<long> &spin_dims,
+template std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eigen::Tensor<cx64, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                                                 const std::vector<size_t> &positions, long center_position,
                                                                                 svd::config &svd_cfg);
 
@@ -583,9 +583,9 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     return mps_sites;
 }
 
-template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<real, 3> &multisite_mps, const std::vector<long> &spin_dims,
+template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<fp64, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                                                const std::vector<size_t> &positions, long center_position,
                                                                                svd::config &svd_cfg);
-template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<long> &spin_dims,
+template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<cx64, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                                                const std::vector<size_t> &positions, long center_position,
                                                                                svd::config &svd_cfg);

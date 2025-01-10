@@ -69,7 +69,7 @@ void idmrg::update_state() {
      * \fn void single_DMRG_step()
      */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(status.opt_ritz));
-    Eigen::Tensor<cplx, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, status.opt_ritz);
+    Eigen::Tensor<cx64, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, status.opt_ritz);
     tensors.merge_twosite_tensor(twosite_tensor, MergeEvent::OPT, svd::config(status.bond_lim, status.trnc_lim));
 }
 

@@ -27,13 +27,13 @@ bool qm::Swap::operator==(const Rwap &rwap) const { return posL == rwap.posL and
 
 bool qm::Rwap::operator==(const Swap &swap) const { return posL == swap.posL and posR == swap.posR; }
 
-qm::SwapGate qm::SwapGate::exp(cplx alpha) const {
+qm::SwapGate qm::SwapGate::exp(cx64 alpha) const {
     if(op_t.size() != 0)
         return qm::SwapGate(op_t, pos, dim, alpha);
     else
         return qm::SwapGate(op, pos, dim, alpha);
 }
-qm::SwapGate qm::SwapGate::exp(cplx_t alpha) const {
+qm::SwapGate qm::SwapGate::exp(cx128 alpha) const {
     if(op_t.size() != 0)
         return qm::SwapGate(op_t, pos, dim, alpha);
     else

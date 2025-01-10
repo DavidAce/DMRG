@@ -23,13 +23,13 @@ MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block te
                         const Eigen::Tensor<S, 3> &envR_, /*!< The right block tensor.  */
                         const Eigen::Tensor<S, 4> &mpo_   /*!< The Hamiltonian MPO's  */
 ) {
-    static_assert(std::is_same_v<S, real> or std::is_same_v<S, cplx>);
+    static_assert(std::is_same_v<S, fp64> or std::is_same_v<S, cx64>);
 
     if constexpr(std::is_same_v<T, S>) {
         mpo  = mpo_;
         envL = envL_;
         envR = envR_;
-    } else if constexpr(std::is_same_v<T, real> and std::is_same_v<S, cplx>) {
+    } else if constexpr(std::is_same_v<T, fp64> and std::is_same_v<S, cx64>) {
         // This should only be done if we know for a fact that there is no imaginary component.
         if constexpr(eig::debug) {
             if(not tenx::isReal(mpo_)) throw except::runtime_error("mpo is not real");
@@ -39,10 +39,10 @@ MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block te
         mpo  = mpo_.real();
         envL = envL_.real();
         envR = envR_.real();
-    } else if constexpr(std::is_same_v<T, cplx> and std::is_same_v<S, real>) {
-        mpo  = mpo_.template cast<cplx>();
-        envL = envL_.template cast<cplx>();
-        envR = envR_.template cast<cplx>();
+    } else if constexpr(std::is_same_v<T, cx64> and std::is_same_v<S, fp64>) {
+        mpo  = mpo_.template cast<cx64>();
+        envL = envL_.template cast<cx64>();
+        envR = envR_.template cast<cx64>();
     }
 
     shape_mps  = {mpo.dimension(2), envL.dimension(0), envR.dimension(0)};
@@ -54,10 +54,10 @@ MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block te
     t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
-template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_, const Eigen::Tensor<real, 4> &mpo_);
-template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_, const Eigen::Tensor<real, 4> &mpo_);
-template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const Eigen::Tensor<cplx, 3> &envR_, const Eigen::Tensor<cplx, 4> &mpo_);
-template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const Eigen::Tensor<cplx, 3> &envR_, const Eigen::Tensor<cplx, 4> &mpo_);
+template MatVecMPO<cx64>::MatVecMPO(const Eigen::Tensor<fp64, 3> &envL_, const Eigen::Tensor<fp64, 3> &envR_, const Eigen::Tensor<fp64, 4> &mpo_);
+template MatVecMPO<fp64>::MatVecMPO(const Eigen::Tensor<fp64, 3> &envL_, const Eigen::Tensor<fp64, 3> &envR_, const Eigen::Tensor<fp64, 4> &mpo_);
+template MatVecMPO<cx64>::MatVecMPO(const Eigen::Tensor<cx64, 3> &envL_, const Eigen::Tensor<cx64, 3> &envR_, const Eigen::Tensor<cx64, 4> &mpo_);
+template MatVecMPO<fp64>::MatVecMPO(const Eigen::Tensor<cx64, 3> &envL_, const Eigen::Tensor<cx64, 3> &envR_, const Eigen::Tensor<cx64, 4> &mpo_);
 
 template<typename T>
 int MatVecMPO<T>::rows() const {
@@ -231,7 +231,7 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     std::array<long, 2> extent2{spindim, spindim};
     auto                id = tenx::TensorIdentity<T>(spindim);
     // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*shift]
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         mpo.slice(offset4, extent4).reshape(extent2) += id * std::real(sigma - shift);
     else
         mpo.slice(offset4, extent4).reshape(extent2) += id * (sigma - shift);
@@ -252,7 +252,7 @@ void MatVecMPO<T>::set_side(const eig::Side side_) {
 
 template<typename T>
 T MatVecMPO<T>::get_shift() const {
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         return std::real(sigma);
     else
         return sigma;
@@ -268,9 +268,9 @@ eig::Side MatVecMPO<T>::get_side() const {
 }
 template<typename T>
 eig::Type MatVecMPO<T>::get_type() const {
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         return eig::Type::REAL;
-    else if constexpr(std::is_same_v<T, cplx>)
+    else if constexpr(std::is_same_v<T, cx64>)
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");

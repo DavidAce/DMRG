@@ -23,11 +23,11 @@
 
 using namespace eig;
 
-int eig::solver::zheevr(cplx *matrix /*!< gets destroyed */, size_type L, char range, int il, int iu, double vl, double vu) {
+int eig::solver::zheevr(cx64 *matrix /*!< gets destroyed */, size_type L, char range, int il, int iu, double vl, double vu) {
     eig::log->trace("Starting eig zheevr | range {} | i [{},{}] | v [{},{}]", range, il, iu, vl, vu);
     auto t_start = std::chrono::high_resolution_clock::now();
 
-    //    auto A    = std::vector<cplx>(matrix, matrix + L * L);
+    //    auto A    = std::vector<cx64>(matrix, matrix + L * L);
     char jobz  = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     int  info  = 0;
     int  n     = safe_cast<int>(L);
@@ -38,8 +38,8 @@ int eig::solver::zheevr(cplx *matrix /*!< gets destroyed */, size_type L, char r
     m_req = std::clamp(m_req, 1, std::min(m_req, n));
 
     int              m_found = 0;
-    cplx             lwork_query[1];
-    real             rwork_query[1];
+    cx64             lwork_query[1];
+    fp64             rwork_query[1];
     int              iwork_query[1];
     std::vector<int> isuppz(static_cast<size_t>(2 * m_req));
     std::vector<int> ifail(static_cast<unsigned long>(L));
@@ -63,7 +63,7 @@ int eig::solver::zheevr(cplx *matrix /*!< gets destroyed */, size_type L, char r
     eig::log->trace(" lwork  = {}", lwork);
     eig::log->trace(" lrwork = {}", lrwork);
     eig::log->trace(" liwork = {}", liwork);
-    std::vector<cplx>   work(static_cast<size_t>(lwork));
+    std::vector<cx64>   work(static_cast<size_t>(lwork));
     std::vector<double> rwork(static_cast<size_t>(lrwork));
     std::vector<int>    iwork(static_cast<size_t>(liwork));
     auto                t_prep = std::chrono::high_resolution_clock::now();

@@ -16,7 +16,7 @@ namespace spdlog {
 
 class AlgorithmBase {
     public:
-    using cplx      = std::complex<double>;
+    using cx64      = std::complex<double>;
     AlgorithmBase() = default;
     AlgorithmBase(OptRitz opt_ritz_, AlgorithmType algo_type_);
     AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, OptRitz opt_ritz_, AlgorithmType algo_type_);

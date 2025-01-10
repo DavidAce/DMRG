@@ -157,7 +157,7 @@ std::string getLogMessage(struct primme_params *primme, [[maybe_unused]] int *ba
                 return static_cast<double *>(basisEvals)[idx - *numLocked];
         }
         if(basisValid) { return static_cast<double *>(basisEvals)[idx]; }
-        auto eigvmap = Eigen::Map<const Eigen::VectorXd>(eigvals.data(), eigvals.size());
+        auto eigvmap = Eigen::Map<const Eigen::VectorXd>(eigvals.data(), safe_cast<long>(eigvals.size()));
         if(solver.config.shift_invert == eig::Shinv::ON) {
             if(idx < eigvmap.size()) return 1.0 / (eigvmap[idx]) + std::real(solver.config.sigma.value_or(0.0));
             return 0.0;
@@ -442,14 +442,14 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     /* Call primme  */
     /* clang-format off */
     int info = 0;
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         try {
             auto t_dprimme = tid::tic_scope("dprimme");
             info = dprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
         } catch(const std::exception &ex) { eig::log->error("dprimme has exited with error: info {} | msg: {}", info, ex.what()); } catch(...) {
             eig::log->error("dprimme has exited with error: info {}", info);
         }
-    } else if constexpr(std::is_same_v<typename MatrixProductType::Scalar, cplx>) {
+    } else if constexpr(std::is_same_v<typename MatrixProductType::Scalar, cx64>) {
         try {
             auto t_zprimme = tid::tic_scope("zprimme");
             info = zprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
@@ -516,13 +516,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     return info;
 }
 
-template int eig::solver::eigs_primme(MatVecMPO<real> &matrix);
-template int eig::solver::eigs_primme(MatVecMPO<cplx> &matrix);
-template int eig::solver::eigs_primme(MatVecMPOS<real> &matrix);
-template int eig::solver::eigs_primme(MatVecMPOS<cplx> &matrix);
-template int eig::solver::eigs_primme(MatVecZero<real> &matrix);
-template int eig::solver::eigs_primme(MatVecZero<cplx> &matrix);
-template int eig::solver::eigs_primme(MatVecDense<real> &matrix);
-template int eig::solver::eigs_primme(MatVecDense<cplx> &matrix);
-template int eig::solver::eigs_primme(MatVecSparse<real> &matrix);
-template int eig::solver::eigs_primme(MatVecSparse<cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<fp64> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<cx64> &matrix);
+template int eig::solver::eigs_primme(MatVecMPOS<fp64> &matrix);
+template int eig::solver::eigs_primme(MatVecMPOS<cx64> &matrix);
+template int eig::solver::eigs_primme(MatVecZero<fp64> &matrix);
+template int eig::solver::eigs_primme(MatVecZero<cx64> &matrix);
+template int eig::solver::eigs_primme(MatVecDense<fp64> &matrix);
+template int eig::solver::eigs_primme(MatVecDense<cx64> &matrix);
+template int eig::solver::eigs_primme(MatVecSparse<fp64> &matrix);
+template int eig::solver::eigs_primme(MatVecSparse<cx64> &matrix);

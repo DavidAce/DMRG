@@ -13,7 +13,7 @@ size_t tools::infinite::measure::length(const EdgesInfinite &edges) { return edg
 
 double tools::infinite::measure::norm(const StateInfinite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    cplx norm = tools::common::contraction::contract_mps_norm(state.get_2site_mps());
+    cx64 norm = tools::common::contraction::contract_mps_norm(state.get_2site_mps());
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("norm: far from unity: {:.16f}{:+.16f}i", norm.real(), norm.imag());
     state.measurements.norm = std::abs(norm);
     return state.measurements.norm.value();

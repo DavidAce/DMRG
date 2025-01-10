@@ -307,7 +307,8 @@ namespace tools::finite::h5 {
         auto attrs      = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(attrs == sinfo) return;
         auto information_center_of_mass = tools::finite::measure::information_center_of_mass(state);
-        tools::log->info("information_center_of_mass: {:.16f} | t = {:.3e}", information_center_of_mass, state.measurements.see_time);
+        tools::log->info("information_center_of_mass: {:.16f} | t = {:.3e}", information_center_of_mass,
+                         state.measurements.see_time.has_value() ? state.measurements.see_time.value() : std::numeric_limits<double>::quiet_NaN());
         save::data_as_table(h5file, sinfo, information_center_of_mass, "information_center_of_mass", "Information center of mass", "scale");
         if(state.measurements.see_time.has_value()) h5file.writeAttribute(state.measurements.see_time.value(), table_path, "time_see");
     }
@@ -370,15 +371,15 @@ namespace tools::finite::h5 {
     void save::bonds(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::table::bonds::policy)) return;
         auto t_hdf = tid::tic_scope("bonds", tid::level::higher);
-        // Transform from cplx to real to save space
-        auto        h5real      = h5pp::type::getH5Type<real>();
-        auto        bonds_real  = std::vector<h5pp::varr_t<real>>();
+        // Transform from cx64 to real to save space
+        auto        h5real      = h5pp::type::getH5Type<fp64>();
+        auto        bonds_real  = std::vector<h5pp::varr_t<fp64>>();
         std::string column_name = "L_";
         std::string table_title = "Bonds (singular values)";
         bonds_real.reserve(state.get_length<size_t>() + 1);
         for(const auto &mps : state.mps_sites) {
-            bonds_real.emplace_back(Eigen::Tensor<real, 1>(mps->get_L().real()));
-            if(mps->isCenter()) { bonds_real.emplace_back(Eigen::Tensor<real, 1>(mps->get_LC().real())); }
+            bonds_real.emplace_back(Eigen::Tensor<fp64, 1>(mps->get_L().real()));
+            if(mps->isCenter()) { bonds_real.emplace_back(Eigen::Tensor<fp64, 1>(mps->get_LC().real())); }
         }
         data_as_table_vla(h5file, sinfo, bonds_real, h5real, "bonds", table_title, column_name);
     }
@@ -472,15 +473,15 @@ namespace tools::finite::h5 {
         h5file.writeDataset(data, data_path, layout);
         tools::common::h5::save::set_save_attrs(h5file, data_path, sinfo);
     }
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 3> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<fp64, 3> &data, std::string_view data_name,
                              std::string_view prefix);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cx64, 2> &data, std::string_view data_name,
                              std::string_view prefix);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 2> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<fp64, 2> &data, std::string_view data_name,
                              std::string_view prefix);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 1> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cx64, 1> &data, std::string_view data_name,
                              std::string_view prefix);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<fp64, 1> &data, std::string_view data_name,
                              std::string_view prefix);
     template<typename T>
     void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, CopyPolicy copy_policy) {
@@ -503,13 +504,13 @@ namespace tools::finite::h5 {
         save::data(h5file, sinfo, data, data_name, prefix);
         tools::common::h5::tmp::copy_from_tmp(h5file, sinfo.iter, sinfo.step, sinfo.storage_event, copy_policy);
     }
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 3> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<fp64, 3> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 2> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cx64, 2> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<real, 1> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<fp64, 1> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
-    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cplx, 1> &data, std::string_view data_name,
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<cx64, 1> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
     void          save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, CopyPolicy copy_policy) {
         save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, copy_policy);

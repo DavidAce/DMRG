@@ -78,15 +78,15 @@ models.
 
 The following software is required to build the project:
 
-- C++17 compiler
-- CMake version >= 3.24 to use conan as a CMake Dependency Provider. Otherwise, 3.19 is sufficient.
+- C++20 compiler (tested with gcc-12 and up and clang-18)
+- CMake version >= 3.24 to use presets.
 
-In addition, conan version 1.59 or higher is recommended for dependency installation. 
+In addition, conan version 2 is recommended for dependency installation. 
 When using conan, you will need:
 
 `conan remote add conan-dmrg https://neumann.theophys.kth.se.org/artifactory/api/conan/conan-dmrg`
 
-to obtain arpack++ (see dependencies below).
+to obtain some custom dependencies such as h5pp (dev) and arpack++ (see dependencies below).
 
 ## Quick start
 

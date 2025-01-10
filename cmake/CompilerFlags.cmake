@@ -21,8 +21,8 @@ target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:RELWITHDEBINFO>,$<C
 target_compile_options(dmrg-flags INTERFACE
                        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4>
                        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Wconversion -Wunused -Wformat -Wdouble-promotion>)
-###  Enable c++17 support
-target_compile_features(dmrg-flags INTERFACE cxx_std_17)
+###  Enable c++23 support
+target_compile_features(dmrg-flags INTERFACE cxx_std_23)
 
 ###  Enable build profiling with ClangBuildAnalyzer
 if(COMPILER_PROFILE_BUILD)

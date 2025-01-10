@@ -52,16 +52,16 @@ void tools::finite::mps::init::set_midchain_singlet_neel_state(StateFinite &stat
     tools::log->debug("Setting Néel state of type {} on axis {} with a midchain singlet {}", enum2sv(type), axis,
                       pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
     move_center_point_to_middle(state);
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
-    Eigen::Tensor<cplx, 1> LC(2); // L for the singlet
+    Eigen::Tensor<cx64, 1> LC(2); // L for the singlet
     LC.setConstant(1.0 / std::sqrt(2));
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                      tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
-    Eigen::Tensor<cplx, 3>                singlet_a(2, 1, 2);
-    Eigen::Tensor<cplx, 3>                singlet_b(2, 2, 1);
+    Eigen::Tensor<cx64, 3>                singlet_a(2, 1, 2);
+    Eigen::Tensor<cx64, 3>                singlet_b(2, 2, 1);
     singlet_a.slice(std::array<long, 3>{0, 0, 0}, std::array<long, 3>{2, 1, 1}) = spinors[0];  // a_up
     singlet_a.slice(std::array<long, 3>{0, 0, 1}, std::array<long, 3>{2, 1, 1}) = spinors[1];  // a_down
     singlet_b.slice(std::array<long, 3>{0, 0, 0}, std::array<long, 3>{2, 1, 1}) = spinors[1];  // b_down
@@ -124,18 +124,18 @@ void tools::finite::mps::init::set_random_entangled_state_haar(StateFinite &stat
         auto  chiL = bond_dimensions[mps.get_position()];
         auto  chiR = bond_dimensions[mps.get_position() + 1];
 
-        Eigen::Tensor<cplx, 2> U;
-        Eigen::Tensor<cplx, 3> G(spin_dim, chiL, chiR);
+        Eigen::Tensor<cx64, 2> U;
+        Eigen::Tensor<cx64, 3> G(spin_dim, chiL, chiR);
         if(label == "A") {
-            if(type == StateInitType::REAL) U = get_random_unitary_matrix<real>(spin_dim * chiL, chiR).cast<cplx>();
-            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<cplx>(spin_dim * chiL, chiR);
+            if(type == StateInitType::REAL) U = get_random_unitary_matrix<fp64>(spin_dim * chiL, chiR).cast<cx64>();
+            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<cx64>(spin_dim * chiL, chiR);
             chiR     = U.dimension(1);
             auto rsh = std::array<long, 3>{spin_dim, chiL, chiR};
             G        = U.reshape(rsh);
         }
         if(label == "B") {
-            if(type == StateInitType::REAL) U = get_random_unitary_matrix<real>(spin_dim * chiR, chiL).cast<cplx>();
-            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<cplx>(spin_dim * chiR, chiL);
+            if(type == StateInitType::REAL) U = get_random_unitary_matrix<fp64>(spin_dim * chiR, chiL).cast<cx64>();
+            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<cx64>(spin_dim * chiR, chiL);
             chiL     = U.dimension(1);
             auto rsh = std::array<long, 3>{spin_dim, chiR, chiL};
             auto shf = std::array<long, 3>{0, 2, 1};
@@ -177,21 +177,21 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
         auto            smdt = pastCenter ? chiR : chiL;
         Eigen::VectorXd Ltmp = Eigen::VectorXd(smdt).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_double_01(); });
         std::sort(Ltmp.data(), Ltmp.data() + Ltmp.size(), std::greater<double>());
-        Eigen::Tensor<cplx, 1> L = tenx::TensorCast(Ltmp.normalized()).cast<cplx>();
-        Eigen::Tensor<cplx, 3> G(spin_dim, chiL, chiR);
+        Eigen::Tensor<cx64, 1> L = tenx::TensorCast(Ltmp.normalized()).cast<cx64>();
+        Eigen::Tensor<cx64, 3> G(spin_dim, chiL, chiR);
         if(type == StateInitType::REAL) {
             Eigen::VectorXd Gtmp = Eigen::VectorXd(size).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_double_box(-1.0, 1.0); });
-            G                    = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<cplx>();
+            G                    = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<cx64>();
         } else if(type == StateInitType::CPLX) {
             Eigen::VectorXcd Gtmp = Eigen::VectorXcd(size).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_complex_in_unit_circle(); });
-            G                     = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<cplx>();
+            G                     = tenx::TensorCast(Gtmp.normalized(), spin_dim, chiL, chiR).cast<cx64>();
         }
 
         mps.set_mps(G, L, 0, label);
         if(mps.isCenter()) {
             Ltmp = Eigen::VectorXd(chiR).unaryExpr([]([[maybe_unused]] auto dummy) { return rnd::uniform_double_01(); });
             std::sort(Ltmp.data(), Ltmp.data() + Ltmp.size(), std::greater<double>());
-            Eigen::Tensor<cplx, 1> LC = tenx::TensorCast(Ltmp.normalized()).cast<cplx>();
+            Eigen::Tensor<cx64, 1> LC = tenx::TensorCast(Ltmp.normalized()).cast<cx64>();
             mps.set_LC(LC);
             pastCenter = true;
             label      = "B";
@@ -286,9 +286,9 @@ void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspi
         auto                                                            chiR = bond_dimensions[mps.get_position() + 1];
         auto                                                            rows = past_center ? chiL : chiL * spin_dim;
         auto                                                            cols = past_center ? chiR * spin_dim : chiR;
-        Eigen::Tensor<cplx, 1>                                          L    = tenx::TensorCast(Eigen::VectorXd::Ones(chiL).normalized()).cast<cplx>();
-        Eigen::Tensor<cplx, 3>                                          G(spin_dim, chiL, chiR);
-        Eigen::Map<Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
+        Eigen::Tensor<cx64, 1>                                          L    = tenx::TensorCast(Eigen::VectorXd::Ones(chiL).normalized()).cast<cx64>();
+        Eigen::Tensor<cx64, 3>                                          G(spin_dim, chiL, chiR);
+        Eigen::Map<Eigen::Matrix<cx64, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         // Here we construct the set of spinors for each site using randomly selected eigenspinors
         std::array<long, 3> offset3;
         std::array<long, 3> extent3{spin_dim, 1, 1};
@@ -307,7 +307,7 @@ void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspi
         //        G = tenx::TensorMap(tenx::VectorCast(G).normalized(), spin_dim, chiL, chiR);
         mps.set_mps(G, L, 0, label);
         if(mps.isCenter()) {
-            Eigen::Tensor<cplx, 1> LC = tenx::TensorCast(Eigen::VectorXd::Ones(chiR).normalized()).cast<cplx>();
+            Eigen::Tensor<cx64, 1> LC = tenx::TensorCast(Eigen::VectorXd::Ones(chiR).normalized()).cast<cx64>();
             mps.set_LC(LC);
             past_center = true;
             label       = "B";
@@ -326,14 +326,14 @@ void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspi
         std::array<long, 3>                                             offset3;
         std::array<long, 3>                                             extent3{spin_dim, 1, 1};
         std::array<long, 1>                                             extent1{spin_dim};
-        Eigen::Tensor<cplx, 3>                                          G(spin_dim, chiL, chiR);
-        Eigen::Map<Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
+        Eigen::Tensor<cx64, 3>                                          G(spin_dim, chiL, chiR);
+        Eigen::Map<Eigen::Matrix<cx64, Eigen::Dynamic, Eigen::Dynamic>> G_mat(G.data(), rows, cols);
         for(long col = 0; col < chiR; col++) {
             for(long row = 0; row < chiL; row++) {
                 offset3                                    = {0, row, col};
-                Eigen::Tensor<cplx, 1> old_spinor_tensor   = mps.get_M().slice(offset3, extent3).reshape(extent1);
+                Eigen::Tensor<cx64, 1> old_spinor_tensor   = mps.get_M().slice(offset3, extent3).reshape(extent1);
                 Eigen::VectorXcd       old_spinor_vector   = tenx::VectorCast(old_spinor_tensor);
-                cplx                   old_spinor_expval   = old_spinor_vector.dot(qm::spin::half::get_pauli(axus) * old_spinor_vector);
+                cx64                   old_spinor_expval   = old_spinor_vector.dot(qm::spin::half::get_pauli(axus) * old_spinor_vector);
                 int                    old_spinor_sign     = std::real(old_spinor_expval) > 0 ? 1 : -1;
                 auto                   new_spinor_vector   = qm::spin::half::get_spinor(axus, -old_spinor_sign);
                 G.slice(offset3, extent3).reshape(extent1) = tenx::TensorMap(new_spinor_vector);

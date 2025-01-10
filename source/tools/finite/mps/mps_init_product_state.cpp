@@ -101,11 +101,11 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
 void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
     tools::log->debug("Setting randomly shuffled Néel state of type {} on axis {} {}", enum2sv(type), axis,
                       pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.size() != state.get_length()) {
@@ -135,11 +135,11 @@ void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &st
     tools::log->debug("Setting a dislocated Néel state of type {} on axis {} {}", enum2sv(type), axis,
                       pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
@@ -180,11 +180,11 @@ void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state,
     tools::log->debug("Setting domain-wall initial state of type {} on axis {} {}", enum2sv(type), axis,
                       pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                      tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     std::string                           bitfield;
     for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
@@ -213,12 +213,12 @@ void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state,
 }
 
 void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, StateInitType type, std::string_view axis, [[maybe_unused]] std::string &pattern) {
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     int  sign = qm::spin::half::get_sign(axis);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
-    Eigen::Tensor<cplx, 3> spinor = tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1);
+    Eigen::Tensor<cx64, 3> spinor = tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1);
     tools::log->debug("Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites", sign, axis);
     std::string label = "A";
     std::string bitfield(state.get_length<size_t>(), sign >= 0 ? '0' : '1');
@@ -241,11 +241,11 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
 void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
     tools::log->debug("Setting Néel state of type {} on axis {} {}", enum2sv(type), axis, pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
@@ -278,7 +278,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
 
 void tools::finite::mps::init::set_random_product_state_with_random_spinors(StateFinite &state, StateInitType type, std::string &pattern) {
     tools::log->debug("Setting random product state with spinors in C²");
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
@@ -286,7 +286,7 @@ void tools::finite::mps::init::set_random_product_state_with_random_spinors(Stat
         if(type == StateInitType::CPLX)
             mps.set_mps(tenx::TensorCast(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L, 0, label);
         else if(type == StateInitType::REAL)
-            mps.set_mps(tenx::TensorCast(Eigen::VectorXd::Random(2).normalized().cast<cplx>(), 2, 1, 1), L, 0, label);
+            mps.set_mps(tenx::TensorCast(Eigen::VectorXd::Random(2).normalized().cast<cx64>(), 2, 1, 1), L, 0, label);
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
@@ -309,11 +309,11 @@ void tools::finite::mps::init::set_product_state_on_axis_using_pattern(StateFini
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw except::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
     if(pattern.empty()) throw except::runtime_error("Initial state pattern is an empty string.");
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
 
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
@@ -336,14 +336,14 @@ void tools::finite::mps::init::set_product_state_on_axis_using_pattern(StateFini
 
 void tools::finite::mps::init::set_random_product_state_on_axis_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view axis,
                                                                                    std::string &pattern) {
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus     = qm::spin::half::get_axis_unsigned(axis);
     int  sign_tgt = qm::spin::half::get_sign(axis);
     int  sign_now = 1;
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
     std::string                           label    = "A";
-    std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
@@ -381,7 +381,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_eigenspino
 
 void tools::finite::mps::init::set_random_product_state_on_axis(StateFinite &state, StateInitType type, std::string_view axis,
                                                                 [[maybe_unused]] std::string &pattern) {
-    Eigen::Tensor<cplx, 1> L(1);
+    Eigen::Tensor<cx64, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     tools::log->debug("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}", axus, axus);

@@ -104,7 +104,7 @@ void IsingRandomField::set_parameter(const std::string_view name, std::any value
  *        3
  *
  */
-Eigen::Tensor<cplx, 4> IsingRandomField::get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cx64, 4> IsingRandomField::get_mpo(cx64 energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                                  [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     using namespace qm::spin::half;
     tools::log->debug("mpo({}): building tf-rf ising mpo", get_position());
@@ -119,7 +119,7 @@ Eigen::Tensor<cplx, 4> IsingRandomField::get_mpo(cplx energy_shift_per_site, std
             if(n == 2) J2 = 1.0;
         }
     }
-    Eigen::Tensor<cplx, 4> mpo_build;
+    Eigen::Tensor<cx64, 4> mpo_build;
     mpo_build.resize(3, 3, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_build.setZero();
     mpo_build.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);

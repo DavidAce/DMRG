@@ -56,10 +56,10 @@ std::string solve(const eig::settings &config, const h5pp::File &h5file, std::st
                           time, dims);
     }
 
-    Eigen::Tensor<real, 3> mps   = h5file.readDataset<Eigen::Tensor<cplx, 3>>(fmt::format("{}/mps", group)).real();
-    auto                   mpo2  = h5file.readDataset<Eigen::Tensor<real, 4>>(fmt::format("{}/mpo2", group));
-    auto                   envL2 = h5file.readDataset<Eigen::Tensor<real, 3>>(fmt::format("{}/envL2", group));
-    auto                   envR2 = h5file.readDataset<Eigen::Tensor<real, 3>>(fmt::format("{}/envR2", group));
+    Eigen::Tensor<fp64, 3> mps   = h5file.readDataset<Eigen::Tensor<cx64, 3>>(fmt::format("{}/mps", group)).real();
+    auto                   mpo2  = h5file.readDataset<Eigen::Tensor<fp64, 4>>(fmt::format("{}/mpo2", group));
+    auto                   envL2 = h5file.readDataset<Eigen::Tensor<fp64, 3>>(fmt::format("{}/envL2", group));
+    auto                   envR2 = h5file.readDataset<Eigen::Tensor<fp64, 3>>(fmt::format("{}/envR2", group));
 
     auto ham2 = MatVecMPO<double>(envL2, envR2, mpo2);
     auto dims = ham2.get_shape_mps();

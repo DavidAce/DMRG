@@ -115,10 +115,10 @@ void erase(std::vector<T1> &vec, T2 val) {
     }
 }
 
-Eigen::Tensor<cplx, 2> contract_a(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
+Eigen::Tensor<cx64, 2> contract_a(const Eigen::Tensor<cx64, 2> &m, const Eigen::Tensor<cx64, 2> &ud, const std::array<long, 4> &shp_mid4,
                                   const std::array<long, 4> &shp_udn4, const std::array<long, 6> &shf6, const tenx::idxlistpair<1> &idx1,
                                   const tenx::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
-    auto  res                 = Eigen::Tensor<cplx, 2>(dim2);
+    auto  res                 = Eigen::Tensor<cx64, 2>(dim2);
     auto &threads             = tenx::threads::get();
     res.device(*threads->dev) = ud.shuffle(tenx::array2{1, 0})
                                     .conjugate()
@@ -130,30 +130,30 @@ Eigen::Tensor<cplx, 2> contract_a(const Eigen::Tensor<cplx, 2> &m, const Eigen::
     return res;
 }
 
-Eigen::Tensor<cplx, 2> contract_b(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 2> &shp_udn2,
+Eigen::Tensor<cx64, 2> contract_b(const Eigen::Tensor<cx64, 2> &m, const Eigen::Tensor<cx64, 2> &ud, const std::array<long, 2> &shp_udn2,
                                   const std::array<long, 4> &shp_udn4, const tenx::idxlistpair<1> &idx1, const tenx::idxlistpair<2> &idx2) {
     auto &threads = tenx::threads::get();
-    auto  res     = Eigen::Tensor<cplx, 2>(shp_udn2);
+    auto  res     = Eigen::Tensor<cx64, 2>(shp_udn2);
     res.device(*threads->dev) =
         ud.shuffle(tenx::array2{1, 0}).conjugate().reshape(shp_udn4).contract(m, idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
     return res;
 }
 
-Eigen::Tensor<cplx, 2> contract_c(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 6> &shp_mid6,
+Eigen::Tensor<cx64, 2> contract_c(const Eigen::Tensor<cx64, 2> &m, const Eigen::Tensor<cx64, 2> &ud, const std::array<long, 6> &shp_mid6,
                                   const tenx::idxlistpair<1> &idx_dn, const tenx::idxlistpair<1> &idx_up, const std::array<long, 6> &shf6,
                                   const std::array<long, 2> &dim2) {
     auto &threads = tenx::threads::get();
-    auto  res     = Eigen::Tensor<cplx, 2>(dim2);
+    auto  res     = Eigen::Tensor<cx64, 2>(dim2);
     res.device(*threads->dev) =
         ud.shuffle(tenx::array2{1, 0}).conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
     return res;
 }
 
-Eigen::Tensor<cplx, 2> contract_d(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
+Eigen::Tensor<cx64, 2> contract_d(const Eigen::Tensor<cx64, 2> &m, const Eigen::Tensor<cx64, 2> &ud, const std::array<long, 4> &shp_mid4,
                                   const tenx::idxlistpair<1> &idx_dn, const tenx::idxlistpair<1> &idx_up, const std::array<long, 4> &shf4,
                                   const std::array<long, 2> &dim2) {
     auto &threads = tenx::threads::get();
-    auto  res     = Eigen::Tensor<cplx, 2>(dim2);
+    auto  res     = Eigen::Tensor<cx64, 2>(dim2);
     res.device(*threads->dev) =
         ud.shuffle(tenx::array2{1, 0}).conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
     return res;
@@ -174,10 +174,10 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
      *
      *  Remember to do the modulo separately on each diagonal entry h!
      */
-    //    static_assert(std::is_same_v<scalar_t, cplx_t>);
-    //    static_assert(std::is_same_v<alpha_t, cplx_t>);
-    //    if(!std::is_same_v<scalar_t, cplx_t>) { throw except::runtime_error("Expected scalar_t == cplx_t: got {}", sfinae::type_name<scalar_t>()); }
-    //    if(!std::is_same_v<alpha_t, cplx_t>) { throw except::runtime_error("Expected alpha_t == cplx_t: got {}", sfinae::type_name<alpha_t>()); }
+    //    static_assert(std::is_same_v<scalar_t, cx128>);
+    //    static_assert(std::is_same_v<alpha_t, cx128>);
+    //    if(!std::is_same_v<scalar_t, cx128>) { throw except::runtime_error("Expected scalar_t == cx128: got {}", sfinae::type_name<scalar_t>()); }
+    //    if(!std::is_same_v<alpha_t, cx128>) { throw except::runtime_error("Expected alpha_t == cx128: got {}", sfinae::type_name<alpha_t>()); }
 
     auto           op_map                       = tenx::MatrixMap(op_);
     constexpr bool scalar_t_is_float128         = std::is_same_v<scalar_t, __float128>;
@@ -200,7 +200,7 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
                             //                                auto twopi_mph        = mpfr::mpreal("3.14159265358979323846264338327950288419716939937510") * 2;
                             //                                auto fmod_alpha_h_mph = mpfr::mpreal();
                             //                                mpfr_fmod(fmod_alpha_h_mph.mpfr_ptr(), (alpha_mph * h_mph).mpfr_srcptr(), twopi_mph.mpfr_srcptr(),
-                            //                                MPFR_RNDN); exp_ialpha_h_mph = static_cast<cplx>(std::exp(-1.0il * fmod_alpha_h_mph.toLDouble()));
+                            //                                MPFR_RNDN); exp_ialpha_h_mph = static_cast<cx64>(std::exp(-1.0il * fmod_alpha_h_mph.toLDouble()));
                             //                                tools::log->info("fmod mph: alpha {} * h {} = {} | 2pi {} | fmod {} | exp {}",
                             //                                alpha_mph.toString(), h_mph.toString(),
                             //                                                 alpha_h_mph.toString(), twopi_mph.toString(), fmod_alpha_h_mph.toString(),
@@ -208,22 +208,22 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
                             //                            }
 
                             scalar_t exp_ialpha_t;
-#if defined(USE_QUADMATH)
+#if defined(DMRG_USE_QUADMATH)
                             {
-                                real_t two_pi_128       = acosq(-1.0) * real_t(2.0);
-                                real_t alpha_h_128      = real_t(-alpha.imag()) * real_t(h.real());
-                                real_t fmod_alpha_h_128 = fmodq(alpha_h_128, two_pi_128);
-                                exp_ialpha_t            = std::exp(-1.0i * static_cast<real>(fmod_alpha_h_128));
+                                fp128 two_pi_128       = acosq(-1.0) * fp128(2.0);
+                                fp128 alpha_h_128      = fp128(-alpha.imag()) * fp128(h.real());
+                                fp128 fmod_alpha_h_128 = fmodq(alpha_h_128, two_pi_128);
+                                exp_ialpha_t            = std::exp(-1.0i * static_cast<fp64>(fmod_alpha_h_128));
                                 //                                tools::log->info("fmod: a {0} * h {1} = {2} | 2pi {3} | fmod {4} | exp {5}", -alpha.imag(),
                                 //                                h.real(), alpha_h_128, two_pi_128,
                                 //                                                 fmod_alpha_h_128, exp_ialpha_t);
                             }
 #else
                             {
-                                real_t two_pi_ld       = std::acos(real_t(-1.0)) * real_t(2.0);
-                                real_t alpha_h_ld      = static_cast<real_t>(std::imag(-alpha)) * static_cast<real_t>(std::real(h));
-                                real_t fmod_alpha_h_ld = std::fmod(alpha_h_ld, two_pi_ld);
-                                exp_ialpha_t           = std::exp(-1.0i * static_cast<real>(fmod_alpha_h_ld));
+                                fp128 two_pi_ld       = std::acos(fp128(-1.0)) * fp128(2.0);
+                                fp128 alpha_h_ld      = static_cast<fp128>(std::imag(-alpha)) * static_cast<fp128>(std::real(h));
+                                fp128 fmod_alpha_h_ld = std::fmod(alpha_h_ld, two_pi_ld);
+                                exp_ialpha_t           = std::exp(-1.0i * static_cast<fp64>(fmod_alpha_h_ld));
                                 if(std::isnan(fmod_alpha_h_ld)) { throw except::runtime_error("fmod gave nan"); }
                                 //                                tools::log->info("fmod: a {0} ({0:a}) * h {1} ({1:a}) = {2} ({2:a}) | 2pi {3} ({3:a}) | fmod
                                 //                                {4}({4: a}) | exp{5}({4: 5})",
@@ -256,12 +256,12 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
     }
 }
 
-template Eigen::Tensor<cplx, 2>   qm::Gate::exp_internal(const Eigen::Tensor<cplx, 2> &op_, cplx alpha) const;
-template Eigen::Tensor<cplx, 2>   qm::Gate::exp_internal(const Eigen::Tensor<cplx, 2> &op_, cplx_t alpha) const;
-template Eigen::Tensor<cplx_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<cplx_t, 2> &op_, cplx alpha) const;
-template Eigen::Tensor<cplx_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<cplx_t, 2> &op_, cplx_t alpha) const;
+template Eigen::Tensor<cx64, 2>   qm::Gate::exp_internal(const Eigen::Tensor<cx64, 2> &op_, cx64 alpha) const;
+template Eigen::Tensor<cx64, 2>   qm::Gate::exp_internal(const Eigen::Tensor<cx64, 2> &op_, cx128 alpha) const;
+template Eigen::Tensor<cx128, 2> qm::Gate::exp_internal(const Eigen::Tensor<cx128, 2> &op_, cx64 alpha) const;
+template Eigen::Tensor<cx128, 2> qm::Gate::exp_internal(const Eigen::Tensor<cx128, 2> &op_, cx128 alpha) const;
 
-qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
+qm::Gate::Gate(const Eigen::Tensor<cx64, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cx64 alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
         throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1));
@@ -269,7 +269,7 @@ qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std:
     op = exp_internal(op_, alpha);
 }
 
-qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
+qm::Gate::Gate(const Eigen::Tensor<cx64, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cx128 alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
         throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1));
@@ -277,7 +277,7 @@ qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std:
     op = exp_internal(op_, alpha);
 }
 
-qm::Gate::Gate(const Eigen::Tensor<cplx_t, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
+qm::Gate::Gate(const Eigen::Tensor<cx128, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cx64 alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
         throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1));
@@ -285,10 +285,10 @@ qm::Gate::Gate(const Eigen::Tensor<cplx_t, 2> &op_, std::vector<size_t> pos_, st
     op_t = exp_internal(op_, alpha);
 
     // We use a unary expression to cast from std::complex<__float128> to std::complex<double>
-    op = op_t.unaryExpr([](auto z) { return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag())); });
+    op = op_t.unaryExpr([](auto z) { return std::complex<fp64>(static_cast<fp64>(z.real()), static_cast<fp64>(z.imag())); });
 }
 
-qm::Gate::Gate(const Eigen::Tensor<cplx_t, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha)
+qm::Gate::Gate(const Eigen::Tensor<cx128, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cx128 alpha)
     : pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
@@ -296,41 +296,41 @@ qm::Gate::Gate(const Eigen::Tensor<cplx_t, 2> &op_, std::vector<size_t> pos_, st
     if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
     op_t = exp_internal(op_, alpha);
     // We use a unary expression to cast from std::complex<__float128> to std::complex<double>
-    op = op_t.unaryExpr([](auto z) { return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag())); });
+    op = op_t.unaryExpr([](auto z) { return std::complex<fp64>(static_cast<fp64>(z.real()), static_cast<fp64>(z.imag())); });
 }
 
-qm::Gate qm::Gate::exp(cplx alpha) const {
+qm::Gate qm::Gate::exp(cx64 alpha) const {
     if(op_t.size() != 0)
         return Gate(op_t, pos, dim, alpha);
     else
         return Gate(op, pos, dim, alpha);
 }
-qm::Gate qm::Gate::exp(cplx_t alpha) const {
+qm::Gate qm::Gate::exp(cx128 alpha) const {
     if(op_t.size() != 0)
         return Gate(op_t, pos, dim, alpha);
     else
         return Gate(op, pos, dim, alpha);
 }
 bool                   qm::Gate::isUnitary(double prec) const { return tenx::MatrixMap(op).isUnitary(prec); }
-Eigen::Tensor<cplx, 2> qm::Gate::adjoint() const {
+Eigen::Tensor<cx64, 2> qm::Gate::adjoint() const {
     return op.conjugate().shuffle(tenx::array2{1, 0});
     //    if(adj) return adj.value();
     //    adj = op.conjugate().shuffle(tenx::array2{1, 0});
     //    return adj.value();
 }
-Eigen::Tensor<cplx, 2> qm::Gate::conjugate() const {
+Eigen::Tensor<cx64, 2> qm::Gate::conjugate() const {
     return op.conjugate();
     //    if(cnj) return cnj.value();
     //    cnj = op.conjugate();
     //    return cnj.value();
 }
-Eigen::Tensor<cplx, 2> qm::Gate::transpose() const {
+Eigen::Tensor<cx64, 2> qm::Gate::transpose() const {
     return op.shuffle(tenx::array2{1, 0});
     //    if(trn) return trn.value();
     //    trn = op.shuffle(tenx::array2{1, 0});
     //    return trn.value();
 }
-Eigen::Tensor<cplx, 2> qm::Gate::unaryOp(GateOp unop) const {
+Eigen::Tensor<cx64, 2> qm::Gate::unaryOp(GateOp unop) const {
     switch(unop) {
         case GateOp::NONE: return op;
         case GateOp::CNJ: return conjugate();
@@ -535,7 +535,7 @@ template qm::Gate qm::Gate::trace(const std::array<Eigen::IndexPair<Eigen::Index
 qm::Gate qm::Gate::trace_idx(const std::vector<long> &idx_) const { return qm::trace_idx(*this, idx_); }
 qm::Gate qm::Gate::trace_pos(const std::vector<size_t> &pos_) const { return qm::trace_pos(*this, pos_); }
 qm::Gate qm::Gate::trace_pos(size_t pos_) const { return qm::trace_pos(*this, pos_); }
-cplx     qm::Gate::trace() const { return qm::trace(*this); }
+cx64     qm::Gate::trace() const { return qm::trace(*this); }
 
 template<typename L>
 std::vector<std::vector<size_t>> qm::get_gate_sequence(const L &layer, bool reverse_odd) {
@@ -827,7 +827,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         std::array<Eigen::Index, 6> shf6{};
         std::array<Eigen::Index, 4> shf4{};
         tenx::idxlistpair<1>        idx_up, idx_dn;
-        Eigen::Tensor<cplx, 2>      op;
+        Eigen::Tensor<cx64, 2>      op;
         auto                        offset =
             static_cast<size_t>(std::distance(middle_gate.pos.begin(), find(middle_gate.pos.begin(), middle_gate.pos.end(), updown_gate.pos.front())));
         size_t offmin = 0;
@@ -1072,11 +1072,11 @@ qm::Gate qm::trace_pos(const qm::Gate &gate, const std::vector<size_t> &pos) {
 
 qm::Gate qm::trace_pos(const qm::Gate &gate, size_t pos) { return qm::trace_pos(gate, gate.idx(std::vector<size_t>{pos})); }
 
-cplx qm::trace(const qm::Gate &gate) {
+cx64 qm::trace(const qm::Gate &gate) {
     qm::Gate t = qm::trace_pos(gate, gate.pos);
     if(not t.pos.empty()) throw except::logic_error("Gate should be empty after tracing all positions. Got pos: {}", t.pos);
     if(t.op.dimension(0) * t.op.dimension(1) != 1)
-        throw except::logic_error("Gate should have cplx op after tracing all positions. Got dims: {}", t.op.dimensions());
+        throw except::logic_error("Gate should have cx64 op after tracing all positions. Got dims: {}", t.op.dimensions());
     return t.op(0);
 }
 
@@ -1125,7 +1125,7 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
     }
 
     // Trace
-    Eigen::Tensor<cplx, 2> op_traced;
+    Eigen::Tensor<cx64, 2> op_traced;
     if(gate.dim.size() == 1) {
         if constexpr(N == 1) { // dim size 1 is special! It can't take 2 index pairs
             op_traced = gate.op.reshape(gate.shape<2>()).trace(idx_list).reshape(dim2);

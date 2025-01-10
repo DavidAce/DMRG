@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.24)
 
 function(check_compile pkg tgt)
     set(options REQUIRED)
@@ -13,7 +13,7 @@ function(check_compile pkg tgt)
                 ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/compile/${pkg}.cpp
                 OUTPUT_VARIABLE compile_out
                 LINK_LIBRARIES ${tgt}
-                CXX_STANDARD 17
+                CXX_STANDARD 23
                 CXX_EXTENSIONS OFF
                 )
         if(${pkg}_compiles_${tgt})

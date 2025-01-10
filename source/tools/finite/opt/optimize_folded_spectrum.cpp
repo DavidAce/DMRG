@@ -80,7 +80,7 @@ namespace tools::finite::opt {
                 result.meta.last_eval  = *eval;
                 result.meta.last_rnorm = *rNorm;
 
-                *isconv = *rNorm < problemTol and (evals_saturated or rnorms_saturated) or * rNorm < primme->eps;
+                *isconv = ((*rNorm < problemTol) and (evals_saturated or rnorms_saturated)) or (*rNorm < primme->eps);
                 if(*isconv == 1) {
                     tools::log->info("eval {:38.32f} ({:+8.3e}) | rnorm {:38.32f} ({:+8.3e}) | problemNorm {:.3e}", *eval, diff_evals_sum, *rNorm,
                                      diff_rnorms_sum, problemNorm);
@@ -105,7 +105,7 @@ namespace tools::finite::opt {
         template<typename Scalar>
         Eigen::Tensor<Scalar, 3> get_initial_guess(const opt_mps &initial_mps, const std::vector<opt_mps> &results) {
             if(results.empty()) {
-                if constexpr(std::is_same_v<Scalar, real>)
+                if constexpr(std::is_same_v<Scalar, fp64>)
                     return initial_mps.get_tensor().real();
                 else
                     return initial_mps.get_tensor();
@@ -126,7 +126,7 @@ namespace tools::finite::opt {
         std::vector<opt_mps_init_t<Scalar>> get_initial_guess_mps(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
             std::vector<opt_mps_init_t<Scalar>> init;
             if(results.empty()) {
-                if constexpr(std::is_same_v<Scalar, real>)
+                if constexpr(std::is_same_v<Scalar, fp64>)
                     init.push_back({initial_mps.get_tensor().real(), 0});
                 else
                     init.push_back({initial_mps.get_tensor(), 0});
@@ -140,7 +140,7 @@ namespace tools::finite::opt {
                         if(r.get_eigs_idx() == n) results_idx_n.emplace_back(r);
                     }
                     if(not results_idx_n.empty()) {
-                        if constexpr(std::is_same_v<Scalar, real>) {
+                        if constexpr(std::is_same_v<Scalar, fp64>) {
                             init.push_back({results_idx_n.back().get().get_tensor().real(), n});
                         } else {
                             init.push_back({results_idx_n.back().get().get_tensor(), n});
@@ -184,23 +184,23 @@ namespace tools::finite::opt {
         //     auto H2v = Eigen::Map<const VectorType>(H2t.data(), H2t.size());
         //     // auto vH2v   = v.dot(H2v);
         //     // auto norm_1 = 1.0 / v.norm();
-        //     auto pref = std::is_same_v<Scalar, real> ? 2.0 : 1.0; // Factor 2 for real
+        //     auto pref = std::is_same_v<Scalar, fp64> ? 2.0 : 1.0; // Factor 2 for real
         //     // auto grad   = pref * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
         //     auto grad = pref * H2v;
         //     return grad.template lpNorm<Eigen::Infinity>();
         // }
         //
-        // double max_gradient(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
+        // double max_gradient(const Eigen::Tensor<cx64, 3> &mps, const TensorsFinite &tensors) {
         //     auto t_grad = tid::tic_token("grad");
         //
         //     if(tensors.is_real()) {
-        //         Eigen::Tensor<real, 3> mpsr = mps.real();
-        //         Eigen::Tensor<real, 3> en1L = tensors.get_multisite_env_ene_blk().L.real();
-        //         Eigen::Tensor<real, 3> en1R = tensors.get_multisite_env_ene_blk().R.real();
-        //         Eigen::Tensor<real, 3> en2L = tensors.get_multisite_env_var_blk().L.real();
-        //         Eigen::Tensor<real, 3> en2R = tensors.get_multisite_env_var_blk().R.real();
-        //         Eigen::Tensor<real, 4> mpo1 = tensors.get_multisite_mpo().real();
-        //         Eigen::Tensor<real, 4> mpo2 = tensors.get_multisite_mpo_squared().real();
+        //         Eigen::Tensor<fp64, 3> mpsr = mps.real();
+        //         Eigen::Tensor<fp64, 3> en1L = tensors.get_multisite_env_ene_blk().L.real();
+        //         Eigen::Tensor<fp64, 3> en1R = tensors.get_multisite_env_ene_blk().R.real();
+        //         Eigen::Tensor<fp64, 3> en2L = tensors.get_multisite_env_var_blk().L.real();
+        //         Eigen::Tensor<fp64, 3> en2R = tensors.get_multisite_env_var_blk().R.real();
+        //         Eigen::Tensor<fp64, 4> mpo1 = tensors.get_multisite_mpo().real();
+        //         Eigen::Tensor<fp64, 4> mpo2 = tensors.get_multisite_mpo_squared().real();
         //         return max_gradient(mpsr, mpo1, en1L, en1R, mpo2, en2L, en2R);
         //     } else {
         //         const auto &en1  = tensors.get_multisite_env_ene_blk();
@@ -236,9 +236,9 @@ namespace tools::finite::opt {
     void eigs_folded_spectrum_executor(eig::solver &solver, MatVecType &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
                                        std::vector<opt_mps> &results, const OptMeta &meta) {
         using Scalar = typename MatVecType::Scalar;
-        if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL)
-            throw except::logic_error("eigs_folded_spectrum_executor error: Mixed Scalar:cplx with OptType::REAL");
-        if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX)
+        if(std::is_same_v<Scalar, cx64> and meta.optType == OptType::REAL)
+            throw except::logic_error("eigs_folded_spectrum_executor error: Mixed Scalar:cx64 with OptType::REAL");
+        if(std::is_same_v<Scalar, fp64> and meta.optType == OptType::CPLX)
             throw except::logic_error("eigs_folded_spectrum_executor error: Mixed Scalar:real with OptType::CPLX");
 
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
@@ -353,8 +353,8 @@ namespace tools::finite::opt {
         auto                 t_var = tid::tic_scope("eigs-xdmrg", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
-            case OptType::REAL: eigs_manager_folded_spectrum<real>(tensors, initial_mps, results, meta); break;
-            case OptType::CPLX: eigs_manager_folded_spectrum<cplx>(tensors, initial_mps, results, meta); break;
+            case OptType::REAL: eigs_manager_folded_spectrum<fp64>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: eigs_manager_folded_spectrum<cx64>(tensors, initial_mps, results, meta); break;
         }
         auto t_post = tid::tic_scope("post");
         if(results.empty()) {

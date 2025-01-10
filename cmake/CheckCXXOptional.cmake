@@ -31,7 +31,7 @@ function(try_compile_std_optional)
                 ${CMAKE_BINARY_DIR}
                 ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/check-std-optional.cpp
                 OUTPUT_VARIABLE OPTIONAL_COMPILES_OUT
-                CXX_STANDARD 17
+                CXX_STANDARD 23
                 CXX_EXTENSIONS OFF
                 )
         if(has_std_optional)

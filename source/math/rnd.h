@@ -2,6 +2,7 @@
 #include <complex>
 #include <optional>
 #include <pcg_random.hpp>
+#include <pcg_extras.hpp>
 #include <vector>
 
 namespace rnd {
@@ -12,7 +13,8 @@ namespace rnd {
 
     namespace internal {
         // The random number engine
-        inline pcg64 rng;
+        inline pcg64 rng64;
+        inline pcg128_once_insecure rng128;
 
     }
     // Random functions

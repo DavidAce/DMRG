@@ -21,9 +21,9 @@ namespace svd {
         // Call clear() to recover this memory space
         void clear_lapack();
         struct SaveMetaData {
-            using VectorReal = Eigen::Matrix<real, Eigen::Dynamic, 1>;
-            using MatrixReal = Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic>;
-            using MatrixCplx = Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>;
+            using VectorReal = Eigen::Matrix<fp64, Eigen::Dynamic, 1>;
+            using MatrixReal = Eigen::Matrix<fp64, Eigen::Dynamic, Eigen::Dynamic>;
+            using MatrixCplx = Eigen::Matrix<cx64, Eigen::Dynamic, Eigen::Dynamic>;
             std::variant<MatrixReal, MatrixCplx> A, U, VT;
             VectorReal                           S;
             int                                  info             = 0;

@@ -34,7 +34,7 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <unsupported/Eigen/MatrixFunctions>
 
-std::pair<StateFinite, AlgorithmStatus> flbit_impl::update_state(const size_t time_index, cplx_t time_point, const StateFinite &state_lbit_init,
+std::pair<StateFinite, AlgorithmStatus> flbit_impl::update_state(const size_t time_index, cx128 time_point, const StateFinite &state_lbit_init,
                                                                  const std::vector<std::vector<qm::SwapGate>> &gates_tevo,
                                                                  const std::vector<std::vector<qm::Gate>>     &unitary_circuit,
                                                                  const AlgorithmStatus                        &status_init) {
@@ -49,7 +49,7 @@ std::pair<StateFinite, AlgorithmStatus> flbit_impl::update_state(const size_t ti
     state_tevo      = transform_to_real_basis(state_tevo, unitary_circuit, status_init);
 
     AlgorithmStatus status_tevo = status_init; // Time evolved status
-    status_tevo.phys_time       = abs_t(time_point);
+    status_tevo.phys_time       = abs(time_point);
     status_tevo.iter            = time_index + 1;
     status_tevo.step            = time_index * settings::model::model_size;
     status_tevo.position        = state_tevo.get_position<long>();
@@ -57,7 +57,7 @@ std::pair<StateFinite, AlgorithmStatus> flbit_impl::update_state(const size_t ti
     return {state_tevo, check_convergence(status_tevo)};
 }
 
-std::vector<std::vector<qm::SwapGate>> flbit_impl::get_time_evolution_gates(const cplx_t                                 &time_point,
+std::vector<std::vector<qm::SwapGate>> flbit_impl::get_time_evolution_gates(const cx128                                 &time_point,
                                                                             const std::vector<std::vector<qm::SwapGate>> &ham_swap_gates) {
     auto t_upd = tid::tic_scope("gen_swap_gates", tid::level::normal);
     tools::log->debug("Updating time evolution swap gates to t = ({:.2e}, {:.2e})", f128_t(std::real(time_point)), f128_t(std::imag(time_point)));
@@ -74,7 +74,7 @@ StateFinite flbit_impl::time_evolve_lbit_state(const StateFinite &state_lbit_ini
     auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
     svd_cfg.svd_lib = svd::lib::lapacke;
     svd_cfg.svd_rtn = svd::rtn::geauto;
-    auto delta_t    = status.delta_t.to_floating_point<cplx_t>();
+    auto delta_t    = status.delta_t.to_floating_point<cx128>();
     tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
     auto state_lbit_tevo = state_lbit_init;
     for(const auto &gates : gates_tevo) { tools::finite::mps::apply_swap_gates(state_lbit_tevo, gates, CircuitOp::NONE, GateMove::AUTO, svd_cfg); }
@@ -147,9 +147,9 @@ void flbit_impl::print_status(const StateFinite &state_real, const AlgorithmStat
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", status.bond_max, status.bond_lim,
                           tools::finite::measure::bond_dimension_midchain(state_real));
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
-        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<real>()));
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<fp64>()));
     if(settings::flbit::time_scale == TimeScale::LINSPACED)
-        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", status.phys_time.to_floating_point<real>()));
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", status.phys_time.to_floating_point<fp64>()));
     report += fmt::format("wtime:{:<} ", fmt::format("{:>.1f}s", status.wall_time));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);

@@ -21,7 +21,7 @@
 
 using namespace eig;
 
-int eig::solver::dsyevx(real *matrix, size_type L, char range, int il, int iu, double vl, double vu) {
+int eig::solver::dsyevx(fp64 *matrix, size_type L, char range, int il, int iu, double vl, double vu) {
     eig::log->trace("Starting eig dsyevx | range {} | i [{},{}] | v [{},{}]", range, il, iu, vl, vu);
     auto t_start = std::chrono::high_resolution_clock::now();
     char jobz    = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';

@@ -38,7 +38,7 @@ namespace tools::finite::opt::internal {
         // if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
         //     // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
         //     tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
-        //     auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+        //     auto eigvals = eig::view::get_eigvals<fp64>(solver.result, false);
         //     auto indices = num::range<long>(0l, eigvals.size());
         //     auto eigComp = EigIdxComparator(OptRitz::LM, 0, eigvals.data(), eigvals.size());
         //     std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
@@ -58,7 +58,7 @@ namespace tools::finite::opt::internal {
         // if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
         //     // tools::log->info("optimize_variance_eig_executor: vl {:.3e} | vu {:.3e}", vl, vu);
         //     tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
-        //     auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+        //     auto eigvals = eig::view::get_eigvals<fp64>(solver.result, false);
         //     auto indices = num::range<long>(0l, eigvals.size());
         //     auto eigComp = EigIdxComparator(meta.optRitz, 0, eigvals.data(), eigvals.size());
         //     std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
@@ -71,8 +71,8 @@ namespace tools::finite::opt::internal {
         // auto        H2 = tensors.get_effective_hamiltonian_squared<Scalar>();
         // solver1.eig<eig::Form::SYMM>(H1.data(), H1.dimension(0));
         // solver2.eig<eig::Form::SYMM>(H2.data(), H2.dimension(0));
-        // auto evals1 = eig::view::get_eigvals<real>(solver1.result);
-        // auto evals2 = eig::view::get_eigvals<real>(solver2.result);
+        // auto evals1 = eig::view::get_eigvals<fp64>(solver1.result);
+        // auto evals2 = eig::view::get_eigvals<fp64>(solver2.result);
         // for(long idx = 0; idx < std::min(evals1.size(), evals2.size()); ++idx) {
         // fmt::print("idx {:2}: H {:20.16f}  H² {:20.16f}\n", idx, evals1[idx], evals2[idx]);
         // }
@@ -96,8 +96,8 @@ namespace tools::finite::opt::internal {
         auto                 t_var = tid::tic_scope("eig-xdmrg", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
-            case OptType::REAL: optimize_folded_spectrum_eig_executor<real>(tensors, initial_mps, results, meta); break;
-            case OptType::CPLX: optimize_folded_spectrum_eig_executor<cplx>(tensors, initial_mps, results, meta); break;
+            case OptType::REAL: optimize_folded_spectrum_eig_executor<fp64>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: optimize_folded_spectrum_eig_executor<cx64>(tensors, initial_mps, results, meta); break;
         }
         auto t_post = tid::tic_scope("post");
         if(results.empty()) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cast.h"
+#include "float.h"
 #include <algorithm>
 #include <cmath>
 #include <complex>
@@ -9,7 +10,7 @@
 #include <numeric>
 #include <vector>
 
-#if defined(USE_QUADMATH)
+#if defined(DMRG_USE_QUADMATH)
     #include <quadmath.h>
 #endif
 
@@ -26,12 +27,6 @@ namespace num {
     static constexpr bool ndebug = false;
 #endif
     namespace internal {
-#if defined(USE_QUADMATH)
-        static constexpr bool use_quadmath = true;
-#else
-        static constexpr bool use_quadmath = false;
-#endif
-
         template<typename T>
         concept has_value_type_v = requires { typename T::value_type; };
 
@@ -46,8 +41,8 @@ namespace num {
 
         template<typename T>
         concept is_float128 =
-#if defined(USE_QUADMATH)
-            std::same_as<T, __float128>;
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+            std::same_as<T, fp128>;
 #else
             false;
 #endif

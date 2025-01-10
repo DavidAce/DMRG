@@ -20,7 +20,7 @@ struct primme_params;
 
 template<typename T>
 class MatVecZero {
-    static_assert(std::is_same_v<T, real> or std::is_same_v<T, cplx>);
+    static_assert(std::is_same_v<T, fp64> or std::is_same_v<T, cx64>);
 
     public:
     using Scalar     = T;
@@ -44,7 +44,7 @@ class MatVecZero {
     eig::Side                        side = eig::Side::R;
 
     // Shift stuff
-    std::complex<double>  sigma         = cplx(0.0, 0.0); // The shift
+    std::complex<double>  sigma         = cx64(0.0, 0.0); // The shift
     bool                  readyShift    = false;          // Flag to make sure the shift has occurred
     constexpr static bool readyFactorOp = false;          // Flag to check if factorization has occurred
 

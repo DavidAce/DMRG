@@ -47,7 +47,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     fullsystem = envs_.L.get_sites() == 0 and envs_.R.get_sites() == 0; //  mpos.size() == settings::model::model_size;
 
     if constexpr(std::is_same_v<EnvType, EnvEne>) {
-        if constexpr(std::is_same_v<T, cplx>) {
+        if constexpr(std::is_same_v<T, cx64>) {
             for(const auto &mpo_ : mpos_) mpos_A.emplace_back(mpo_.get().MPO());
             envL_A = envs_.L.get_block();
             envR_A = envs_.R.get_block();
@@ -65,7 +65,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
         }
     }
     if constexpr(std::is_same_v<EnvType, EnvVar>) {
-        if constexpr(std::is_same_v<T, cplx>) {
+        if constexpr(std::is_same_v<T, cx64>) {
             for(const auto &mpo_ : mpos_) mpos_A.emplace_back(mpo_.get().MPO2());
             envL_A = envs_.L.get_block();
             envR_A = envs_.R.get_block();
@@ -129,10 +129,10 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     t_multPc   = std::make_unique<tid::ur>("Time MultPc");
 }
 
-template MatVecMPOS<cplx>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
-template MatVecMPOS<real>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
-template MatVecMPOS<cplx>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &envs_);
-template MatVecMPOS<real>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &envs_);
+template MatVecMPOS<cx64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
+template MatVecMPOS<fp64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &envs_);
+template MatVecMPOS<cx64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &envs_);
+template MatVecMPOS<fp64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &envs_);
 
 template<typename T>
 template<typename EnvTypeA, typename EnvTypeB>
@@ -143,7 +143,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     // static_assert(sfinae::is_any_v<EnvTypeA, EnvVar>);
     // static_assert(sfinae::is_any_v<EnvTypeB, EnvEne>);
     if constexpr(std::is_same_v<EnvTypeB, EnvEne>) {
-        if constexpr(std::is_same_v<T, cplx>) {
+        if constexpr(std::is_same_v<T, cx64>) {
             for(const auto &mpo_ : mpos_) mpos_B.emplace_back(mpo_.get().MPO());
             envL_B = envb_.L.get_block();
             envR_B = envb_.R.get_block();
@@ -154,7 +154,7 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
         }
     }
     if constexpr(std::is_same_v<EnvTypeB, EnvVar>) {
-        if constexpr(std::is_same_v<T, cplx>) {
+        if constexpr(std::is_same_v<T, cx64>) {
             for(const auto &mpo_ : mpos_) mpos_B.emplace_back(mpo_.get().MPO2());
             envL_B = envb_.L.get_block();
             envR_B = envb_.R.get_block();
@@ -185,14 +185,14 @@ MatVecMPOS<T>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite
     }
 }
 
-template MatVecMPOS<real>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &enva_,
+template MatVecMPOS<fp64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &enva_,
                                       const env_pair<const EnvEne &> &envb);
-template MatVecMPOS<cplx>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &enva_,
+template MatVecMPOS<cx64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvVar &> &enva_,
                                       const env_pair<const EnvEne &> &envb);
 
-template MatVecMPOS<real>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &enva_,
+template MatVecMPOS<fp64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &enva_,
                                       const env_pair<const EnvVar &> &envb);
-template MatVecMPOS<cplx>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &enva_,
+template MatVecMPOS<cx64>::MatVecMPOS(const std::vector<std::reference_wrapper<const MpoSite>> &mpos_, const env_pair<const EnvEne &> &enva_,
                                       const env_pair<const EnvVar &> &envb);
 
 template<typename T>
@@ -488,7 +488,7 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block_old(long of
             if(J + offset >= size_mps) continue;
             auto elem = get_matrix_element(I + offset, J + offset, MPOS, ENVL, ENVR);
             res(I, J) = elem;
-            if constexpr(std::is_same_v<T, cplx>)
+            if constexpr(std::is_same_v<T, cx64>)
                 res(J, I) = std::conj(elem);
             else
                 res(J, I) = elem;
@@ -516,7 +516,7 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
                 if(J + offset >= size_mps) continue;
                 auto elem = get_matrix_element(I + offset, J + offset, MPOS, ENVL, ENVR);
                 res(I, J) = elem;
-                if constexpr(std::is_same_v<T, cplx>)
+                if constexpr(std::is_same_v<T, cx64>)
                     res(J, I) = std::conj(elem);
                 else
                     res(J, I) = elem;
@@ -622,9 +622,9 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
     if(offset >= size_mps) { return {}; }
     auto t_old = tid::ur("old");
     auto t_new = tid::ur("new");
+    auto res = MatrixType(extent, extent);
 
     if(MPOS_A.size() > 1) {
-        auto res = MatrixType(extent, extent);
         t_old.tic();
 #pragma omp parallel for collapse(2)
         for(long J = 0; J < extent; J++) {
@@ -636,7 +636,7 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
                 auto elemB = get_matrix_element(I + offset, J + offset, MPOS_B, ENVL_B, ENVR_B);
                 auto elem  = elemA - shift * elemB;
                 res(I, J)  = elem;
-                if constexpr(std::is_same_v<T, cplx>)
+                if constexpr(std::is_same_v<T, cx64>)
                     res(J, I) = std::conj(elem);
                 else
                     res(J, I) = elem;
@@ -644,7 +644,9 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
         }
         return res;
         t_old.toc();
-    } else {
+    }
+
+    {
         // auto dbg = MatrixType(extent, extent);
         // #pragma omp parallel for collapse(2)
         // for(long J = 0; J < extent; J++) {
@@ -656,7 +658,7 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
         //         auto elemB = get_matrix_element(I + offset, J + offset, MPOS_B, ENVL_B, ENVR_B);
         //         auto elem  = elemA - shift * elemB;
         //         dbg(I, J)  = elem;
-        //         if constexpr(std::is_same_v<T, cplx>)
+        //         if constexpr(std::is_same_v<T, cx64>)
         //             dbg(J, I) = std::conj(elem);
         //         else
         //             dbg(J, I) = elem;
@@ -664,7 +666,6 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
         // }
 
         // t_new.tic();
-        MatrixType res(extent, extent);
         res.setZero();
         long J0 = offset;
         long JN = offset + extent - 1;
@@ -1455,7 +1456,7 @@ void MatVecMPOS<T>::set_shift(std::complex<double> shift) {
         std::array<long, 2> extent2{spindim, spindim};
         auto                id = tenx::TensorIdentity<T>(spindim);
         // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*shift]
-        if constexpr(std::is_same_v<T, real>)
+        if constexpr(std::is_same_v<T, fp64>)
             mpo.slice(offset4, extent4).reshape(extent2) += id * std::real(sigma_per_mpo - shift_per_mpo);
         else
             mpo.slice(offset4, extent4).reshape(extent2) += id * (sigma_per_mpo - shift_per_mpo);
@@ -1504,7 +1505,7 @@ void MatVecMPOS<T>::set_jcbMaxBlockSize(std::optional<long> size) {
 
 template<typename T>
 T MatVecMPOS<T>::get_shift() const {
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         return std::real(sigma);
     else
         return sigma;
@@ -1520,9 +1521,9 @@ eig::Side MatVecMPOS<T>::get_side() const {
 }
 template<typename T>
 eig::Type MatVecMPOS<T>::get_type() const {
-    if constexpr(std::is_same_v<T, real>)
+    if constexpr(std::is_same_v<T, fp64>)
         return eig::Type::REAL;
-    else if constexpr(std::is_same_v<T, cplx>)
+    else if constexpr(std::is_same_v<T, cx64>)
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");

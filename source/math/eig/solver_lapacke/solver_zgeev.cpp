@@ -20,7 +20,7 @@
 #include "math/cast.h"
 #include <chrono>
 
-int eig::solver::zgeev(cplx *matrix, size_type L) {
+int eig::solver::zgeev(cx64 *matrix, size_type L) {
     eig::log->trace("Starting eig_zgeev (non-optimized");
     auto  t_start  = std::chrono::high_resolution_clock::now();
     auto &eigvals  = result.get_eigvals<Form::NSYM>();
@@ -35,9 +35,9 @@ int eig::solver::zgeev(cplx *matrix, size_type L) {
     int               lrwork = safe_cast<int>(2 * L);
     int               info   = 0;
     int               Lint   = safe_cast<int>(L);
-    cplx              lwork_query;
-    std::vector<real> rwork(safe_cast<size_t>(lrwork));
-    auto              matrix_ptr      = reinterpret_cast<lapack_complex_double *>(const_cast<cplx *>(matrix));
+    cx64              lwork_query;
+    std::vector<fp64> rwork(safe_cast<size_t>(lrwork));
+    auto              matrix_ptr      = reinterpret_cast<lapack_complex_double *>(const_cast<cx64 *>(matrix));
     auto              eigvals_ptr     = reinterpret_cast<lapack_complex_double *>(eigvals.data());
     auto              eigvecsL_ptr    = reinterpret_cast<lapack_complex_double *>(eigvecsL.data());
     auto              eigvecsR_ptr    = reinterpret_cast<lapack_complex_double *>(eigvecsR.data());

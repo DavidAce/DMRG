@@ -22,11 +22,11 @@ struct primme_params;
 
 template<typename T>
 class MatVecMPOS {
-    static_assert(std::is_same_v<T, real> or std::is_same_v<T, cplx>);
+    static_assert(std::is_same_v<T, fp64> or std::is_same_v<T, cx64>);
 
     public:
     using Scalar     = T;
-    using T32        = std::conditional_t<std::is_same_v<T, real>, float, std::complex<float>>;
+    using T32        = std::conditional_t<std::is_same_v<T, fp64>, float, std::complex<float>>;
     using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
     using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
     using SparseType = Eigen::SparseMatrix<T>;
@@ -102,7 +102,7 @@ class MatVecMPOS {
     // void                             thomas(const long rows, const VectorType &x, const VectorType &dl, const VectorType &dm, const VectorType &du);
 
     // Shift stuff
-    std::complex<double> sigma           = cplx(0.0, 0.0); // The shift
+    std::complex<double> sigma           = cx64(0.0, 0.0); // The shift
     bool                 readyShift      = false;          // Flag to make sure the shift has occurred
     bool                 readyFactorOp   = false;          // Flag to check if factorization has occurred
     bool                 readyCalcPc     = false;

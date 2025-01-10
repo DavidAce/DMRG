@@ -30,7 +30,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_s
     for(long i = 0; i < V.cols(); ++i) {
         Q.col(i) = V.col(i);
         R(i, i)  = Q.col(i).norm();
-        if(std::abs(R(i, i)) < std::numeric_limits<real>::epsilon()) {
+        if(std::abs(R(i, i)) < std::numeric_limits<fp64>::epsilon()) {
             // tools::log->error("Q.col({}) is a zero vector:\n Q: \n{}\n", i, linalg::matrix::to_string(Q.real(), 8));
             continue;
         }
@@ -42,5 +42,5 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_s
     }
     return Q;
 }
-template Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic> &V);
-template Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic> &V);
+template Eigen::Matrix<fp64, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<fp64, Eigen::Dynamic, Eigen::Dynamic> &V);
+template Eigen::Matrix<cx64, Eigen::Dynamic, Eigen::Dynamic> linalg::matrix::modified_gram_schmidt(const Eigen::Matrix<cx64, Eigen::Dynamic, Eigen::Dynamic> &V);

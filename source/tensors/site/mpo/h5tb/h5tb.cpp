@@ -213,19 +213,19 @@ void h5tb_lbit::register_table_type() const {
 std::string h5tb_lbit::fmt_value(std::string_view p) const {
     // J2_rand is special since it varies in length for each mpo. Let's just pad with nan to make it pretty
     if(p == "J2_rand") {
-        std::vector<real> J2_rand;
+        std::vector<fp64> J2_rand;
         for(size_t i = 0; i < param.J2_ctof + 1; ++i) {
             if(i < param.J2_rand.size())
-                J2_rand.emplace_back(param.J2_rand[i].to_floating_point<real>());
+                J2_rand.emplace_back(param.J2_rand[i].to_floating_point<fp64>());
             else
-                J2_rand.emplace_back(std::numeric_limits<real>::quiet_NaN());
+                J2_rand.emplace_back(std::numeric_limits<fp64>::quiet_NaN());
         }
         return fmt::format("{::<+9.2e}", J2_rand);
     }
 
     /* clang-format off */
-        if(p == "J1_rand")     return fmt::format("{:<+9.2e}", param.J1_rand.to_floating_point<real>());
-        if(p == "J3_rand")     return fmt::format("{:<+9.2e}", param.J3_rand.to_floating_point<real>());
+        if(p == "J1_rand")     return fmt::format("{:<+9.2e}", param.J1_rand.to_floating_point<fp64>());
+        if(p == "J3_rand")     return fmt::format("{:<+9.2e}", param.J3_rand.to_floating_point<fp64>());
         if(p == "J1_mean")     return fmt::format("{:<+9.2e}", param.J1_mean);
         if(p == "J2_mean")     return fmt::format("{:<+9.2e}", param.J2_mean);
         if(p == "J3_mean")     return fmt::format("{:<+9.2e}", param.J3_mean);

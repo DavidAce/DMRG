@@ -97,7 +97,7 @@ namespace tools::finite::opt::internal{
         extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & eigvecs, size_t idx);
         extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
         extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
-        extern TensorType<cplx,3> get_tensor_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims);
+        extern TensorType<cx64,3> get_tensor_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims);
         template <typename T>
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_hamiltonian_in_subspace(const ModelFinite & model,
                                                                                                          const EdgesFinite & edges,

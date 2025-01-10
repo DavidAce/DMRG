@@ -21,8 +21,8 @@ void tools::finite::opt::internal::extract_results(const TensorsFinite &tensors,
     auto t_ext    = tid::tic_scope("extract");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-        auto eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
-        auto eigvals = eig::view::get_eigvals<real>(solver.result, converged_only);
+        auto eigvecs = eig::view::get_eigvecs<cx64>(solver.result, eig::Side::R, converged_only);
+        auto eigvals = eig::view::get_eigvals<fp64>(solver.result, converged_only);
 
         if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
             [[maybe_unused]] double overlap_sq_sum = 0;
@@ -95,8 +95,8 @@ void tools::finite::opt::internal::extract_results_subspace(const TensorsFinite 
     auto t_ext    = tid::tic_scope("extract");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-        auto eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R);
-        auto eigvals = eig::view::get_eigvals<real>(solver.result);
+        auto eigvecs = eig::view::get_eigvecs<cx64>(solver.result, eig::Side::R);
+        auto eigvals = eig::view::get_eigvals<fp64>(solver.result);
         if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
             auto indices = num::range<long>(0, eigvals.size());
             // Eigenvalues are normally sorted small to large, so we reverse when looking for large.

@@ -52,7 +52,7 @@ class Loader {
                 throw except::range_error("Parameter [{}] has no value", param_name);
             }
             if constexpr(std::is_same_v<T, unsigned int>) {
-                auto val = safe_cast<int>(std::stoi(param_val));
+                auto val = std::stoi(param_val);
                 if(val < 0) throw except::runtime_error("Read negative value for unsigned parameter: {}", val);
                 return static_cast<T>(val);
             }

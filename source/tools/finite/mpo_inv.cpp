@@ -56,10 +56,10 @@ std::vector<Eigen::Tensor<Scalar, 4>> get_inverted_mpos_initial_guess(const std:
         }
         impo.resize(dims);
         auto impomap = Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(impo.data(), impo.size());
-        if constexpr(std::is_same_v<Scalar, cplx>)
-            for(long i = 0; i < impomap.size(); ++i) impomap[i] = cplx(rnd::uniform_double_box(-1.0, 1.0), 0.0);
+        if constexpr(std::is_same_v<Scalar, cx64>)
+            for(long i = 0; i < impomap.size(); ++i) impomap[i] = cx64(rnd::uniform_double_box(-1.0, 1.0), 0.0);
         else
-            for(long i = 0; i < impomap.size(); ++i) impomap[i] = rnd::normal<real>(0, 1.0);
+            for(long i = 0; i < impomap.size(); ++i) impomap[i] = rnd::normal<fp64>(0, 1.0);
 
         // impo.setRandom();
         // impo.setConstant(std::pow(2, -static_cast<double>(impos.size()))); // Make the numbers smaller
@@ -391,7 +391,7 @@ Eigen::Tensor<Scalar, 1> linear_solve(Eigen::Tensor<Scalar, 2> A, Eigen::Tensor<
     auto *y    = Y.data();
     auto  ldy  = static_cast<int>(Y.dimension(0));
     auto  ipiv = std::vector<int>(static_cast<size_t>(A.dimension(0)));
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         // int info = LAPACKE_dsysv(LAPACK_COL_MAJOR, 'L', n, nhrs, a, lda, ipiv.data(), y, ldy);
         // int info = LAPACKE_dgetrs(LAPACK_COL_MAJOR, 'N', n, nrhs, a, lda, ipiv.data(), y, ldy );
         int info = LAPACKE_dgesv(LAPACK_COL_MAJOR, n, nrhs, a, lda, ipiv.data(), y, ldy);
@@ -614,7 +614,7 @@ class mpo_functor5 : public ceres::FirstOrderFunction {
 };
 
 template<typename Scalar>
-std::vector<Eigen::Tensor<cplx, 4>> get_inverted_mpos_internal(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos) {
+std::vector<Eigen::Tensor<cx64, 4>> get_inverted_mpos_internal(const std::vector<Eigen::Tensor<Scalar, 4>> &mpos) {
     // using MatrixType         = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using VectorType         = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     auto impos               = get_inverted_mpos_initial_guess(mpos, 72);
@@ -676,7 +676,7 @@ std::vector<Eigen::Tensor<cplx, 4>> get_inverted_mpos_internal(const std::vector
         auto Ndtensor                  = get_N_dagger(mpos, impos, pos);
         auto Nd                        = tenx::VectorMap(Ndtensor);
 
-        if constexpr(std::is_same_v<Scalar, real>) {
+        if constexpr(std::is_same_v<Scalar, fp64>) {
             auto B     = get_B(impos, pos);
             // int  niter = 0;
             // solver.compute(M);
@@ -730,17 +730,17 @@ std::vector<Eigen::Tensor<cplx, 4>> get_inverted_mpos_internal(const std::vector
         if(dir > 0) pos++;
         if(dir < 0) pos--;
     }
-    if constexpr(std::is_same_v<Scalar, cplx>)
+    if constexpr(std::is_same_v<Scalar, cx64>)
         return impos;
     else {
-        std::vector<Eigen::Tensor<cplx, 4>> impos_cplx;
+        std::vector<Eigen::Tensor<cx64, 4>> impos_cplx;
         impos_cplx.reserve(impos.size());
-        for(const auto &impo : impos) impos_cplx.emplace_back(impo.template cast<cplx>());
+        for(const auto &impo : impos) impos_cplx.emplace_back(impo.template cast<cx64>());
         return impos_cplx;
     }
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_inverted_mpos(const std::vector<Eigen::Tensor<cplx, 4>> &mpos) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_inverted_mpos(const std::vector<Eigen::Tensor<cx64, 4>> &mpos) {
     fmt::print("INIT: num_threads: {} | omp_in_parallel {} \n", tenx::threads::getNumThreads(), omp_in_parallel());
     static bool googleLogginghasInitialized = false;
     if(not googleLogginghasInitialized) {
@@ -760,11 +760,11 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_inverted_mpos(const 
         }
     }
     if(isComplex) {
-        return get_inverted_mpos_internal<cplx>(mpos);
+        return get_inverted_mpos_internal<cx64>(mpos);
     } else {
-        std::vector<Eigen::Tensor<real, 4>> mpos_real;
+        std::vector<Eigen::Tensor<fp64, 4>> mpos_real;
         mpos_real.reserve(mpos.size());
         for(const auto &mpo : mpos) mpos_real.emplace_back(mpo.real());
-        return get_inverted_mpos_internal<real>(mpos_real);
+        return get_inverted_mpos_internal<fp64>(mpos_real);
     }
 }

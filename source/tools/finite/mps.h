@@ -24,14 +24,14 @@ namespace tools{
 
 
 namespace tools::finite::mps {
-    using cplx = std::complex<double>;
+    using cx64 = std::complex<double>;
     extern size_t move_center_point_single_site      (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point                  (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_pos           (StateFinite & state, long pos, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_pos_dir       (StateFinite & state, long pos, int dir, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_inward_edge   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_middle        (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cplx,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
+    extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cx64,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
     extern bool normalize_state                      (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void initialize_state                     (StateFinite & state, StateInit state_type, StateInitType type, std::string_view sector, bool use_eigenspinors, long bond_lim, std::string & pattern);
     extern void apply_random_paulis                  (StateFinite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices);
@@ -43,7 +43,7 @@ namespace tools::finite::mps {
     extern std::vector<size_t>
                 generate_gate_sequence               (const StateFinite &state, const std::vector<GateType> &gates, CircuitOp cop, bool range_long_to_short = false);
     extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, GateOp gop, GateMove gmov, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, CircuitOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cx64,2>> & nsite_tensors, size_t gate_size, CircuitOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates,  CircuitOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_gates_old                      (StateFinite & state, const std::vector<qm::Gate> & gates,  CircuitOp cop, bool moveback = true,  std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_circuit                        (StateFinite & state, const std::vector<std::vector<qm::Gate>> & gates, CircuitOp gop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);

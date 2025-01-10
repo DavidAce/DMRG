@@ -11,8 +11,8 @@ namespace tools::finite::opt {
         private:
         // All of these values are supposed to be for the full system size
         std::optional<std::string>            name           = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 3>> tensor         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> bond           = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 3>> tensor         = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 2>> bond           = std::nullopt;
         std::optional<std::vector<size_t>>    sites          = std::nullopt;
         std::optional<double>                 eshift         = std::nullopt; /*!< current energy shift in the energy MPOs: eshift  */
         std::optional<double>                 energy_shifted = std::nullopt; /*!< <H-eshift>  */
@@ -42,7 +42,7 @@ namespace tools::finite::opt {
         std::optional<double>                 eigs_rnorm     = std::nullopt;
         std::optional<double>                 eigs_eigval    = std::nullopt;
         std::optional<std::string>            eigs_ritz      = std::nullopt;
-        std::optional<cplx>                   eigs_shift     = std::nullopt;
+        std::optional<cx64>                   eigs_shift     = std::nullopt;
         std::optional<OptAlgo>                optAlgo        = std::nullopt;
         std::optional<OptSolver>              optSolver      = std::nullopt;
         std::optional<OptRitz>                optRitz        = std::nullopt;
@@ -56,19 +56,19 @@ namespace tools::finite::opt {
 
         opt_mps() = default;
         // Constructor used for candidates
-        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double energy_shifted_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cx64, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double energy_shifted_,
                 std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for results
-        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cx64, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                 double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
         // Constructor used for initial state
-        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cx64, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
               double overlap_, size_t length);
 
         [[nodiscard]] bool                               is_initialized() const;
         [[nodiscard]] std::string_view                   get_name() const;
-        [[nodiscard]] const Eigen::Tensor<cplx, 3>      &get_tensor() const;
-        [[nodiscard]] const Eigen::Tensor<cplx, 2>      &get_bond() const;
+        [[nodiscard]] const Eigen::Tensor<cx64, 3>      &get_tensor() const;
+        [[nodiscard]] const Eigen::Tensor<cx64, 2>      &get_bond() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXcd> get_vector() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXd>  get_vector_cplx_as_2xreal() const;
         [[nodiscard]] Eigen::VectorXd                    get_vector_cplx_as_1xreal() const;
@@ -109,7 +109,7 @@ namespace tools::finite::opt {
         [[nodiscard]] double                     get_eigs_rnorm() const;
         [[nodiscard]] double                     get_eigs_eigval() const;
         [[nodiscard]] std::string_view           get_eigs_ritz() const;
-        [[nodiscard]] cplx                       get_eigs_shift() const;
+        [[nodiscard]] cx64                       get_eigs_shift() const;
         [[nodiscard]] OptSolver                  get_optsolver() const;
         [[nodiscard]] OptAlgo                    get_optalgo() const;
         [[nodiscard]] OptExit                    get_optexit() const;
@@ -119,10 +119,10 @@ namespace tools::finite::opt {
         void clear();
         void normalize();
         void set_name(std::string_view name_);
-        void set_tensor(const Eigen::Tensor<cplx, 3> &tensor_);
+        void set_tensor(const Eigen::Tensor<cx64, 3> &tensor_);
         void set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<long, 3> &dims);
         void set_bond(const Eigen::MatrixXcd &matrix);
-        void set_bond(const Eigen::Tensor<cplx, 2> &bond_);
+        void set_bond(const Eigen::Tensor<cx64, 2> &bond_);
         void set_sites(const std::vector<size_t> &sites_);
         void set_energy_shifted(double energy_shifted_);
         void set_eshift(double energy_shift_);
@@ -152,7 +152,7 @@ namespace tools::finite::opt {
         void set_eigs_rnorm(double rnorm_);
         void set_eigs_eigval(double eigval_);
         void set_eigs_ritz(std::string_view ritz_);
-        void set_eigs_shift(const cplx shift_);
+        void set_eigs_shift(const cx64 shift_);
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_optsolver(OptSolver optsolver_);

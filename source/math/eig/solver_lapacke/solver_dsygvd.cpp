@@ -21,7 +21,7 @@
 
 using namespace eig;
 
-int eig::solver::dsygvd(real *matrixA, real *matrixB, size_type L) {
+int eig::solver::dsygvd(fp64 *matrixA, fp64 *matrixB, size_type L) {
     eig::log->trace("Starting eig dsygvd");
     auto t_start = std::chrono::high_resolution_clock::now();
 

@@ -9,6 +9,11 @@
  */
 namespace tenx::sfinae {
 
+    template<typename...>
+    struct print_type_and_exit_compile_time;
+    template<typename T>
+    [[deprecated]] inline constexpr void print_type_and_continue_compile_time([[maybe_unused]] const char *msg = nullptr) {}
+
     template<typename T1, typename T2>
     concept type_is = std::same_as<std::remove_cvref_t<T1>, T2>;
 

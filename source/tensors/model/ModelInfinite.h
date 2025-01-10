@@ -11,10 +11,10 @@ class MpoSite;
 class ModelInfinite {
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<cplx, 4>> twosite_mpo_AB = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>> twosite_mpo_BA = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> twosite_ham_AB = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> twosite_ham_BA = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 4>> twosite_mpo_AB = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 4>> twosite_mpo_BA = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 2>> twosite_ham_AB = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 2>> twosite_ham_BA = std::nullopt;
     };
     mutable Cache            cache;
     std::unique_ptr<MpoSite> HA; /*!< Left hamiltonian MPO */
@@ -34,7 +34,7 @@ class ModelInfinite {
     void                                randomize();
     void                                reset_mpo_squared();
     void                                rebuild_mpo_squared();
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared();
+    std::vector<Eigen::Tensor<cx64, 4>> get_compressed_mpo_squared();
 
     bool is_real() const;
     bool has_nan() const;
@@ -44,10 +44,10 @@ class ModelInfinite {
     [[nodiscard]] const MpoSite  &get_mpo_siteB() const;
     [[nodiscard]] MpoSite        &get_mpo_siteA();
     [[nodiscard]] MpoSite        &get_mpo_siteB();
-    const Eigen::Tensor<cplx, 4> &get_2site_mpo_AB() const;
-    const Eigen::Tensor<cplx, 4> &get_2site_mpo_BA() const;
-    const Eigen::Tensor<cplx, 2> &get_2site_ham_AB() const;
-    const Eigen::Tensor<cplx, 2> &get_2site_ham_BA() const;
+    const Eigen::Tensor<cx64, 4> &get_2site_mpo_AB() const;
+    const Eigen::Tensor<cx64, 4> &get_2site_mpo_BA() const;
+    const Eigen::Tensor<cx64, 2> &get_2site_ham_AB() const;
+    const Eigen::Tensor<cx64, 2> &get_2site_ham_BA() const;
 
     Eigen::DSizes<long, 4> dimensions() const;
 

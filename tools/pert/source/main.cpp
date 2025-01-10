@@ -56,7 +56,7 @@ int main() {
     H5Tinsert(h5_type, "variance_pert", HOFFSET(PertData, variance_pert), H5T_NATIVE_DOUBLE);
     // Collect and sort all the files in h5dir
     using h5iter = h5pp::fs::recursive_directory_iterator;
-    long counter = 0;
+    // long counter = 0;
     h5tgt.setKeepFileOpened();
 
     for(const auto &file : h5iter(h5dir)) {
@@ -80,7 +80,7 @@ int main() {
         auto spinZ = h5src.readTableField<spins>("xDMRG/state_emid/measurements", "spin_global", h5pp::TableSelection::LAST).z;
 
         auto seed            = h5src.readDataset<long>("common/seed");
-        auto model_size      = h5src.readAttribute<long>("xDMRG/model/hamiltonian", "model_size");
+        auto model_size      = h5src.readAttribute<size_t>("xDMRG/model/hamiltonian", "model_size");
         auto model_type      = h5src.readAttribute<ModelType>("xDMRG/model/hamiltonian", "model_type");
         auto position        = h5src.readAttribute<long>("xDMRG/state_emid/mps", "position");
         auto model_g         = h5src.readTableField<double>("xDMRG/model/hamiltonian", "g", h5pp::TableSelection::FIRST);
@@ -125,7 +125,7 @@ int main() {
             auto mposEne_pert = model_pert.get_all_mpo_tensors(MposWithEdges::ON);
             auto ene_pert     = tools::finite::measure::expectation_value(state_pert, state_pert, mposEne_pert);
 
-            for(const auto &mpo : model_pert.MPO) mpo->set_energy_shift_mpo(cplx(std::real(ene_pert) / static_cast<double>(model_size), 0.0));
+            for(const auto &mpo : model_pert.MPO) mpo->set_energy_shift_mpo(cx64(std::real(ene_pert) / static_cast<double>(model_size), 0.0));
             for(auto &mpo : model_pert.MPO) { mpo->set_parity_shift_mpo_squared(spinZ > 0 ? 1 : -1, "z"); }
 
             model_pert.clear_cache();
@@ -169,7 +169,7 @@ int main() {
 
         }
         h5src.setKeepFileClosed();
-        counter++;
+        // counter++;
         // if(counter > 100) exit(0);
     }
     h5tgt.setKeepFileClosed();

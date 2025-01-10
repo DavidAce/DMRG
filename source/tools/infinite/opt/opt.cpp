@@ -12,11 +12,11 @@
 #include "tools/common/log.h"
 
 namespace tools::infinite::opt {
-    Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &state, OptRitz ritz) {
+    Eigen::Tensor<cx64, 3> find_ground_state(const TensorsInfinite &state, OptRitz ritz) {
         return tools::infinite::opt::find_ground_state(state, enum2sv(ritz));
     }
 
-    Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &tensors, std::string_view ritzstring) {
+    Eigen::Tensor<cx64, 3> find_ground_state(const TensorsInfinite &tensors, std::string_view ritzstring) {
         tools::log->trace("Starting ground state optimization");
         auto t_opt = tid::tic_scope("opt");
 
@@ -26,21 +26,21 @@ namespace tools::infinite::opt {
         const auto &mpo       = tensors.model->get_2site_mpo_AB();
         const auto &env       = tensors.edges->get_ene_blk();
 
-        MatVecMPO<cplx> matrix(env.L, env.R, mpo);
+        MatVecMPO<cx64> matrix(env.L, env.R, mpo);
         eig::solver     solver;
         solver.config.maxNev  = 1;
         solver.config.maxNcv  = settings::precision::eigs_ncv;
         solver.config.tol     = settings::precision::eigs_tol_min;
         solver.config.maxIter = 10000;
         solver.eigs(matrix, -1, -1, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
-        return eig::view::get_eigvec<cplx>(solver.result, shape_mps);
+        return eig::view::get_eigvec<cx64>(solver.result, shape_mps);
     }
 
     //============================================================================//
     // Do unitary evolution on an MPS
     //============================================================================//
 
-    Eigen::Tensor<cplx, 3> time_evolve_state(const StateInfinite &state, const Eigen::Tensor<cplx, 2> &U)
+    Eigen::Tensor<cx64, 3> time_evolve_state(const StateInfinite &state, const Eigen::Tensor<cx64, 2> &U)
     /*!
     @verbatim
       1--[ mps ]--2

@@ -17,7 +17,7 @@ struct primme_params;
 
 template<typename T>
 class MatVecMPO {
-    static_assert(std::is_same_v<T, real> or std::is_same_v<T, cplx>);
+    static_assert(std::is_same_v<T, fp64> or std::is_same_v<T, cx64>);
 
     public:
     using Scalar     = T;
@@ -40,7 +40,7 @@ class MatVecMPO {
     eig::Side           side = eig::Side::R;
 
     // Shift and shift-invert mode stuff
-    std::complex<double> sigma         = cplx(0.0, 0.0); // The shift
+    std::complex<double> sigma         = cx64(0.0, 0.0); // The shift
     bool                 readyShift    = false;          // Flag to make sure the shift has occurred
     bool                 readyFactorOp = false;          // Flag to make sure LU factorization has occurred
 

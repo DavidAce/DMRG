@@ -9,6 +9,9 @@ add_source_target(dmrg-math-eig-matvec
         dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
+        dmrg-tensors-mps
+        dmrg-tensors-mpo
+        dmrg-tensors-env
         dmrg-math-svd
         dmrg-math-tenx
         dmrg-tools-common-contraction

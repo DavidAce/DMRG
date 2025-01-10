@@ -248,7 +248,7 @@ def get_meta(plotdir, cachedir):
             'palettes': ["viridis_r", "autumn_r", "summer_r"],
             'mplstyle': mplstyle,
             'ylabel': 'natural mass center',
-            'xlabel': "$\Delta$",
+            'xlabel': "$\delta$",
             'legendcols': ['L', 'g:.3f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
@@ -262,7 +262,7 @@ def get_meta(plotdir, cachedir):
             'default': default3x3,
             'include': {
                 # 'L': [12, 14, 16],
-                'L': [12,14,16,18],
+                'L': [12,14,16,18,20],
                 # 'g': [0.030],
                 'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
                 'd': [-6, -5, -4, -3, -2, -1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1, 2, 3, 4, 5, 6],
@@ -285,8 +285,8 @@ def get_meta(plotdir, cachedir):
             'filename': 'info-natural-center_vs_d_foreach_g',
             'palettes': ["viridis_r", "autumn_r", "summer_r"],
             'mplstyle': mplstyle,
-            'ylabel': 'natural mass center',
-            'xlabel': "$\Delta$",
+            'ylabel': '$\\xi$',
+            'xlabel': "$\delta$",
             'legendcols': ['L', 'g:.3f', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
@@ -300,7 +300,7 @@ def get_meta(plotdir, cachedir):
             'default': default2x2,
             'include': {
                 # 'L': [12, 14, 16],
-                'L': [12,14,16,18],
+                'L': [12,14,16,18,20],
                 # 'g': [0.030],
                 'g': [0.000, 0.005, 0.010, 0.015, 0.020, 0.025, 0.030],
                 'd': [0],
@@ -323,7 +323,7 @@ def get_meta(plotdir, cachedir):
             'filename': 'info-center_vs_g_foreach_L',
             'palettes': ["viridis_r", "autumn_r", "summer_r"],
             'mplstyle': mplstyle,
-            'ylabel': 'natural mass center',
+            'ylabel': '$\\xi$',
             'xlabel': "$g$",
             'legendcols': ['L', 'g:.3f', 'd:.3f', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,

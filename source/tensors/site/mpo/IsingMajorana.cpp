@@ -101,7 +101,7 @@ void IsingMajorana::set_parameter(const std::string_view name, std::any value) {
  *  delta = <ln J_i> - <ln h_i> =  2ln(W).
  *
  */
-Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
+Eigen::Tensor<cx64, 4> IsingMajorana::get_mpo(cx64 energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                               [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
 
 {
@@ -120,7 +120,7 @@ Eigen::Tensor<cplx, 4> IsingMajorana::get_mpo(cplx energy_shift_per_site, std::o
         }
     }
 
-    Eigen::Tensor<cplx, 4> mpo_build;
+    Eigen::Tensor<cx64, 4> mpo_build;
     mpo_build.resize(5, 5, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_build.setZero();
     mpo_build.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);

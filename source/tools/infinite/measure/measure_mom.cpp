@@ -33,7 +33,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
 
     solver.eigs(transfer_matrix_theta_evn.data(), sizeLB, nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
                 eig::Dephase::OFF);
-    auto eigval                   = eig::view::get_eigval<cplx>(solver.result, 0);
+    auto eigval                   = eig::view::get_eigval<cx64>(solver.result, 0);
     auto new_theta_evn_normalized = tools::common::views::get_theta_evn(state_evolved, sqrt(eigval));
     auto old_theta_evn_normalized = tools::common::views::get_theta_evn(state_original);
     long sizeL                    = new_theta_evn_normalized.dimension(1) * state_original.chiA();
@@ -46,7 +46,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     solver.eigs(transfer_matrix_G.data(), transfer_matrix_G.dimension(0), nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
                 eig::Vecs::OFF, eig::Dephase::OFF);
     //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigs_default_ncv, Ritz::LM, Side::R, false);
-    auto lambdaG = eig::view::get_eigval<cplx>(solver.result, 0);
+    auto lambdaG = eig::view::get_eigval<cx64>(solver.result, 0);
     return lambdaG;
 }
 

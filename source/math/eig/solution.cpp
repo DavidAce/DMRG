@@ -4,13 +4,13 @@ namespace eig {
     template<typename Scalar, Side side>
     std::vector<Scalar> &solution::get_eigvecs() const {
         static_assert(side != Side::LR and "Cannot get both L/R eigvecs simultaneusly");
-        if constexpr(std::is_same_v<Scalar, real>) {
+        if constexpr(std::is_same_v<Scalar, fp64>) {
             build_eigvecs_real();
             if constexpr(side == Side::R) return eigvecsR_real;
             if constexpr(side == Side::L) return eigvecsL_real;
             //            if constexpr(side == Side::LR) return std::pair(eigvecsL_real, eigvecsR_real);
         }
-        if constexpr(std::is_same_v<Scalar, cplx>) {
+        if constexpr(std::is_same_v<Scalar, cx64>) {
             build_eigvecs_cplx();
             if constexpr(side == Side::R) return eigvecsR_cplx;
             if constexpr(side == Side::L) return eigvecsL_cplx;
@@ -18,10 +18,10 @@ namespace eig {
         }
     }
 
-    template std::vector<real> &solution::get_eigvecs<real, Side::L>() const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx, Side::L>() const;
-    template std::vector<real> &solution::get_eigvecs<real, Side::R>() const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx, Side::R>() const;
+    template std::vector<fp64> &solution::get_eigvecs<fp64, Side::L>() const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64, Side::L>() const;
+    template std::vector<fp64> &solution::get_eigvecs<fp64, Side::R>() const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64, Side::R>() const;
 
     template<typename Scalar>
     std::vector<Scalar> &solution::get_eigvecs(Side side) const {
@@ -29,35 +29,35 @@ namespace eig {
         if(side == Side::L) return get_eigvecs<Scalar, Side::L>();
         throw std::runtime_error("Cannot return both L and R eigenvectors");
     }
-    template std::vector<real> &solution::get_eigvecs<real>(Side side) const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx>(Side side) const;
+    template std::vector<fp64> &solution::get_eigvecs<fp64>(Side side) const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64>(Side side) const;
 
     template<typename Scalar, Form form, Side side>
     std::vector<Scalar> &solution::get_eigvecs() const {
-        if constexpr(std::is_same<real, Scalar>::value) return get_eigvecs<form, Type::REAL, side>();
-        if constexpr(std::is_same<cplx, Scalar>::value) return get_eigvecs<form, Type::CPLX, side>();
+        if constexpr(std::is_same<fp64, Scalar>::value) return get_eigvecs<form, Type::REAL, side>();
+        if constexpr(std::is_same<cx64, Scalar>::value) return get_eigvecs<form, Type::CPLX, side>();
     }
-    template std::vector<real> &solution::get_eigvecs<real, Form::SYMM, Side::L>() const;
-    template std::vector<real> &solution::get_eigvecs<real, Form::SYMM, Side::R>() const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::SYMM, Side::L>() const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::SYMM, Side::R>() const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::NSYM, Side::L>() const;
-    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::NSYM, Side::R>() const;
+    template std::vector<fp64> &solution::get_eigvecs<fp64, Form::SYMM, Side::L>() const;
+    template std::vector<fp64> &solution::get_eigvecs<fp64, Form::SYMM, Side::R>() const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64, Form::SYMM, Side::L>() const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64, Form::SYMM, Side::R>() const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64, Form::NSYM, Side::L>() const;
+    template std::vector<cx64> &solution::get_eigvecs<cx64, Form::NSYM, Side::R>() const;
 
     template<typename Scalar>
     std::vector<Scalar> &solution::get_eigvals() const {
-        if constexpr(std::is_same_v<Scalar, real>) {
+        if constexpr(std::is_same_v<Scalar, fp64>) {
             build_eigvals_real();
             return eigvals_real;
         }
-        if constexpr(std::is_same_v<Scalar, cplx>) {
+        if constexpr(std::is_same_v<Scalar, cx64>) {
             build_eigvals_cplx();
             return eigvals_cplx;
         }
     }
 
-    template std::vector<real> &solution::get_eigvals<real>() const;
-    template std::vector<cplx> &solution::get_eigvals<cplx>() const;
+    template std::vector<fp64> &solution::get_eigvals<fp64>() const;
+    template std::vector<cx64> &solution::get_eigvals<cx64>() const;
 
     const std::vector<double> &solution::get_resnorms() const { return meta.residual_norms; }
 
@@ -80,9 +80,9 @@ namespace eig {
 
     std::type_index solution::get_eigvecs_type() const {
         if(eigvecs_are_real())
-            return typeid(real);
+            return typeid(fp64);
         else
-            return typeid(cplx);
+            return typeid(cx64);
     }
 
     void solution::build_eigvecs_cplx() const {

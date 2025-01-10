@@ -203,8 +203,8 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, int nev) {
                     if(config.shift_invert == Shinv::ON) {
                         eig::log->trace("Enabling shift-invert mode");
                         matrix.FactorOP();
-                        if constexpr(std::is_same_v<ShiftType, cplx>) solver.SetShiftInvertMode(config.sigma.value(), &matrix, &MatrixType::MultOPv);
-                        if constexpr(std::is_same_v<ShiftType, real>) solver.SetShiftInvertMode(std::real(config.sigma.value()), &matrix, &MatrixType::MultOPv);
+                        if constexpr(std::is_same_v<ShiftType, cx64>) solver.SetShiftInvertMode(config.sigma.value(), &matrix, &MatrixType::MultOPv);
+                        if constexpr(std::is_same_v<ShiftType, fp64>) solver.SetShiftInvertMode(std::real(config.sigma.value()), &matrix, &MatrixType::MultOPv);
                     }
                 } else if(config.shift_invert == Shinv::ON)
                     throw std::runtime_error("Tried to shift-invert an incompatible matrix");
@@ -298,8 +298,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
                     if(config.shift_invert == Shinv::ON) {
                         eig::log->trace("Enabling shift-invert mode");
                         matrix.FactorOP();
-                        if constexpr(std::is_same_v<ShiftType, cplx>) solver.SetShiftInvertMode(config.sigma.value());
-                        if constexpr(std::is_same_v<ShiftType, real>) solver.SetShiftInvertMode(std::real(config.sigma.value()));
+                        if constexpr(std::is_same_v<ShiftType, cx64>) solver.SetShiftInvertMode(config.sigma.value());
+                        if constexpr(std::is_same_v<ShiftType, fp64>) solver.SetShiftInvertMode(std::real(config.sigma.value()));
                     }
                 } else if(config.shift_invert == Shinv::ON)
                     throw std::runtime_error("Tried to shift-invert an incompatible matrix");
@@ -431,10 +431,10 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
     auto           eigvalsize_t               = safe_cast<size_t>(eigvalsize);
     auto           eigvecsize_t               = safe_cast<size_t>(eigvecsize);
     constexpr auto eigval_has_imag_separately = eig::sfinae::has_RawEigenvaluesImag_v<Derived>;
-    constexpr auto eigval_is_cplx             = std::is_same_v<cplx, eigval_type>;
-    constexpr auto eigval_is_real             = std::is_same_v<real, eigval_type>;
-    constexpr auto eigvec_is_cplx             = std::is_same_v<cplx, eigvec_type>;
-    constexpr auto eigvec_is_real             = std::is_same_v<real, eigvec_type>;
+    constexpr auto eigval_is_cplx             = std::is_same_v<cx64, eigval_type>;
+    constexpr auto eigval_is_real             = std::is_same_v<fp64, eigval_type>;
+    constexpr auto eigvec_is_cplx             = std::is_same_v<cx64, eigvec_type>;
+    constexpr auto eigvec_is_real             = std::is_same_v<fp64, eigvec_type>;
 
     if(result.meta.eigvals_found) {
         if constexpr(eigval_has_imag_separately) {
@@ -506,16 +506,16 @@ void eig::solver_arpack<MatrixType>::compute_residual_norms() {
     }
 }
 
-template class eig::solver_arpack<MatVecDense<real>>;
-template class eig::solver_arpack<MatVecDense<cplx>>;
-template class eig::solver_arpack<MatVecSparse<real>>;
-template class eig::solver_arpack<MatVecSparse<cplx>>;
-template class eig::solver_arpack<MatVecMPO<real>>;
-template class eig::solver_arpack<MatVecMPO<cplx>>;
-template class eig::solver_arpack<MatVecMPOS<real>>;
-template class eig::solver_arpack<MatVecMPOS<cplx>>;
-template class eig::solver_arpack<MatVecZero<real>>;
-template class eig::solver_arpack<MatVecZero<cplx>>;
+template class eig::solver_arpack<MatVecDense<fp64>>;
+template class eig::solver_arpack<MatVecDense<cx64>>;
+template class eig::solver_arpack<MatVecSparse<fp64>>;
+template class eig::solver_arpack<MatVecSparse<cx64>>;
+template class eig::solver_arpack<MatVecMPO<fp64>>;
+template class eig::solver_arpack<MatVecMPO<cx64>>;
+template class eig::solver_arpack<MatVecMPOS<fp64>>;
+template class eig::solver_arpack<MatVecMPOS<cx64>>;
+template class eig::solver_arpack<MatVecZero<fp64>>;
+template class eig::solver_arpack<MatVecZero<cx64>>;
 #if defined(__clang__)
     // turn the warnings back on
     #pragma clang diagnostic pop

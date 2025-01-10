@@ -226,7 +226,7 @@ namespace settings {
         inline size_t              dmrg_max_blocksize          = 4;                                      /*!< Maximum number of sites in a dmrg optimization step. */
         inline long                dmrg_max_prob_size          = 1024*2*1024;                            /*!< Restricts the dmrg blocksize to keep the problem size below this limit. Problem size = chiL * (spindim ** blocksize) * chiR */
         inline EnvExpandMode       dmrg_env_expand_mode        = EnvExpandMode::DEFAULT;                 /*!< Select options for environment expansion (aka subspace expansion) [NONE H1, H2, SSITE, NSITE, BACKWARD, FORWARD, DEFAULT(H1 | H2 | NSITE | FORWARD)] */
-        inline long                dmrg_env_expand_iter        = 20;                                     /*!< How many iterations to use in the nsite environment expansion (ignored in 1-site expansion) */
+        inline size_t              dmrg_env_expand_iter        = 20;                                     /*!< How many iterations to use in the nsite environment expansion (ignored in 1-site expansion) */
         inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */

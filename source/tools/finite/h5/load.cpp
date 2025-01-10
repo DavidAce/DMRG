@@ -49,7 +49,7 @@ namespace tools::finite::h5 {
     }
 
     void load::state(const h5pp::File &h5file, std::string_view state_prefix, StateFinite &state, MpsInfo &info) {
-        using cplx = std::complex<double>;
+        using cx64 = std::complex<double>;
         try {
             // To successfully load a state there has to be an MPS with StorageLevel::FULL
             auto mps_info = tools::common::h5::resume::find_fully_stored_mps(h5file, state_prefix);
@@ -73,7 +73,7 @@ namespace tools::finite::h5 {
                     auto label = h5file.readAttribute<std::string>(dset_M_name, "label");
                     state.mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, position, error, label));
                 } else {
-                    auto M     = h5file.readDataset<Eigen::Tensor<cplx, 3>>(dset_M_name);
+                    auto M     = h5file.readDataset<Eigen::Tensor<cx64, 3>>(dset_M_name);
                     auto L     = h5file.readAttribute<Eigen::Tensor<double, 1>>(dset_M_name, "L");
                     auto error = h5file.readAttribute<double>(dset_M_name, "truncation_error");
                     auto label = h5file.readAttribute<std::string>(dset_M_name, "label");
@@ -141,11 +141,11 @@ namespace tools::finite::h5 {
             // Check that the time limits are the same
             tools::log->info("Validating time series: [{}]", state_prefix);
             auto time_scale          = h5file.readAttribute<std::optional<std::string>>(state_prefix, "time_scale");
-            auto time_start          = h5file.readAttribute<std::optional<cplx>>(state_prefix, "time_start");
-            auto time_final          = h5file.readAttribute<std::optional<cplx>>(state_prefix, "time_final");
+            auto time_start          = h5file.readAttribute<std::optional<cx64>>(state_prefix, "time_start");
+            auto time_final          = h5file.readAttribute<std::optional<cx64>>(state_prefix, "time_final");
             auto time_num_steps      = h5file.readAttribute<std::optional<uint64_t>>(state_prefix, "time_num_steps");
-            auto expected_time_start = cplx(settings::flbit::time_start_real, settings::flbit::time_start_imag);
-            auto expected_time_final = cplx(settings::flbit::time_final_real, settings::flbit::time_final_imag);
+            auto expected_time_start = cx64(settings::flbit::time_start_real, settings::flbit::time_start_imag);
+            auto expected_time_final = cx64(settings::flbit::time_final_real, settings::flbit::time_final_imag);
             if(time_scale.has_value() and time_scale.value() != enum2sv(settings::flbit::time_scale)) {
                 throw except::load_error("Mismatching time scale: file {} != config {}", time_scale, enum2sv(settings::flbit::time_scale));
             }

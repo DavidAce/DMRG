@@ -15,15 +15,15 @@ class MpoSite;
 
 class EnvBase {
     public:
-    using real = double;
-    using cplx = std::complex<real>;
+    using fp64 = double;
+    using cx64 = std::complex<fp64>;
 
     protected:
-    void build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo);
-    void enlarge(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo);
-    void set_edge_dims(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 1> &edge);
+    void build_block(Eigen::Tensor<cx64, 3> &otherblock, const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo);
+    void enlarge(const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo);
+    void set_edge_dims(const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 1> &edge);
 
-    std::unique_ptr<Eigen::Tensor<cplx, 3>> block;        /*!< The environment block. */
+    std::unique_ptr<Eigen::Tensor<cx64, 3>> block;        /*!< The environment block. */
     size_t                                  sites    = 0; /*!< Number of particles that have been contracted into this environment. */
     std::optional<size_t>                   position = std::nullopt;
     std::string                             side;
@@ -51,8 +51,8 @@ class EnvBase {
     void assert_validity() const;
     void assert_unique_id(const EnvBase &env, const MpsSite &mps, const MpoSite &mpo) const;
 
-    [[nodiscard]] const Eigen::Tensor<cplx, 3> &get_block() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 3>       &get_block();
+    [[nodiscard]] const Eigen::Tensor<cx64, 3> &get_block() const;
+    [[nodiscard]] Eigen::Tensor<cx64, 3>       &get_block();
     [[nodiscard]] bool                          has_block() const;
     [[nodiscard]] std::array<long, 3>           get_dims() const;
     [[nodiscard]] bool                          is_real() const;
@@ -69,8 +69,8 @@ class EnvBase {
     std::optional<std::size_t> get_unique_id_mps() const;
     std::optional<std::size_t> get_unique_id_mpo() const;
 
-    template<typename T = cplx>
+    template<typename T = cx64>
     Eigen::Tensor<T, 3> get_expansion_term(const Eigen::Tensor<T, 3> &mps, const Eigen::Tensor<T, 4> &mpo, double alpha) const;
-    template<typename T = cplx>
+    template<typename T = cx64>
     Eigen::Tensor<T, 3> get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max = -1) const;
 };

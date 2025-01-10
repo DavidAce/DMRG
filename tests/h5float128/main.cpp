@@ -1,5 +1,4 @@
 
-#if defined(USE_QUADMATH)
     #include "debug/exceptions.h"
     #include "io/fmt_custom.h"
     #include "io/fmt_f128_t.h"
@@ -55,10 +54,10 @@ T get_decimal(std::string s) {
 int main() {
     auto tval = float(5.0);
     auto tbin = get_binary(tval);
-    auto wval = __float128(0.1);
+    auto wval = fp128(0.1);
     auto wbin = get_binary(wval);
     fmt::print("tval = {} -> {} -> {}\n", tval, tbin, get_decimal<float>(tbin));
-    fmt::print("wval = {} -> {} -> {}\n", f128_t(wval), wbin, f128_t(get_decimal<__float128>(wbin)));
+    fmt::print("wval = {} -> {} -> {}\n", f128_t(wval), wbin, f128_t(get_decimal<fp128>(wbin)));
 
     auto f = h5pp::File("h5float128.h5", h5pp::FilePermission::READWRITE, 2);
 
@@ -94,26 +93,25 @@ int main() {
     auto o     = h5pp::Options();
     o.linkPath = "float128";
     o.h5Type   = h5_float128_t;
-    o.dataDims = {};
+    o.dataDims = std::vector<hsize_t>{};
 
     auto dataInfo = h5pp::scan::scanDataInfo(wval, o);
     auto dsetInfo = h5pp::scan::makeDsetInfo(f.openFileHandle(), o, f.plists);
     h5pp::hdf5::createDataset(dsetInfo, f.plists);
     h5pp::hdf5::writeDataset(wval, dataInfo, dsetInfo, f.plists);
 
-    auto rval = f.readDataset<__float128>("float128", std::nullopt, h5_float128_t);
+    auto rval = f.readDataset<fp128>("float128", std::nullopt, h5_float128_t);
     auto rbin = get_binary(rval);
-    fmt::print("rval = {} -> {} -> {}\n", f128_t(rval), rbin, f128_t(get_decimal<__float128>(rbin)));
+    fmt::print("rval = {} -> {} -> {}\n", f128_t(rval), rbin, f128_t(get_decimal<fp128>(rbin)));
     if(rval != wval) throw std::runtime_error("rval != wval");
 
     h5pp::varr_t<h5pp::fstr_t<64>> test1;
     h5pp::varr_t<h5pp::fstr_t<64>> test2 = {};
-    h5pp::varr_t<h5pp::fstr_t<64>> test3 = rnd::random<real_t>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
-    test1 = rnd::random<real_t>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
-    test2 = rnd::random<real_t>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
+    h5pp::varr_t<h5pp::fstr_t<64>> test3 = rnd::random<fp128>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
+    test1 = rnd::random<fp128>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
+    test2 = rnd::random<fp128>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
     test3 = {};
+
     return 0;
 }
-#else
-int main() { return 0; }
-#endif
+

@@ -63,7 +63,7 @@ std::tuple<long, double, bool> get_optimal_eigenvalue(long numZeroEigenvalues, E
             // Take the closest to the old value
             optVal    = (evals.array() - oldVal).cwiseAbs().minCoeff(&optIdx);
             optVal    = evals.coeff(optIdx);
-            saturated = std::abs(oldVal - optVal) < std::numeric_limits<real>::epsilon();
+            saturated = std::abs(oldVal - optVal) < std::numeric_limits<fp64>::epsilon();
 
             break;
         }
@@ -80,7 +80,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> modified_gram_schmidt(Eigen::Ma
     for(long i = 0; i < V.cols(); ++i) {
         Q.col(i) = V.col(i);
         R(i, i)  = Q.col(i).norm();
-        if(std::abs(R(i, i)) < std::numeric_limits<real>::epsilon()) {
+        if(std::abs(R(i, i)) < std::numeric_limits<fp64>::epsilon()) {
             tools::log->error("Q.col({}) is a zero vector:\n Q: \n{}\n", i, linalg::matrix::to_string(Q.real(), 8));
             continue;
         }
@@ -102,8 +102,8 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site(const std
     res.sites        = sites;
     res.dims_old     = state.get_mps_dims(sites);
     res.bond_old     = state.get_bond_dims(sites);
-    res.posL         = sites.front();
-    res.posR         = sites.back();
+    res.posL         = safe_cast<long>(sites.front());
+    res.posR         = safe_cast<long>(sites.back());
     const auto &mpsL = state.get_mps_site(res.posL);
     const auto &mpsR = state.get_mps_site(res.posR);
     res.dimL_old     = mpsL.dimensions();
@@ -119,7 +119,7 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site(const std
     auto V           = MatrixType(size, 3);
     auto H1V         = MatrixType(size, 3);
     auto H2V         = MatrixType(size, 3);
-    if constexpr(std::is_same_v<T, real>) {
+    if constexpr(std::is_same_v<T, fp64>) {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites)).real();
     } else {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites));
@@ -128,8 +128,8 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site(const std
     // If H1_on we use {1, H¹ }|\psi>
     // If H2_on we use {1, H² }|\psi>
     // If H1_on and H2_on we use {1,  H¹, H² }|\psi>
-    auto H1_on = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::H1));
-    auto H2_on = static_cast<double>(has_flag(envExpandMode, EnvExpandMode::H2));
+    bool H1_on = has_flag(envExpandMode, EnvExpandMode::H1);
+    bool H2_on = has_flag(envExpandMode, EnvExpandMode::H2);
 
     // Define the krylov subspace v0,  H1v0, H2v0
     H1.MultAx(V.col(0).data(), V.col(1).data());
@@ -196,13 +196,13 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site(const std
     // tools::log->debug("Vars: {}", linalg::matrix::to_string(Vars.real().transpose(), 8));
 
     // Eigenvalues are sorted in ascending order.
-    real tol           = std::clamp(std::pow(K3(0, 0).real(), 2.0), std::numeric_limits<real>::epsilon(), 1e-10);
+    auto tol           = std::clamp(std::pow(K3(0, 0).real(), 2.0), std::numeric_limits<fp64>::epsilon(), 1e-10);
     long numZeroRowsK1 = (K1.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
     long numZeroRowsK2 = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
     long numZeroRowsK3 = (K3.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
     long numZeroRows   = std::max({numZeroRowsK1, numZeroRowsK2, numZeroRowsK3});
     long optIdx        = 0;
-    real optVal        = evals.coeff(optIdx);
+    auto optVal        = evals.coeff(optIdx);
     if(numZeroRows > 0) {
         for(long i = 0; i < 3; ++i) { tools::log->debug("V.col({}).norm() = {:.16f}", i, V.col(i).norm()); }
         tools::log->debug("V.col(0).dot(V.col(1)) = {:.16f}", V.col(0).dot(V.col(1)));
@@ -231,14 +231,14 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site(const std
     V.col(0) = (V * col).eval();
 
     tools::log->debug("mixed state result:  <H²>-<H>²= {:.16f} | sites {} (size {})", optVal, sites, size);
-    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
+    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cx64>();
     return res;
 }
 
-template EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site<real>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site<fp64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                       const ModelFinite &model, const EdgesFinite &edges,
                                                                                       EnvExpandMode envExpandMode);
-template EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site<cplx>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::get_optimally_mixed_block_1site<cx64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                       const ModelFinite &model, const EdgesFinite &edges,
                                                                                       EnvExpandMode envExpandMode);
 template<typename T>
@@ -254,8 +254,8 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1(co
     res.sites        = sites;
     res.dims_old     = state.get_mps_dims(sites);
     res.bond_old     = state.get_bond_dims(sites);
-    res.posL         = sites.front();
-    res.posR         = sites.back();
+    res.posL         = safe_cast<long>(sites.front());
+    res.posR         = safe_cast<long>(sites.back());
     const auto &mpsL = state.get_mps_site(res.posL);
     const auto &mpsR = state.get_mps_site(res.posR);
     res.dimL_old     = mpsL.dimensions();
@@ -269,7 +269,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1(co
     auto V           = MatrixType(size, 3);
     auto H1V         = MatrixType(size, 3);
     auto H2V         = MatrixType(size, 3);
-    if constexpr(std::is_same_v<T, real>) {
+    if constexpr(std::is_same_v<T, fp64>) {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites)).real();
     } else {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites));
@@ -308,7 +308,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1(co
         auto evals  = solver.eigenvalues();
         auto evecs  = solver.eigenvectors();
 
-        real tol                            = std::numeric_limits<real>::epsilon();
+        auto tol                            = std::numeric_limits<fp64>::epsilon();
         long numZeroRowsK1                  = (K1.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long optIdx                         = 0;
         bool saturated                      = false;
@@ -335,14 +335,14 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1(co
     t_totals.toc();
     tools::log->debug("mixed state result: <H> = {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s", optVal,
                       sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
-    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
+    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cx64>();
     return res;
 }
 
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1<real>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1<fp64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                              size_t maxiter);
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1<cplx>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H1<cx64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                              size_t maxiter);
 
@@ -359,8 +359,8 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
     res.sites        = sites;
     res.dims_old     = state.get_mps_dims(sites);
     res.bond_old     = state.get_bond_dims(sites);
-    res.posL         = sites.front();
-    res.posR         = sites.back();
+    res.posL         = safe_cast<long>(sites.front());
+    res.posR         = safe_cast<long>(sites.back());
     const auto &mpsL = state.get_mps_site(res.posL);
     const auto &mpsR = state.get_mps_site(res.posR);
     res.dimL_old     = mpsL.dimensions();
@@ -372,7 +372,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
     auto size        = H1.get_size();
     auto V           = MatrixType(size, 3);
     auto H2V         = MatrixType(size, 3);
-    if constexpr(std::is_same_v<T, real>) {
+    if constexpr(std::is_same_v<T, fp64>) {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites)).real();
     } else {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites));
@@ -412,8 +412,8 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
         auto evecs  = solver.eigenvectors();
 
         // Eigenvalues are sorted in ascending order.
-        static constexpr auto eps         = std::numeric_limits<real>::epsilon();
-        real                  tol         = std::clamp(std::pow(K2(0, 0).real(), 2.0), eps, 1e-10);
+        static constexpr auto eps         = std::numeric_limits<fp64>::epsilon();
+        auto                  tol         = std::clamp(std::pow(K2(0, 0).real(), 2.0), eps, 1e-10);
         long                  numZeroRows = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long                  optIdx      = 0;
         if(numZeroRows > 0) {
@@ -467,14 +467,14 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2(co
     tools::log->debug(
         "mixed state result: <H²> = {:.16f} | α: {:.3e} {:.3e} {:.3e} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s",
         optVal, res.alpha_mps, res.alpha_h1v, res.alpha_h2v, sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
-    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
+    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cx64>();
     return res;
 }
 
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2<real>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2<fp64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                              size_t maxiter);
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2<cplx>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_H2<cx64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                              const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                              size_t maxiter);
 template<typename T>
@@ -490,8 +490,8 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(
     res.sites        = sites;
     res.dims_old     = state.get_mps_dims(sites);
     res.bond_old     = state.get_bond_dims(sites);
-    res.posL         = sites.front();
-    res.posR         = sites.back();
+    res.posL         = safe_cast<long>(sites.front());
+    res.posR         = safe_cast<long>(sites.back());
     const auto &mpsL = state.get_mps_site(res.posL);
     const auto &mpsR = state.get_mps_site(res.posR);
     res.dimL_old     = mpsL.dimensions();
@@ -504,7 +504,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(
     auto V           = MatrixType(size, 3);
     auto H1V         = MatrixType(size, 3);
     auto H2V         = MatrixType(size, 3);
-    if constexpr(std::is_same_v<T, real>) {
+    if constexpr(std::is_same_v<T, fp64>) {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites)).real();
     } else {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites));
@@ -569,7 +569,7 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(
         // tools::log->debug("Vars: {}", linalg::matrix::to_string(Vars.real().transpose(), 8));
 
         // Eigenvalues are sorted in ascending order.
-        real tol           = std::clamp(std::pow(K3(0, 0).real(), 2.0), std::numeric_limits<real>::epsilon(), 1e-10);
+        auto tol           = std::clamp(std::pow(K3(0, 0).real(), 2.0), std::numeric_limits<fp64>::epsilon(), 1e-10);
         long numZeroRowsK1 = (K1.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long numZeroRowsK2 = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long numZeroRowsK3 = (K3.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
@@ -613,14 +613,14 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH(
     t_totals.toc();
     tools::log->debug("mixed state result:  <H²>-<H>²= {:.16f} | sites {} (size {}) | rnorm {:.3e} | iters {} | t_multax {:.3e} s |  t_totals {:.3e} s", optVal,
                       sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
-    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
+    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cx64>();
     return res;
 }
 
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH<real>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH<fp64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                                const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                                size_t maxiter);
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH<cplx>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_VarH<cx64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                                const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                                size_t maxiter);
 
@@ -637,8 +637,8 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(
     res.sites        = sites;
     res.dims_old     = state.get_mps_dims(sites);
     res.bond_old     = state.get_bond_dims(sites);
-    res.posL         = sites.front();
-    res.posR         = sites.back();
+    res.posL         = safe_cast<long>(sites.front());
+    res.posR         = safe_cast<long>(sites.back());
     const auto &mpsL = state.get_mps_site(res.posL);
     const auto &mpsR = state.get_mps_site(res.posR);
     res.dimL_old     = mpsL.dimensions();
@@ -646,13 +646,13 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(
 
     auto H1          = MatVecMPOS<T>(model.get_mpo(sites), edges.get_multisite_env_ene(sites));
     auto H2          = MatVecMPOS<T>(model.get_mpo(sites), edges.get_multisite_env_var(sites));
-    using VectorType = typename MatVecMPOS<T>::VectorType;
+    // using VectorType = typename MatVecMPOS<T>::VectorType;
     using MatrixType = typename MatVecMPOS<T>::MatrixType;
     auto size        = H1.get_size();
     auto V           = MatrixType(size, 3);
     auto H1V         = MatrixType(size, 3);
     auto H2V         = MatrixType(size, 3);
-    if constexpr(std::is_same_v<T, real>) {
+    if constexpr(std::is_same_v<T, fp64>) {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites)).real();
     } else {
         V.col(0) = tenx::VectorCast(state.get_multisite_mps(sites));
@@ -700,20 +700,20 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(
         K2(2, 2) = V.col(2).dot(H2V.col(2));
         K2       = K2.template selfadjointView<Eigen::Lower>();
 
-        real tol           = std::numeric_limits<real>::epsilon();
+        auto tol           = std::numeric_limits<fp64>::epsilon();
         long numZeroRowsK1 = (K1.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long numZeroRowsK2 = (K2.cwiseAbs().rowwise().maxCoeff().array() <= tol).count();
         long numZeroRows   = std::max({numZeroRowsK1, numZeroRowsK2});
 
         Eigen::Vector3d evals;
         Eigen::Matrix3d evecs;
-        long optIdx    = 0;
-        bool saturated = 0;
+        long            optIdx    = 0;
+        bool            saturated = 0;
         if(numZeroRows == 0) {
             auto solver = Eigen::GeneralizedSelfAdjointEigenSolver<Eigen::Matrix3cd>(
                 K1.template selfadjointView<Eigen::Lower>(), K2.template selfadjointView<Eigen::Lower>(), Eigen::ComputeEigenvectors | Eigen::Ax_lBx);
-            evals = solver.eigenvalues().real();
-            evecs = solver.eigenvectors().real();
+            evals                               = solver.eigenvalues().real();
+            evecs                               = solver.eigenvectors().real();
             std::tie(optIdx, optVal, saturated) = get_optimal_eigenvalue(numZeroRows, evals, optVal, ritz);
         } else {
             auto K3     = Eigen::Matrix3cd(K2 - K1 * K1);
@@ -781,14 +781,14 @@ EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH(
                       "t_totals {:.3e} s",
                       optVal, res.alpha_mps, res.alpha_h1v, res.alpha_h2v, sites, size, rnorm, iter, t_multax.get_time(), t_totals.get_time());
 
-    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cplx>();
+    res.mixed_blk = Eigen::TensorMap<Eigen::Tensor<T, 3>>(V.col(0).data(), H1.get_shape_mps()).template cast<cx64>();
     return res;
 }
 
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH<real>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH<fp64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                                const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                                size_t maxiter);
-template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH<cplx>(const std::vector<size_t> &sites, const StateFinite &state,
+template EnvExpansionResult tools::finite::env::internal::get_optimally_mixed_block_GsiH<cx64>(const std::vector<size_t> &sites, const StateFinite &state,
                                                                                                const ModelFinite &model, const EdgesFinite &edges, OptRitz ritz,
                                                                                                size_t maxiter);
 
@@ -798,39 +798,39 @@ EnvExpansionResult tools::finite::env::get_optimally_mixed_block(const std::vect
     switch(algo) {
         case OptAlgo::DMRG: {
             if(is_real)
-                return internal::get_optimally_mixed_block_H1<real>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_H1<fp64>(sites, state, model, edges, ritz, maxiter);
             else
-                return internal::get_optimally_mixed_block_H1<cplx>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_H1<cx64>(sites, state, model, edges, ritz, maxiter);
         }
         case OptAlgo::DMRGX: {
             if(is_real)
-                return internal::get_optimally_mixed_block_VarH<real>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_VarH<fp64>(sites, state, model, edges, ritz, maxiter);
             else
-                return internal::get_optimally_mixed_block_VarH<cplx>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_VarH<cx64>(sites, state, model, edges, ritz, maxiter);
         }
         case OptAlgo::HYBRID_DMRGX: {
             if(is_real)
-                return internal::get_optimally_mixed_block_VarH<real>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_VarH<fp64>(sites, state, model, edges, ritz, maxiter);
             else
-                return internal::get_optimally_mixed_block_VarH<cplx>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_VarH<cx64>(sites, state, model, edges, ritz, maxiter);
         }
         case OptAlgo::XDMRG: {
             if(is_real)
-                return internal::get_optimally_mixed_block_H2<real>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_H2<fp64>(sites, state, model, edges, ritz, maxiter);
             else
-                return internal::get_optimally_mixed_block_H2<cplx>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_H2<cx64>(sites, state, model, edges, ritz, maxiter);
         }
         case OptAlgo::GDMRG: {
             if(is_real)
-                return internal::get_optimally_mixed_block_GsiH<real>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_GsiH<fp64>(sites, state, model, edges, ritz, maxiter);
             else
-                return internal::get_optimally_mixed_block_GsiH<cplx>(sites, state, model, edges, ritz, maxiter);
+                return internal::get_optimally_mixed_block_GsiH<cx64>(sites, state, model, edges, ritz, maxiter);
         }
         default: return {};
     }
 }
 
-void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_PR,
+void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cx64, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cx64, 3> &MR_PR,
                              const svd::config &svd_cfg) {
     // The expanded bond sits between mpsL and mpsR
     // We zero-pad mpsL and enrich mpsR.
@@ -877,16 +877,16 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
         mpsL.set_M(ML_PL);
         mpsL.take_stash(mpsR); // normalization of mpsL is lost here.
     } else if(labL == "B" and labR == "B") {
-        auto US = Eigen::Tensor<cplx, 3>(U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0})));
+        auto US = Eigen::Tensor<cx64, 3>(U.contract(tenx::asDiagonal(S), tenx::idx({2}, {0})));
         mpsR.set_M(V);
         mpsR.stash_U(US, posL);
         mpsR.stash_S(S, -1.0, posL); // Set a negative truncation error to ignore it.
         mpsL.set_M(ML_PL);
         mpsL.take_stash(mpsR); // normalization of mpsL is lost here.
     } else if(labL == "A" and labR == "AC") {
-        auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
-        auto C1 = Eigen::Tensor<cplx, 1>(V.dimension(2));
-        C1.setConstant(cplx(1.0, 0.0)); // Replaces C with an identity
+        auto SV = Eigen::Tensor<cx64, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
+        auto C1 = Eigen::Tensor<cx64, 1>(V.dimension(2));
+        C1.setConstant(cx64(1.0, 0.0)); // Replaces C with an identity
         mpsR.set_M(SV);
         mpsR.set_L(S);
         mpsR.set_LC(C1);
@@ -900,19 +900,19 @@ void merge_expansion_term_PR(const StateFinite &state, MpsSite &mpsL, const Eige
     {
         // Make mpsL normalized so that later checks can succeed
         auto                   multisite_mpsL = state.get_multisite_mps({posL});
-        cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsL);
-        Eigen::Tensor<cplx, 3> M_tmp          = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
+        cx64                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsL);
+        Eigen::Tensor<cx64, 3> M_tmp          = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
         mpsL.set_M(M_tmp);
         if constexpr(settings::debug_expansion) {
             auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
-            cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
+            cx64 norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
             tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), std::abs(norm_old),
                               std::abs(norm_new));
         }
     }
 }
 
-void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cplx, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cplx, 3> &MR_PR,
+void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eigen::Tensor<cx64, 3> &ML_PL, MpsSite &mpsR, const Eigen::Tensor<cx64, 3> &MR_PR,
                              const svd::config &svd_cfg) {
     // The expanded bond sits between mpsL and mpsR.
     // During forward expansion <--
@@ -951,14 +951,14 @@ void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eige
     auto [U, S, V]   = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg);
 
     if(labL == "A" and labR == "AC") {
-        auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
+        auto SV = Eigen::Tensor<cx64, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
         mpsL.set_M(U);
         mpsL.stash_S(S, -1.0, posR); // Set a negative truncation error to ignore it.
         mpsL.stash_V(SV, posR);
         mpsR.set_M(MR_PR);
         mpsR.take_stash(mpsL); // normalization of mpsR is lost here
     } else if(labL == "A" and labR == "A") {
-        auto SV = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
+        auto SV = Eigen::Tensor<cx64, 3>(tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}));
         mpsL.set_M(U);
         mpsL.stash_S(S, -1.0, posR); // Set a negative truncation error to ignore it.
         mpsL.stash_V(SV, posR);
@@ -977,12 +977,12 @@ void merge_expansion_term_PL(const StateFinite &state, MpsSite &mpsL, const Eige
     {
         // Make mpsR normalized so that later checks can succeed
         auto                   multisite_mpsR = state.get_multisite_mps({posR});
-        cplx                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsR);
-        Eigen::Tensor<cplx, 3> M_tmp          = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
+        cx64                   norm_old       = tools::common::contraction::contract_mps_norm(multisite_mpsR);
+        Eigen::Tensor<cx64, 3> M_tmp          = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale by the norm
         mpsR.set_M(M_tmp);
         if constexpr(settings::debug_expansion) {
             auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
-            cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
+            cx64 norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
             tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), std::abs(norm_old),
                               std::abs(norm_new));
         }
@@ -1068,9 +1068,9 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
 
     auto res = EnvExpansionResult();
     if(state.is_real() and model.is_real() and edges.is_real()) {
-        res = get_optimally_mixed_block_1site<real>(pos_expanded, state, model, edges, envExpandMode);
+        res = get_optimally_mixed_block_1site<fp64>(pos_expanded, state, model, edges, envExpandMode);
     } else {
-        res = get_optimally_mixed_block_1site<cplx>(pos_expanded, state, model, edges, envExpandMode);
+        res = get_optimally_mixed_block_1site<cx64>(pos_expanded, state, model, edges, envExpandMode);
     }
     auto &mpsL     = state.get_mps_site(res.posL);
     auto &mpsR     = state.get_mps_site(res.posR);
@@ -1103,20 +1103,20 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             //      * mpsL is AC(i), or B(i) during multisite dmrg
             //      * mpsR is B(i+1) and belongs in envR later in the optimization step
             // auto &mpoL = model.get_mpo(res.posL);
-            auto &mpoR = model.get_mpo(res.posR);
-            // Eigen::Tensor<cplx, 3> ML_PL = mpsL.get_M();
-            Eigen::Tensor<cplx, 3> MR_PR =
-                mpsR.get_M() * mpsR.get_M().constant(cplx(res.alpha_mps, 0.0)); // mpsR is going into the environment, enriched with PR.
+            auto &mpoR = model.get_mpo(safe_cast<size_t>(res.posR));
+            // Eigen::Tensor<cx64, 3> ML_PL = mpsL.get_M();
+            Eigen::Tensor<cx64, 3> MR_PR =
+                mpsR.get_M() * mpsR.get_M().constant(cx64(res.alpha_mps, 0.0)); // mpsR is going into the environment, enriched with PR.
             long PRdim1 = 0;
             if(res.alpha_h1v != 0) {
                 // auto                  &envL    = edges.get_env_eneL(res.posL);
-                auto &envR    = edges.get_env_eneR(res.posR);
+                auto &envR    = edges.get_env_eneR(safe_cast<size_t>(res.posR));
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
-                // Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
-                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
-                // Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, -1);
-                // Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
-                Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+                // Eigen::Tensor<cx64, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
+                Eigen::Tensor<cx64, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
+                // Eigen::Tensor<cx64, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, -1);
+                // Eigen::Tensor<cx64, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
                 // ML_PL                            = std::move(ML_PL_tmp);
                 MR_PR = std::move(MR_PR_tmp);
                 PRdim1 += PR.dimension(1);
@@ -1124,21 +1124,21 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             }
             if(res.alpha_h2v != 0) {
                 // auto                  &envL    = edges.get_env_varL(res.posL);
-                auto &envR    = edges.get_env_varR(res.posR);
+                auto &envR    = edges.get_env_varR(safe_cast<size_t>(res.posR));
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
-                // Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
-                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
-                // Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
-                // Eigen::Tensor<cplx, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
-                // Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
-                Eigen::Tensor<cplx, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
+                // Eigen::Tensor<cx64, 3> PL      = envL.get_expansion_term(mpsL, mpoL, 1.0, -1);
+                Eigen::Tensor<cx64, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
+                // Eigen::Tensor<cx64, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
+                // Eigen::Tensor<cx64, 3> PR        = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, -1);
+                // Eigen::Tensor<cx64, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> MR_PR_tmp = MR_PR.concatenate(PR, 1);
                 // ML_PL                            = std::move(ML_PL_tmp);
                 MR_PR = std::move(MR_PR_tmp);
                 PRdim1 += PR.dimension(1);
                 res.env_var = envR;
             }
-            Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
-            Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
+            Eigen::Tensor<cx64, 3> P0    = tenx::TensorConstant<cx64>(cx64(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
+            Eigen::Tensor<cx64, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // mpsL is going to be optimized, zero-padded with P0
             merge_expansion_term_PR(state, mpsL, ML_P0, mpsR, MR_PR, svd_cfg);
             // merge_expansion_term_PR(state, mpsL, ML_PL, mpsR, MR_PR, svd_cfg);
             state.clear_measurements();
@@ -1152,33 +1152,33 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             // The expanded bond sits between mpsL and mpsR. When direction is right-to-left:
             //      * mpsL is A(i-1) and belongs in envL later in the optimization step
             //      * mpsR is A(i) (or AC(i)) and is the active site
-            auto                  &mpoL   = model.get_mpo(res.posL);
-            Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M() * mpsL.get_M().constant(cplx(res.alpha_mps, 0.0));
+            auto                  &mpoL   = model.get_mpo(safe_cast<size_t>(res.posL));
+            Eigen::Tensor<cx64, 3> ML_PL  = mpsL.get_M() * mpsL.get_M().constant(cx64(res.alpha_mps, 0.0));
             long                   PLdim2 = 0;
             if(res.alpha_h1v != 0) {
-                auto                  &envL    = edges.get_env_eneL(res.posL);
+                auto                  &envL    = edges.get_env_eneL(safe_cast<size_t>(res.posL));
                 long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
-                Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, chi_max);
-                // Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, -1);
-                Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, chi_max);
+                // Eigen::Tensor<cx64, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, -1);
+                Eigen::Tensor<cx64, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 ML_PL                            = std::move(ML_PL_tmp);
                 PLdim2 += PL.dimension(2);
                 res.env_ene = envL;
             }
             if(res.alpha_h2v != 0) {
-                auto                  &envL    = edges.get_env_varL(res.posL);
+                auto                  &envL    = edges.get_env_varL(safe_cast<size_t>(res.posL));
                 long                   chi_max = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
-                Eigen::Tensor<cplx, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, chi_max);
-                // Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, -1);
-                Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> PL      = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, chi_max);
+                // Eigen::Tensor<cx64, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, -1);
+                Eigen::Tensor<cx64, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 ML_PL                            = std::move(ML_PL_tmp);
                 PLdim2 += PL.dimension(2);
                 res.env_var = envL;
             }
             if(PLdim2 == 0) { tools::log->error("expand_environment_forward_1site: PRdim1 == 0: this is likely an error: mpsL was needlessly modified! "); }
 
-            Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
-            Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
+            Eigen::Tensor<cx64, 3> P0    = tenx::TensorConstant<cx64>(cx64(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
+            Eigen::Tensor<cx64, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
             merge_expansion_term_PL(state, mpsL, ML_PL, mpsR, MR_P0, svd_cfg);
 
             state.clear_cache();
@@ -1193,30 +1193,30 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             // The expanded bond sits between mpsL and mpsR. When direction is left-to-right:
             //      * mpsL is "AC(i)" and will get moved into envL later
             //      * mpsR is "B(i+1)" and will become the active site after moving center position
-            auto                  &mpoL   = model.get_mpo(res.posL);
-            Eigen::Tensor<cplx, 3> ML_PL  = mpsL.get_M() * mpsL.get_M().constant(cplx(res.alpha_mps, 0.0));
+            auto                  &mpoL   = model.get_mpo(safe_cast<size_t>(res.posL));
+            Eigen::Tensor<cx64, 3> ML_PL  = mpsL.get_M() * mpsL.get_M().constant(cx64(res.alpha_mps, 0.0));
             long                   PLdim2 = 0;
             if(res.alpha_h1v != 0) {
-                auto                  &envL      = edges.get_env_eneL(res.posL);
+                auto                  &envL      = edges.get_env_eneL(safe_cast<size_t>(res.posL));
                 long                   chi_max   = 2 * bond_lim / (1 + mpoL.MPO().dimension(1));
-                Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, chi_max);
-                Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h1v, chi_max);
+                Eigen::Tensor<cx64, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 ML_PL                            = std::move(ML_PL_tmp);
                 PLdim2 += PL.dimension(2);
                 res.env_ene = envL; // Saves a reference to the expanded environment
             }
             if(res.alpha_h2v != 0) {
-                auto                  &envL      = edges.get_env_varL(res.posL);
+                auto                  &envL      = edges.get_env_varL(safe_cast<size_t>(res.posL));
                 long                   chi_max   = 2 * bond_lim / (1 + mpoL.MPO2().dimension(1));
-                Eigen::Tensor<cplx, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, chi_max);
-                Eigen::Tensor<cplx, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> PL        = envL.get_expansion_term(mpsL, mpoL, res.alpha_h2v, chi_max);
+                Eigen::Tensor<cx64, 3> ML_PL_tmp = ML_PL.concatenate(PL, 2);
                 ML_PL                            = std::move(ML_PL_tmp);
                 PLdim2 += PL.dimension(2);
                 res.env_var = envL; // Saves a reference to the expanded environment
             }
             if(PLdim2 == 0) { tools::log->error("expand_environment_backward: PLdim2 == 0: this is likely an error"); }
-            Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
-            Eigen::Tensor<cplx, 3> MR_P0 = mpsR.get_M().concatenate(P0, 1); // mpsR is going into the environment, padded with zeros
+            Eigen::Tensor<cx64, 3> P0    = tenx::TensorConstant<cx64>(cx64(0.0, 0.0), mpsR.spin_dim(), PLdim2, mpsR.get_chiR());
+            Eigen::Tensor<cx64, 3> MR_P0 = mpsR.get_M().concatenate(P0, 1); // mpsR is going into the environment, padded with zeros
             merge_expansion_term_PL(state, mpsL, ML_PL, mpsR, MR_P0, svd_cfg);
             tools::log->debug("Environment expansion backward pos {} | {} | αₑ:{:.2e} αᵥ:{:.2e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,
                               flag2str(envExpandMode), res.alpha_h1v, res.alpha_h2v, svd_cfg.truncation_limit.value(), svd_cfg.rank_max.value(), dimL_old[2],
@@ -1227,17 +1227,17 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             //      * mpsL is "A(i-1)" and will become the active site after moving center position
             //      * mpsR is "AC(i)" and is the active site that will get moved into envR later
             // auto                  &mpoL   = model.get_mpo(posL);
-            auto                  &mpoR   = model.get_mpo(res.posR);
-            Eigen::Tensor<cplx, 3> MR_PR  = mpsR.get_M() * mpsR.get_M().constant(cplx(res.alpha_mps, 0.0)); // [ AC  P ]^T  including LC
+            auto                  &mpoR   = model.get_mpo(safe_cast<size_t>(res.posR));
+            Eigen::Tensor<cx64, 3> MR_PR  = mpsR.get_M() * mpsR.get_M().constant(cx64(res.alpha_mps, 0.0)); // [ AC  P ]^T  including LC
             long                   PRdim1 = 0;
             if(res.alpha_h1v != 0) {
                 // auto                  &envL       = edges.get_env_eneL(posL);
-                auto &envR    = edges.get_env_eneR(res.posR);
+                auto &envR    = edges.get_env_eneR(safe_cast<size_t>(res.posR));
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO().dimension(0));
-                // Eigen::Tensor<cplx, 3> PL         = envL.get_expansion_term(mpsL, mpoL, 0.0, chi_max);
-                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
-                // Eigen::Tensor<cplx, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
-                Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+                // Eigen::Tensor<cx64, 3> PL         = envL.get_expansion_term(mpsL, mpoL, 0.0, chi_max);
+                Eigen::Tensor<cx64, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h1v, chi_max);
+                // Eigen::Tensor<cx64, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
                 // ML_PL                             = std::move(ML_PL_temp);
                 MR_PR = std::move(MR_PR_temp);
                 PRdim1 += PR.dimension(1);
@@ -1245,20 +1245,20 @@ EnvExpansionResult tools::finite::env::expand_environment_1site(StateFinite &sta
             }
             if(res.alpha_h2v != 0) {
                 // auto                  &envL       = edges.get_env_varL(posL);
-                auto &envR    = edges.get_env_varR(res.posR);
+                auto &envR    = edges.get_env_varR(safe_cast<size_t>(safe_cast<size_t>(res.posR)));
                 long  chi_max = 2 * bond_lim / (1 + mpoR.MPO2().dimension(0));
-                // Eigen::Tensor<cplx, 3> PL         = envL.get_expansion_term(mpsL, mpoL, 0.0, chi_max);
-                Eigen::Tensor<cplx, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
-                // Eigen::Tensor<cplx, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
-                Eigen::Tensor<cplx, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
+                // Eigen::Tensor<cx64, 3> PL         = envL.get_expansion_term(mpsL, mpoL, 0.0, chi_max);
+                Eigen::Tensor<cx64, 3> PR = envR.get_expansion_term(mpsR, mpoR, res.alpha_h2v, chi_max);
+                // Eigen::Tensor<cx64, 3> ML_PL_temp = ML_PL.concatenate(PL, 2);
+                Eigen::Tensor<cx64, 3> MR_PR_temp = MR_PR.concatenate(PR, 1);
                 // ML_PL                             = std::move(ML_PL_temp);
                 MR_PR = std::move(MR_PR_temp);
                 PRdim1 += PR.dimension(1);
                 res.env_var = envR;
             }
             if(PRdim1 == 0) { tools::log->error("expand_environment (backward): PRdim1 == 0: this is likely an error"); }
-            Eigen::Tensor<cplx, 3> P0    = tenx::TensorConstant<cplx>(cplx(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
-            Eigen::Tensor<cplx, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // [ A   0 ]
+            Eigen::Tensor<cx64, 3> P0    = tenx::TensorConstant<cx64>(cx64(0.0, 0.0), mpsL.spin_dim(), mpsL.get_chiL(), PRdim1);
+            Eigen::Tensor<cx64, 3> ML_P0 = mpsL.get_M().concatenate(P0, 2); // [ A   0 ]
             merge_expansion_term_PR(state, mpsL, ML_P0, mpsR, MR_PR, svd_cfg);
 
             tools::log->debug("Environment expansion backward pos {} | {} | αₑ:{:.2e} αᵥ:{:.3e} | svd_ε {:.2e} | χlim {} | χ {} -> {} -> {}", pos_expanded,

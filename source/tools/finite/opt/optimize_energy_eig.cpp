@@ -42,11 +42,11 @@ namespace tools::finite::opt::internal {
                 // Filter the results
                 if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
                     // tools::log->info("Found {} eigvals ({} converged)", solver.result.meta.nev, solver.result.meta.nev_converged);
-                    auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+                    auto eigvals = eig::view::get_eigvals<fp64>(solver.result, false);
                     auto indices = num::range<long>(0l, eigvals.size());
                     auto eigComp = EigIdxComparator(meta.optRitz, eigval, eigvals.data(), eigvals.size());
                     std::sort(indices.begin(), indices.end(), eigComp); // Should sort them according to distance from eigval
-                    indices.resize(std::min(eigvals.size(), 10l));      // We only need the first few indices, say 4
+                    indices.resize(safe_cast<size_t>(std::min(eigvals.size(), 10l)));      // We only need the first few indices, say 4
                     // for(auto idx : indices) { tools::log->info(" -- idx {}: {:.16f}", idx, eigvals(idx)); }
                     extract_results(tensors, initial_mps, meta, solver, results, false, indices);
                 }
@@ -75,8 +75,8 @@ namespace tools::finite::opt::internal {
         auto                 t_gs = tid::tic_scope("eig-ene", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
-            case OptType::REAL: optimize_energy_eig_executor<real>(tensors, initial_mps, results, meta); break;
-            case OptType::CPLX: optimize_energy_eig_executor<cplx>(tensors, initial_mps, results, meta); break;
+            case OptType::REAL: optimize_energy_eig_executor<fp64>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: optimize_energy_eig_executor<cx64>(tensors, initial_mps, results, meta); break;
         }
         if(results.empty()) {
             meta.optExit = OptExit::FAIL_ERROR;

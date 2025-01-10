@@ -21,11 +21,11 @@
 
 using namespace eig;
 
-int eig::solver::dsygvx(real *matrixA, real *matrixB, size_type L, char range, int il, int iu, double vl, double vu) {
+int eig::solver::dsygvx(fp64 *matrixA, fp64 *matrixB, size_type L, char range, int il, int iu, double vl, double vu) {
     eig::log->trace("Starting eig dsygvr | range {} | i [{},{}] | v [{},{}]", range, il, iu, vl, vu);
     auto t_start = std::chrono::high_resolution_clock::now();
 
-    //    auto A     = std::vector<real>(matrix, matrix + L * L);
+    //    auto A     = std::vector<fp64>(matrix, matrix + L * L);
     char jobz  = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     int  itype = 1;
     int  info  = 0;
@@ -39,8 +39,8 @@ int eig::solver::dsygvx(real *matrixA, real *matrixB, size_type L, char range, i
 
     int              m_found = 0;
     double           lwork_query[1];
-    std::vector<int> iwork(L * 5ul);
-    std::vector<int> ifail(L, 0);
+    std::vector<int> iwork(safe_cast<size_t>(L) * 5ul);
+    std::vector<int> ifail(safe_cast<size_t>(L), 0);
 
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::REAL>();

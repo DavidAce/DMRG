@@ -1,10 +1,10 @@
 #include "../rnd.h"
+#include "math/float.h"
 #include <algorithm>
 #include <cstdio>
 #include <omp.h>
 #include <random>
 #include <stdexcept>
-#include "math/float.h"
 
 #if defined(NDEBUG)
 namespace rnd {
@@ -47,26 +47,29 @@ namespace rnd {
         if(n.has_value() and n.value() >= 0) {
             auto given_seed = (unsigned long) n.value();
             std::printf("pcg-rng seed: %ld\n", given_seed);
-            pcg_extras::seed_seq_from<pcg64> seq(given_seed);
-            internal::rng.seed(seq);
+            pcg_extras::seed_seq_from<pcg64> seq64(given_seed);
+            internal::rng64.seed(seq64);
+            pcg_extras::seed_seq_from<pcg128_once_insecure> seq128(given_seed);
+            internal::rng128.seed(seq128);
         } else {
             std::printf("pcg-rng seed: std::random_device\n");
             pcg_extras::seed_seq_from<std::random_device> seed_source;
-            internal::rng.seed(seed_source);
+            internal::rng64.seed(seed_source);
+            internal::rng128.seed(seed_source);
         }
-        std::srand(static_cast<unsigned>(internal::rng()));
+        std::srand(static_cast<unsigned>(internal::rng64()));
     }
 
     int uniform_integer_01() {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_integer_01 is not thread safe!");
-        return internal::rand_int_01(internal::rng);
+        return internal::rand_int_01(internal::rng64);
     }
 
     double uniform_double_01() {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_double_01 is not thread safe!");
-        return internal::rand_double_01(internal::rng);
+        return internal::rand_double_01(internal::rng64);
     }
 
     template<typename T>
@@ -74,7 +77,7 @@ namespace rnd {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_integer_box is not thread safe!");
         std::uniform_int_distribution<T> rand_int(std::min(min, max), std::max(min, max));
-        return rand_int(internal::rng);
+        return rand_int(internal::rng64);
     }
     template int      uniform_integer_box(int min, int max);
     template unsigned uniform_integer_box(unsigned min, unsigned max);
@@ -85,18 +88,18 @@ namespace rnd {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_double_box is not thread safe!");
         std::uniform_real_distribution<> rand_real(std::min(min, max), std::max(min, max));
-        return rand_real(internal::rng);
+        return rand_real(internal::rng64);
     }
     double uniform_double_box(double halfwidth) {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_double_box is not thread safe!");
         std::uniform_real_distribution<> rand_real(-halfwidth, halfwidth);
-        return rand_real(internal::rng);
+        return rand_real(internal::rng64);
     }
 
-    std::complex<double> uniform_complex_in_unit_circle() { return std::polar(uniform_double_01(), internal::rand_double_0_2pi(internal::rng)); }
+    std::complex<double> uniform_complex_in_unit_circle() { return std::polar(uniform_double_01(), internal::rand_double_0_2pi(internal::rng64)); }
 
-    std::complex<double> uniform_complex_on_unit_circle() { return std::polar(1.0, internal::rand_double_0_2pi(internal::rng)); }
+    std::complex<double> uniform_complex_on_unit_circle() { return std::polar(1.0, internal::rand_double_0_2pi(internal::rng64)); }
 
     std::complex<double> uniform_complex_box(double real_min, double real_max, double imag_min, double imag_max) {
         return {uniform_double_box(real_min, real_max), uniform_double_box(imag_min, imag_max)};
@@ -108,13 +111,13 @@ namespace rnd {
         double         norm = 0.0;
         for(size_t i = 0; i < n; i++) {
             if constexpr(std::is_same<T, std::complex<double>>::value) {
-                double re   = internal::normal_double_01(internal::rng);
-                double im   = internal::normal_double_01(internal::rng);
-                T      cplx = T(1.0, 0.0) * re + T(0.0, 1.0) * im;
-                arr.push_back(cplx);
+                double re   = internal::normal_double_01(internal::rng64);
+                double im   = internal::normal_double_01(internal::rng64);
+                T      cx64 = T(1.0, 0.0) * re + T(0.0, 1.0) * im;
+                arr.push_back(cx64);
                 norm += re * re + im * im;
             } else {
-                arr.push_back(internal::normal_double_01(internal::rng));
+                arr.push_back(internal::normal_double_01(internal::rng64));
                 norm += std::abs(arr[i] * arr[i]);
             }
         }
@@ -135,16 +138,22 @@ namespace rnd {
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform is not thread safe!");
         if constexpr(std::is_arithmetic_v<out_t>) {
             std::uniform_real_distribution<out_t> distribution(a, b);
-            return distribution(internal::rng);
-        } else if constexpr(std::is_same_v<out_t, __float128>) {
-            std::uniform_real_distribution<long double> distribution(static_cast<long double>(a), static_cast<long double>(b));
-            return static_cast<__float128>(distribution(internal::rng));
+            return distribution(internal::rng64);
         }
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+        else if constexpr(std::is_same_v<out_t, fp128>) {
+            __extension__ typedef __uint128_t __uint128;
+            auto                              rndval = static_cast<fp128>(internal::rng128()) / static_cast<fp128>(std::numeric_limits<__uint128>::max());
+            return (rndval * (b - a)) + a;
+        }
+#endif
     }
     template float       uniform(float mean, float std);
     template double      uniform(double mean, double std);
     template long double uniform(long double mean, long double std);
-    template __float128  uniform(__float128 mean, __float128 std);
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+    template fp128 uniform(fp128 mean, fp128 std);
+#endif
 
     template<typename out_t>
     out_t normal(out_t mean, out_t std) {
@@ -152,16 +161,19 @@ namespace rnd {
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::normal is not thread safe!");
         if constexpr(std::is_arithmetic_v<out_t>) {
             std::normal_distribution<out_t> distribution(mean, std);
-            return distribution(internal::rng);
-        } else if constexpr(std::is_same_v<out_t, __float128>) {
-            std::normal_distribution<long double> distribution(static_cast<long double>(mean), static_cast<long double>(std));
-            return static_cast<__float128>(distribution(internal::rng));
+            return distribution(internal::rng64);
         }
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+        else if constexpr(std::is_same_v<out_t, fp128>) {
+            std::normal_distribution<long double> distribution(static_cast<long double>(mean), static_cast<long double>(std));
+            return static_cast<fp128>(distribution(internal::rng128));
+        }
+#endif
     }
     template float       normal(float mean, float std);
     template double      normal(double mean, double std);
     template long double normal(long double mean, long double std);
-    template __float128  normal(__float128 mean, __float128 std);
+    template fp128       normal(fp128 mean, fp128 std);
 
     template<typename out_t>
     out_t log_normal(out_t mean, out_t std) {
@@ -169,16 +181,19 @@ namespace rnd {
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::log_normal is not thread safe!");
         if constexpr(std::is_arithmetic_v<out_t>) {
             std::lognormal_distribution<out_t> distribution(mean, std);
-            return distribution(internal::rng);
-        } else if constexpr(std::is_same_v<out_t, __float128>) {
-            std::lognormal_distribution<long double> distribution(static_cast<long double>(mean), static_cast<long double>(std));
-            return static_cast<__float128>(distribution(internal::rng));
+            return distribution(internal::rng64);
         }
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+        else if constexpr(std::is_same_v<out_t, fp128>) {
+            std::lognormal_distribution<long double> distribution(static_cast<long double>(mean), static_cast<long double>(std));
+            return static_cast<fp128>(distribution(internal::rng128));
+        }
+#endif
     }
     template float       log_normal(float mean, float std);
     template double      log_normal(double mean, double std);
     template long double log_normal(long double mean, long double std);
-    template __float128  log_normal(__float128 mean, __float128 std);
+    template fp128       log_normal(fp128 mean, fp128 std);
 
     std::vector<int> random_with_replacement(const std::vector<int> &in) {
         std::vector<int> boot;
@@ -200,14 +215,14 @@ namespace rnd {
         double                           ll = fmin(lowerLimit, upperLimit);
         double                           number;
         while(true) {
-            number = distribution(internal::rng);
+            number = distribution(internal::rng64);
             if(number >= ll && number <= ul) { return number; }
         }
     }
 
     template<typename T>
     void shuffle(T &list) {
-        std::shuffle(std::begin(list), std::end(list), internal::rng);
+        std::shuffle(std::begin(list), std::end(list), internal::rng64);
     }
     template void shuffle(std::vector<int> &list);
     template void shuffle(std::vector<unsigned> &list);
@@ -215,21 +230,23 @@ namespace rnd {
     template void shuffle(std::vector<size_t> &list);
     template void shuffle(std::vector<double> &list);
     template void shuffle(std::vector<long double> &list);
-    template void shuffle(std::vector<__float128> &list);
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+    template void shuffle(std::vector<fp128> &list);
+#endif
     template void shuffle(std::string &list);
 
     template<typename out_t, typename Distribution>
     std::vector<out_t> random(Distribution &&d, size_t num) {
         auto rndvec = std::vector<out_t>(num);
-        for(size_t i = 0; i < num; ++i) rndvec[i] = d(internal::rng);
+        for(size_t i = 0; i < num; ++i) rndvec[i] = d(internal::rng64);
         return rndvec;
     }
-    //    template std::vetor<__float128>  random<__float128>(Distribution &&d, size_t num);
+    //    template std::vetor<fp128>  random<fp128>(Distribution &&d, size_t num);
 
     template<typename out_t>
     out_t random(dist d, out_t mean, out_t width) {
         switch(d) {
-            case dist::uniform: return uniform<out_t>(mean - width / 2, mean + width / 2);
+            case dist::uniform: return uniform<out_t>(mean - width / static_cast<out_t>(2), mean + width / static_cast<out_t>(2));
             case dist::normal: return normal<out_t>(mean, width);
             case dist::lognormal: return log_normal<out_t>(mean, width);
             default: throw std::runtime_error("Invalid distribution");
@@ -238,8 +255,9 @@ namespace rnd {
     template float       random<float>(dist d, float mean, float width);
     template double      random<double>(dist d, double mean, double width);
     template long double random<long double>(dist d, long double mean, long double width);
-    template __float128  random<__float128>(dist d, __float128 mean, __float128 width);
-
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+    template fp128 random<fp128>(dist d, fp128 mean, fp128 width);
+#endif
     template<typename out_t>
     out_t random(std::string_view distribution, out_t mean, out_t width) {
         return random<out_t>(sv2enum(distribution), mean, width);
@@ -247,7 +265,7 @@ namespace rnd {
     template float       random<float>(std::string_view d, float mean, float width);
     template double      random<double>(std::string_view d, double mean, double width);
     template long double random<long double>(std::string_view d, long double mean, long double width);
-    template __float128  random<__float128>(std::string_view d, __float128 mean, __float128 width);
+    template fp128       random<fp128>(std::string_view d, fp128 mean, fp128 width);
 
     template<typename out_t>
     std::vector<out_t> random(dist d, out_t mean, out_t width, size_t num) {
@@ -258,17 +276,21 @@ namespace rnd {
                 case dist::lognormal: return random<out_t>(std::lognormal_distribution<out_t>(mean, width), num);
                 default: throw std::runtime_error("Invalid distribution");
             }
-        } else if(std::is_same_v<out_t, __float128>) {
-            std::vector<__float128> rndvec(num);
+        }
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+        else if(std::is_same_v<out_t, fp128>) {
+            std::vector<fp128> rndvec(num);
             for(auto &r : rndvec) r = random<out_t>(d, mean, width);
             return rndvec;
-        } else
+        }
+#endif
+        else
             throw std::runtime_error("rnd::random: unrecognized type");
     }
     template std::vector<float>       random<float>(dist d, float mean, float width, size_t num);
     template std::vector<double>      random<double>(dist d, double mean, double width, size_t num);
     template std::vector<long double> random<long double>(dist d, long double mean, long double width, size_t num);
-    template std::vector<__float128>  random<__float128>(dist d, __float128 mean, __float128 width, size_t num);
+    template std::vector<fp128>       random<fp128>(dist d, fp128 mean, fp128 width, size_t num);
 
     template<typename out_t>
     std::vector<out_t> random(dist d, out_t mean, out_t width, const std::vector<out_t> &weights) {
@@ -279,7 +301,7 @@ namespace rnd {
     template std::vector<float>       random<float>(dist d, float mean, float width, const std::vector<float> &weights);
     template std::vector<double>      random<double>(dist d, double mean, double width, const std::vector<double> &weights);
     template std::vector<long double> random<long double>(dist d, long double mean, long double width, const std::vector<long double> &weights);
-    template std::vector<__float128>  random<__float128>(dist d, __float128 mean, __float128 width, const std::vector<__float128> &weights);
+    template std::vector<fp128>       random<fp128>(dist d, fp128 mean, fp128 width, const std::vector<fp128> &weights);
 
     template<typename out_t>
     std::vector<out_t> random(std::string_view distribution, out_t mean, out_t width, size_t num) {
@@ -288,7 +310,7 @@ namespace rnd {
     template std::vector<float>       random<float>(std::string_view d, float mean, float width, size_t num);
     template std::vector<double>      random<double>(std::string_view d, double mean, double width, size_t num);
     template std::vector<long double> random<long double>(std::string_view d, long double mean, long double width, size_t num);
-    template std::vector<__float128>  random<__float128>(std::string_view d, __float128 mean, __float128 width, size_t num);
+    template std::vector<fp128>       random<fp128>(std::string_view d, fp128 mean, fp128 width, size_t num);
 
     template<typename out_t>
     std::vector<out_t> random(std::string_view distribution, out_t mean, out_t width, const std::vector<out_t> &weights) {
@@ -297,6 +319,6 @@ namespace rnd {
     template std::vector<float>       random<float>(std::string_view d, float mean, float width, const std::vector<float> &weights);
     template std::vector<double>      random<double>(std::string_view d, double mean, double width, const std::vector<double> &weights);
     template std::vector<long double> random<long double>(std::string_view d, long double mean, long double width, const std::vector<long double> &weights);
-    template std::vector<__float128>  random<__float128>(std::string_view d, __float128 mean, __float128 width, const std::vector<__float128> &weights);
+    template std::vector<fp128>       random<fp128>(std::string_view d, fp128 mean, fp128 width, const std::vector<fp128> &weights);
 
 }

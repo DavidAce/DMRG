@@ -6,8 +6,8 @@
 
 // class TensorsLocal{
 //     private:
-//     using cplx = std::complex<double>;
-//     using real = double;
+//     using cx64 = std::complex<double>;
+//     using fp64 = double;
 //
 //     public:
 //

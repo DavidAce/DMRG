@@ -17,15 +17,15 @@ struct EnvExpansionResult;
 
 class TensorsFinite {
     private:
-    using cplx = std::complex<double>;
-    using real = double;
+    using cx64 = std::complex<double>;
+    using fp64 = double;
     struct Cache {
         std::optional<std::vector<size_t>>    cached_sites_hamiltonian           = std::nullopt;
         std::optional<std::vector<size_t>>    cached_sites_hamiltonian_squared   = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> effective_hamiltonian_cplx         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> effective_hamiltonian_squared_cplx = std::nullopt;
-        std::optional<Eigen::Tensor<real, 2>> effective_hamiltonian_real         = std::nullopt;
-        std::optional<Eigen::Tensor<real, 2>> effective_hamiltonian_squared_real = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 2>> effective_hamiltonian_cplx         = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 2>> effective_hamiltonian_squared_cplx = std::nullopt;
+        std::optional<Eigen::Tensor<fp64, 2>> effective_hamiltonian_real         = std::nullopt;
+        std::optional<Eigen::Tensor<fp64, 2>> effective_hamiltonian_squared_real = std::nullopt;
     };
     mutable Cache cache;
 
@@ -64,11 +64,11 @@ class TensorsFinite {
     void initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors, long bond_lim,
                           std::string &pattern);
     void normalize_state(std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
-    [[nodiscard]] const Eigen::Tensor<cplx, 3>            &get_multisite_mps() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>            &get_multisite_mpo() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>            &get_multisite_mpo_squared() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &> get_multisite_env_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3> &> get_multisite_env_var_blk() const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 3>            &get_multisite_mps() const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 4>            &get_multisite_mpo() const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 4>            &get_multisite_mpo_squared() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cx64, 3> &> get_multisite_env_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cx64, 3> &> get_multisite_env_var_blk() const;
     /* clang-format off */
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian() const;
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
@@ -119,7 +119,7 @@ class TensorsFinite {
     size_t              move_center_point_to_pos(long pos, std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_middle(std::optional<svd::config> svd_cfg = std::nullopt);
-    void merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt,
+    void merge_multisite_mps(const Eigen::Tensor<cx64, 3> &multisite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt,
                              LogPolicy log_policy = LogPolicy::SILENT);
 
     EnvExpansionResult expand_environment(EnvExpandMode envExpandMode, OptAlgo algo, OptRitz ritz, size_t blocksize, svd::config svd_cfg);

@@ -39,7 +39,7 @@
 #include <Eigen/LU>
 #include <Eigen/QR>
 
-std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 4>> tools::finite::mpo::swap_mpo(const Eigen::Tensor<cplx, 4> &mpoL, const Eigen::Tensor<cplx, 4> &mpoR) {
+std::pair<Eigen::Tensor<cx64, 4>, Eigen::Tensor<cx64, 4>> tools::finite::mpo::swap_mpo(const Eigen::Tensor<cx64, 4> &mpoL, const Eigen::Tensor<cx64, 4> &mpoR) {
     /* The swap operation takes two neighboring sites
      *
      *            (2)dL                           (2)dR
@@ -99,7 +99,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 4>> tools::finite::mpo::sw
      *
      */
 
-    Eigen::Tensor<cplx, 6> swapped_mpo = mpoL.contract(mpoR, tenx::idx({1}, {0})).shuffle(tenx::array6{0, 4, 5, 3, 1, 2}); // swap
+    Eigen::Tensor<cx64, 6> swapped_mpo = mpoL.contract(mpoR, tenx::idx({1}, {0})).shuffle(tenx::array6{0, 4, 5, 3, 1, 2}); // swap
     auto                   svd_cfg     = svd::config();
     svd_cfg.truncation_limit           = 1e-16;
     svd_cfg.svd_lib                    = svd::lib::lapacke;
@@ -132,8 +132,8 @@ void tools::finite::mpo::swap_sites(ModelFinite &model, size_t posL, size_t posR
     std::swap(sites[posL], sites[posR]);
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_mpos_with_edges(const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
-                                                                            const Eigen::Tensor<cplx, 1> &Ledge, const Eigen::Tensor<cplx, 1> &Redge) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_mpos_with_edges(const std::vector<Eigen::Tensor<cx64, 4>> &mpos,
+                                                                            const Eigen::Tensor<cx64, 1> &Ledge, const Eigen::Tensor<cx64, 1> &Redge) {
     auto  mpos_with_edge = mpos;
     auto &threads        = tenx::threads::get();
 
@@ -165,8 +165,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_mpos_with_edges(cons
     return mpos_with_edge;
 }
 
-std::vector<Eigen::Tensor<cplx_t, 4>> tools::finite::mpo::get_mpos_with_edges_t(const std::vector<Eigen::Tensor<cplx_t, 4>> &mpos,
-                                                                                const Eigen::Tensor<cplx_t, 1> &Ledge, const Eigen::Tensor<cplx_t, 1> &Redge) {
+std::vector<Eigen::Tensor<cx128, 4>> tools::finite::mpo::get_mpos_with_edges_t(const std::vector<Eigen::Tensor<cx128, 4>> &mpos,
+                                                                                const Eigen::Tensor<cx128, 1> &Ledge, const Eigen::Tensor<cx128, 1> &Redge) {
     auto  mpos_with_edge = mpos;
     auto &threads        = tenx::threads::get();
 
@@ -198,7 +198,7 @@ std::vector<Eigen::Tensor<cplx_t, 4>> tools::finite::mpo::get_mpos_with_edges_t(
     return mpos_with_edge;
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos, MpoCompress mpoComp) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_compressed_mpos(std::vector<Eigen::Tensor<cx64, 4>> mpos, MpoCompress mpoComp) {
     switch(mpoComp) {
         case MpoCompress::NONE: return mpos;
         case MpoCompress::SVD: return get_svdcompressed_mpos(mpos);
@@ -206,8 +206,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(std:
         default: return mpos;
     }
 }
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
-                                                                            const Eigen::Tensor<cplx, 1> &Ledge, const Eigen::Tensor<cplx, 1> &Redge,
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_compressed_mpos(const std::vector<Eigen::Tensor<cx64, 4>> &mpos,
+                                                                            const Eigen::Tensor<cx64, 1> &Ledge, const Eigen::Tensor<cx64, 1> &Redge,
                                                                             MpoCompress mpoComp) {
     switch(mpoComp) {
         case MpoCompress::NONE: return mpos;
@@ -217,7 +217,7 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_compressed_mpos(cons
     }
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_svdcompressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_svdcompressed_mpos(std::vector<Eigen::Tensor<cx64, 4>> mpos) {
     tools::log->trace("Compressing MPOs: {} sites", mpos.size());
     // Setup SVD
     // Here we need a lot of precision:
@@ -240,8 +240,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_svdcompressed_mpos(s
 
     for(size_t iter = 0; iter < 4; iter++) {
         // Next compress from left to right
-        Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
-        Eigen::Tensor<cplx, 4> T_mpo;
+        Eigen::Tensor<cx64, 2> T_l2r; // Transfer matrix
+        Eigen::Tensor<cx64, 4> T_mpo;
         for(auto &&[idx, mpo] : iter::enumerate(mpos)) {
             auto mpo_dim_old = mpo.dimensions();
             if(T_l2r.size() == 0)
@@ -258,8 +258,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_svdcompressed_mpos(s
         }
 
         // Now we have done left to right. Next we do right to left
-        Eigen::Tensor<cplx, 2> T_r2l; // Transfer matrix
-        Eigen::Tensor<cplx, 4> mpo_T; // Absorbs transfer matrix
+        Eigen::Tensor<cx64, 2> T_r2l; // Transfer matrix
+        Eigen::Tensor<cx64, 4> mpo_T; // Absorbs transfer matrix
         for(auto &&[idx, mpo] : iter::enumerate_reverse(mpos)) {
             auto mpo_dim_old = mpo.dimensions();
             if(T_r2l.size() == 0)
@@ -281,12 +281,12 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_svdcompressed_mpos(s
 
     return mpos;
 }
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_svdcompressed_mpos(const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
-                                                                               const Eigen::Tensor<cplx, 1> &Ledge, const Eigen::Tensor<cplx, 1> &Redge) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_svdcompressed_mpos(const std::vector<Eigen::Tensor<cx64, 4>> &mpos,
+                                                                               const Eigen::Tensor<cx64, 1> &Ledge, const Eigen::Tensor<cx64, 1> &Redge) {
     return get_svdcompressed_mpos(get_mpos_with_edges(mpos, Ledge, Redge));
 }
 
-std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(const Eigen::Tensor<cplx, 4> &mpo) {
+std::pair<Eigen::Tensor<cx64, 4>, Eigen::Tensor<cx64, 2>> deparallelize_mpo_l2r(const Eigen::Tensor<cx64, 4> &mpo) {
     // Collect index 0,2,3 (left, top, bottom) for rows and leave index 1 for columns.
 
     /*
@@ -320,7 +320,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
     auto dim2      = mpo.dimension(0);
     auto dim3      = mpo.dimension(1);
     auto dim_ddm   = dim0 * dim1 * dim2;
-    auto mpo_rank2 = Eigen::Tensor<cplx, 2>(mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3}));
+    auto mpo_rank2 = Eigen::Tensor<cx64, 2>(mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3}));
     auto mpo_map   = tenx::MatrixMap(mpo_rank2);
 
     // auto rows     = mpo_map.rows();
@@ -331,7 +331,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
     for(long jdx = 0; jdx < mpo_map.cols(); ++jdx) { // checked col index
         if(col_keep.size() == 0 and mpo_map.col(jdx).norm() != 0.0) {
             // Keep if none are already kept
-            mat_xfer(0l, jdx) = cplx(1.0, 0.0);
+            mat_xfer(0l, jdx) = cx64(1.0, 0.0);
             col_keep.emplace_back(jdx);
             continue;
         }
@@ -343,7 +343,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
             auto col_kdx = mpo_map.col(col_keep[static_cast<size_t>(kdx)]); // A kept column from cols_keep
 
             // Find the row index with the first nonzero element in both col_kdx and col_jdx
-            auto prefactor = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); // Factor between the two columns
+            auto prefactor = cx64(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); // Factor between the two columns
             for(long rdx = 0; rdx < std::min(col_kdx.size(), col_jdx.size()); ++rdx) {                                 // row index
                 if(std::abs(col_kdx[rdx]) != 0.0 and std::abs(col_jdx[rdx]) != 0.0) {
                     prefactor = col_jdx[rdx] / col_kdx[rdx];
@@ -371,7 +371,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
         if(keep_jdx) {
             // We should keep column jdx if it isn't parallel to any of the kept columns
             col_keep.emplace_back(jdx); // must be added before setting xfer
-            mat_xfer(static_cast<long>(col_keep.size() - 1ul), jdx) = cplx(1.0, 0.0);
+            mat_xfer(static_cast<long>(col_keep.size() - 1ul), jdx) = cx64(1.0, 0.0);
         }
     }
 
@@ -381,7 +381,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
     // Create the deparallelized mpo by shuffling the indices back into position
     auto matrix_dep = Eigen::MatrixXcd(mpo_map(Eigen::all, col_keep)); // Deparallelized matrix
     auto tensor_dep = tenx::TensorMap(matrix_dep, std::array<long, 4>{dim0, dim1, dim2, matrix_dep.cols()});
-    auto mpo_dep    = Eigen::Tensor<cplx, 4>(tensor_dep.shuffle(std::array<long, 4>{2, 3, 0, 1}));
+    auto mpo_dep    = Eigen::Tensor<cx64, 4>(tensor_dep.shuffle(std::array<long, 4>{2, 3, 0, 1}));
 
     if constexpr(settings::debug) {
         // Sanity check
@@ -397,7 +397,7 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> deparallelize_mpo_l2r(
     return {mpo_dep, tenx::TensorMap(mat_xfer)};
 }
 
-std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(const Eigen::Tensor<cplx, 4> &mpo) {
+std::pair<Eigen::Tensor<cx64, 2>, Eigen::Tensor<cx64, 4>> deparallelize_mpo_r2l(const Eigen::Tensor<cx64, 4> &mpo) {
     // Collect index 1,2,3 (right, top, bottom) for rows and leave index 0 for rows.
 
     /*
@@ -430,7 +430,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
     auto dim2      = mpo.dimension(3);
     auto dim3      = mpo.dimension(1);
     auto dim_ddm   = dim1 * dim2 * dim3;
-    auto mpo_rank2 = Eigen::Tensor<cplx, 2>(mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm}));
+    auto mpo_rank2 = Eigen::Tensor<cx64, 2>(mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm}));
     auto mpo_map   = tenx::MatrixMap(mpo_rank2);
 
     auto rows = mpo_map.rows();
@@ -441,7 +441,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
     for(long idx = 0; idx < mpo_map.rows(); ++idx) { // checked row index
         if(row_keep.size() == 0 and mpo_map.row(idx).norm() != 0.0) {
             // Keep if none are already kept
-            mat_xfer(idx, 0l) = cplx(1.0, 0.0);
+            mat_xfer(idx, 0l) = cx64(1.0, 0.0);
             row_keep.emplace_back(idx);
             continue;
         }
@@ -453,7 +453,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
             auto row_kdx = mpo_map.row(row_keep[static_cast<size_t>(kdx)]); // A kept row from cols_keep
 
             // Find the col index with the first nonzero element in both row_kdx and row_jdx
-            auto prefactor = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); // Factor between the two columns
+            auto prefactor = cx64(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()); // Factor between the two columns
             for(long cdx = 0; cdx < std::min(row_kdx.size(), row_idx.size()); ++cdx) {                                 // col index
                 if(std::abs(row_kdx[cdx]) != 0.0 and std::abs(row_idx[cdx]) != 0.0) {
                     prefactor = row_idx[cdx] / row_kdx[cdx];
@@ -481,7 +481,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
         if(keep_idx) {
             // We should keep row idx if it isn't parallel to any of the kept rows
             row_keep.emplace_back(idx); // must be added before setting xfer
-            mat_xfer(idx, static_cast<long>(row_keep.size() - 1ul)) = cplx(1.0, 0.0);
+            mat_xfer(idx, static_cast<long>(row_keep.size() - 1ul)) = cx64(1.0, 0.0);
         }
     }
     // Resize the transfer matrix. It should have size rows x row_keep.size()
@@ -490,7 +490,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
     // Create the deparallelized mpo by shuffling the indices back into position
     auto matrix_dep = Eigen::MatrixXcd(mpo_map(row_keep, Eigen::all)); // Deparallelized matrix
     auto tensor_dep = tenx::TensorMap(matrix_dep, std::array<long, 4>{matrix_dep.rows(), dim1, dim2, dim3});
-    auto mpo_dep    = Eigen::Tensor<cplx, 4>(tensor_dep.shuffle(std::array<long, 4>{0, 3, 1, 2}));
+    auto mpo_dep    = Eigen::Tensor<cx64, 4>(tensor_dep.shuffle(std::array<long, 4>{0, 3, 1, 2}));
 
     if constexpr(settings::debug) {
         // Sanity check
@@ -507,7 +507,7 @@ std::pair<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> deparallelize_mpo_r2l(
     return {tenx::TensorMap(mat_xfer), mpo_dep};
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_deparallelized_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_deparallelized_mpos(std::vector<Eigen::Tensor<cx64, 4>> mpos) {
     tools::log->trace("Deparallelizing MPOs: {} sites", mpos.size());
 
     // Print the results
@@ -517,8 +517,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_deparallelized_mpos(
 
     for(size_t iter = 0; iter < 2; iter++) {
         // Start by deparallelizing left to right compress from left to right
-        Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
-        Eigen::Tensor<cplx, 4> T_mpo;
+        Eigen::Tensor<cx64, 2> T_l2r; // Transfer matrix
+        Eigen::Tensor<cx64, 4> T_mpo;
         for(auto &&[idx, mpo] : iter::enumerate(mpos)) {
             auto mpo_dim_old = mpo.dimensions();
             if(T_l2r.size() == 0)
@@ -535,8 +535,8 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_deparallelized_mpos(
         }
 
         // Now we have done left to right. Next we do right to left
-        Eigen::Tensor<cplx, 2> T_r2l; // Transfer matrix
-        Eigen::Tensor<cplx, 4> mpo_T; // Absorbs transfer matrix
+        Eigen::Tensor<cx64, 2> T_r2l; // Transfer matrix
+        Eigen::Tensor<cx64, 4> mpo_T; // Absorbs transfer matrix
         for(auto &&[idx, mpo] : iter::enumerate_reverse(mpos)) {
             auto mpo_dim_old = mpo.dimensions();
             if(T_r2l.size() == 0)
@@ -559,7 +559,7 @@ std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_deparallelized_mpos(
     return mpos;
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> tools::finite::mpo::get_deparallelized_mpos(const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
-                                                                                const Eigen::Tensor<cplx, 1> &Ledge, const Eigen::Tensor<cplx, 1> &Redge) {
+std::vector<Eigen::Tensor<cx64, 4>> tools::finite::mpo::get_deparallelized_mpos(const std::vector<Eigen::Tensor<cx64, 4>> &mpos,
+                                                                                const Eigen::Tensor<cx64, 1> &Ledge, const Eigen::Tensor<cx64, 1> &Redge) {
     return get_deparallelized_mpos(get_mpos_with_edges(mpos, Ledge, Redge));
 }

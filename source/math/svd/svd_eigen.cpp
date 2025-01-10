@@ -134,7 +134,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 //! \brief force instantiation of do_svd for type 'double'
 template std::tuple<svd::MatrixType<double>, svd::VectorType<double>, svd::MatrixType<double>> svd::solver::do_svd_eigen(const double *, long, long) const;
 
-using cplx = std::complex<double>;
+using cx64 = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_eigen(const cplx *, long, long) const;
+template std::tuple<svd::MatrixType<cx64>, svd::VectorType<cx64>, svd::MatrixType<cx64>> svd::solver::do_svd_eigen(const cx64 *, long, long) const;

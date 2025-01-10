@@ -56,7 +56,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
             if(posC < pos) tools::log->trace("Moving {} <- {}", posC, pos);
         }
 
-        Eigen::Tensor<cplx, 1> LC(1);
+        Eigen::Tensor<cx64, 1> LC(1);
         LC.setConstant({1.0, 0.0}); // Store the LC bond in a temporary. It will become a regular "L" bond later
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
@@ -103,7 +103,7 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, std::optional<s
         auto &mpsR    = state.get_mps_site(posR); // The site to the right of the new center position
         // Store the special LC bond in a temporary. It needs to be put back afterwards
         // Do the same with its truncation error
-        Eigen::Tensor<cplx, 1> LC                  = mps.get_LC();
+        Eigen::Tensor<cx64, 1> LC                  = mps.get_LC();
         double                 truncation_error_LC = mps.get_truncation_error_LC();
         auto                   twosite_tensor      = state.get_multisite_mps({posL_ul, posR_ul});
         tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, safe_cast<long>(posL),
@@ -161,7 +161,7 @@ size_t tools::finite::mps::move_center_point_to_middle(StateFinite &state, std::
     return moves;
 }
 
-size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<size_t> &sites,
+size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::Tensor<cx64, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                long center_position, MergeEvent mevent, std::optional<svd::config> svd_cfg,
                                                std::optional<LogPolicy> logPolicy) {
     auto t_merge          = tid::tic_scope("merge", tid::level::higher);
@@ -225,7 +225,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         throw except::runtime_error("merge_multisite_mps: multisite mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod);
 
     // Hold LC if moving. This should be placed in an L-slot later
-    std::optional<stash<Eigen::Tensor<cplx, 1>>> lc_move = std::nullopt;
+    std::optional<stash<Eigen::Tensor<cx64, 1>>> lc_move = std::nullopt;
     if(center_position != current_position and current_position >= 0) {
         auto &mps      = state.get_mps_site(current_position); // Guaranteed to have LC since that is the definition of current_position
         auto  pos_back = safe_cast<long>(sites.back());
@@ -242,7 +242,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
             // Case 4, deep-move: A[3]A[4]LC[4]B[5]B[6]B[7] -> A[3]A[4]A[5]A[6]LC[6]B[7], current_position == 5, center_position == 6. Then LC[4] is thrown
             // Takeaway: LC is only held when LC is on the left edge, turning a B into an A which needs an L
             // It's important that the last V is a diagonal matrix, otherwise it would truncate the site to the right.
-            if(current_position + 1 == pos_frnt) lc_move = stash<Eigen::Tensor<cplx, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), sites.front()};
+            if(current_position + 1 == pos_frnt) lc_move = stash<Eigen::Tensor<cx64, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), sites.front()};
         }
         // Detect left-move
         if(center_position < current_position) { // This AC position will become a B (AC moves to the left)
@@ -260,7 +260,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
             // Takeaway: LC is only held when LC is on the right edge, turning an AC into a B which needs an L.
             // It's important that the front U is a diagonal matrix, otherwise it would truncate the site to the left.
 
-            if(current_position == pos_back) lc_move = stash<Eigen::Tensor<cplx, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
+            if(current_position == pos_back) lc_move = stash<Eigen::Tensor<cx64, 1>>{mps.get_LC(), mps.get_truncation_error_LC(), pos_curr};
         }
         // Note that one of the positions on the split may contain a new center, so we need to unset
         // the center in our current state so we don't get duplicate centers
@@ -562,7 +562,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ga
                 0
 
      */
-    Eigen::Tensor<cplx, 3> tmp(mps.dimensions());
+    Eigen::Tensor<cx64, 3> tmp(mps.dimensions());
     {
         auto t_apply = tid::tic_token("apply", tid::level::highest);
         //        auto &threads = tenx::threads::get();
@@ -593,7 +593,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ga
                           state.get_truncation_error(gate.pos.front()));
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, CircuitOp cop,
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cx64, 2>> &nsite_tensors, size_t gate_size, CircuitOp cop,
                                      bool moveback, GateMove gm, std::optional<svd::config> svd_cfg) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
@@ -752,7 +752,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     auto           rsh4               = tenx::array4{dL, dR, chiL, chiR};
     constexpr auto shf4               = tenx::array4{1, 0, 2, 3};
     auto           rsh3               = tenx::array3{dR * dL, chiL, chiR};
-    auto           swapped_mps        = Eigen::Tensor<cplx, 3>(rsh3);
+    auto           swapped_mps        = Eigen::Tensor<cx64, 3>(rsh3);
     auto          &threads            = tenx::threads::get();
     swapped_mps.device(*threads->dev) = state.get_multisite_mps({posL, posR})
                                             .reshape(rsh4)
@@ -870,7 +870,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, const qm::SwapGate 
     auto mps = state.get_multisite_mps(pos_idxs);
 
     // Apply the gate
-    Eigen::Tensor<cplx, 3> tmp(mps.dimensions());
+    Eigen::Tensor<cx64, 3> tmp(mps.dimensions());
     {
         auto t_apply = tid::tic_token("apply", tid::level::highest);
         //        const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation

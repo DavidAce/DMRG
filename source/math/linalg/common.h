@@ -15,7 +15,7 @@ namespace linalg {
     using is_PlainObject = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived>>, std::decay_t<Derived>>;
 
     template<typename TA, typename TB>
-    using cplx_or_real = typename std::conditional<std::is_same_v<TA, cplx> or std::is_same_v<TB, cplx>, cplx, real>::type;
+    using cplx_or_real = typename std::conditional<std::is_same_v<TA, cx64> or std::is_same_v<TB, cx64>, cx64, fp64>::type;
 
     template<typename T>
     struct is_std_complex : public std::false_type {};

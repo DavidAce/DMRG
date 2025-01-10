@@ -181,9 +181,9 @@ void svd::solver::save_svd(const MatrixType<Scalar> &U, const VectorType<Scalar>
     file.writeAttribute(info, group_name, "info");
 }
 
-using cplx = std::complex<double>;
-using real = double;
-template void svd::solver::save_svd(const MatrixType<real> &A, std::optional<svd::save> override) const;
-template void svd::solver::save_svd(const MatrixType<cplx> &A, std::optional<svd::save> override) const;
-template void svd::solver::save_svd(const MatrixType<real> &U, const VectorType<real> &S, const MatrixType<real> &VT, int info) const;
-template void svd::solver::save_svd(const MatrixType<cplx> &U, const VectorType<cplx> &S, const MatrixType<cplx> &VT, int info) const;
+using cx64 = std::complex<double>;
+using fp64 = double;
+template void svd::solver::save_svd(const MatrixType<fp64> &A, std::optional<svd::save> override) const;
+template void svd::solver::save_svd(const MatrixType<cx64> &A, std::optional<svd::save> override) const;
+template void svd::solver::save_svd(const MatrixType<fp64> &U, const VectorType<fp64> &S, const MatrixType<fp64> &VT, int info) const;
+template void svd::solver::save_svd(const MatrixType<cx64> &U, const VectorType<cx64> &S, const MatrixType<cx64> &VT, int info) const;

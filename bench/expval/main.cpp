@@ -122,7 +122,7 @@ void matrix_vector_product(Scalar *res_ptr, const Scalar *const mps_ptr, std::ar
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
 #if defined(DMRG_ENABLE_TBLIS)
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         // auto                         arch         = get_arch();
         const tblis::tblis_config_s *tblis_config = nullptr; // tblis::tblis_get_config(arch.data());
         // #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
@@ -252,7 +252,7 @@ void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, 
     // tools::log->info("mps_tmp1.resize({} = {}) | t = {:.3e} | tot = {:.3e}", new_shp6, Eigen::internal::array_prod(new_shp6), t_mv->restart_lap(),
     // t_mv->get_last_interval());
 #if defined(DMRG_ENABLE_TBLIS)
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0 * d1, d2, d3, d4 * d5});
         contract_tblis(mps_in, envL, mps_tmp1_map4, "afb", "fcd", "abcd", tblis_config);
     } else
@@ -271,7 +271,7 @@ void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, 
         d4 = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
         d5 = mpo.dimension(3);       // The virtual bond of the current mpo
 #if defined(DMRG_ENABLE_TBLIS)
-        if constexpr(std::is_same_v<Scalar, real>) {
+        if constexpr(std::is_same_v<Scalar, fp64>) {
             auto md  = mps_tmp1.dimensions();
             new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
             mps_tmp2.resize(new_shp6);
@@ -294,7 +294,7 @@ void matrix_vector_product_custom(Scalar *res_ptr, const Scalar *const mps_ptr, 
     d2 = mps_tmp1.dimension(4);
     d3 = mps_tmp1.dimension(5);
 #if defined(DMRG_ENABLE_TBLIS)
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0, d1, d2, d3});
         contract_tblis(mps_tmp1_map4, envR, mps_out, "qjir", "qkr", "ijk", tblis_config);
     } else
@@ -324,7 +324,7 @@ int main() {
     fmt::print("Compiler flags {}\n", env::build::compiler_flags);
     settings::threading::num_threads = 8;
     settings::configure_threads();
-    using real = double;
+    using fp64 = double;
     using cplx = std::complex<double>;
     long sites = 2;
     long d     = 2 << (sites - 1);
@@ -344,15 +344,15 @@ int main() {
     tools::log->info("__builtin_cpu_is(znver4)           : {}", __builtin_cpu_is("znver4"));
     // tools::log->info("__builtin_cpu_is(znver5)            : {}", __builtin_cpu_is("znver5"));
 
-    auto mps_enL = Eigen::Tensor<real, 4>(d, chiR, chiR, m);
-    auto res     = Eigen::Tensor<real, 3>(d, chiL, chiR);
-    auto mps     = Eigen::Tensor<real, 3>(d, chiL, chiR);
-    auto mps_shf = Eigen::Tensor<real, 3>(chiR, d, chiL);
-    auto mpo     = Eigen::Tensor<real, 4>(m, m, d, d);
-    auto enL     = Eigen::Tensor<real, 3>(chiL, chiL, m);
-    auto enR     = Eigen::Tensor<real, 3>(chiR, chiR, m);
-    auto mpo_shf = Eigen::Tensor<real, 4>(2, 2, m, m);
-    // auto mpo_shf = Eigen::Tensor<real, 4>(d, d, m, m);
+    auto mps_enL = Eigen::Tensor<fp64, 4>(d, chiR, chiR, m);
+    auto res     = Eigen::Tensor<fp64, 3>(d, chiL, chiR);
+    auto mps     = Eigen::Tensor<fp64, 3>(d, chiL, chiR);
+    auto mps_shf = Eigen::Tensor<fp64, 3>(chiR, d, chiL);
+    auto mpo     = Eigen::Tensor<fp64, 4>(m, m, d, d);
+    auto enL     = Eigen::Tensor<fp64, 3>(chiL, chiL, m);
+    auto enR     = Eigen::Tensor<fp64, 3>(chiR, chiR, m);
+    auto mpo_shf = Eigen::Tensor<fp64, 4>(2, 2, m, m);
+    // auto mpo_shf = Eigen::Tensor<fp64, 4>(d, d, m, m);
     mps.setRandom();
     mps_shf.setRandom();
     // mpo.setRandom();
@@ -361,7 +361,7 @@ int main() {
     mpo_shf.setRandom();
     tools::log->info("mps dims: {} | size: {}", mps.dimensions(), mps.size());
     // tools::log->info("mpo dims: {}", mpo.dimensions());
-    auto mpos_shf = std::vector<Eigen::Tensor<real, 4>>(sites, mpo_shf);
+    auto mpos_shf = std::vector<Eigen::Tensor<fp64, 4>>(safe_cast<size_t>(sites), mpo_shf);
 
     {
         ankerl::nanobench::Bench().warmup(4).epochs(4).minEpochIterations(10).run("tools::common::contraction::matrix_vector_product", [&] {
@@ -437,11 +437,11 @@ int main() {
     }
 
     {
-        // auto res = Eigen::Tensor<real, 3>(chiL, d, chiR);
-        // auto mps = Eigen::Tensor<real, 3>(chiL, d, chiR);
-        // auto mpo = Eigen::Tensor<real, 4>(m, m, d, d);
-        // auto enL = Eigen::Tensor<real, 3>(chiL, m, chiL);
-        // auto enR = Eigen::Tensor<real, 3>(chiR, m, chiR);
+        // auto res = Eigen::Tensor<fp64, 3>(chiL, d, chiR);
+        // auto mps = Eigen::Tensor<fp64, 3>(chiL, d, chiR);
+        // auto mpo = Eigen::Tensor<fp64, 4>(m, m, d, d);
+        // auto enL = Eigen::Tensor<fp64, 3>(chiL, m, chiL);
+        // auto enR = Eigen::Tensor<fp64, 3>(chiR, m, chiR);
         //
         // mps.setRandom();
         // mpo.setRandom();

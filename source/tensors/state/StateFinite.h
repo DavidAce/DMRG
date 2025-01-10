@@ -32,16 +32,16 @@ class TensorsFinite;
 class StateFinite {
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<cplx, 3>>                      multisite_mps = std::nullopt;
-        std::deque<std::pair<std::string, Eigen::Tensor<real, 3>>> mps_real      = {};
-        std::deque<std::pair<std::string, Eigen::Tensor<cplx, 3>>> mps_cplx      = {};
-        // std::unordered_map<std::string, Eigen::Tensor<real, 3>>    mps_real      = {};
-        // std::unordered_map<std::string, Eigen::Tensor<cplx, 3>>    mps_cplx      = {};
-        std::deque<std::pair<std::string, Eigen::Tensor<real, 4>>> trf_real = {};
-        std::deque<std::pair<std::string, Eigen::Tensor<cplx, 4>>> trf_cplx = {};
-        // std::unordered_map<std::string, Eigen::Tensor<real, 4>> trf_real      = {};
-        // std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> trf_cplx      = {};
-        std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> temporary_rho = {};
+        std::optional<Eigen::Tensor<cx64, 3>>                      multisite_mps = std::nullopt;
+        std::deque<std::pair<std::string, Eigen::Tensor<fp64, 3>>> mps_real      = {};
+        std::deque<std::pair<std::string, Eigen::Tensor<cx64, 3>>> mps_cplx      = {};
+        // std::unordered_map<std::string, Eigen::Tensor<fp64, 3>>    mps_real      = {};
+        // std::unordered_map<std::string, Eigen::Tensor<cx64, 3>>    mps_cplx      = {};
+        std::deque<std::pair<std::string, Eigen::Tensor<fp64, 4>>> trf_real = {};
+        std::deque<std::pair<std::string, Eigen::Tensor<cx64, 4>>> trf_cplx = {};
+        // std::unordered_map<std::string, Eigen::Tensor<fp64, 4>> trf_real      = {};
+        // std::unordered_map<std::string, Eigen::Tensor<cx64, 4>> trf_cplx      = {};
+        std::unordered_map<std::string, Eigen::Tensor<cx64, 4>> temporary_rho = {};
     };
     enum class FindStaleKeys { OFF, ON };
 
@@ -112,9 +112,9 @@ class StateFinite {
     void                        set_algorithm(const AlgorithmType &algo_type);
     [[nodiscard]] AlgorithmType get_algorithm() const;
 
-    const Eigen::Tensor<cplx, 1> &get_bond(long posL, long posR) const;
-    const Eigen::Tensor<cplx, 1> &get_midchain_bond() const;
-    const Eigen::Tensor<cplx, 1> &current_bond() const;
+    const Eigen::Tensor<cx64, 1> &get_bond(long posL, long posR) const;
+    const Eigen::Tensor<cx64, 1> &get_midchain_bond() const;
+    const Eigen::Tensor<cx64, 1> &current_bond() const;
 
     template<typename T = size_t>
     [[nodiscard]] T get_length() const;
@@ -176,9 +176,9 @@ class StateFinite {
     long                             get_spin_dim() const;
     std::vector<std::array<long, 3>> get_mps_dims(const std::vector<size_t> &sites) const;
     std::vector<std::array<long, 3>> get_mps_dims_active() const;
-    template<typename Scalar = cplx>
+    template<typename Scalar = cx64>
     Eigen::Tensor<Scalar, 3>      get_multisite_mps(const std::vector<size_t> &sites, bool use_cache = false) const;
-    const Eigen::Tensor<cplx, 3> &get_multisite_mps() const;
+    const Eigen::Tensor<cx64, 3> &get_multisite_mps() const;
     template<typename Scalar>
     Eigen::Tensor<Scalar, 2> get_reduced_density_matrix(const std::vector<size_t> &sites) const;
     template<typename Scalar>

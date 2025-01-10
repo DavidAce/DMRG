@@ -15,7 +15,7 @@ namespace eig::view {
     template<typename Scalar>
     Eigen::Map<VectorType<Scalar>> get_eigvals(const eig::solution &result, bool converged_only = true) {
         if(not result.meta.eigvals_found) throw except::runtime_error("Results have not been obtained yet: eigvals found [{}]", result.meta.eigvals_found);
-        if constexpr(std::is_same_v<Scalar, real>)
+        if constexpr(std::is_same_v<Scalar, fp64>)
             if(not result.eigvals_are_real()) throw except::runtime_error("Can't view real eigenvalues: the solution has complex eigenvalues");
 
         auto &eigvals = result.get_eigvals<Scalar>();
@@ -38,7 +38,7 @@ namespace eig::view {
 
         if(side == Side::LR) throw except::runtime_error("Cannot get both L and R eigenvectors. Choose one");
 
-        if constexpr(std::is_same_v<Scalar, real>)
+        if constexpr(std::is_same_v<Scalar, fp64>)
             if(not result.eigvecs_are_real()) throw except::runtime_error("Can't view real eigenvectors: solution has complex eigenvectors");
         auto &eigvecs = result.get_eigvecs<Scalar>(side);
         if(eigvecs.empty()) throw except::runtime_error("The requested eigenvectors are empty. Did you request the correct type?");
@@ -58,7 +58,7 @@ namespace eig::view {
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(const eig::solution &result, const std::array<long, 3> &dims, long num = 0, Side side = Side::R) {
         if(result.meta.rows != dims[0] * dims[1] * dims[2])
             throw except::range_error("Given tensor dimensions do not match eigenvector size: size {} != {} * {} * {} = {}", result.meta.rows, dims[0], dims[1],
-                                      dims[3], dims[0] * dims[1] * dims[2]);
+                                      dims[2], dims[0] * dims[1] * dims[2]);
         auto eigvecmap = get_eigvec<Scalar>(result, num, side);
         return Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(eigvecmap.data(), dims);
     }

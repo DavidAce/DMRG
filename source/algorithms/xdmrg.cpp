@@ -237,8 +237,8 @@ void xdmrg::run_preprocessing() {
         solver2.eig<eig::Form::SYMM>(ham2.data(), ham2.dimension(0), eig::Vecs::OFF);
         // solver1i.eig<eig::Form::SYMM>(ham1i.data(), ham1i.dimension(0));
 
-        auto            evals1 = eig::view::get_eigvals<real>(solver1.result);
-        auto            evals2 = eig::view::get_eigvals<real>(solver2.result);
+        auto            evals1 = eig::view::get_eigvals<fp64>(solver1.result);
+        auto            evals2 = eig::view::get_eigvals<fp64>(solver2.result);
         Eigen::VectorXd diffs1 = Eigen::VectorXd::Zero(evals1.size());
         Eigen::VectorXd diffs2 = Eigen::VectorXd::Zero(evals1.size());
         auto            N1     = evals1.size() - 1;
@@ -246,7 +246,7 @@ void xdmrg::run_preprocessing() {
         diffs1.topRows(N1)     = (evals1.bottomRows(N1) - evals1.topRows(N1));
         diffs2.topRows(N2)     = (evals2.bottomRows(N2) - evals2.topRows(N2));
 
-        // auto evals1i = eig::view::get_eigvals<real>(solver1i.result);
+        // auto evals1i = eig::view::get_eigvals<fp64>(solver1i.result);
         fmt::print("{:^8} {:<20}\n", " ", "H¹");
         for(long idx = 0; idx < evals1.size(); ++idx) {
             // if(std::abs(evals1[idx]) > 1.1) continue;
@@ -278,7 +278,7 @@ void xdmrg::run_preprocessing() {
         // // auto ham3i = svd::solver::pseudo_inverse(ham3i);
         // eig::solver solver3i;
         // solver3i.eig<eig::Form::SYMM>(ham3i.data(), ham3i.dimension(0));
-        // auto evals3i = eig::view::get_eigvals<real>(solver3i.result);
+        // auto evals3i = eig::view::get_eigvals<fp64>(solver3i.result);
 
         // fmt::print("{:^8} {:<20} {:<20} {:<20} {:<20}\n", " ", "H¹", "H⁻¹", "H⁻¹(iter)", "diff");
         // for(long idx = 0; idx < std::min(evals1i.size(), evals3i.size()); ++idx) {
@@ -331,7 +331,7 @@ void xdmrg::run_algorithm() {
         if(tensors.get_position<long>() == tensors.get_length<long>()/2-1) {
             auto chosen_sites = num::range<size_t>(tensors.get_position<size_t>(), tensors.get_position<size_t>()+2);
             tensors.activate_sites(chosen_sites);
-            Eigen::Tensor<real,3> mmps = tensors.get_multisite_mps().real();
+            Eigen::Tensor<fp64,3> mmps = tensors.get_multisite_mps().real();
             write_to_file(mmps, "mmps", StorageEvent::NONE);
         }
     }

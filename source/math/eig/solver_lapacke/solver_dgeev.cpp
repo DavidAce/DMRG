@@ -20,7 +20,7 @@
 #include "math/cast.h"
 #include <chrono>
 
-int eig::solver::dgeev(real *matrix, size_type L) {
+int eig::solver::dgeev(fp64 *matrix, size_type L) {
     eig::log->trace("Starting eig_dgeev (non-optimized)");
     auto  t_start      = std::chrono::high_resolution_clock::now();
     auto &eigvals_real = result.eigvals_real;

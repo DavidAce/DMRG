@@ -7,9 +7,9 @@
 class LBit : public MpoSite {
     private:
     h5tb_lbit                h5tb;
-    Eigen::Tensor<cplx, 4>   get_mpo(cplx energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    Eigen::Tensor<cx64, 4>   get_mpo(cx64 energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                      std::optional<std::vector<size_t>> skip = std::nullopt) const final;
-    Eigen::Tensor<cplx_t, 4> get_mpo_t(cplx_t energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    Eigen::Tensor<cx128, 4> get_mpo_t(cx128 energy_shift_per_site, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                        std::optional<std::vector<size_t>> skip = std::nullopt) const final;
 
     public:

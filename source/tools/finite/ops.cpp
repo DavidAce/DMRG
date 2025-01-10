@@ -27,15 +27,15 @@ namespace settings {
     inline constexpr bool verbose_projection = false;
 }
 
-void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &Ledge,
-                                   const Eigen::Tensor<cplx, 3> &Redge) {
-    std::vector<Eigen::Tensor<cplx, 4>> mpos(state.get_length(), mpo);
+void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 3> &Ledge,
+                                   const Eigen::Tensor<cx64, 3> &Redge) {
+    std::vector<Eigen::Tensor<cx64, 4>> mpos(state.get_length(), mpo);
     apply_mpos(state, mpos, Ledge, Redge);
 }
 
-void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 1> &Ledge,
-                                    const Eigen::Tensor<cplx, 1> &Redge, bool adjoint) {
-    Eigen::Tensor<cplx, 3> Ledge3, Redge3;
+void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cx64, 4>> &mpos, const Eigen::Tensor<cx64, 1> &Ledge,
+                                    const Eigen::Tensor<cx64, 1> &Redge, bool adjoint) {
+    Eigen::Tensor<cx64, 3> Ledge3, Redge3;
     {
         auto mps_dims = state.mps_sites.front()->dimensions();
         auto mpo_dims = mpos.front().dimensions();
@@ -69,8 +69,8 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     apply_mpos(state, mpos, Ledge3, Redge3, adjoint);
 }
 
-void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 3> &Ledge,
-                                    const Eigen::Tensor<cplx, 3> &Redge, bool adjoint) {
+void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cx64, 4>> &mpos, const Eigen::Tensor<cx64, 3> &Ledge,
+                                    const Eigen::Tensor<cx64, 3> &Redge, bool adjoint) {
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPOs");
@@ -121,14 +121,14 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         auto                   label    = mps.get_label();
         long                   mpoDimL  = mpos.front().dimension(0);
         auto                   Ldim     = Ledge.dimension(0);
-        Eigen::Tensor<cplx, 3> M_temp =
+        Eigen::Tensor<cx64, 3> M_temp =
             Ledge
                 .shuffle(tenx::array3{0, 2, 1})                  // Start by shuffling the legs into consecutive order before merge
                 .reshape(tenx::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
                 .contract(mps.get_M_bare(), tenx::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
                 .shuffle(tenx::array3{1, 0, 2});                 // Shuffle back to convention
         if(isCenter or label != "B") {
-            Eigen::Tensor<cplx, 1> one = Eigen::Tensor<cplx, 1>(Ldim).constant(1.0);
+            Eigen::Tensor<cx64, 1> one = Eigen::Tensor<cx64, 1>(Ldim).constant(1.0);
             mps.set_mps(M_temp, one, 0, label);
         } else {
             // The left edge is a B-site.
@@ -159,11 +159,11 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         bool                   isCenter = mps.isCenter();
         long                   mpoDimR  = mpos.back().dimension(1);
         auto                   Rdim     = Redge.dimension(0);
-        Eigen::Tensor<cplx, 3> M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
+        Eigen::Tensor<cx64, 3> M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
                                             .reshape(tenx::array2{Rdim * mpoDimR, Rdim})
                                             .contract(mps.get_M(), tenx::idx({0}, {2})) // Include LC if it's there
                                             .shuffle(tenx::array3{1, 2, 0});
-        Eigen::Tensor<cplx, 1> one = Eigen::Tensor<cplx, 1>(Rdim).constant(1.0);
+        Eigen::Tensor<cx64, 1> one = Eigen::Tensor<cx64, 1>(Rdim).constant(1.0);
         if(isCenter) {
             mps.set_M(M_temp);
             mps.set_LC(one, 0);
@@ -197,13 +197,13 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     }
 }
 
-void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const svd::config &svd_cfg) {
+void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vector<Eigen::Tensor<cx64, 4>> &mpos, const svd::config &svd_cfg) {
     tools::log->trace("Applying MPOs");
     if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     svd::solver                           svd(svd_cfg);
-    std::optional<Eigen::Tensor<cplx, 1>> S_prev;
-    std::optional<Eigen::Tensor<cplx, 2>> U_prev, V_prev, SV, US;
-    Eigen::Tensor<cplx, 3>                ASV, USB; // The two remaining matrices in the center
+    std::optional<Eigen::Tensor<cx64, 1>> S_prev;
+    std::optional<Eigen::Tensor<cx64, 2>> U_prev, V_prev, SV, US;
+    Eigen::Tensor<cx64, 3>                ASV, USB; // The two remaining matrices in the center
     auto                                  pos_center = state.get_position();
 
     for(size_t pos = 0; pos < pos_center + 1; ++pos) {
@@ -224,11 +224,11 @@ void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vecto
         long                   d0      = mpo.dimension(3);
         long                   d1      = mps.dimension(1) * mpo.dimension(0);
         long                   d2      = mps.dimension(2) * mpo.dimension(1);
-        Eigen::Tensor<cplx, 3> mpo_mps = mpo.contract(mps, tenx::idx({2}, {0})).shuffle(tenx::array5{2, 0, 3, 1, 4}).reshape(tenx::array3{d0, d1, d2});
+        Eigen::Tensor<cx64, 3> mpo_mps = mpo.contract(mps, tenx::idx({2}, {0})).shuffle(tenx::array5{2, 0, 3, 1, 4}).reshape(tenx::array3{d0, d1, d2});
 
         if(S_prev) mps_site.set_L(S_prev.value(), svd.get_truncation_error());
         if(S_prev and V_prev) {
-            mpo_mps = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S_prev.value())
+            mpo_mps = Eigen::Tensor<cx64, 3>(tenx::asDiagonal(S_prev.value())
                                                  .contract(V_prev.value(), tenx::idx({1}, {0}))
                                                  .contract(mpo_mps, tenx::idx({1}, {1}))
                                                  .shuffle(tenx::array3{1, 0, 2}));
@@ -245,7 +245,7 @@ void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vecto
             V_prev = std::nullopt;
         } else {
             auto [U, S, V] = svd.decompose(mpo_mps, d0 * d1, d2);
-            mps_site.set_M(Eigen::Tensor<cplx, 3>(U.reshape(tenx::array3{d0, d1, S.size()})));
+            mps_site.set_M(Eigen::Tensor<cx64, 3>(U.reshape(tenx::array3{d0, d1, S.size()})));
             S_prev = S;
             V_prev = V;
         }
@@ -269,11 +269,11 @@ void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vecto
         long                   d0      = mpo.dimension(3);
         long                   d1      = mps.dimension(1) * mpo.dimension(0);
         long                   d2      = mps.dimension(2) * mpo.dimension(1);
-        Eigen::Tensor<cplx, 3> mpo_mps = mpo.contract(mps, tenx::idx({2}, {0})).shuffle(tenx::array5{2, 0, 3, 1, 4}).reshape(tenx::array3{d0, d1, d2});
+        Eigen::Tensor<cx64, 3> mpo_mps = mpo.contract(mps, tenx::idx({2}, {0})).shuffle(tenx::array5{2, 0, 3, 1, 4}).reshape(tenx::array3{d0, d1, d2});
         if(S_prev) mps_site.set_L(S_prev.value(), svd.get_truncation_error());
         if(U_prev and S_prev) {
             mpo_mps =
-                Eigen::Tensor<cplx, 3>(mpo_mps.contract(U_prev.value(), tenx::idx({2}, {0})).contract(tenx::asDiagonal(S_prev.value()), tenx::idx({2}, {0})));
+                Eigen::Tensor<cx64, 3>(mpo_mps.contract(U_prev.value(), tenx::idx({2}, {0})).contract(tenx::asDiagonal(S_prev.value()), tenx::idx({2}, {0})));
             S_prev = std::nullopt;
             U_prev = std::nullopt;
             d0     = mpo_mps.dimension(0);
@@ -289,7 +289,7 @@ void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vecto
             auto [U, S, V] = svd.decompose(mpo_mps, d1, d0 * d2);
             U_prev         = U;
             S_prev         = S;
-            mps_site.set_M(Eigen::Tensor<cplx, 3>(V.reshape(tenx::array3{d0, S.size(), d2})));
+            mps_site.set_M(Eigen::Tensor<cx64, 3>(V.reshape(tenx::array3{d0, S.size(), d2})));
         }
     }
 
@@ -302,24 +302,24 @@ void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vecto
 
     long d0     = ASV.dimension(0) * ASV.dimension(1);
     long d1     = USB.dimension(0) * USB.dimension(2);
-    auto ASVUSB = Eigen::Tensor<cplx, 2>(d0, d1);
+    auto ASVUSB = Eigen::Tensor<cx64, 2>(d0, d1);
     auto &threads = tenx::threads::get();
     ASVUSB.device(*threads->dev) = ASV.contract(USB, tenx::idx({2}, {1})).reshape(tenx::array2{d0, d1});
     auto [U, S, VT]                           = svd.decompose(ASVUSB, svd_cfg);
 
     auto &mpsL = state.get_mps_site(pos_center);
     auto &mpsR = state.get_mps_site(pos_center + 1);
-    mpsL.set_M(Eigen::Tensor<cplx, 3>(U.reshape(tenx::array3{ASV.dimension(0), ASV.dimension(1), S.size()})));
+    mpsL.set_M(Eigen::Tensor<cx64, 3>(U.reshape(tenx::array3{ASV.dimension(0), ASV.dimension(1), S.size()})));
     mpsL.set_LC(S);
-    mpsR.set_M(Eigen::Tensor<cplx, 3>(VT.reshape(tenx::array3{USB.dimension(0), S.size(), USB.dimension(2)})));
+    mpsR.set_M(Eigen::Tensor<cx64, 3>(VT.reshape(tenx::array3{USB.dimension(0), S.size(), USB.dimension(2)})));
 
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 1> &Ledge,
-                                            const Eigen::Tensor<cplx, 1> &Redge, const svd::config &svd_cfg) {
+void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vector<Eigen::Tensor<cx64, 4>> &mpos, const Eigen::Tensor<cx64, 1> &Ledge,
+                                            const Eigen::Tensor<cx64, 1> &Redge, const svd::config &svd_cfg) {
     tools::log->trace("Applying MPOs");
     if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     apply_mpos_general(state, mpo::get_mpos_with_edges(mpos, Ledge, Redge), svd_cfg);
@@ -451,12 +451,12 @@ StateFinite tools::finite::ops::get_projection_to_nearest_axis(const StateFinite
     return state_projected;
 }
 
-auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) -> cplx {
+auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) -> cx64 {
     if(state1.get_length() != state2.get_length()) throw except::logic_error("ERROR: States have different lengths! Can't do overlap.");
     if(state1.get_position() != state2.get_position()) throw except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
     size_t pos   = 0;
     auto overlap = tools::common::contraction::contract_mps_mps_partial<std::array{0l, 1l}>(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M());
-    Eigen::Tensor<cplx, 2> temp;
+    Eigen::Tensor<cx64, 2> temp;
     auto &threads = tenx::threads::get();
     for(pos = 1; pos < state1.get_length(); pos++) {
         const auto &M1 = state1.get_mps_site(pos).get_M();
@@ -466,6 +466,6 @@ auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &s
         overlap                                 = std::move(temp);
     }
 
-    Eigen::Tensor<cplx, 0> norm_chain = overlap.trace();
+    Eigen::Tensor<cx64, 0> norm_chain = overlap.trace();
     return norm_chain.coeff(0);
 }

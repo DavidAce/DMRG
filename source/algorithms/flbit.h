@@ -21,12 +21,12 @@ class flbit : public AlgorithmFinite {
     std::vector<qm::SwapGate>                        ham_swap_gates_3body, time_swap_gates_3body;
     std::vector<qm::SwapGate>                        ham_swap_gates_Lbody, time_swap_gates_Lbody;
     std::vector<std::vector<qm::Gate>>               unitary_gates_2site_layers;
-    std::vector<Eigen::Tensor<cplx, 4>>              unitary_gates_mpo_layer_full;
-    std::vector<std::vector<Eigen::Tensor<cplx, 4>>> unitary_gates_mpo_layers;
+    std::vector<Eigen::Tensor<cx64, 4>>              unitary_gates_mpo_layer_full;
+    std::vector<std::vector<Eigen::Tensor<cx64, 4>>> unitary_gates_mpo_layers;
     qm::lbit::UnitaryGateProperties                  uprop;
     Eigen::Tensor<std::complex<double>, 1>           ledge, redge;
-    std::vector<cplx_t>                              time_points;
-    Eigen::Tensor<cplx, 2>                           lbit_overlap; // The real-space support of the l-bits
+    std::vector<cx128>                              time_points;
+    Eigen::Tensor<cx64, 2>                           lbit_overlap; // The real-space support of the l-bits
 
     // Inherit the constructor of class_algorithm_base
     using AlgorithmFinite::AlgorithmFinite;

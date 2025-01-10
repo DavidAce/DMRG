@@ -293,7 +293,7 @@ AlgorithmFinite::OptMeta AlgorithmFinite::get_opt_meta() {
         m1.eigs_tol = std::clamp(tol, settings::precision::eigs_tol_min, settings::precision::eigs_tol_max);
         // if(m1.optAlgo == OptAlgo::GDMRG) m1.eigs_tol = std::sqrt(settings::precision::eigs_tol_min);
     } else {
-        m1.max_sites = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::OPT) ? dmrg_blocksize : m1.min_sites;
+        m1.max_sites = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::OPT) ? safe_cast<size_t>(dmrg_blocksize) : m1.min_sites;
     }
 
     // Set up the problem size here
@@ -334,7 +334,7 @@ void AlgorithmFinite::expand_environment(EnvExpandMode envexpMode, OptAlgo algo,
         auto trnc_lim = has_flag(envexpMode, EnvExpandMode::FORWARD) ? status.trnc_lim : status.trnc_lim;
         svd_cfg       = svd::config(bond_lim, trnc_lim);
     }
-    auto expand_blocksize = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::EXP) ? dmrg_blocksize : 1;
+    auto expand_blocksize = has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::EXP) ? static_cast<size_t>(dmrg_blocksize) : 1ul;
     auto res              = tensors.expand_environment(envexpMode, algo, ritz, expand_blocksize, svd_cfg.value());
     if(not res.ok) {
         tools::log->debug("Expansion canceled");
@@ -716,28 +716,28 @@ void AlgorithmFinite::update_truncation_error_limit() {
 void AlgorithmFinite::update_dmrg_blocksize() {
     auto old_bsize = dmrg_blocksize;
     if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MIN) {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        dmrg_blocksize = safe_cast<size_t>(settings::strategy::dmrg_min_blocksize);
         if(old_bsize != dmrg_blocksize) {
             tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
         }
         return;
     }
     if(settings::strategy::dmrg_blocksize_policy == BlockSizePolicy::MAX) {
-        dmrg_blocksize = settings::strategy::dmrg_max_blocksize;
+        dmrg_blocksize = safe_cast<size_t>(settings::strategy::dmrg_max_blocksize);
         if(old_bsize != dmrg_blocksize) {
             tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
         }
         return;
     }
     if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::FIN_BOND) and !status.bond_limit_has_reached_max) {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        dmrg_blocksize = safe_cast<size_t>(settings::strategy::dmrg_min_blocksize);
         if(old_bsize != dmrg_blocksize) {
             tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
         }
         return;
     }
     if(has_flag(settings::strategy::dmrg_blocksize_policy, BlockSizePolicy::FIN_TRNC) and !status.trnc_limit_has_reached_min) {
-        dmrg_blocksize = settings::strategy::dmrg_min_blocksize;
+        dmrg_blocksize = safe_cast<size_t>(settings::strategy::dmrg_min_blocksize);
         if(old_bsize != dmrg_blocksize) {
             tools::log->info("Updated blocksize {} -> {} | policy: {}", old_bsize, dmrg_blocksize, flag2str(settings::strategy::dmrg_blocksize_policy));
         }
@@ -802,8 +802,7 @@ void AlgorithmFinite::update_dmrg_blocksize() {
         blocksize = std::ceil(blocksize);
 
         dmrg_blocksize = std::clamp<size_t>(static_cast<size_t>(blocksize), dmrg_min_blocksize, dmrg_max_blocksize);
-        tools::log->info("Set ICOM{} blocksize {} -> {}: icom = {:.3f}: {}",tag, old_bsize, dmrg_blocksize, icom,
-                         has_no_status ? "" : flag2str(reasons));
+        tools::log->info("Set ICOM{} blocksize {} -> {}: icom = {:.3f}: {}", tag, old_bsize, dmrg_blocksize, icom, has_no_status ? "" : flag2str(reasons));
     } else {
         dmrg_blocksize = dmrg_min_blocksize;
         if(old_bsize != dmrg_blocksize) { tools::log->info("Set MIN blocksize {} -> {} (default)", old_bsize, dmrg_blocksize); }
@@ -1123,7 +1122,7 @@ void AlgorithmFinite::check_convergence() {
     int  entropy_saturated  = entropy_enabled and status.entanglement_saturated_for > 1;
     int  infocom_saturated  = infocom_enabled and infocom_saturated_for > 1;
     int  all_saturated      = variance_saturated + entropy_saturated + infocom_saturated >= num_enabled;
-    bool max_saturated      = sum_saturated_for > settings::strategy::iter_max_saturated * num_enabled;
+    bool max_saturated      = sum_saturated_for > settings::strategy::iter_max_saturated * safe_cast<size_t>(num_enabled);
     if(all_saturated or max_saturated) {
         status.algorithm_saturated_for++;
     } else {
@@ -1474,10 +1473,10 @@ void AlgorithmFinite::write_to_file(const T &data, std::string_view name, Storag
     status.event = StorageEvent::NONE;
 }
 
-template void AlgorithmFinite::write_to_file(const Eigen::Tensor<real, 3> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
-template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cplx, 2> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
-template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cplx, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
-template void AlgorithmFinite::write_to_file(const Eigen::Tensor<real, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<fp64, 3> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cx64, 2> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<cx64, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<fp64, 1> &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy);
 void          AlgorithmFinite::print_status() {
     if(num::mod(status.step, settings::print_freq(status.algo_type)) != 0) return;
     if(settings::print_freq(status.algo_type) == 0) return;

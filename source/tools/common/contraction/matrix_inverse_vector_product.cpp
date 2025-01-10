@@ -34,9 +34,9 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     typedef int     StorageIndex;
     enum { ColsAtCompileTime = Eigen::Dynamic, MaxColsAtCompileTime = Eigen::Dynamic, IsRowMajor = false };
 
-    const Scalar_       *envL = nullptr;
-    const Scalar_       *envR = nullptr;
-    const Scalar_       *mpo  = nullptr;
+    const Scalar_      *envL = nullptr;
+    const Scalar_      *envR = nullptr;
+    const Scalar_      *mpo  = nullptr;
     std::array<long, 3> shape_mps;
     std::array<long, 4> shape_mpo;
     std::array<long, 3> shape_envL;
@@ -58,11 +58,11 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     // Custom API:
     MatrixReplacement() = default;
 
-    void attachTensors(const Scalar_            * const envL_,      /*!< The left block tensor.  */
-                       const Scalar_            * const envR_,      /*!< The right block tensor.  */
-                       const Scalar_            * const mpo_,       /*!< The Hamiltonian MPO's  */
-                       std::array<long, 3> shape_mps_, /*!< An array containing the shapes of the mps  */
-                       std::array<long, 4> shape_mpo_  /*!< An array containing the shapes of the mpo  */
+    void attachTensors(const Scalar_ *const envL_,      /*!< The left block tensor.  */
+                       const Scalar_ *const envR_,      /*!< The right block tensor.  */
+                       const Scalar_ *const mpo_,       /*!< The Hamiltonian MPO's  */
+                       std::array<long, 3>  shape_mps_, /*!< An array containing the shapes of the mps  */
+                       std::array<long, 4>  shape_mpo_  /*!< An array containing the shapes of the mpo  */
     ) {
         envL       = envL_;
         envR       = envR_;
@@ -95,12 +95,8 @@ namespace Eigen::internal {
             EIGEN_ONLY_USED_FOR_DEBUG(alpha);
             mat.tmp.resize(static_cast<size_t>(dst.size()));
             Eigen::Map<Dest> tmp_map(mat.tmp.data(), dst.size());
-            tools::common::contraction::matrix_vector_product(tmp_map.data(),
-                                                              rhs.data(), mat.shape_mps,
-                                                              mat.mpo, mat.shape_mpo,
-                                                              mat.envL, mat.shape_envL,
-                                                              mat.envR, mat.shape_envR
-                                                              );
+            tools::common::contraction::matrix_vector_product(tmp_map.data(), rhs.data(), mat.shape_mps, mat.mpo, mat.shape_mpo, mat.envL, mat.shape_envL,
+                                                              mat.envR, mat.shape_envR);
 
             dst.noalias() += tmp_map;
             mat.counter++;
@@ -110,9 +106,9 @@ namespace Eigen::internal {
 }
 
 template<typename Scalar>
-void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, //
-                                                               const Scalar *const mps_ptr, std::array<long, 3> mps_dims, //
-                                                               const Scalar *const mpo_ptr, std::array<long, 4> mpo_dims, //
+void tools::common::contraction::matrix_inverse_vector_product(Scalar             *res_ptr,                                 //
+                                                               const Scalar *const mps_ptr, std::array<long, 3> mps_dims,   //
+                                                               const Scalar *const mpo_ptr, std::array<long, 4> mpo_dims,   //
                                                                const Scalar *const envL_ptr, std::array<long, 3> envL_dims, //
                                                                const Scalar *const envR_ptr, std::array<long, 3> envR_dims) {
     // Here we return x <-- A^-1 * b
@@ -185,14 +181,14 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, 
     //    guess = res;
 }
 
-template void tools::common::contraction::matrix_inverse_vector_product(      real       *res_ptr,                                 //
-                                                                        const real *const mps_ptr, std::array<long, 3> mps_dims,   //
-                                                                        const real *const mpo_ptr, std::array<long, 4> mpo_dims,   //
-                                                                        const real *const envL_ptr, std::array<long, 3> envL_dims, //
-                                                                        const real *const envR_ptr, std::array<long, 3> envR_dims);
-template void tools::common::contraction::matrix_inverse_vector_product(      cplx       *res_ptr,                                 //
-                                                                        const cplx *const mps_ptr, std::array<long, 3> mps_dims,   //
-                                                                        const cplx *const mpo_ptr, std::array<long, 4> mpo_dims,   //
-                                                                        const cplx *const envL_ptr, std::array<long, 3> envL_dims, //
-                                                                        const cplx *const         envR_ptr,                        //
+template void tools::common::contraction::matrix_inverse_vector_product(fp64             *res_ptr,                                 //
+                                                                        const fp64 *const mps_ptr, std::array<long, 3> mps_dims,   //
+                                                                        const fp64 *const mpo_ptr, std::array<long, 4> mpo_dims,   //
+                                                                        const fp64 *const envL_ptr, std::array<long, 3> envL_dims, //
+                                                                        const fp64 *const envR_ptr, std::array<long, 3> envR_dims);
+template void tools::common::contraction::matrix_inverse_vector_product(cx64             *res_ptr,                                 //
+                                                                        const cx64 *const mps_ptr, std::array<long, 3> mps_dims,   //
+                                                                        const cx64 *const mpo_ptr, std::array<long, 4> mpo_dims,   //
+                                                                        const cx64 *const envL_ptr, std::array<long, 3> envL_dims, //
+                                                                        const cx64 *const   envR_ptr,                              //
                                                                         std::array<long, 3> envR_dims);

@@ -21,7 +21,7 @@
 
 using namespace eig;
 
-int eig::solver::dsyevd(real *matrix, size_type L) {
+int eig::solver::dsyevd(fp64 *matrix, size_type L) {
     eig::log->trace("Starting eig dsyevd");
     auto t_start = std::chrono::high_resolution_clock::now();
 

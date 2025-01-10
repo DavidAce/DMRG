@@ -73,9 +73,9 @@ struct Amplitude {
     long                   state_size;        // System size
     std::bitset<N>         bits;              // Bits that select spins on each MPS site
     long                   pos = -1l;         // Keeps track of the latest mps pos that has been contracted into ampl
-    Eigen::Tensor<cplx, 1> ampl;              // Accumulates the MPS tensors
+    Eigen::Tensor<cx64, 1> ampl;              // Accumulates the MPS tensors
     bool                   cache_hit = false; // True if eval was avoided due to cache hit
-    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<cplx, 1> &ampl_) : state_size(state_size_), bits(bits_), ampl(ampl_) {
+    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<cx64, 1> &ampl_) : state_size(state_size_), bits(bits_), ampl(ampl_) {
         // In the beginning, no mps site has been contracted into ampl, so pos must be outside the chain 0...L
         if constexpr(from == From::A) pos = -1l;
         if constexpr(from == From::B) pos = state_size;
@@ -182,7 +182,7 @@ struct Amplitude {
                 auto  t_con   = tid::tic_scope("contract", tid::level::highest);
                 auto &threads = tenx::threads::get();
 
-                Eigen::Tensor<cplx, 1> temp;
+                Eigen::Tensor<cx64, 1> temp;
                 // Contract the missing mps up to, but not including, the last mps at mps_site
                 for(const auto &mps : state.mps_sites) {
                     long mps_pos = mps->template get_position<long>();
@@ -254,7 +254,7 @@ struct Amplitude {
 
                 auto                   t_con   = tid::tic_scope("contract", tid::level::highest);
                 auto                  &threads = tenx::threads::get();
-                Eigen::Tensor<cplx, 1> temp;
+                Eigen::Tensor<cx64, 1> temp;
                 // Contract the missing mps
                 for(const auto &mps : iter::reverse(state.mps_sites)) {
                     long mps_pos = mps->template get_position<long>();
@@ -352,7 +352,7 @@ std::vector<std::vector<size_t>> get_popcount_partitions(size_t num_bits) {
 std::vector<size_t> get_random_roundrobin_popcount_vector(size_t num_bits) {
     auto popcount_partitions = get_popcount_partitions(num_bits);
     // Shuffle each partition
-    for(auto &p : popcount_partitions) std::shuffle(p.begin(), p.end(), rnd::internal::rng);
+    for(auto &p : popcount_partitions) std::shuffle(p.begin(), p.end(), rnd::internal::rng64);
 
     // Make a new list where we pick the tails of each partition in round-robin fashion
     std::vector<size_t> rrp;

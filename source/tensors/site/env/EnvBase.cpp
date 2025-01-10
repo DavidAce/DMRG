@@ -19,23 +19,23 @@
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-EnvBase:: EnvBase() : block(std::make_unique<Eigen::Tensor<cplx, 3>>()) { assert_block(); } // default ctor
+EnvBase:: EnvBase() : block(std::make_unique<Eigen::Tensor<cx64, 3>>()) { assert_block(); } // default ctor
 EnvBase::~EnvBase()                                    = default;                           // default dtor
 EnvBase:: EnvBase(EnvBase &&other) noexcept            = default;                           // default move ctor
 EnvBase  &EnvBase::operator=(EnvBase &&other) noexcept = default;                           // default move assign
 
 EnvBase::EnvBase(const EnvBase &other)
-    : block(std::make_unique<Eigen::Tensor<cplx, 3>>(*other.block)), sites(other.sites), position(other.position), side(other.side), tag(other.tag),
+    : block(std::make_unique<Eigen::Tensor<cx64, 3>>(*other.block)), sites(other.sites), position(other.position), side(other.side), tag(other.tag),
       unique_id(other.unique_id), unique_id_mps(other.unique_id_mps), unique_id_mpo(other.unique_id_mpo), unique_id_env(other.unique_id_env) {
     assert_block();
 }
 
 EnvBase::EnvBase(size_t position_, std::string side_, std::string tag_)
-    : block(std::make_unique<Eigen::Tensor<cplx, 3>>()), position(position_), side(std::move(side_)), tag(std::move(tag_)) {
+    : block(std::make_unique<Eigen::Tensor<cx64, 3>>()), position(position_), side(std::move(side_)), tag(std::move(tag_)) {
     assert_block();
 }
 EnvBase::EnvBase(std::string side_, std::string tag_, const MpsSite &MPS, const MpoSite &MPO)
-    : block(std::make_unique<Eigen::Tensor<cplx, 3>>()), side(std::move(side_)), tag(std::move(tag_)) {
+    : block(std::make_unique<Eigen::Tensor<cx64, 3>>()), side(std::move(side_)), tag(std::move(tag_)) {
     if(MPS.get_position() != MPO.get_position())
         throw except::logic_error("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position());
     position = MPS.get_position();
@@ -44,7 +44,7 @@ EnvBase::EnvBase(std::string side_, std::string tag_, const MpsSite &MPS, const 
 
 EnvBase &EnvBase::operator=(const EnvBase &other) {
     if(this != &other) {
-        block         = std::make_unique<Eigen::Tensor<cplx, 3>>(*other.block);
+        block         = std::make_unique<Eigen::Tensor<cx64, 3>>(*other.block);
         sites         = other.sites;
         position      = other.position;
         side          = other.side;
@@ -64,7 +64,7 @@ void EnvBase::assert_block() const {
     if(not block) throw except::runtime_error("env block {} {} at pos {} is nullptr", tag, side, get_position());
 }
 
-void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo) {
+void EnvBase::build_block(Eigen::Tensor<cx64, 3> &otherblock, const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo) {
     /*!< Contracts a site into the block-> */
     // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
     // This can't be checked here though, so do that before calling this function.
@@ -74,7 +74,7 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
     unique_id_mps = std::nullopt;
     unique_id_mpo = std::nullopt;
     auto &threads = tenx::threads::get();
-    if(not block) block = std::make_unique<Eigen::Tensor<cplx, 3>>();
+    if(not block) block = std::make_unique<Eigen::Tensor<cx64, 3>>();
     if(side == "L") {
         /*! # Left environment block contraction
          *   [       ]--0         [       ]--0 0--[LB]--1 1--[  GA    ]--2
@@ -106,7 +106,7 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
         //                                    .contract(mpo, tenx::idx({1, 2}, {0, 2}))
         //                                    .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
         //                                    .shuffle(tenx::array3{0, 2, 1});
-        Eigen::Tensor<cplx, 4> block_mps_mpo(otherblock.dimension(0), mps.dimension(2), mpo.dimension(1), mpo.dimension(2));
+        Eigen::Tensor<cx64, 4> block_mps_mpo(otherblock.dimension(0), mps.dimension(2), mpo.dimension(1), mpo.dimension(2));
         block_mps_mpo.device(*threads->dev) = otherblock.contract(mps.conjugate(), tenx::idx({1}, {1})).contract(mpo, tenx::idx({1, 2}, {0, 3}));
         block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
         block->device(*threads->dev) = mps.contract(block_mps_mpo, tenx::idx({0, 1}, {3, 0}));
@@ -143,14 +143,14 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
         // .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
         // .shuffle(tenx::array3{0, 2, 1});
 
-        Eigen::Tensor<cplx, 4> block_mps_mpo(otherblock.dimension(0), mps.dimension(1), mpo.dimension(0), mpo.dimension(2));
+        Eigen::Tensor<cx64, 4> block_mps_mpo(otherblock.dimension(0), mps.dimension(1), mpo.dimension(0), mpo.dimension(2));
         block_mps_mpo.device(*threads->dev) = otherblock.contract(mps.conjugate(), tenx::idx({1}, {2})).contract(mpo, tenx::idx({1, 2}, {1, 3}));
         block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
         block->device(*threads->dev) = mps.contract(block_mps_mpo, tenx::idx({0, 2}, {3, 0}));
     }
 }
 
-void EnvBase::enlarge(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo) {
+void EnvBase::enlarge(const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo) {
     /*!< Contracts a site into the current block-> */
 
     // NOTE:
@@ -159,7 +159,7 @@ void EnvBase::enlarge(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cpl
     // There is no way to check the positions here, so checks should be done before calling this function
 
     assert_block();
-    Eigen::Tensor<cplx, 3> thisblock = *block;
+    Eigen::Tensor<cx64, 3> thisblock = *block;
     build_block(thisblock, mps, mpo);
     sites++;
     if(position) {
@@ -172,13 +172,13 @@ void EnvBase::enlarge(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cpl
 
 void EnvBase::clear() {
     assert_block();
-    block->resize(0, 0, 0); // = Eigen::Tensor<cplx,3>();
+    block->resize(0, 0, 0); // = Eigen::Tensor<cx64,3>();
     tools::log->trace("Ejected env{} pos {}", side, get_position());
     unique_id = std::nullopt;
 
     // Do not clear the empty edge
     //    if(sites > 0) {
-    //        block->resize(0, 0, 0); // = Eigen::Tensor<cplx,3>();
+    //        block->resize(0, 0, 0); // = Eigen::Tensor<cx64,3>();
     //        tools::log->trace("Ejected env{} pos {}", side, get_position());
     //        unique_id = std::nullopt;
     //    }
@@ -188,11 +188,11 @@ void EnvBase::clear() {
     unique_id_mpo = std::nullopt;
 }
 
-const Eigen::Tensor<cplx, 3> &EnvBase::get_block() const {
+const Eigen::Tensor<cx64, 3> &EnvBase::get_block() const {
     assert_block();
     return *block;
 }
-Eigen::Tensor<cplx, 3> &EnvBase::get_block() {
+Eigen::Tensor<cx64, 3> &EnvBase::get_block() {
     assert_block();
     return *block;
 }
@@ -251,7 +251,7 @@ size_t EnvBase::get_position() const {
 
 size_t EnvBase::get_sites() const { return sites; }
 
-void EnvBase::set_edge_dims(const Eigen::Tensor<cplx, 3> &MPS, const Eigen::Tensor<cplx, 4> &MPO, const Eigen::Tensor<cplx, 1> &edge) {
+void EnvBase::set_edge_dims(const Eigen::Tensor<cx64, 3> &MPS, const Eigen::Tensor<cx64, 4> &MPO, const Eigen::Tensor<cx64, 1> &edge) {
     assert_block();
     if(side == "L") {
         long mpsDim = MPS.dimension(1);
@@ -302,8 +302,8 @@ std::optional<std::size_t> EnvBase::get_unique_id_mpo() const { return unique_id
 
 template<typename T>
 Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const Eigen::Tensor<T, 3> &mps, const Eigen::Tensor<T, 4> &mpo, double alpha) const {
-    if constexpr(std::is_same_v<T, cplx>) {
-        if(tenx::isReal(mps) and tenx::isReal(mpo)) { return get_expansion_term<real>(mps.real(), mpo.real(), alpha).template cast<cplx>(); }
+    if constexpr(std::is_same_v<T, cx64>) {
+        if(tenx::isReal(mps) and tenx::isReal(mpo)) { return get_expansion_term<fp64>(mps.real(), mpo.real(), alpha).template cast<cx64>(); }
     }
     Eigen::Tensor<T, 3> P;
     auto               &threads = tenx::threads::get();
@@ -318,7 +318,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const Eigen::Tensor<T, 3> &mps, 
             return P;
         }
 
-        if constexpr(std::is_same_v<T, real>) {
+        if constexpr(std::is_same_v<T, fp64>) {
             Eigen::Tensor<T, 3> B   = get_block().real();
             Eigen::Tensor<T, 3> M   = mps.real();
             P.device(*threads->dev) = B.contract(M, tenx::idx({0}, {1}))
@@ -343,7 +343,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const Eigen::Tensor<T, 3> &mps, 
             P.setZero();
             return P;
         }
-        if constexpr(std::is_same_v<T, real>) {
+        if constexpr(std::is_same_v<T, fp64>) {
             Eigen::Tensor<T, 3> B   = get_block().real();
             Eigen::Tensor<T, 3> M   = mps.real();
             P.device(*threads->dev) = B.contract(M, tenx::idx({0}, {2}))
@@ -363,13 +363,13 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const Eigen::Tensor<T, 3> &mps, 
     if(alpha == 1.0) return P;
     return P * P.constant(alpha);
 }
-template Eigen::Tensor<real, 3> EnvBase::get_expansion_term<real>(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo, double alpha) const;
-template Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term<cplx>(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, double alpha) const;
+template Eigen::Tensor<fp64, 3> EnvBase::get_expansion_term<fp64>(const Eigen::Tensor<fp64, 3> &mps, const Eigen::Tensor<fp64, 4> &mpo, double alpha) const;
+template Eigen::Tensor<cx64, 3> EnvBase::get_expansion_term<cx64>(const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo, double alpha) const;
 
 template<typename T>
 Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const {
-    if constexpr(std::is_same_v<T, cplx>) {
-        if(mps.is_real() and mpo.is_real()) { return get_expansion_term<real>(mps, mpo, alpha, rank_max).cast<cplx>(); }
+    if constexpr(std::is_same_v<T, cx64>) {
+        if(mps.is_real() and mpo.is_real()) { return get_expansion_term<fp64>(mps, mpo, alpha, rank_max).cast<cx64>(); }
     }
 
     assert(tag == "ene" or tag == "var");
@@ -381,7 +381,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
     Eigen::Tensor<T, 4> mpo_tensor;
     Eigen::Tensor<T, 3> P;
 
-    if constexpr(std::is_same_v<T, real>) {
+    if constexpr(std::is_same_v<T, fp64>) {
         mpo_tensor = tag == "ene" ? mpo.MPO().real() : mpo.MPO2().real();
     } else {
         mpo_tensor = tag == "ene" ? mpo.MPO() : mpo.MPO2();
@@ -393,7 +393,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
         svd::solver svd;
         auto        mps_reduced = mps;
         // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
-        if constexpr(std::is_same_v<T, real>) {
+        if constexpr(std::is_same_v<T, fp64>) {
             Eigen::Tensor<T, 3> M = mps_reduced.get_M().real();
             auto [U, S, V]        = svd.schmidt_into_left_normalized(M, mps_reduced.spin_dim(), svd::config(rank_max));
             if(mps_reduced.isCenter()) {
@@ -417,7 +417,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
             }
         }
         tools::log->debug("Pre-truncated site {}: {} -> {} (rank max {})", mps.get_position(), mps.dimensions(), mps_reduced.dimensions(), rank_max);
-        if constexpr(std::is_same_v<T,real>) {
+        if constexpr(std::is_same_v<T,fp64>) {
             return get_expansion_term<T>(mps_reduced.get_M().real(), mpo_tensor.real(), alpha);
         }else {
             return get_expansion_term<T>(mps_reduced.get_M(), mpo_tensor, alpha);
@@ -428,7 +428,7 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
         svd::solver svd;
         auto        mps_reduced = mps;
         // We can truncate the mps that goes into the expansion term here so that the SVD we do later doesn't become too large
-        if constexpr(std::is_same_v<T, real>) {
+        if constexpr(std::is_same_v<T, fp64>) {
             Eigen::Tensor<T, 3> M = mps_reduced.get_M().real();
             auto [U, S, V]        = svd.schmidt_into_right_normalized(M, mps_reduced.spin_dim(), svd::config(rank_max));
             M.resize(V.dimensions());
@@ -436,23 +436,23 @@ Eigen::Tensor<T, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSit
             mps_reduced.set_M(M);
         } else {
             auto [U, S, V] = svd.schmidt_into_right_normalized(mps_reduced.get_M(), mps_reduced.spin_dim(), svd::config(rank_max));
-            Eigen::Tensor<cplx, 3> M(V.dimensions());
+            Eigen::Tensor<cx64, 3> M(V.dimensions());
             M.device(*threads->dev) = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {1})).shuffle(std::array{1, 0, 2});
             mps_reduced.set_M(M);
         }
         tools::log->debug("Pre-truncated site {}: {} -> {} (rank max {})", mps.get_position(), mps.dimensions(), mps_reduced.dimensions(), rank_max);
-        if constexpr(std::is_same_v<T,real>) {
+        if constexpr(std::is_same_v<T,fp64>) {
             return get_expansion_term<T>(mps_reduced.get_M().real(), mpo_tensor.real(), alpha);
         }else {
             return get_expansion_term<T>(mps_reduced.get_M(), mpo_tensor, alpha);
         }
     }
-    if constexpr(std::is_same_v<T,real>) {
+    if constexpr(std::is_same_v<T,fp64>) {
         return get_expansion_term<T>(mps.get_M().real(), mpo_tensor.real(), alpha);
     }else {
         return get_expansion_term<T>(mps.get_M(), mpo_tensor, alpha);
     }
 }
 
-template Eigen::Tensor<real, 3> EnvBase::get_expansion_term<real>(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const;
-template Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term<cplx>(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const;
+template Eigen::Tensor<fp64, 3> EnvBase::get_expansion_term<fp64>(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const;
+template Eigen::Tensor<cx64, 3> EnvBase::get_expansion_term<cx64>(const MpsSite &mps, const MpoSite &mpo, double alpha, long rank_max) const;

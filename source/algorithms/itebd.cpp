@@ -19,12 +19,12 @@ void itebd::run_preprocessing() {
     init_truncation_error_limits();
     initialize_model(); // First use of random!
     auto t_init    = tid::tic_scope("init");
-    status.delta_t = cplx_t(settings::itebd::time_step_init_real, settings::itebd::time_step_init_imag);
+    status.delta_t = cx128(static_cast<fp128>(settings::itebd::time_step_init_real), static_cast<fp128>(settings::itebd::time_step_init_imag));
     h_evn          = tensors.model->get_2site_ham_AB();
     h_odd          = tensors.model->get_2site_ham_BA();
 
     unitary_time_evolving_operators =
-        qm::time::get_twosite_time_evolution_operators(status.delta_t.to_floating_point<cplx_t>(), settings::itebd::suzuki_order, h_evn, h_odd);
+        qm::time::get_twosite_time_evolution_operators(status.delta_t.to_floating_point<cx128>(), settings::itebd::suzuki_order, h_evn, h_odd);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -55,11 +55,11 @@ void itebd::update_state() {
      */
     auto t_step = tid::tic_scope("step");
     for(auto &U : unitary_time_evolving_operators) {
-        Eigen::Tensor<cplx, 3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state, U);
+        Eigen::Tensor<cx64, 3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state, U);
         tensors.merge_twosite_tensor(twosite_tensor, MergeEvent::GATE, svd::config(status.bond_lim, status.trnc_lim));
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
-    status.phys_time += abs_t(status.delta_t.to_floating_point<cplx_t>());
+    status.phys_time += abs_t(status.delta_t.to_floating_point<cx128>());
     tensors.clear_measurements();
 }
 
@@ -78,12 +78,12 @@ void itebd::check_convergence() {
 }
 
 void itebd::check_convergence_time_step() {
-    auto delta_t = status.delta_t.to_floating_point<cplx_t>();
-    if(abs_t(delta_t) <= settings::itebd::time_step_min) {
+    auto delta_t = status.delta_t.to_floating_point<cx128>();
+    if(abs_t(delta_t) <= static_cast<fp128>(settings::itebd::time_step_min)) {
         status.time_step_has_converged = true;
     } else if(status.bond_limit_has_reached_max and status.entanglement_converged_for > 0) {
         // TODO : This step is not compatible with switching between real/imag time evolution... I think?
-        status.delta_t                  = std::max(real_t(settings::itebd::time_step_min), abs_t(delta_t) * 0.5);
+        status.delta_t                  = std::max<fp128>(static_cast<fp128>(settings::itebd::time_step_min), abs_t(delta_t) * static_cast<fp128>(0.5));
         unitary_time_evolving_operators = qm::time::get_twosite_time_evolution_operators(delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
         //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);
         clear_convergence_status();

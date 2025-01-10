@@ -1,49 +1,287 @@
 #pragma once
-#ifndef DMRG_FLOAT_H
-    #define DMRG_FLOAT_H
-    #include "f128.h"
-    #include <complex>
+
+#include <cassert>
+#include <complex>
+#include <Eigen/Core>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <utility>
 // This header defines the floating point types used throughout this program
 
-using real = double;
-using cplx = std::complex<real>;
+using fp64 = double;
+using cx64 = std::complex<fp64>;
 
-    #if defined(USE_QUADMATH)
-        #include <quadmath.h>
-using real_t = __float128;
-using cplx_t = std::complex<real_t>;
-    #else
-using real_t = long double;
-using cplx_t = std::complex<real_t>;
-    #endif
+#if defined(DMRG_USE_QUADMATH)
+    #include <quadmath.h>
+__extension__ typedef __float128 fp128;
+using cx128 = std::complex<fp128>;
+#elif defined(DMRG_USE_FLOAT128)
+    #include <stdfloat>
+using fp128 = std::float128_t;
+using cx128 = std::complex<fp128>;
+#else
+using fp128 = long double;
+using cx128 = std::complex<long double>;
+#endif
+
+namespace sfinae {
+    template<typename T>
+    concept is_native_float = std::is_same_v<T, float> || std::is_same_v<T, double> || std::is_same_v<T, long double>;
+
+    template<typename T>
+    concept is_extended_float = std::is_floating_point_v<T> && !is_native_float<T>;
+}
 
 template<typename Lhs, typename Rhs>
 bool cmp_t(Lhs lhs, Rhs rhs) {
-    if constexpr(std::is_same_v<Lhs, cplx_t> or std::is_same_v<Rhs, cplx_t>) {
-        bool real_eq = static_cast<real_t>(std::real(lhs)) == static_cast<real_t>(std::real(rhs));
-        bool imag_eq = static_cast<real_t>(std::imag(lhs)) == static_cast<real_t>(std::imag(rhs));
+    if constexpr(std::is_same_v<Lhs, cx128> or std::is_same_v<Rhs, cx128>) {
+        bool real_eq = static_cast<fp128>(std::real(lhs)) == static_cast<fp128>(std::real(rhs));
+        bool imag_eq = static_cast<fp128>(std::imag(lhs)) == static_cast<fp128>(std::imag(rhs));
         return real_eq and imag_eq;
-    } else if constexpr(std::is_same_v<Lhs, real_t> or std::is_same_v<Rhs, real_t>)
-        return static_cast<real_t>(lhs) == static_cast<real_t>(rhs);
+    } else if constexpr(std::is_same_v<Lhs, fp128> or std::is_same_v<Rhs, fp128>)
+        return static_cast<fp128>(lhs) == static_cast<fp128>(rhs);
     else
         return lhs == rhs;
 }
 
-template<typename T>
-auto abs_t(T val) -> real_t {
-    if constexpr(std::is_arithmetic_v<T>) return std::abs(val);
-    #if defined(USE_QUADMATH)
-    else if constexpr(std::is_same_v<T, cplx_t>) {
-        __complex128 x;
-        __real__ x = val.real();
-        __imag__ x = val.imag();
-        return cabsq(x);
-    } else if constexpr(std::is_same_v<T, real_t>)
-        return fabsq(val);
-    #else
-    else
-        return std::abs(val);
-    #endif
-}
+// template<typename T>
+// auto abs_t(T val) -> fp128 {
+//     if constexpr(std::is_arithmetic_v<T>) return std::abs(val);
+// #if defined(DMRG_USE_QUADMATH)
+//     else if constexpr(std::is_same_v<T, cx128>) {
+//         __complex128 x;
+//         __real__ x = val.real();
+//         __imag__ x = val.imag();
+//         return cabsq(x);
+//     } else if constexpr(std::is_same_v<T, fp128>)
+//         return fabsq(val);
+// #else
+//     else
+//         return std::abs(val);
+// #endif
+// }
 
+namespace Eigen {
+
+    template<>
+    struct NumTraits<fp128> : NumTraits<double> // permits to get the epsilon, dummy_precision, lowest, highest functions
+    {
+        typedef fp128 Real;
+        typedef fp128 NonInteger;
+        typedef fp128 Nested;
+
+        enum { IsComplex = 0, IsInteger = 0, IsSigned = 1, RequireInitialization = 1, ReadCost = 1, AddCost = 3, MulCost = 3 };
+    };
+
+    template<>
+    struct NumTraits<cx128> : NumTraits<std::complex<double>> // permits to get the epsilon, dummy_precision, lowest, highest functions
+    {
+        typedef fp128 Real;
+        typedef fp128 NonInteger;
+        typedef fp128 Nested;
+        enum { IsComplex = 1, IsInteger = 0, IsSigned = 1, RequireInitialization = 1, ReadCost = 1, AddCost = 6, MulCost = 6 };
+    };
+
+}
+#if defined(DMRG_USE_QUADMATH)
+
+inline const fp128 &conj(const fp128 &x) { return x; }
+inline const fp128 &real(const fp128 &x) { return x; }
+inline fp128        imag(const fp128 &) { return 0.; }
+inline fp128        abs(const fp128 &x) { return fabsq(x); }
+inline fp128        abs2(const fp128 &x) { return x * x; }
+
+inline cx128 conj(const cx128 &x) {
+    __complex128 y = conjq(*reinterpret_cast<const __complex128 *>(&x));
+    return *reinterpret_cast<cx128 *>(&y);
+}
+inline fp128 real(const cx128 &x) { return crealq(*reinterpret_cast<const __complex128 *>(&x)); }
+inline cx128 imag(const cx128 &x) { return cimagq(*reinterpret_cast<const __complex128 *>(&x)); }
+inline fp128 abs(const cx128 &x) { return cabsq(*reinterpret_cast<const __complex128 *>(&x)); }
+inline fp128 abs2(const cx128 &x) { return abs(conj(x) * x); }
+
+#elif defined(DMRG_USE_FLOAT128)
+// inline const fp128 &conj(const fp128 &x) { return x; }
+// inline const fp128 &real(const fp128 &x) { return x; }
+// inline fp128        imag(const fp128 &) { return 0.; }
+// inline fp128        abs(const fp128 &x) { return abs_t(x); }
+// inline fp128        abs2(const fp128 &x) { return x * x; }
+//
+// inline cx128 conj(const cx128 &x) { return cx128(x.real(), -x.imag()); }
+// inline fp128 real(const cx128 &x) { return x.real(); }
+// inline fp128 imag(const cx128 &) { return 0.; }
+// inline fp128 abs(const cx128 &x) { return abs_t(x); }
+// inline fp128 abs2(const cx128 &x) { return abs_t(conj(x) * x); }
+
+#endif
+
+// Wrapper around the float128 type
+
+template<typename Scalar>
+struct f128_base {
+    protected:
+    Scalar val = 0.0;
+
+    public:
+    virtual ~f128_base() = default;
+    using format_type    = double;
+    using value_type     = Scalar;
+    f128_base()          = default;
+    template<typename T>
+    f128_base(const T &v) : val(v) {}
+    operator Scalar() const { return val; }
+    // operator double() const { return static_cast<double>(val); }
+    [[nodiscard]] Scalar value() const { return val; }
+    template<typename T>
+    bool operator==(const T &v) const {
+        static_assert(std::is_arithmetic_v<T> or std::is_same_v<T, Scalar>);
+        if constexpr(std::is_same_v<T, f128_base>)
+            return val == v.val;
+        else
+            return val == v;
+    }
+    template<typename T>
+    f128_base<T> operator=(T v) {
+        val = v;
+        return val;
+    }
+
+    template<typename T>
+    f128_base<T> operator*(const T &v) const {
+        return val * v;
+    }
+    template<typename T>
+    f128_base<T> operator/(const T &v) const {
+        return val / v;
+    }
+    template<typename T>
+    f128_base<T> operator+(const T &v) const {
+        return val + v;
+    }
+    template<typename T>
+    f128_base<T> operator-(const T &v) const {
+        return val - v;
+    }
+    [[nodiscard]] virtual std::string string(int prec = 36, size_t width = 0, char pres = 'f', std::string_view align = "",
+                                             std::string_view sign = "") const = 0;
+};
+
+#if defined(DMRG_USE_QUADMATH)
+struct f128_t : f128_base<fp128> {
+    using f128_base::f128_base;
+    f128_t(std::string_view s) { val = strtoflt128(s.data(), nullptr); }
+    f128_t(const char *c) : f128_t(std::string_view(c)) {}
+
+    [[nodiscard]] std::string string(int prec = 36, size_t width = 0, char pres = 'f', std::string_view align = "", std::string_view sign = "") const final {
+        if(prec < 0) prec = 36;
+        char        fstr[16] = {0};
+        const char *astr     = (align == "<") ? "-" : (align == ">" ? "" : align.data()); // alignment string
+        auto        res      = std::snprintf(fstr, sizeof fstr, "%%%s%s%d.%uQ%c", astr, sign.data(), static_cast<int>(width), prec, pres);
+        if(res < 0) throw std::runtime_error("f128_t.string(): snprintf() returned < 0");
+        auto size = quadmath_snprintf(nullptr, 0, fstr, val);
+        if(size < 0) { throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned < 0"); }
+        std::string buf;
+        buf.resize(static_cast<size_t>(size));
+        quadmath_snprintf(buf.data(), static_cast<size_t>(size+1), fstr, val);
+        return buf;
+    }
+};
+
+struct c128_t : std::complex<f128_t> {
+    using complex<f128_t>::complex;
+    template<typename T>
+    c128_t(const T &v) {
+        this->real() = std::real(v);
+        this->imag() = std::imag(v);
+    }
+};
+#elif defined(DMRG_USE_FLOAT128)
+struct f128_t : f128_base<fp128> {
+    using f128_base::f128_base;
+    f128_t(std::string_view s) {
+        std::from_chars(s.data(), s.data() + s.size(), val);
+        auto [ptr, ec] = std::from_chars(s.data(), s.data() + s.size(), val);
+        if(ec == std::errc::invalid_argument) throw std::runtime_error("f128_t(std::string_view s): invalid_argument");
+        if(ec == std::errc::result_out_of_range) throw std::runtime_error("f128_t(std::string_view s): result_out_of_range");
+    }
+    [[nodiscard]] std::string string(int prec = 36, size_t width = 0, char pres = 'f', std::string_view align = "", std::string_view sign = "") const final {
+        auto chfmt = std::chars_format::fixed;
+        if(pres == 'f')
+            chfmt = std::chars_format::fixed;
+        else if(pres == 'e')
+            chfmt = std::chars_format::scientific;
+        else if(pres == 'g')
+            chfmt = std::chars_format::general;
+        else if(pres == 'h')
+            chfmt = std::chars_format::hex;
+
+        constexpr auto bufsize      = std::numeric_limits<std::float128_t>::max_digits10 + 10;
+        char           buf[bufsize] = {0};
+
+        auto result = std::to_chars(buf, buf + bufsize, val, chfmt, prec);
+        if(result.ec != std::errc()) throw std::runtime_error(std::make_error_code(result.ec).message());
+
+        auto        length = strnlen(buf, bufsize);
+        std::string sgn    = (buf[0] != '-' and sign == "+") ? "+" : "";
+        if(sgn == "+") { length++; }
+        width = std::max(length, width);
+        std::string str;
+        str.resize(width);
+        assert(std::cmp_less(width - length, std::numeric_limits<int>::max()));
+        assert(std::cmp_less(length, std::numeric_limits<int>::max()));
+        int padLen = static_cast<int>(width - length); // Calc Padding length
+        if(padLen < 0) padLen = 0;                     // Avoid negative length
+        if(padLen == 0) {
+            std::snprintf(str.data(), str.size() + 1, "%s%s", sgn.c_str(), buf); // No Padding
+        } else if(align.find('<') != std::string_view::npos or align.find('-') != std::string_view::npos) {
+            // Pad on right side
+            std::string padding(padLen, ' ');
+            std::snprintf(str.data(), str.size() + 1, "%s%s%*.*s", sgn.c_str(), buf, padLen, padLen, padding.c_str()); // RIGHT Padding
+
+        } else {
+            // pad on the left side
+            std::string padding(padLen, ' ');
+            std::snprintf(str.data(), str.size() + 1, "%*.*s%s%s", padLen, padLen, padding.c_str(), sgn.c_str(), buf); // LEFT Padding
+        }
+        return str;
+    }
+};
+
+struct c128_t : std::complex<f128_t> {
+    using complex<f128_t>::complex;
+    template<typename T>
+    c128_t(const T &v) {
+        this->real() = std::real(v);
+        this->imag() = std::imag(v);
+    }
+};
+
+#else
+// Dummy wrapper around the long double type
+struct f128_t : f128_base<long double> {
+    using f128_base::f128_base;
+    f128_t(std::string_view s) { val = strtold(s.data(), nullptr); }
+    f128_t(const char *c) : f128_t(std::string_view(c)) {}
+    [[nodiscard]] std::string string(int prec = 36, size_t width = 0, char pres = 'f', std::string_view align = "", std::string_view sign = "") const final {
+        std::string buf;
+        char        fstr[16];
+        std::snprintf(fstr, sizeof fstr, "%%%s%s%d.%dL%c", align == "<" ? "-" : align.data(), sign.data(), static_cast<int>(width), prec, pres);
+        auto size = std::snprintf(nullptr, 0, fstr, val);
+        if(size < 0 ) throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned size < 0");
+        std::string buf;
+        buf.resize(static_cast<size_t>(size));
+        std::snprintf(buf.data(), size+1, fstr, val);
+        return buf;
+    }
+};
+struct c128_t : std::complex<f128_t> {
+    using complex<f128_t>::complex;
+    template<typename T>
+    c128_t(const T &v) {
+        this->real() = std::real(v);
+        this->imag() = std::imag(v);
+    }
+};
 #endif

@@ -99,9 +99,13 @@ endif()
 
 ### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
 ### for accurate long time-scale evolution)
-if(DMRG_USE_QUADMATH)
+if(DMRG_USE_FLOAT128)
+    target_compile_definitions(dmrg-flags INTERFACE DMRG_USE_FLOAT128)
+    target_compile_options(dmrg-flags INTERFACE -fext-numeric-literals)
+elseif(DMRG_USE_QUADMATH)
     find_package(quadmath REQUIRED)
-    target_compile_definitions(dmrg-flags INTERFACE USE_QUADMATH)
+    target_compile_definitions(dmrg-flags INTERFACE DMRG_USE_QUADMATH)
     target_compile_options(dmrg-flags INTERFACE -fext-numeric-literals)
     target_link_libraries(dmrg-flags INTERFACE quadmath::quadmath)
 endif ()
+

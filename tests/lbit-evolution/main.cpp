@@ -7,6 +7,7 @@
 #include "debug/stacktrace.h"
 #include "env/environment.h"
 #include "io/filesystem.h"
+#include "io/fmt_f128_t.h"
 #include "math/float.h"
 #include "math/linalg.h"
 #include "math/num.h"
@@ -25,9 +26,9 @@
 #include <fmt/format.h>
 #include <h5pp/h5pp.h>
 
-auto get_hamiltonian(const flbit &f) -> Eigen::Matrix<cplx_t, Eigen::Dynamic, Eigen::Dynamic> {
+auto get_hamiltonian(const flbit &f) -> Eigen::Matrix<cx128, Eigen::Dynamic, Eigen::Dynamic> {
     //    for(const auto &field : f.tensors.model->get_parameter("J1_rand"))
-    using matrix_t = Eigen::Matrix<cplx_t, Eigen::Dynamic, Eigen::Dynamic>;
+    using matrix_t = Eigen::Matrix<cx128, Eigen::Dynamic, Eigen::Dynamic>;
     auto L         = f.tensors.get_length<size_t>();
     auto N         = static_cast<long>(std::pow(2.0, L));
     auto H         = matrix_t(N, N);
@@ -38,15 +39,15 @@ auto get_hamiltonian(const flbit &f) -> Eigen::Matrix<cplx_t, Eigen::Dynamic, Ei
     auto J3 = f.tensors.model->get_parameter("J3_rand");
 
     H.setZero();
-    for(size_t i = 0; i < L - 0; ++i) H += std::any_cast<real_t>(J1[i]) * SZ[i].cast<cplx_t>();
+    for(size_t i = 0; i < L - 0; ++i) H += std::any_cast<fp128>(J1[i]) * SZ[i].cast<cx128>();
     for(size_t i = 0; i < L - 1; ++i) {
-        auto J2i = std::any_cast<h5pp::varr_t<real_t>>(J2[i]);
+        auto J2i = std::any_cast<h5pp::varr_t<fp128>>(J2[i]);
         for(size_t j = i + 1; j < L; ++j) {
             auto r = j - i;
-            H += J2i[r] * SZ[i].cast<cplx_t>() * SZ[j].cast<cplx_t>();
+            H += J2i[r] * SZ[i].cast<cx128>() * SZ[j].cast<cx128>();
         }
     }
-    for(size_t i = 0; i < L - 2; ++i) H += std::any_cast<real_t>(J3[i]) * SZ[i + 0].cast<cplx_t>() * SZ[i + 1].cast<cplx_t>() * SZ[i + 2].cast<cplx_t>();
+    for(size_t i = 0; i < L - 2; ++i) H += std::any_cast<fp128>(J3[i]) * SZ[i + 0].cast<cx128>() * SZ[i + 1].cast<cx128>() * SZ[i + 2].cast<cx128>();
 
     return H;
 }
@@ -90,34 +91,34 @@ size_t assert_lbit_evolution(const flbit &f) {
 
     auto H_exact = get_hamiltonian(f);
     auto H_Lbody = not f.ham_gates_Lbody.empty() ? tenx::MatrixMap(f.ham_gates_Lbody.front().op_t) : tenx::MatrixMap(f.ham_swap_gates_Lbody.front().op_t);
-#if defined(USE_QUADMATH)
+#if defined(DMRG_USE_QUADMATH)
     auto digits10_t = FLT128_DIG;
 //    auto epsilon_t  = 1.926e-34; // FLT128_EPSILON;
 #else
-    auto digits10_t = std::numeric_limits<real_t>::digits10;
-//    auto   epsilon_t      = std::numeric_limits<real_t>::epsilon();
+    auto digits10_t = std::numeric_limits<fp128>::digits10;
+//    auto   epsilon_t      = std::numeric_limits<fp128>::epsilon();
 #endif
-    auto digits10_d  = std::numeric_limits<real>::digits10;
-    auto epsilon_d   = std::numeric_limits<real>::epsilon();
+    auto digits10_d  = std::numeric_limits<fp64>::digits10;
+    auto epsilon_d   = std::numeric_limits<fp64>::epsilon();
     auto precision_d = std::max({
         epsilon_d,
         std::pow(f.status.trnc_lim, 2.0),
     });
 
-#if defined(USE_QUADMATH)
+#if defined(DMRG_USE_QUADMATH)
     double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
-                                static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cplx_t>().real())),
-                                static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cplx_t>().imag())),
+                                static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cx128>().real())),
+                                static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cx128>().imag())),
                             });
 
 #else
     double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
-                                static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cplx_t>().real())),
-                                static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cplx_t>().imag())),
+                                static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cx128>().real())),
+                                static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cx128>().imag())),
                             });
 #endif
     double max_norm_error = settings::precision::max_norm_error;
@@ -132,7 +133,7 @@ size_t assert_lbit_evolution(const flbit &f) {
 
     auto T_Lgate = has_time_swap_gates ? f.time_swap_gates_Lbody.front() : f.time_gates_Lbody.front();
     auto T_Lbody = tenx::MatrixMap(T_Lgate.op_t);
-    auto T_Hgate = qm::lbit::get_time_evolution_gates(f.status.delta_t.to_floating_point<cplx_t>(), {qm::Gate(H_exact, T_Lgate.pos, T_Lgate.dim)});
+    auto T_Hgate = qm::lbit::get_time_evolution_gates(f.status.delta_t.to_floating_point<cx128>(), {qm::Gate(H_exact, T_Lgate.pos, T_Lgate.dim)});
     auto T_exact = tenx::MatrixMap(T_Hgate.front().op_t);
 
     tools::log->info("T_Lbody: {}", linalg::matrix::to_string(T_Lbody.diagonal().transpose(), digits10_d));
@@ -153,19 +154,17 @@ size_t assert_lbit_evolution(const flbit &f) {
     if(not unitarymatrix.isUnitary()) throw except::logic_error("unitarymatrix is not unitary");
     if(not exp_lbit_iHdt.isUnitary()) throw except::logic_error("exp_lbit_iHdt is not unitary");
 
-
-
     auto             psi_real_init = tools::finite::measure::mps2tensor(*f.state_real_init);
     auto             psi_lbit_init = tools::finite::measure::mps2tensor(*f.state_lbit_init);
-    auto             psi_real_tebd = tools::finite::measure::mps2tensor(*f.tensors.state);
+    auto             psi_fp128ebd  = tools::finite::measure::mps2tensor(*f.tensors.state);
     auto             psi_lbit_tebd = tools::finite::measure::mps2tensor(*f.state_lbit);
     Eigen::VectorXcd vec_real_init = tenx::VectorMap(psi_real_init);
     Eigen::VectorXcd vec_lbit_init = tenx::VectorMap(psi_lbit_init);
-    Eigen::VectorXcd vec_real_tebd = tenx::VectorMap(psi_real_tebd);
+    Eigen::VectorXcd vec_fp128ebd  = tenx::VectorMap(psi_fp128ebd);
     Eigen::VectorXcd vec_lbit_tebd = tenx::VectorMap(psi_lbit_tebd);
-    Eigen::VectorXcd vec_lbit_levo = exp_lbit_iHdt * vec_lbit_init;                 // From lbit
+    Eigen::VectorXcd vec_lbit_levo = exp_lbit_iHdt * vec_lbit_init;                           // From lbit
     Eigen::VectorXcd vec_lbit_revo = exp_lbit_iHdt * unitarymatrix.adjoint() * vec_real_init; // From real
-    Eigen::VectorXcd vec_lbit_devo = exp_lbit_iHdt.conjugate() * vec_lbit_tebd;     // From real
+    Eigen::VectorXcd vec_lbit_devo = exp_lbit_iHdt.conjugate() * vec_lbit_tebd;               // From real
     Eigen::VectorXcd vec_real_levo = unitarymatrix * exp_lbit_iHdt * vec_lbit_init;
     Eigen::VectorXcd vec_real_revo = unitarymatrix * exp_lbit_iHdt * unitarymatrix.adjoint() * vec_real_init;
     Eigen::VectorXcd vec_real_back = unitarymatrix * vec_lbit_init; // Returns the initial lbit state to real basis
@@ -173,8 +172,8 @@ size_t assert_lbit_evolution(const flbit &f) {
     auto overlap_lbit_levo_tebd = vec_lbit_levo.dot(vec_lbit_tebd); // One if time evo works independently of U
     auto overlap_lbit_revo_tebd = vec_lbit_revo.dot(vec_lbit_tebd); // One if time evo and U both work
     auto overlap_lbit_devo_init = vec_lbit_devo.dot(vec_lbit_init); // One if time evo works independently of U
-    auto overlap_real_levo_tebd = vec_real_levo.dot(vec_real_tebd); // One if time evo and U both work
-    auto overlap_real_revo_tebd = vec_real_revo.dot(vec_real_tebd); // One if time evo and U both work
+    auto overlap_real_levo_tebd = vec_real_levo.dot(vec_fp128ebd);  // One if time evo and U both work
+    auto overlap_real_revo_tebd = vec_real_revo.dot(vec_fp128ebd);  // One if time evo and U both work
     auto overlap_real_back_init = vec_real_back.dot(vec_real_init); // One if U works independently of time evo
 
     auto real_error_lbit_levo_tebd = std::abs(std::real(overlap_lbit_levo_tebd) - 1.0);
@@ -198,7 +197,7 @@ size_t assert_lbit_evolution(const flbit &f) {
 
     tools::log->info("vec_real_init.norm()   : {:.16f}", vec_real_init.norm());
     tools::log->info("vec_lbit_init.norm()   : {:.16f}", vec_lbit_init.norm());
-    tools::log->info("vec_real_tebd.norm()   : {:.16f}", vec_real_tebd.norm());
+    tools::log->info("vec_fp128ebd.norm()   : {:.16f}", vec_fp128ebd.norm());
     tools::log->info("vec_lbit_tebd.norm()   : {:.16f}", vec_lbit_tebd.norm());
     tools::log->info("vec_lbit_levo.norm()   : {:.16f}", vec_lbit_levo.norm());
     tools::log->info("vec_lbit_revo.norm()   : {:.16f}", vec_lbit_revo.norm());
@@ -216,7 +215,7 @@ size_t assert_lbit_evolution(const flbit &f) {
 
     if(std::abs(vec_real_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_init.norm() {0:.{2}f} > {1:.{2}f}", vec_real_init.norm(), max_norm_error, digits10_d);
     if(std::abs(vec_lbit_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_init.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_init.norm(), max_norm_error, digits10_d);
-    if(std::abs(vec_real_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_tebd.norm() {0:.{2}f} > {1:.{2}f}", vec_real_tebd.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_fp128ebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_fp128ebd.norm() {0:.{2}f} > {1:.{2}f}", vec_fp128ebd.norm(), max_norm_error, digits10_d);
     if(std::abs(vec_lbit_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_tebd.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_tebd.norm(), max_norm_error, digits10_d);
     if(std::abs(vec_lbit_levo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_levo.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_levo.norm(), max_norm_error, digits10_d);
     if(std::abs(vec_lbit_revo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_revo.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_revo.norm(), max_norm_error, digits10_d);
@@ -251,56 +250,42 @@ size_t assert_lbit_evolution(const flbit &f) {
 size_t assert_lbit_evolution(const flbit &f1, const flbit &f2) {
     auto overlap_real_init = tools::finite::ops::overlap(*f1.state_real_init, *f2.state_real_init);
     auto overlap_lbit_init = tools::finite::ops::overlap(*f1.state_lbit_init, *f2.state_lbit_init);
-    auto overlap_real_tevo = tools::finite::ops::overlap(*f1.tensors.state, *f2.tensors.state);
+    auto overlap_fp128evo  = tools::finite::ops::overlap(*f1.tensors.state, *f2.tensors.state);
     auto overlap_lbit_tevo = tools::finite::ops::overlap(*f1.state_lbit, *f2.state_lbit);
     tools::log->info("overlap_real_init : {:.16f} | {:.16f} |", overlap_real_init, std::abs(overlap_real_init));
     tools::log->info("overlap_lbit_init : {:.16f} | {:.16f} |", overlap_lbit_init, std::abs(overlap_lbit_init));
-    tools::log->info("overlap_real_tevo : {:.16f} | {:.16f} |", overlap_real_tevo, std::abs(overlap_real_tevo));
+    tools::log->info("overlap_fp128evo : {:.16f} | {:.16f} |", overlap_fp128evo, std::abs(overlap_fp128evo));
     tools::log->info("overlap_lbit_tevo : {:.16f} | {:.16f} |", overlap_lbit_tevo, std::abs(overlap_lbit_tevo));
     auto real_error_real_init = std::abs(std::real(overlap_real_init) - 1.0);
     auto real_error_lbit_init = std::abs(std::real(overlap_lbit_init) - 1.0);
-    auto real_error_real_tevo = std::abs(std::real(overlap_real_tevo) - 1.0);
+    auto real_error_fp128evo  = std::abs(std::real(overlap_fp128evo) - 1.0);
     auto real_error_lbit_tevo = std::abs(std::real(overlap_lbit_tevo) - 1.0);
     auto imag_error_real_init = std::abs(std::imag(overlap_real_init) - 0.0);
     auto imag_error_lbit_init = std::abs(std::imag(overlap_lbit_init) - 0.0);
-    auto imag_error_real_tevo = std::abs(std::imag(overlap_real_tevo) - 0.0);
+    auto imag_error_fp128evo  = std::abs(std::imag(overlap_fp128evo) - 0.0);
     auto imag_error_lbit_tevo = std::abs(std::imag(overlap_lbit_tevo) - 0.0);
 
-    auto digits10_d  = std::numeric_limits<real>::digits10;
-    auto epsilon_d   = std::numeric_limits<real>::epsilon();
-    auto precision_d = std::max({
+    auto   digits10_d     = std::numeric_limits<fp64>::digits10;
+    auto   epsilon_d      = std::numeric_limits<fp64>::epsilon();
+    auto   precision_d    = std::max({
         epsilon_d,
         std::pow(f1.status.trnc_lim, 2.0),
         std::pow(f2.status.trnc_lim, 2.0),
     });
-#if defined(USE_QUADMATH)
     double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
-                                static_cast<real>(fabsq(f1.status.delta_t.to_floating_point<cplx_t>().real())),
-                                static_cast<real>(fabsq(f1.status.delta_t.to_floating_point<cplx_t>().imag())),
-                                static_cast<real>(fabsq(f2.status.delta_t.to_floating_point<cplx_t>().real())),
-                                static_cast<real>(fabsq(f2.status.delta_t.to_floating_point<cplx_t>().imag())),
+                                static_cast<fp64>(abs(f1.status.delta_t.to_floating_point<cx128>())),
+                                static_cast<fp64>(abs(f2.status.delta_t.to_floating_point<cx128>())),
                             });
-
-#else
-    double max_tevo_error = 100 * precision_d *
-                            std::max({
-                                1.0,
-                                static_cast<real>(std::abs(f1.status.delta_t.to_floating_point<cplx_t>().real())),
-                                static_cast<real>(std::abs(f1.status.delta_t.to_floating_point<cplx_t>().imag())),
-                                static_cast<real>(std::abs(f2.status.delta_t.to_floating_point<cplx_t>().real())),
-                                static_cast<real>(std::abs(f2.status.delta_t.to_floating_point<cplx_t>().imag())),
-                            });
-#endif
     /* clang-format off */
     if(real_error_real_init > max_tevo_error) throw except::logic_error("real_error_real_init {0:.{2}f} > {1:.{2}f}", real_error_real_init, max_tevo_error,digits10_d);
     if(real_error_lbit_init > max_tevo_error) throw except::logic_error("real_error_lbit_init {0:.{2}f} > {1:.{2}f}", real_error_lbit_init, max_tevo_error,digits10_d);
-    if(real_error_real_tevo > max_tevo_error) throw except::logic_error("real_error_real_tevo {0:.{2}f} > {1:.{2}f}", real_error_real_tevo, max_tevo_error,digits10_d);
+    if(real_error_fp128evo > max_tevo_error) throw except::logic_error("real_error_fp128evo {0:.{2}f} > {1:.{2}f}", real_error_fp128evo, max_tevo_error,digits10_d);
     if(real_error_lbit_tevo > max_tevo_error) throw except::logic_error("real_error_lbit_tevo {0:.{2}f} > {1:.{2}f}", real_error_lbit_tevo, max_tevo_error,digits10_d);
     if(imag_error_real_init > max_tevo_error) throw except::logic_error("imag_error_real_init {0:.{2}f} > {1:.{2}f}", imag_error_real_init, max_tevo_error,digits10_d);
     if(imag_error_lbit_init > max_tevo_error) throw except::logic_error("imag_error_lbit_init {0:.{2}f} > {1:.{2}f}", imag_error_lbit_init, max_tevo_error,digits10_d);
-    if(imag_error_real_tevo > max_tevo_error) throw except::logic_error("imag_error_real_tevo {0:.{2}f} > {1:.{2}f}", imag_error_real_tevo, max_tevo_error,digits10_d);
+    if(imag_error_fp128evo > max_tevo_error) throw except::logic_error("imag_error_fp128evo {0:.{2}f} > {1:.{2}f}", imag_error_fp128evo, max_tevo_error,digits10_d);
     if(imag_error_lbit_tevo > max_tevo_error) throw except::logic_error("imag_error_lbit_tevo {0:.{2}f} > {1:.{2}f}", imag_error_lbit_tevo, max_tevo_error,digits10_d);
     /* clang-format on */
 
@@ -327,19 +312,22 @@ int main(int argc, char *argv[]) {
 
     // Register termination codes and what to do in those cases
     debug::register_callbacks();
-    tools::log->info("cplx: {:.4f}", std::complex<double>(1.0, -1.0));
-    tools::log->info("real   epsilon: {:.4e}", std::numeric_limits<double>::epsilon());
-    tools::log->info("real   max_dig: {}", std::numeric_limits<double>::max_digits10);
-    tools::log->info("real_t epsilon: {:.4e}", std::numeric_limits<long double>::epsilon());
-    tools::log->info("real_t max_dig: {}", std::numeric_limits<long double>::max_digits10);
-#if __has_include(<quadmath.h>)
-    tools::log->info(" __float128 max_dig: {}", FLT128_DIG);
+    tools::log->info("cplx            : {:.4f}", std::complex<double>(1.0, -1.0));
+    tools::log->info("fp64     epsilon: {:.4e}", std::numeric_limits<double>::epsilon());
+    tools::log->info("fp64     max_dig: {}", std::numeric_limits<double>::max_digits10);
+    tools::log->info("ldouble  max_dig: {}", std::numeric_limits<long double>::max_digits10);
+#if defined(DMRG_USE_QUADMATH)
+    tools::log->info("fp128 epsilon: {}", f128_t(1.926e-34)); // The true def of FLT128_EPSILON has a literal extension "Q" which gives a warning
+    tools::log->info("fp128 max_dig: {}", FLT128_DIG);
+#elif defined(DMRG_USE_FLOAT128)
+    tools::log->info("fp128 epsilon: {:.4e}", std::numeric_limits<fp128>::epsilon());
+    tools::log->info(" __float128 max_dig: {}", std::numeric_limits<fp128>::max_digits10());
 #endif
     // Initialize the flbit algorithm
     auto flbit_swap = flbit(nullptr); // Will evolve with swap gates on
     auto flbit_slow = flbit(nullptr); // Will evolve with swap gates off
 
-    settings::flbit::use_swap_gates         = true;
+    settings::flbit::use_swap_gates = true;
     set_log("swap");
     flbit_swap.run_preprocessing();
 

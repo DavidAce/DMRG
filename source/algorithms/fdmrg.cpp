@@ -197,7 +197,7 @@ void fdmrg::run_algorithm() {
     status.algorithm_has_finished = true;
     if(settings::fdmrg::store_wavefn and tensors.get_length<long>() <= 16) {
 #pragma message "Save fdmrg wavevector properly"
-        Eigen::Tensor<real, 1> psi = tools::finite::measure::mps2tensor(*tensors.state).real();
+        Eigen::Tensor<fp64, 1> psi = tools::finite::measure::mps2tensor(*tensors.state).real();
         write_to_file(psi, "psi", StorageEvent::FINISHED);
     }
 }

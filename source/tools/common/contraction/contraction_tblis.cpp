@@ -86,14 +86,14 @@ Scalar tools::common::contraction::expectation_value(const Scalar * const mps_pt
     return result;
 }
 
-template real tools::common::contraction::expectation_value(const real * const mps_ptr,  std::array<long,3> mps_dims,
-                                                            const real * const mpo_ptr,  std::array<long,4> mpo_dims,
-                                                            const real * const envL_ptr, std::array<long,3> envL_dims,
-                                                            const real * const envR_ptr, std::array<long,3> envR_dims);
-template cplx tools::common::contraction::expectation_value(const cplx * const mps_ptr,  std::array<long,3> mps_dims,
-                                                            const cplx * const mpo_ptr,  std::array<long,4> mpo_dims,
-                                                            const cplx * const envL_ptr, std::array<long,3> envL_dims,
-                                                            const cplx * const envR_ptr, std::array<long,3> envR_dims);
+template fp64 tools::common::contraction::expectation_value(const fp64 * const mps_ptr,  std::array<long,3> mps_dims,
+                                                            const fp64 * const mpo_ptr,  std::array<long,4> mpo_dims,
+                                                            const fp64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                            const fp64 * const envR_ptr, std::array<long,3> envR_dims);
+template cx64 tools::common::contraction::expectation_value(const cx64 * const mps_ptr,  std::array<long,3> mps_dims,
+                                                            const cx64 * const mpo_ptr,  std::array<long,4> mpo_dims,
+                                                            const cx64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                            const cx64 * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
 
 /* clang-format off */
@@ -161,16 +161,16 @@ Scalar tools::common::contraction::expectation_value(const Scalar * const bra_pt
     return result;
 }
 
-template real tools::common::contraction::expectation_value(const real * const bra_ptr,  std::array<long,3> bra_dims,
-                                                            const real * const ket_ptr,  std::array<long,3> ket_dims,
-                                                            const real * const mpo_ptr,  std::array<long,4> mpo_dims,
-                                                            const real * const envL_ptr, std::array<long,3> envL_dims,
-                                                            const real * const envR_ptr, std::array<long,3> envR_dims);
-template cplx tools::common::contraction::expectation_value(const cplx * const bra_ptr,  std::array<long,3> bra_dims,
-                                                            const cplx * const ket_ptr,  std::array<long,3> ket_dims,
-                                                            const cplx * const mpo_ptr,  std::array<long,4> mpo_dims,
-                                                            const cplx * const envL_ptr, std::array<long,3> envL_dims,
-                                                            const cplx * const envR_ptr, std::array<long,3> envR_dims);
+template fp64 tools::common::contraction::expectation_value(const fp64 * const bra_ptr,  std::array<long,3> bra_dims,
+                                                            const fp64 * const ket_ptr,  std::array<long,3> ket_dims,
+                                                            const fp64 * const mpo_ptr,  std::array<long,4> mpo_dims,
+                                                            const fp64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                            const fp64 * const envR_ptr, std::array<long,3> envR_dims);
+template cx64 tools::common::contraction::expectation_value(const cx64 * const bra_ptr,  std::array<long,3> bra_dims,
+                                                            const cx64 * const ket_ptr,  std::array<long,3> ket_dims,
+                                                            const cx64 * const mpo_ptr,  std::array<long,4> mpo_dims,
+                                                            const cx64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                            const cx64 * const envR_ptr, std::array<long,3> envR_dims);
 
 
 #if defined(DMRG_ENABLE_TBLIS)
@@ -234,7 +234,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
 #if defined(DMRG_ENABLE_TBLIS)
-    if constexpr(std::is_same_v<Scalar, real>){
+    if constexpr(std::is_same_v<Scalar, fp64>){
         static const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config(get_tblis_arch().data());
         #if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
         tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
@@ -292,16 +292,16 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
 }
 
 using namespace tools::common::contraction;
-template void tools::common::contraction::matrix_vector_product(      cplx *       res_ptr,
-                                                                const cplx * const mps_ptr, std::array<long,3> mps_dims,
-                                                                const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
-                                                                const cplx * const envL_ptr, std::array<long,3> envL_dims,
-                                                                const cplx * const envR_ptr, std::array<long,3> envR_dims);
-template void tools::common::contraction::matrix_vector_product(      real *       res_ptr,
-                                                                const real * const mps_ptr, std::array<long,3> mps_dims,
-                                                                const real * const mpo_ptr, std::array<long,4> mpo_dims,
-                                                                const real * const envL_ptr, std::array<long,3> envL_dims,
-                                                                const real * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_vector_product(      cx64 *       res_ptr,
+                                                                const cx64 * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const cx64 * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                                const cx64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const cx64 * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_vector_product(      fp64 *       res_ptr,
+                                                                const fp64 * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const fp64 * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                                const fp64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const fp64 * const envR_ptr, std::array<long,3> envR_dims);
 
 
 template<typename Scalar, typename mpo_type>
@@ -369,7 +369,7 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     auto  mps_tmp2 = Eigen::Tensor<Scalar, 6>();
     mps_tmp1.resize(tenx::array6{d0, d1, d2, d3, d5, d4});
     #if defined(DMRG_ENABLE_TBLIS)
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0 * d1, d2, d3, d4 * d5});
         contract_tblis(mps_in, envL, mps_tmp1_map4, "afb", "fcd", "abcd", tblis_config);
     } else
@@ -387,7 +387,7 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
         d4       = mpodimprod(0, idx + 1); // if idx == 0, this has the mpos at idx == 0...k (i.e. including the one from the current iteration)
         d5       = mpo.dimension(3);       // The virtual bond of the current mpo
         #if defined(DMRG_ENABLE_TBLIS)
-        if constexpr(std::is_same_v<Scalar, real>) {
+        if constexpr(std::is_same_v<Scalar, fp64>) {
             auto md  = mps_tmp1.dimensions();
             new_shp6 = tenx::array6{d0, d1, d2, d3, d4, d5};
             mps_tmp2.resize(new_shp6);
@@ -409,7 +409,7 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     d2 = mps_tmp1.dimension(4);
     d3 = mps_tmp1.dimension(5);
     #if defined(DMRG_ENABLE_TBLIS)
-    if constexpr(std::is_same_v<Scalar, real>) {
+    if constexpr(std::is_same_v<Scalar, fp64>) {
         auto mps_tmp1_map4 = Eigen::TensorMap<Eigen::Tensor<Scalar, 4>>(mps_tmp1.data(), std::array{d0, d1, d2, d3});
         contract_tblis(mps_tmp1_map4, envR, mps_out, "qjir", "qkr", "ijk", tblis_config);
     } else
@@ -420,16 +420,16 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
 }
 
 using namespace tools::common::contraction;
-template void tools::common::contraction::matrix_vector_product(      cplx *       res_ptr,
-                                                                const cplx * const mps_ptr, std::array<long,3> mps_dims,
-                                                                const std::vector<Eigen::Tensor<cplx, 4>> & mpos_shf,
-                                                                const cplx * const envL_ptr, std::array<long,3> envL_dims,
-                                                                const cplx * const envR_ptr, std::array<long,3> envR_dims);
-template void tools::common::contraction::matrix_vector_product(      real *       res_ptr,
-                                                                const real * const mps_ptr, std::array<long,3> mps_dims,
-                                                                const std::vector<Eigen::Tensor<real, 4>> & mpos_shf,
-                                                                const real * const envL_ptr, std::array<long,3> envL_dims,
-                                                                const real * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_vector_product(      cx64 *       res_ptr,
+                                                                const cx64 * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const std::vector<Eigen::Tensor<cx64, 4>> & mpos_shf,
+                                                                const cx64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const cx64 * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_vector_product(      fp64 *       res_ptr,
+                                                                const fp64 * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const std::vector<Eigen::Tensor<fp64, 4>> & mpos_shf,
+                                                                const fp64 * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const fp64 * const envR_ptr, std::array<long,3> envR_dims);
 
 template<typename Scalar>
 void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      , std::array<long,3> res_dims,
@@ -444,13 +444,13 @@ void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      ,
     auto bnd_mat = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic, 1>>(bnd_ptr, bnd_dims[0]);
     res_mat.noalias() = mps_mat * bnd_mat.asDiagonal(); // calls gemm
 }
-template void tools::common::contraction::contract_mps_bnd(      cplx *       res_ptr, std::array<long,3> res_dims,
-                                                           const cplx * const mps_ptr, std::array<long,3> mps_dims,
-                                                           const cplx * const bnd_ptr, std::array<long,1> bnd_dims);
+template void tools::common::contraction::contract_mps_bnd(      cx64 *       res_ptr, std::array<long,3> res_dims,
+                                                           const cx64 * const mps_ptr, std::array<long,3> mps_dims,
+                                                           const cx64 * const bnd_ptr, std::array<long,1> bnd_dims);
 
-template void tools::common::contraction::contract_mps_bnd(      real *       res_ptr, std::array<long,3> res_dims,
-                                                           const real * const mps_ptr, std::array<long,3> mps_dims,
-                                                           const real * const bnd_ptr, std::array<long,1> bnd_dims);
+template void tools::common::contraction::contract_mps_bnd(      fp64 *       res_ptr, std::array<long,3> res_dims,
+                                                           const fp64 * const mps_ptr, std::array<long,3> mps_dims,
+                                                           const fp64 * const bnd_ptr, std::array<long,1> bnd_dims);
 
 
 template<typename Scalar>
@@ -467,12 +467,12 @@ void  tools::common::contraction::contract_bnd_mps(      Scalar * res_ptr      ,
     res.device(*threads->dev) = tenx::asDiagonal(bnd).contract(mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
 }
 
-template void tools::common::contraction::contract_bnd_mps(      cplx *       res_ptr, std::array<long,3> res_dims,
-                                                           const cplx * const bnd_ptr, std::array<long,1> bnd_dims,
-                                                           const cplx * const mps_ptr, std::array<long,3> mps_dims);
-template void tools::common::contraction::contract_bnd_mps(      real *       res_ptr, std::array<long,3> res_dims,
-                                                           const real * const bnd_ptr, std::array<long,1> bnd_dims,
-                                                           const real * const mps_ptr, std::array<long,3> mps_dims);
+template void tools::common::contraction::contract_bnd_mps(      cx64 *       res_ptr, std::array<long,3> res_dims,
+                                                           const cx64 * const bnd_ptr, std::array<long,1> bnd_dims,
+                                                           const cx64 * const mps_ptr, std::array<long,3> mps_dims);
+template void tools::common::contraction::contract_bnd_mps(      fp64 *       res_ptr, std::array<long,3> res_dims,
+                                                           const fp64 * const bnd_ptr, std::array<long,1> bnd_dims,
+                                                           const fp64 * const mps_ptr, std::array<long,3> mps_dims);
 
 
 template<typename Scalar>
@@ -489,7 +489,7 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     if(res_dims != check_dims) throw except::runtime_error("res dimension mismatch: dims {} | expected dims {}", res_dims, check_dims);
     if(mpsL.dimension(2) != mpsR.dimension(1)) throw except::runtime_error("Dimension mismatch mpsL {} (idx 2) and mpsR {} (idx 1)", mpsL.dimensions(), mpsR.dimensions());
     auto &threads = tenx::threads::get();
-    if constexpr(std::is_same_v<Scalar, real>){
+    if constexpr(std::is_same_v<Scalar, fp64>){
         auto tmp = Eigen::Tensor<Scalar,4>(mpsL_dims[0], mpsL_dims[1], mpsR_dims[0], mpsR_dims[2]);
         #if defined(DMRG_ENABLE_TBLIS)
         auto arch =  get_tblis_arch();
@@ -505,13 +505,13 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
 }
 
 
-template void tools::common::contraction::contract_mps_mps(      cplx * res_ptr       , std::array<long,3> res_dims,
-                                                           const cplx * const mpsL_ptr, std::array<long,3> mpsL_dims,
-                                                           const cplx * const mpsR_ptr, std::array<long,3> mpsR_dims);
+template void tools::common::contraction::contract_mps_mps(      cx64 * res_ptr       , std::array<long,3> res_dims,
+                                                           const cx64 * const mpsL_ptr, std::array<long,3> mpsL_dims,
+                                                           const cx64 * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
-template void tools::common::contraction::contract_mps_mps(      real * res_ptr       , std::array<long,3> res_dims,
-                                                           const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
-                                                           const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
+template void tools::common::contraction::contract_mps_mps(      fp64 * res_ptr       , std::array<long,3> res_dims,
+                                                           const fp64 * const mpsL_ptr, std::array<long,3> mpsL_dims,
+                                                           const fp64 * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
 
 
@@ -527,10 +527,10 @@ Scalar tools::common::contraction::contract_mps_mps_overlap(const Scalar * const
     return mps1.dot(mps2); // Calls gemv // TODO: Check that this works with the tests (used to be conjugate on mps2!)
 }
 
-template cplx   tools::common::contraction::contract_mps_mps_overlap(const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
-                                                                     const cplx * const mps2_ptr, std::array<long,3> mps2_dims);
-template real   tools::common::contraction::contract_mps_mps_overlap(const real * const mps1_ptr, std::array<long,3> mps1_dims,
-                                                                     const real * const mps2_ptr, std::array<long,3> mps2_dims);
+template cx64   tools::common::contraction::contract_mps_mps_overlap(const cx64 * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                     const cx64 * const mps2_ptr, std::array<long,3> mps2_dims);
+template fp64   tools::common::contraction::contract_mps_mps_overlap(const fp64 * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                     const fp64 * const mps2_ptr, std::array<long,3> mps2_dims);
 
 
 template<typename Scalar>
@@ -546,13 +546,13 @@ void tools::common::contraction::contract_mps_mps_partial(Scalar *       res_ptr
     res.device(*threads->dev) = mps1.conjugate().contract(mps2, idxs);
 }
 
-template void tools::common::contraction::contract_mps_mps_partial(      cplx *       res_ptr , std::array<long,2> res_dims,
-                                                                   const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
-                                                                   const cplx * const mps2_ptr, std::array<long,3> mps2_dims,
+template void tools::common::contraction::contract_mps_mps_partial(      cx64 *       res_ptr , std::array<long,2> res_dims,
+                                                                   const cx64 * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                   const cx64 * const mps2_ptr, std::array<long,3> mps2_dims,
                                                                    std::array<long,2> idx);
-template void tools::common::contraction::contract_mps_mps_partial(      real *       res_ptr , std::array<long,2> res_dims,
-                                                                   const real * const mps1_ptr, std::array<long,3> mps1_dims,
-                                                                   const real * const mps2_ptr, std::array<long,3> mps2_dims,
+template void tools::common::contraction::contract_mps_mps_partial(      fp64 *       res_ptr , std::array<long,2> res_dims,
+                                                                   const fp64 * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                   const fp64 * const mps2_ptr, std::array<long,3> mps2_dims,
                                                                    std::array<long,2> idx);
 
 
@@ -571,10 +571,10 @@ void tools::common::contraction::contract_env_mps_mpo(      Scalar *      res_pt
                                   .contract(mps.conjugate(), tenx::idx({0, 2}, {1, 0}));
 }
 
-template void tools::common::contraction::contract_env_mps_mpo(      cplx *       res_ptr , std::array<long,2> res_dims,
-                                                               const cplx * const env_ptr , std::array<long,2> env_dims,
-                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
-                                                               const cplx * const mpo_ptr , std::array<long,2> mpo_dims);
+template void tools::common::contraction::contract_env_mps_mpo(      cx64 *       res_ptr , std::array<long,2> res_dims,
+                                                               const cx64 * const env_ptr , std::array<long,2> env_dims,
+                                                               const cx64 * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cx64 * const mpo_ptr , std::array<long,2> mpo_dims);
 
 template<typename Scalar>
 void tools::common::contraction::contract_env_mps_mpo(      Scalar *       res_ptr, std::array<long, 3> res_dims,
@@ -592,10 +592,10 @@ void tools::common::contraction::contract_env_mps_mpo(      Scalar *       res_p
                                   .shuffle(                  tenx::array3{0, 2, 1});
 }
 
-template void tools::common::contraction::contract_env_mps_mpo(      cplx *       res_ptr , std::array<long,3> res_dims,
-                                                               const cplx * const env_ptr , std::array<long,3> env_dims,
-                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
-                                                               const cplx * const mpo_ptr , std::array<long,4> mpo_dims);
+template void tools::common::contraction::contract_env_mps_mpo(      cx64 *       res_ptr , std::array<long,3> res_dims,
+                                                               const cx64 * const env_ptr , std::array<long,3> env_dims,
+                                                               const cx64 * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cx64 * const mpo_ptr , std::array<long,4> mpo_dims);
 
 template<typename Scalar>
 void tools::common::contraction::contract_mps_mpo_env(      Scalar *       res_ptr, std::array<long, 2> res_dims,
@@ -611,10 +611,10 @@ void tools::common::contraction::contract_mps_mpo_env(      Scalar *       res_p
                                   .contract(mpo,             tenx::idx({1}, {0}))
                                   .contract(mps.conjugate(), tenx::idx({0, 2}, {2, 0}));
 }
-template void tools::common::contraction::contract_mps_mpo_env(      cplx *       res_ptr , std::array<long,2> res_dims,
-                                                               const cplx * const env_ptr , std::array<long,2> env_dims,
-                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
-                                                               const cplx * const mpo_ptr , std::array<long,2> mpo_dims);
+template void tools::common::contraction::contract_mps_mpo_env(      cx64 *       res_ptr , std::array<long,2> res_dims,
+                                                               const cx64 * const env_ptr , std::array<long,2> env_dims,
+                                                               const cx64 * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cx64 * const mpo_ptr , std::array<long,2> mpo_dims);
 template<typename Scalar>
 void tools::common::contraction::contract_mps_mpo_env(Scalar       *      res_ptr, std::array<long, 3> res_dims,
                                                       const Scalar * const env_ptr, std::array<long, 3> env_dims,
@@ -631,8 +631,8 @@ void tools::common::contraction::contract_mps_mpo_env(Scalar       *      res_pt
                                   .shuffle(                  tenx::array3{0, 2, 1});
 }
 
-template void tools::common::contraction::contract_mps_mpo_env(      cplx *       res_ptr , std::array<long,3> res_dims,
-                                                               const cplx * const env_ptr , std::array<long,3> env_dims,
-                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
-                                                               const cplx * const mpo_ptr , std::array<long,4> mpo_dims);
+template void tools::common::contraction::contract_mps_mpo_env(      cx64 *       res_ptr , std::array<long,3> res_dims,
+                                                               const cx64 * const env_ptr , std::array<long,3> env_dims,
+                                                               const cx64 * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cx64 * const mpo_ptr , std::array<long,4> mpo_dims);
 /* clang-format on */

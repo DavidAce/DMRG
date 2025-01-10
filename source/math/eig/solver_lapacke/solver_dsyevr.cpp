@@ -21,12 +21,12 @@
 
 using namespace eig;
 
-int eig::solver::dsyevr(real *matrix /*!< gets destroyed */, size_type L, char range, int il, int iu, double vl, double vu) {
+int eig::solver::dsyevr(fp64 *matrix /*!< gets destroyed */, size_type L, char range, int il, int iu, double vl, double vu) {
     if(config.tag.empty()) config.tag = "dsyevr";
     eig::log->trace("Starting eig dsyevr | range {} | i [{},{}] | v [{},{}]", range, il, iu, vl, vu);
     auto t_start = std::chrono::high_resolution_clock::now();
 
-    //    auto A     = std::vector<real>(matrix, matrix + L * L);
+    //    auto A     = std::vector<fp64>(matrix, matrix + L * L);
     char jobz  = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     int  info  = 0;
     int  n     = safe_cast<int>(L);

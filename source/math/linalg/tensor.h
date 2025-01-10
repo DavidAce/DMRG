@@ -30,14 +30,14 @@ namespace linalg::tensor {
             if constexpr(std::is_floating_point_v<typename T::value_type>) {
                 std::string real = fmt::format("({0:.{1}f}", number.real(), prec);
                 std::string imag = fmt::format("{0:.{1}f})", number.imag(), prec);
-                std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                return fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+                std::string cx64 = fmt::format("{:>},{:<}", real, imag);
+                return fmt::format("{0:>{1}}", cx64, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
 
             } else if constexpr(std::is_integral_v<typename T::value_type>) {
                 std::string real = fmt::format("({}", number.real());
                 std::string imag = fmt::format("{})", number.imag());
-                std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                return fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+                std::string cx64 = fmt::format("{:>},{:<}", real, imag);
+                return fmt::format("{0:>{1}}", cx64, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
             }
         } else if constexpr(std::is_floating_point_v<T>)
             return fmt::format("{0:>{1}.{2}f}", number, min_width, prec);

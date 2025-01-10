@@ -7,7 +7,7 @@
 
 using namespace tools::finite::opt;
 
-opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double energy_shifted_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cx64, 3> &tensor_, const std::vector<size_t> &sites_, double eshift_, double energy_shifted_,
                  std::optional<double> variance_, double overlap_, size_t length_)
     : name(name_), tensor(tensor_), sites(sites_), eshift(eshift_), energy_shifted(energy_shifted_), energy(energy_shifted_ + eshift_), variance(variance_),
       overlap(overlap_), length(length_) {
@@ -17,7 +17,7 @@ opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, 
     time   = 0;
 }
 
-opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cx64, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                  double overlap_, size_t length_, size_t iter_, size_t counter_, size_t time_)
     : name(name_), tensor(tensor_), sites(sites_), energy(energy_), variance(variance_), overlap(overlap_), length(length_), iter(iter_), num_mv(counter_),
       time(time_) {
@@ -33,13 +33,13 @@ std::string_view opt_mps::get_name() const {
         throw except::runtime_error("opt_mps: name not set");
 }
 
-const Eigen::Tensor<cplx, 3> &opt_mps::get_tensor() const {
+const Eigen::Tensor<cx64, 3> &opt_mps::get_tensor() const {
     if(tensor)
         return tensor.value();
     else
         throw except::runtime_error("opt_mps: tensor not set");
 }
-const Eigen::Tensor<cplx, 2> &opt_mps::get_bond() const {
+const Eigen::Tensor<cx64, 2> &opt_mps::get_bond() const {
     if(bond)
         return bond.value();
     else
@@ -255,11 +255,11 @@ std::string_view opt_mps::get_eigs_ritz() const {
         return "--";
 }
 
-cplx opt_mps::get_eigs_shift() const {
+cx64 opt_mps::get_eigs_shift() const {
     if(eigs_shift)
         return eigs_shift.value();
     else
-        return cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+        return cx64(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
 double opt_mps::get_rnorm_H() const {
@@ -348,19 +348,19 @@ void opt_mps::normalize() {
 }
 
 void opt_mps::set_name(std::string_view name_) { name = name_; }
-void opt_mps::set_tensor(const Eigen::Tensor<cplx, 3> &tensor_) {
+void opt_mps::set_tensor(const Eigen::Tensor<cx64, 3> &tensor_) {
     tensor = tensor_;
     norm   = get_vector().norm();
 }
 void opt_mps::set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<long, 3> &dims) {
-    tensor = Eigen::TensorMap<const Eigen::Tensor<const cplx, 3>>(vector.data(), dims);
+    tensor = Eigen::TensorMap<const Eigen::Tensor<const cx64, 3>>(vector.data(), dims);
     norm   = get_vector().norm();
 }
 
 void opt_mps::set_bond(const Eigen::MatrixXcd &matrix) {
-    bond = Eigen::TensorMap<const Eigen::Tensor<const cplx, 2>>(matrix.data(), matrix.rows(), matrix.cols());
+    bond = Eigen::TensorMap<const Eigen::Tensor<const cx64, 2>>(matrix.data(), matrix.rows(), matrix.cols());
 }
-void opt_mps::set_bond(const Eigen::Tensor<cplx, 2> &bond_) { bond = bond_; }
+void opt_mps::set_bond(const Eigen::Tensor<cx64, 2> &bond_) { bond = bond_; }
 
 void opt_mps::set_sites(const std::vector<size_t> &sites_) { sites = sites_; }
 void opt_mps::set_energy_shifted(double energy_shifted_) {
@@ -404,20 +404,20 @@ void opt_mps::set_eigs_tol(double tol_) { eigs_tol = tol_; }
 void opt_mps::set_eigs_rnorm(double rnorm_) { eigs_rnorm = rnorm_; }
 void opt_mps::set_eigs_eigval(double eigval_) { eigs_eigval = eigval_; }
 void opt_mps::set_eigs_ritz(std::string_view ritz_) { eigs_ritz = std::string(ritz_); }
-void opt_mps::set_eigs_shift(const cplx shift_) { eigs_shift = shift_; }
+void opt_mps::set_eigs_shift(const cx64 shift_) { eigs_shift = shift_; }
 
 void opt_mps::set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims) {
     // Here we set a complex tensor from double data.
     // In the real representation, a pair of doubles corresponds to a single complex<double>
     // We expect the size of "dims" to corresponds to the number of complex numbers in the data buffer
-    tensor = Eigen::TensorMap<const Eigen::Tensor<const cplx, 3>>(reinterpret_cast<const cplx *>(data), dims);
+    tensor = Eigen::TensorMap<const Eigen::Tensor<const cx64, 3>>(reinterpret_cast<const cx64 *>(data), dims);
     norm   = get_vector().norm();
 }
 void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims) {
     // Here we set a complex tensor from double data, but this time
     // only the real part is present in the data buffer, so 1 double corresponds to 1 std::complex<double>.
     // Simplest solution is to cast each element to complex before copy.
-    tensor = Eigen::TensorMap<const Eigen::Tensor<const real, 3>>(data, dims).cast<cplx>();
+    tensor = Eigen::TensorMap<const Eigen::Tensor<const fp64, 3>>(data, dims).cast<cx64>();
     norm   = get_vector().norm();
 }
 

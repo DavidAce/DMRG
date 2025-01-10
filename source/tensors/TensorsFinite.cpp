@@ -109,11 +109,11 @@ void TensorsFinite::normalize_state(std::optional<svd::config> svd_cfg, NormPoli
     }
 }
 
-const Eigen::Tensor<cplx, 3> &TensorsFinite::get_multisite_mps() const { return state->get_multisite_mps(); }
+const Eigen::Tensor<cx64, 3> &TensorsFinite::get_multisite_mps() const { return state->get_multisite_mps(); }
 
-const Eigen::Tensor<cplx, 4> &TensorsFinite::get_multisite_mpo() const { return model->get_multisite_mpo(); }
+const Eigen::Tensor<cx64, 4> &TensorsFinite::get_multisite_mpo() const { return model->get_multisite_mpo(); }
 
-const Eigen::Tensor<cplx, 4> &TensorsFinite::get_multisite_mpo_squared() const { return model->get_multisite_mpo_squared(); }
+const Eigen::Tensor<cx64, 4> &TensorsFinite::get_multisite_mpo_squared() const { return model->get_multisite_mpo_squared(); }
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> contract_mpo_env(const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &envL, const Eigen::Tensor<Scalar, 3> &envR) {
@@ -163,8 +163,8 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian() const
         return cache.effective_hamiltonian_cplx.value();
     }
 }
-template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian() const;
-template const Eigen::Tensor<cplx, 2>                &TensorsFinite::get_effective_hamiltonian() const;
+template const Eigen::Tensor<TensorsFinite::fp64, 2> &TensorsFinite::get_effective_hamiltonian() const;
+template const Eigen::Tensor<cx64, 2>                &TensorsFinite::get_effective_hamiltonian() const;
 
 template<typename Scalar>
 const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared() const {
@@ -190,11 +190,11 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
         return cache.effective_hamiltonian_squared_cplx.value();
     }
 }
-template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
-template const Eigen::Tensor<cplx, 2>                &TensorsFinite::get_effective_hamiltonian_squared() const;
+template const Eigen::Tensor<TensorsFinite::fp64, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
+template const Eigen::Tensor<cx64, 2>                &TensorsFinite::get_effective_hamiltonian_squared() const;
 
-env_pair<const Eigen::Tensor<cplx, 3> &> TensorsFinite::get_multisite_env_ene_blk() const { return std::as_const(*edges).get_multisite_env_ene_blk(); }
-env_pair<const Eigen::Tensor<cplx, 3> &> TensorsFinite::get_multisite_env_var_blk() const { return std::as_const(*edges).get_multisite_env_var_blk(); }
+env_pair<const Eigen::Tensor<cx64, 3> &> TensorsFinite::get_multisite_env_ene_blk() const { return std::as_const(*edges).get_multisite_env_ene_blk(); }
+env_pair<const Eigen::Tensor<cx64, 3> &> TensorsFinite::get_multisite_env_var_blk() const { return std::as_const(*edges).get_multisite_env_var_blk(); }
 
 void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg) {
     auto sign = tools::finite::ops::project_to_nearest_axis(*state, axis, svd_cfg);
@@ -511,7 +511,7 @@ size_t TensorsFinite::move_center_point_to_middle(std::optional<svd::config> svd
     return moves;
 }
 
-void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg,
+void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cx64, 3> &multisite_tensor, MergeEvent mevent, std::optional<svd::config> svd_cfg,
                                         LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     auto t_merge = tid::tic_scope("merge");

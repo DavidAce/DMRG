@@ -81,14 +81,14 @@ namespace tools::finite::opt::internal {
             case OptRitz::SM: {
                 solver.eig(matrixA.data(), matrixB.data(), matrixA.dimension(0));
                 // Determine the nev largest eigenvalues
-                auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+                auto eigvals = eig::view::get_eigvals<fp64>(solver.result, false);
                 auto indices = std::vector<long>();
                 if(nev == 1) {
                     long                  maxidx = 0;
                     [[maybe_unused]] auto maxval = eigvals.cwiseAbs().minCoeff(&maxidx);
                     indices                      = {maxidx};
                 } else {
-                    indices = get_k_smallest(eigvals.cwiseAbs(), nev);
+                    indices = get_k_smallest(eigvals.cwiseAbs(), safe_cast<size_t>(nev));
                 }
                 extract_results(tensors, initial_mps, meta, solver, results, true, indices);
                 break;
@@ -97,14 +97,14 @@ namespace tools::finite::opt::internal {
             case OptRitz::LM: {
                 solver.eig(matrixA.data(), matrixB.data(), matrixA.dimension(0));
                 // Determine the nev largest eigenvalues
-                auto eigvals = eig::view::get_eigvals<real>(solver.result, false);
+                auto eigvals = eig::view::get_eigvals<fp64>(solver.result, false);
                 auto indices = std::vector<long>();
                 if(nev == 1) {
                     long                  maxidx = 0;
                     [[maybe_unused]] auto maxval = eigvals.cwiseAbs().maxCoeff(&maxidx);
                     indices                      = {maxidx};
                 } else {
-                    indices = get_k_largest(eigvals.cwiseAbs(), nev);
+                    indices = get_k_largest(eigvals.cwiseAbs(), safe_cast<size_t>(nev));
                 }
                 extract_results(tensors, initial_mps, meta, solver, results, true, indices);
                 break;
@@ -119,8 +119,8 @@ namespace tools::finite::opt::internal {
                 // auto        iu        = static_cast<int>(matrixA_u.dimension(0));
                 // solver_u.eig(matrixA_u.data(), matrixB_u.data(), matrixA_u.dimension(0), 'I', il, iu, 0.0, 1.0);
                 // solver_l.eig(matrixA_l.data(), matrixB_l.data(), matrixA_l.dimension(0), 'I', 1, nev, 0.0, 1.0);
-                // auto eigvals_u = eig::view::get_eigvals<real>(solver_u.result, false);
-                // auto eigvals_l = eig::view::get_eigvals<real>(solver_l.result, false);
+                // auto eigvals_u = eig::view::get_eigvals<fp64>(solver_u.result, false);
+                // auto eigvals_l = eig::view::get_eigvals<fp64>(solver_l.result, false);
                 // auto ev_u      = eigvals_u(eigvals_u.size() - 1);
                 // auto ev_l      = eigvals_l(0);
                 // if(std::abs(ev_l) >= std::abs(ev_u)) {
@@ -150,8 +150,8 @@ namespace tools::finite::opt::internal {
         auto                 t_var = tid::tic_scope("eig-gdmrg", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
-            case OptType::REAL: optimize_generalized_shift_invert_eig_executor<real>(tensors, initial_mps, results, meta); break;
-            case OptType::CPLX: optimize_generalized_shift_invert_eig_executor<cplx>(tensors, initial_mps, results, meta); break;
+            case OptType::REAL: optimize_generalized_shift_invert_eig_executor<fp64>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: optimize_generalized_shift_invert_eig_executor<cx64>(tensors, initial_mps, results, meta); break;
         }
         auto t_post = tid::tic_scope("post");
         if(results.empty()) {

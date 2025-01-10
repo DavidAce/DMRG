@@ -1,3 +1,4 @@
+#include "math/float.h"
 #include "flbit.h"
 #include "flbit_impl.h"
 //
@@ -242,10 +243,10 @@ void flbit::run_preprocessing() {
             auto        psi_real1_v           = tenx::VectorMap(psi_real1_t);
             auto        psi_real2_v           = tenx::VectorMap(psi_real2_t);
             auto        u_circuit_m           = tenx::MatrixMap(u_circuit_t);
-            cplx        overlap_real1_real2   = psi_real1_v.dot(psi_real2_v);
-            cplx        overlap_real1_u_lbit  = psi_real1_v.dot(u_circuit_m * psi_lbit_v);
-            cplx        overlap_lbit_ua_real1 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real1_v);
-            cplx        overlap_lbit_ua_real2 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real2_v);
+            cx64        overlap_real1_real2   = psi_real1_v.dot(psi_real2_v);
+            cx64        overlap_real1_u_lbit  = psi_real1_v.dot(u_circuit_m * psi_lbit_v);
+            cx64        overlap_lbit_ua_real1 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real1_v);
+            cx64        overlap_lbit_ua_real2 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real2_v);
             auto        uadjoint_u            = Eigen::MatrixXcd(u_circuit_m.adjoint() * u_circuit_m);
             std::string err;
             if(std::abs(overlap_real1_real2.real() + overlap_real1_real2.imag() - 1) > status.trnc_lim * 10)
@@ -268,7 +269,7 @@ void flbit::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name("state_real");
     if(not state_lbit) transform_to_lbit_basis();
     if(time_points.empty()) create_time_points();
-    if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) update_time_step();
+    if(cmp_t(status.delta_t.to_floating_point<cx128>(), 0.0)) update_time_step();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
@@ -300,7 +301,7 @@ void flbit::run_algorithm_parallel() {
         tools::finite::mps::normalize_state(*state_lbit_init, std::nullopt, NormPolicy::ALWAYS);
     }
     if(time_points.empty()) create_time_points();
-    if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) update_time_step();
+    if(cmp_t(status.delta_t.to_floating_point<cx128>(), 0.0)) update_time_step();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
@@ -409,18 +410,18 @@ void flbit::run_algorithm2() {
             status_eff.algo_type = AlgorithmType::fLBIT;
             status_eff.delta_t   = time;
             using namespace std::complex_literals;
-            auto t_f64 = std::complex<real>(static_cast<real>(time.real()), static_cast<real>(time.imag()));
+            auto t_f64 = std::complex<fp64>(static_cast<fp64>(time.real()), static_cast<fp64>(time.imag()));
             if(t_f64.real() > 1e8 or t_f64.imag() > 1e8) { tools::log->warn("Precision is bad when time > 1e8 | current time == {:.2e}", t_f64); }
             // Generate the time evolution operator in diagonal form
             tools::log->debug("Exponentiating the diagonal Hamiltonians");
 
-            auto tevo_op = [&time](const auto &h) -> cplx {
-#if defined(USE_QUADMATH)
-                f128_t fmod_th_128 = fmodq(time.real() * real_t(h.real()), atanq(1.0) * 8.0 /* 2 * M_PIq*/);
-                return std::exp(-1.0i * static_cast<real>(fmod_th_128));
+            auto tevo_op = [&time](const auto &h) -> cx64 {
+#if defined(DMRG_USE_QUADMATH)
+                f128_t fmod_th_128 = fmodq(time.real() * fp128(h.real()), atanq(1.0) * 8.0 /* 2 * M_PIq*/);
+                return std::exp(-1.0i * static_cast<fp64>(fmod_th_128));
 #else
-                f128_t fmod_th_128 = std::fmod(time.real() * real_t(h.real()), 2 * std::numbers::pi_v<real_t>);
-                return std::exp(-1.0i * static_cast<real>(fmod_th_128));
+                f128_t fmod_th_128 = std::fmod(time.real() * fp128(h.real()), 2 * std::numbers::pi_v<fp128>);
+                return std::exp(-1.0i * static_cast<fp64>(fmod_th_128));
 #endif
             };
             //            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
@@ -436,7 +437,7 @@ void flbit::run_algorithm2() {
             tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, true, GateMove::ON, svd_cfg);
 
             // Update stuff
-            status_eff.phys_time = abs_t(time);
+            status_eff.phys_time = abs(time);
             status_eff.iter      = tidx + 1;
             status_eff.step      = status_eff.iter * settings::model::model_size;
             status_eff.position  = state_eff.get_position<long>();
@@ -462,7 +463,7 @@ void flbit::update_state() {
     /*!
      * \fn void update_state()
      */
-    auto delta_t = status.delta_t.to_floating_point<cplx_t>();
+    auto delta_t = status.delta_t.to_floating_point<cx128>();
     tools::log->debug("Starting fLBIT: iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
     if(not state_lbit) throw except::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
@@ -478,7 +479,7 @@ void flbit::update_state() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);
+    status.phys_time = abs(time_points[std::min(status.iter, time_points.size() - 1)]);
 
     status.iter += 1;
     status.step += settings::model::model_size;
@@ -497,9 +498,9 @@ void flbit::update_time_step() {
     }
     status.delta_t = time_points[status.iter];
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
-        if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) throw except::logic_error("Expected nonzero delta_t after time step update");
-    tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t.to_floating_point<cplx>(),
-                      status.phys_time.to_floating_point<real>());
+        if(cmp_t(status.delta_t.to_floating_point<cx128>(), 0.0)) throw except::logic_error("Expected nonzero delta_t after time step update");
+    tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t.to_floating_point<cx64>(),
+                      status.phys_time.to_floating_point<fp64>());
 }
 
 void flbit::check_convergence() {
@@ -532,17 +533,17 @@ void flbit::check_convergence() {
 
 void flbit::create_time_points() {
     auto   t_crt = tid::tic_scope("create_time_points");
-    cplx_t time_start(static_cast<real_t>(settings::flbit::time_start_real), static_cast<real_t>(settings::flbit::time_start_imag));
-    cplx_t time_final(static_cast<real_t>(settings::flbit::time_final_real), static_cast<real_t>(settings::flbit::time_final_imag));
+    cx128 time_start(static_cast<fp128>(settings::flbit::time_start_real), static_cast<fp128>(settings::flbit::time_start_imag));
+    cx128 time_final(static_cast<fp128>(settings::flbit::time_final_real), static_cast<fp128>(settings::flbit::time_final_imag));
     tools::log->info("Creating time points ({},{}) -> ({},{})", settings::flbit::time_start_real, settings::flbit::time_start_imag,
                      settings::flbit::time_final_real, settings::flbit::time_final_imag);
 
-    cplx_t time_diff = time_start - time_final;
+    cx128 time_diff = time_start - time_final;
     // Check that there will be some time evolution
     if(cmp_t(time_diff, 0.0)) throw except::logic_error("time_start - time_final == 0");
     // Check that the time limits are purely real or imaginary!
-    bool time_is_real = abs_t(time_diff.real()) > 0;
-    bool time_is_imag = abs_t(time_diff.imag()) > 0;
+    bool time_is_real = abs(time_diff.real()) > 0;
+    bool time_is_imag = abs(time_diff.imag()) > 0;
     if(time_is_real and time_is_imag)
         throw except::logic_error("time_start and time_final must both be either purely real or imaginary. Got:\n"
                                   "time_start = {:.8f}{:+.8f}\n"
@@ -554,7 +555,7 @@ void flbit::create_time_points() {
             for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
         } else {
             for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) {
-                time_points.emplace_back(cplx_t(0.0, t));
+                time_points.emplace_back(cx128(static_cast<fp128>(0.0), t));
             }
         }
     } else if(settings::flbit::time_scale == TimeScale::LINSPACED) {
@@ -562,17 +563,17 @@ void flbit::create_time_points() {
             for(const auto &t : num::LinSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
         } else {
             for(const auto &t : num::LinSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) {
-                time_points.emplace_back(cplx_t(0.0, t));
+                time_points.emplace_back(cx128(static_cast<fp128>(0.0), t));
             }
         }
     }
 
     //    tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
     // Sanity check
-    if(time_points.front().real() != static_cast<real_t>(settings::flbit::time_start_real)) throw except::logic_error("Time start real mismatch");
-    if(time_points.front().imag() != static_cast<real_t>(settings::flbit::time_start_imag)) throw except::logic_error("Time start imag mismatch");
-    if(time_points.back().real() != static_cast<real_t>(settings::flbit::time_final_real)) throw except::logic_error("Time final real mismatch");
-    if(time_points.back().imag() != static_cast<real_t>(settings::flbit::time_final_imag)) throw except::logic_error("Time final imag mismatch");
+    if(time_points.front().real() != static_cast<fp128>(settings::flbit::time_start_real)) throw except::logic_error("Time start real mismatch");
+    if(time_points.front().imag() != static_cast<fp128>(settings::flbit::time_start_imag)) throw except::logic_error("Time start imag mismatch");
+    if(time_points.back().real() != static_cast<fp128>(settings::flbit::time_final_real)) throw except::logic_error("Time final real mismatch");
+    if(time_points.back().imag() != static_cast<fp128>(settings::flbit::time_final_imag)) throw except::logic_error("Time final imag mismatch");
     if(time_points.size() != settings::flbit::time_num_steps)
         throw except::logic_error("Got time_points.size():[{}] != settings::flbit::time_num_steps:[{}]", time_points.size(), settings::flbit::time_num_steps);
 }
@@ -733,7 +734,7 @@ void flbit::update_time_evolution_gates() {
 
     if(not has_swap_gates and not has_slow_gates) throw except::logic_error("Hamiltonian gates have not been constructed");
     if(has_swap_gates and has_slow_gates) tools::log->warn("Both swap/non-swap gates have been constructed: Normally only one type should be used");
-    auto delta_t = status.delta_t.to_floating_point<cplx_t>();
+    auto delta_t = status.delta_t.to_floating_point<cx128>();
     if(has_swap_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_swap_gates");
         tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)),
@@ -758,7 +759,7 @@ void flbit::create_unitary_circuit_gates() {
     if(unitary_gates_2site_layers.size() == settings::model::lbit::u_depth) return;
     if(settings::model::model_type == ModelType::lbit) {
         std::vector<double> fields;
-        for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
+        for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<fp128>(field)));
         unitary_gates_2site_layers.resize(settings::model::lbit::u_depth);
         uprop              = qm::lbit::UnitaryGateProperties(fields);
         uprop.keep_circuit = settings::storage::table::random_unitary_circuit::policy != StoragePolicy::NONE;
@@ -770,8 +771,8 @@ void flbit::create_unitary_circuit_gates() {
             //        unitary_gates_mpo_layer_full = qm::lbit::merge_unitary_mpo_layers(mpo_layers);
             ledge.resize(1);
             redge.resize(1);
-            ledge.setConstant(cplx(1.0, 0.0));
-            redge.setConstant(cplx(1.0, 0.0));
+            ledge.setConstant(cx64(1.0, 0.0));
+            redge.setConstant(cx64(1.0, 0.0));
         }
     } else {
         // Try to generate the unitary circuit from the microscopic Hamiltonian
@@ -787,7 +788,7 @@ void flbit::time_evolve_lbit_state() {
     bool has_slow_gates = not time_gates_1body.empty() or not time_gates_2body.empty() or not time_gates_3body.empty();
     if(has_swap_gates and has_slow_gates) throw except::logic_error("Both swap and non-swap time evolution gates found");
     if(not has_swap_gates and not has_slow_gates) throw except::logic_error("None of swap or non-swap time evolution gates found");
-    auto delta_t = status.delta_t.to_floating_point<cplx_t>();
+    auto delta_t = status.delta_t.to_floating_point<cx128>();
     if(has_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircuitOp::NONE, GateMove::AUTO, svd_cfg);
@@ -927,7 +928,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto                umkinds  = std::vector<LbitCircuitGateMatrixKind>{settings::model::lbit::u_mkind};
             auto                randhf   = settings::flbit::cls::randomize_hfields;
             std::vector<double> fields;
-            for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
+            for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<fp128>(field)));
             auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
             uprop_default.ulayers = unitary_gates_2site_layers;
             auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, ulambdas, uwkinds, umkinds);
@@ -1005,7 +1006,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                                                                     svd_cfg); // Applies U^\dagger
             tools::finite::mps::normalize_state(state_real_rps, svd_cfg, NormPolicy::ALWAYS);
 
-            auto rho = Eigen::Tensor<cplx, 2>(length, length);
+            auto rho = Eigen::Tensor<cx64, 2>(length, length);
             rho.setZero();
             // Now we make measurements on every pair of sites
             for(long pos_i = 0; pos_i < length; ++pos_i) {
@@ -1028,7 +1029,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             tools::log->debug("rho trace: {:.16f}", rho_trace);
             if(not rho_matrix.isApprox(rho_matrix.adjoint())) throw except::logic_error("rho is not hermitian");
             eig_sol.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
-            auto eigvals = eig::view::get_eigvals<real>(eig_sol.result);
+            auto eigvals = eig::view::get_eigvals<fp64>(eig_sol.result);
             tools::log->info("opdm eigv {:2} {}: {::.2e} | sum {:.15f}", nrps, pattern, eigvals, eigvals.sum());
             if(std::abs(rho_trace - static_cast<double>(length) / 2.0) > 1e-12) throw except::logic_error("R does not have trace L/2");
             if(eigvals.real().maxCoeff() > 1 + 1e-8) throw except::logic_error("The largest eigenvalue is larger than 1");
@@ -1071,9 +1072,9 @@ void flbit::print_status(const AlgorithmStatus &st, const TensorsFinite &ts) {
 
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", st.bond_max, st.bond_lim, tools::finite::measure::bond_dimension_midchain(*ts.state));
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
-        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", st.phys_time.to_floating_point<real>()));
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", st.phys_time.to_floating_point<fp64>()));
     if(settings::flbit::time_scale == TimeScale::LINSPACED)
-        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", st.phys_time.to_floating_point<real>()));
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", st.phys_time.to_floating_point<fp64>()));
     report += fmt::format("wtime:{:<}(+{:<}) ", fmt::format("{:>.1f}s", tid::get_unscoped("t_tot").get_time()),
                           fmt::format("{:>.1f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());

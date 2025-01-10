@@ -8,6 +8,7 @@ enum class Type { INT, LONG, DOUBLE, COMPLEX, TID };
 enum class Size { FIX, VAR };
 
 struct Key {
+    virtual ~Key() = default;
     std::string    algo, state, subgroup;
     std::string    name;
     std::string    key;

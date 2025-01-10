@@ -8,14 +8,14 @@
 
 namespace qm::time {
     /* clang-format off */
-    extern std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_1st_order(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd);
-    extern std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_2nd_order(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd);
-    extern std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_4th_order(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd);
-    extern std::vector<Eigen::Tensor<cplx, 2>> get_twosite_time_evolution_operators(cplx_t delta_t, size_t susuki_trotter_order,
-                                                                                    const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd);
-    extern std::vector<Eigen::Tensor<cplx, 2>> compute_G(cplx_t a, size_t susuki_trotter_order, const Eigen::Tensor<cplx, 2> &h_evn,
-                                                         const Eigen::Tensor<cplx, 2> &h_odd);
-    extern std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> get_time_evolution_gates(cplx_t delta_t, const std::vector<qm::Gate> &hams_nsite);
+    extern std::vector<Eigen::Tensor<cx64, 2>> Suzuki_Trotter_1st_order(cx128 delta_t, const Eigen::Tensor<cx64, 2> &h_evn, const Eigen::Tensor<cx64, 2> &h_odd);
+    extern std::vector<Eigen::Tensor<cx64, 2>> Suzuki_Trotter_2nd_order(cx128 delta_t, const Eigen::Tensor<cx64, 2> &h_evn, const Eigen::Tensor<cx64, 2> &h_odd);
+    extern std::vector<Eigen::Tensor<cx64, 2>> Suzuki_Trotter_4th_order(cx128 delta_t, const Eigen::Tensor<cx64, 2> &h_evn, const Eigen::Tensor<cx64, 2> &h_odd);
+    extern std::vector<Eigen::Tensor<cx64, 2>> get_twosite_time_evolution_operators(cx128 delta_t, size_t susuki_trotter_order,
+                                                                                    const Eigen::Tensor<cx64, 2> &h_evn, const Eigen::Tensor<cx64, 2> &h_odd);
+    extern std::vector<Eigen::Tensor<cx64, 2>> compute_G(cx128 a, size_t susuki_trotter_order, const Eigen::Tensor<cx64, 2> &h_evn,
+                                                         const Eigen::Tensor<cx64, 2> &h_odd);
+    extern std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> get_time_evolution_gates(cx128 delta_t, const std::vector<qm::Gate> &hams_nsite);
     /* clang-format on */
 
 }

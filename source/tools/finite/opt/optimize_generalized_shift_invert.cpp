@@ -50,7 +50,7 @@ namespace tools::finite::opt {
         std::vector<opt_mps_init_t<Scalar>> get_initial_guess_mps(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
             std::vector<opt_mps_init_t<Scalar>> init;
             if(results.empty()) {
-                if constexpr(std::is_same_v<Scalar, real>)
+                if constexpr(std::is_same_v<Scalar, fp64>)
                     init.push_back({initial_mps.get_tensor().real(), 0});
                 else
                     init.push_back({initial_mps.get_tensor(), 0});
@@ -64,7 +64,7 @@ namespace tools::finite::opt {
                         if(r.get_eigs_idx() == n) results_idx_n.emplace_back(r);
                     }
                     if(not results_idx_n.empty()) {
-                        if constexpr(std::is_same_v<Scalar, real>) {
+                        if constexpr(std::is_same_v<Scalar, fp64>) {
                             init.push_back({results_idx_n.back().get().get_tensor().real(), n});
                         } else {
                             init.push_back({results_idx_n.back().get().get_tensor(), n});
@@ -79,7 +79,7 @@ namespace tools::finite::opt {
         template<typename Scalar>
         Eigen::Tensor<Scalar, 3> get_initial_guess(const opt_mps &initial_mps, const std::vector<opt_mps> &results) {
             if(results.empty()) {
-                if constexpr(std::is_same_v<Scalar, real>)
+                if constexpr(std::is_same_v<Scalar, fp64>)
                     return initial_mps.get_tensor().real();
                 else
                     return initial_mps.get_tensor();
@@ -101,9 +101,9 @@ namespace tools::finite::opt {
     void eigs_generalized_shift_invert_executor(eig::solver &solver, MatVecType &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
                                                 std::vector<opt_mps> &results, const OptMeta &meta) {
         using Scalar = typename MatVecType::Scalar;
-        if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL)
-            throw except::logic_error("eigs_variance_executor error: Mixed Scalar:cplx with OptType::REAL");
-        if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX)
+        if(std::is_same_v<Scalar, cx64> and meta.optType == OptType::REAL)
+            throw except::logic_error("eigs_variance_executor error: Mixed Scalar:cx64 with OptType::REAL");
+        if(std::is_same_v<Scalar, fp64> and meta.optType == OptType::CPLX)
             throw except::logic_error("eigs_variance_executor error: Mixed Scalar:real with OptType::CPLX");
 
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
@@ -189,8 +189,8 @@ namespace tools::finite::opt {
         auto                 t_gdmrg = tid::tic_scope("eigs-gdmrg", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
-            case OptType::REAL: eigs_manager_generalized_shift_invert<real>(tensors, initial_mps, results, meta); break;
-            case OptType::CPLX: eigs_manager_generalized_shift_invert<cplx>(tensors, initial_mps, results, meta); break;
+            case OptType::REAL: eigs_manager_generalized_shift_invert<fp64>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: eigs_manager_generalized_shift_invert<cx64>(tensors, initial_mps, results, meta); break;
         }
         auto t_post = tid::tic_scope("post");
         if(results.empty()) {

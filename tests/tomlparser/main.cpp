@@ -14,7 +14,7 @@ T get_value(toml::node_view<toml::node> node) {
         else
             throw std::runtime_error("Missing value for node");
     } else if constexpr(sfinae::is_std_vector_v<T>) {
-        using value_type = T::value_type;
+        using value_type = typename T::value_type;
         T            res;
         toml::array *array = node.as_array();
         if(array) {
@@ -25,7 +25,7 @@ T get_value(toml::node_view<toml::node> node) {
         }
 
     } else if constexpr(sfinae::is_std_array_v<T>) {
-        using value_type = T::value_type;
+        using value_type = typename T::value_type;
         T            res;
         toml::array *array = node.as_array();
         if(array and array->size() == res.size()) {

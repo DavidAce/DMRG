@@ -17,15 +17,15 @@ namespace eig {
         friend class solver_arpack;
 
         private:
-        mutable std::vector<real> eigvals_real;
-        mutable std::vector<real> eigvals_imag;
-        mutable std::vector<cplx> eigvals_cplx;
-        mutable std::vector<real> eigvecsR_real;
-        mutable std::vector<real> eigvecsR_imag;
-        mutable std::vector<real> eigvecsL_real;
-        mutable std::vector<real> eigvecsL_imag;
-        mutable std::vector<cplx> eigvecsR_cplx;
-        mutable std::vector<cplx> eigvecsL_cplx;
+        mutable std::vector<fp64> eigvals_real;
+        mutable std::vector<fp64> eigvals_imag;
+        mutable std::vector<cx64> eigvals_cplx;
+        mutable std::vector<fp64> eigvecsR_real;
+        mutable std::vector<fp64> eigvecsR_imag;
+        mutable std::vector<fp64> eigvecsL_real;
+        mutable std::vector<fp64> eigvecsL_imag;
+        mutable std::vector<cx64> eigvecsR_cplx;
+        mutable std::vector<cx64> eigvecsL_cplx;
 
         void build_eigvecs_cplx() const;
         void build_eigvecs_real() const;
@@ -88,12 +88,12 @@ namespace eig {
         template<Form form, Type type = Type::CPLX, Side side = Side::R>
         auto &get_eigvecs() const {
             if constexpr(type == Type::REAL) {
-                if constexpr(form == Form::SYMM) return get_eigvecs<real, side>();
-                if constexpr(form == Form::NSYM) return get_eigvecs<cplx, side>();
+                if constexpr(form == Form::SYMM) return get_eigvecs<fp64, side>();
+                if constexpr(form == Form::NSYM) return get_eigvecs<cx64, side>();
             }
             if constexpr(type == Type::CPLX) {
-                if constexpr(form == Form::SYMM) return get_eigvecs<cplx, side>();
-                if constexpr(form == Form::NSYM) return get_eigvecs<cplx, side>();
+                if constexpr(form == Form::SYMM) return get_eigvecs<cx64, side>();
+                if constexpr(form == Form::NSYM) return get_eigvecs<cx64, side>();
             }
         }
 
@@ -110,8 +110,8 @@ namespace eig {
 
         template<Form form = Form::SYMM>
         auto &get_eigvals() const {
-            if constexpr(form == Form::SYMM) { return get_eigvals<real>(); }
-            if constexpr(form == Form::NSYM) { return get_eigvals<cplx>(); }
+            if constexpr(form == Form::SYMM) { return get_eigvals<fp64>(); }
+            if constexpr(form == Form::NSYM) { return get_eigvals<cx64>(); }
         }
 
         const std::vector<double> &get_resnorms() const;

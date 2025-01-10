@@ -6,8 +6,8 @@
 class TensorsInfinite;
 class StateInfinite;
 namespace tools::infinite::opt {
-    using cplx = std::complex<double>;
-    extern Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &tensors, std::string_view ritz);
-    extern Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &tensors, OptRitz ritz);
-    extern Eigen::Tensor<cplx, 3> time_evolve_state(const StateInfinite &state, const Eigen::Tensor<cplx, 2> &U);
+    using cx64 = std::complex<double>;
+    extern Eigen::Tensor<cx64, 3> find_ground_state(const TensorsInfinite &tensors, std::string_view ritz);
+    extern Eigen::Tensor<cx64, 3> find_ground_state(const TensorsInfinite &tensors, OptRitz ritz);
+    extern Eigen::Tensor<cx64, 3> time_evolve_state(const StateInfinite &state, const Eigen::Tensor<cx64, 2> &U);
 }

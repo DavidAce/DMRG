@@ -205,16 +205,16 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     throw std::logic_error("Unrecognized svd library");
 }
 
-using real = double;
-using cplx = std::complex<double>;
+using fp64 = double;
+using cx64 = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>> svd::solver::do_svd_ptr(const real *, long, long, const svd::config &);
+template std::tuple<svd::MatrixType<fp64>, svd::VectorType<fp64>, svd::MatrixType<fp64>> svd::solver::do_svd_ptr(const fp64 *, long, long, const svd::config &);
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_ptr(const cplx *, long, long, const svd::config &);
+template std::tuple<svd::MatrixType<cx64>, svd::VectorType<cx64>, svd::MatrixType<cx64>> svd::solver::do_svd_ptr(const cx64 *, long, long, const svd::config &);
 
 template<typename Scalar>
 void svd::solver::print_matrix([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols,
@@ -245,13 +245,13 @@ void svd::solver::print_vector([[maybe_unused]] const Scalar *vec_ptr, [[maybe_u
 #endif
 }
 
-template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, std::string_view tag, long dec) const;
+template void svd::solver::print_matrix<fp64>(const fp64 *vec_ptr, long rows, long cols, std::string_view tag, long dec) const;
 
-template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, std::string_view tag, long dec) const;
+template void svd::solver::print_matrix<cx64>(const cx64 *vec_ptr, long rows, long cols, std::string_view tag, long dec) const;
 
-template void svd::solver::print_vector<real>(const real *vec_ptr, long size, std::string_view tag, long dec) const;
+template void svd::solver::print_vector<fp64>(const fp64 *vec_ptr, long size, std::string_view tag, long dec) const;
 
-template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, std::string_view tag, long dec) const;
+template void svd::solver::print_vector<cx64>(const cx64 *vec_ptr, long size, std::string_view tag, long dec) const;
 
 // template<typename Scalar>
 std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
@@ -367,9 +367,9 @@ std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> svd::solver::spli
     /* clang-format on */
 }
 
-template std::tuple<Eigen::Tensor<real, 4>, Eigen::Tensor<real, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<real, 4> &mpo, const svd::config &svd_cfg);
+template std::tuple<Eigen::Tensor<fp64, 4>, Eigen::Tensor<fp64, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<fp64, 4> &mpo, const svd::config &svd_cfg);
 
-template std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<cplx, 4> &mpo, const svd::config &svd_cfg);
+template std::tuple<Eigen::Tensor<cx64, 4>, Eigen::Tensor<cx64, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<cx64, 4> &mpo, const svd::config &svd_cfg);
 
 template<typename Scalar>
 std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo, const svd::config &svd_cfg) {
@@ -444,6 +444,6 @@ std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::spli
     /* clang-format on */
 }
 
-template std::tuple<Eigen::Tensor<real, 2>, Eigen::Tensor<real, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<real, 4> &mpo, const svd::config &svd_cfg);
+template std::tuple<Eigen::Tensor<fp64, 2>, Eigen::Tensor<fp64, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<fp64, 4> &mpo, const svd::config &svd_cfg);
 
-template std::tuple<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<cplx, 4> &mpo, const svd::config &svd_cfg);
+template std::tuple<Eigen::Tensor<cx64, 2>, Eigen::Tensor<cx64, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<cx64, 4> &mpo, const svd::config &svd_cfg);

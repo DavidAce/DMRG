@@ -18,21 +18,21 @@ class ModelFinite {
     friend TensorsFinite;
     struct Cache {
         std::optional<std::vector<size_t>>                        cached_sites              = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>>                     multisite_mpo             = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 4>>                     multisite_mpo             = std::nullopt;
         std::optional<std::vector<size_t>>                        multisite_mpo_ids         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>>                     multisite_ham             = std::nullopt;
-        std::optional<Eigen::Tensor<cplx_t, 4>>                   multisite_mpo_t           = std::nullopt;
-        std::optional<Eigen::Tensor<cplx_t, 2>>                   multisite_ham_t           = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>>                     multisite_mpo_squared     = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 2>>                     multisite_ham             = std::nullopt;
+        std::optional<Eigen::Tensor<cx128, 4>>                   multisite_mpo_t           = std::nullopt;
+        std::optional<Eigen::Tensor<cx128, 2>>                   multisite_ham_t           = std::nullopt;
+        std::optional<Eigen::Tensor<cx64, 4>>                     multisite_mpo_squared     = std::nullopt;
         std::optional<std::vector<size_t>>                        multisite_mpo_squared_ids = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>>                     multisite_ham_squared     = std::nullopt;
-        std::unordered_map<std::string, Eigen::Tensor<cplx, 4>>   multisite_mpo_temps;   // Keeps previous results for reuse
-        std::unordered_map<std::string, Eigen::Tensor<cplx_t, 4>> multisite_mpo_t_temps; // Keeps previous results for reuse
-        // std::unordered_map<std::string, Eigen::Tensor<cplx, 4>>   multisite_mpo_squared_temps;   // Keeps previous results for reuse
-        // std::unordered_map<std::string, Eigen::Tensor<cplx_t, 4>> multisite_mpo_squared_t_temps; // Keeps previous results for reuse
+        std::optional<Eigen::Tensor<cx64, 2>>                     multisite_ham_squared     = std::nullopt;
+        std::unordered_map<std::string, Eigen::Tensor<cx64, 4>>   multisite_mpo_temps;   // Keeps previous results for reuse
+        std::unordered_map<std::string, Eigen::Tensor<cx128, 4>> multisite_mpo_t_temps; // Keeps previous results for reuse
+        // std::unordered_map<std::string, Eigen::Tensor<cx64, 4>>   multisite_mpo_squared_temps;   // Keeps previous results for reuse
+        // std::unordered_map<std::string, Eigen::Tensor<cx128, 4>> multisite_mpo_squared_t_temps; // Keeps previous results for reuse
     };
     mutable Cache cache;
-    //    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos);
+    //    std::vector<Eigen::Tensor<cx64, 4>> get_compressed_mpos(std::vector<Eigen::Tensor<cx64, 4>> mpos);
     void                                                     randomize();
     [[nodiscard]] bool                                       has_mpo() const;
     [[nodiscard]] bool                                       has_mpo_squared() const;
@@ -74,12 +74,12 @@ class ModelFinite {
     [[nodiscard]] std::vector<std::reference_wrapper<MpoSite>>       get_mpo(const std::vector<size_t> &sites);
     [[nodiscard]] std::vector<std::reference_wrapper<const MpoSite>> get_mpo_active() const;
     [[nodiscard]] std::vector<std::reference_wrapper<MpoSite>>       get_mpo_active();
-    [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_all_mpo_tensors(MposWithEdges withEdges = MposWithEdges::OFF);
-    [[nodiscard]] std::vector<Eigen::Tensor<cplx_t, 4>>              get_all_mpo_tensors_t(MposWithEdges withEdges = MposWithEdges::OFF);
-    [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_compressed_mpos(MposWithEdges withEdges = MposWithEdges::OFF);
-    [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_compressed_mpos_squared(MposWithEdges withEdges = MposWithEdges::OFF);
-    [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_mpos_energy_shifted_view(double energy_per_site) const;
-    // [[nodiscard]] std::vector<Eigen::Tensor<cplx, 4>>                get_mpos_squared_shifted_view(double energy_per_site, MposWithEdges withEdges =
+    [[nodiscard]] std::vector<Eigen::Tensor<cx64, 4>>                get_all_mpo_tensors(MposWithEdges withEdges = MposWithEdges::OFF);
+    [[nodiscard]] std::vector<Eigen::Tensor<cx128, 4>>              get_all_mpo_tensors_t(MposWithEdges withEdges = MposWithEdges::OFF);
+    [[nodiscard]] std::vector<Eigen::Tensor<cx64, 4>>                get_compressed_mpos(MposWithEdges withEdges = MposWithEdges::OFF);
+    [[nodiscard]] std::vector<Eigen::Tensor<cx64, 4>>                get_compressed_mpos_squared(MposWithEdges withEdges = MposWithEdges::OFF);
+    [[nodiscard]] std::vector<Eigen::Tensor<cx64, 4>>                get_mpos_energy_shifted_view(double energy_per_site) const;
+    // [[nodiscard]] std::vector<Eigen::Tensor<cx64, 4>>                get_mpos_squared_shifted_view(double energy_per_site, MposWithEdges withEdges =
     // MposWithEdges::OFF) const;
 
     [[nodiscard]] bool                  has_energy_shifted_mpo() const; // For shifted energy MPO's
@@ -95,27 +95,27 @@ class ModelFinite {
 
     // For multisite
     [[nodiscard]] std::array<long, 4>      active_dimensions() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    [[nodiscard]] Eigen::Tensor<cx64, 4>   get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                                              bool with_edgeL = false, bool with_edgeR = false) const;
-    [[nodiscard]] Eigen::Tensor<cplx_t, 4> get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt,
+    [[nodiscard]] Eigen::Tensor<cx128, 4> get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                                                bool with_edgeL = false, bool with_edgeR = false) const;
-    [[nodiscard]] Eigen::Tensor<cplx, 2>   get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    [[nodiscard]] Eigen::Tensor<cplx_t, 2> get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    // [[nodiscard]] Eigen::Tensor<cplx, 4>   get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody =
+    [[nodiscard]] Eigen::Tensor<cx64, 2>   get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    [[nodiscard]] Eigen::Tensor<cx128, 2> get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    // [[nodiscard]] Eigen::Tensor<cx64, 4>   get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody =
     // std::nullopt, bool with_edgeL = false, bool with_edgeR = false) const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>   &get_multisite_mpo() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 2>   &get_multisite_ham() const;
-    [[nodiscard]] const Eigen::Tensor<cplx_t, 4> &get_multisite_mpo_t() const;
-    [[nodiscard]] const Eigen::Tensor<cplx_t, 2> &get_multisite_ham_t() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>          get_multisite_mpo_shifted_view(double energy_per_site) const;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>          get_multisite_mpo_squared_shifted_view(double energy_per_site) const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 4>   &get_multisite_mpo() const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 2>   &get_multisite_ham() const;
+    [[nodiscard]] const Eigen::Tensor<cx128, 4> &get_multisite_mpo_t() const;
+    [[nodiscard]] const Eigen::Tensor<cx128, 2> &get_multisite_ham_t() const;
+    [[nodiscard]] Eigen::Tensor<cx64, 4>          get_multisite_mpo_shifted_view(double energy_per_site) const;
+    [[nodiscard]] Eigen::Tensor<cx64, 4>          get_multisite_mpo_squared_shifted_view(double energy_per_site) const;
     [[nodiscard]] std::array<long, 4>             active_dimensions_squared() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>          get_multisite_mpo_squared(const std::vector<size_t>         &sites,
+    [[nodiscard]] Eigen::Tensor<cx64, 4>          get_multisite_mpo_squared(const std::vector<size_t>         &sites,
                                                                             std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    [[nodiscard]] Eigen::Tensor<cplx, 2>          get_multisite_ham_squared(const std::vector<size_t>         &sites,
+    [[nodiscard]] Eigen::Tensor<cx64, 2>          get_multisite_ham_squared(const std::vector<size_t>         &sites,
                                                                             std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 4>   &get_multisite_mpo_squared() const;
-    [[nodiscard]] const Eigen::Tensor<cplx, 2>   &get_multisite_ham_squared() const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 4>   &get_multisite_mpo_squared() const;
+    [[nodiscard]] const Eigen::Tensor<cx64, 2>   &get_multisite_ham_squared() const;
     void                                          clear_cache(LogPolicy logPolicy = LogPolicy::SILENT) const;
 
     [[nodiscard]] std::vector<size_t> get_active_ids() const;

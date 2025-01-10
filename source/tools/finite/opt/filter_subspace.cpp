@@ -235,8 +235,8 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_fullspace
     return fullspace_vector.normalized();
 }
 
-Eigen::Tensor<cplx, 3> tools::finite::opt::internal::subspace::get_tensor_in_fullspace(const std::vector<opt_mps>        &eigvecs,
+Eigen::Tensor<cx64, 3> tools::finite::opt::internal::subspace::get_tensor_in_fullspace(const std::vector<opt_mps>        &eigvecs,
                                                                                        const Eigen::VectorXcd            &subspace_vector,
                                                                                        const std::array<Eigen::Index, 3> &dims) {
-    return Eigen::TensorMap<Eigen::Tensor<cplx, 3>>(subspace::get_vector_in_fullspace(eigvecs, subspace_vector).data(), dims);
+    return Eigen::TensorMap<Eigen::Tensor<cx64, 3>>(subspace::get_vector_in_fullspace(eigvecs, subspace_vector).data(), dims);
 }

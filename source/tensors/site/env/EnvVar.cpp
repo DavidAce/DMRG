@@ -122,7 +122,7 @@ void EnvVar::refresh(const EnvVar &env, const MpsSite &mps, const MpoSite &mpo) 
 }
 
 void EnvVar::set_edge_dims(const MpsSite &mps, const MpoSite &mpo) {
-    Eigen::Tensor<cplx, 1> edge;
+    Eigen::Tensor<cx64, 1> edge;
     if(side == "L") edge = mpo.get_MPO2_edge_left();
     if(side == "R") edge = mpo.get_MPO2_edge_right();
     std::size_t unique_id_edge = hash::hash_buffer(edge.data(), static_cast<size_t>(edge.size()));

@@ -525,13 +525,13 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         );
     return std::make_tuple(U, S, VT);
 }
-using real = double;
-using cplx = std::complex<double>;
+using fp64 = double;
+using cx64 = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd_lapacke for type 'double'
-template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>> svd::solver::do_svd_lapacke(const real *, long, long) const;
+template std::tuple<svd::MatrixType<fp64>, svd::VectorType<fp64>, svd::MatrixType<fp64>> svd::solver::do_svd_lapacke(const fp64 *, long, long) const;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd_lapacke for type 'std::complex<double>'
-template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_lapacke(const cplx *, long, long) const;
+template std::tuple<svd::MatrixType<cx64>, svd::VectorType<cx64>, svd::MatrixType<cx64>> svd::solver::do_svd_lapacke(const cx64 *, long, long) const;

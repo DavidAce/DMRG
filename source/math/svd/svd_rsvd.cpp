@@ -18,11 +18,11 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
     if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
     auto mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
-    if constexpr(std::is_same_v<Scalar, cplx>) {
+    if constexpr(std::is_same_v<Scalar, cx64>) {
         if(tenx::isReal(mat)) {
-            svd::MatrixType<real> matreal = mat.real();
+            svd::MatrixType<fp64> matreal = mat.real();
             auto [U, S, V]                = do_svd_rsvd(matreal.data(), rows, cols);
-            return std::make_tuple(U.cast<cplx>(), S.cast<cplx>(), V.cast<cplx>());
+            return std::make_tuple(U.cast<cx64>(), S.cast<cx64>(), V.cast<cx64>());
         }
     }
 
@@ -38,7 +38,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     //    randomEngine.seed(777);
     //    rnd::
 
-    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::None> SVD(rnd::internal::rng);
+    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::None> SVD(rnd::internal::rng64);
     //    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Mgs> SVD(rnd::internal::rng);
 
     log->debug("Running RSVD | {} x {} | truncation limit {:.4e} | rank_lim {}", rows, cols, truncation_lim, rank_lim);
@@ -68,13 +68,13 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint());
 }
 
-using real = double;
-using cplx = std::complex<double>;
+using fp64 = double;
+using cx64 = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>> svd::solver::do_svd_rsvd(const real *, long, long) const;
+template std::tuple<svd::MatrixType<fp64>, svd::VectorType<fp64>, svd::MatrixType<fp64>> svd::solver::do_svd_rsvd(const fp64 *, long, long) const;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_rsvd(const cplx *, long, long) const;
+template std::tuple<svd::MatrixType<cx64>, svd::VectorType<cx64>, svd::MatrixType<cx64>> svd::solver::do_svd_rsvd(const cx64 *, long, long) const;

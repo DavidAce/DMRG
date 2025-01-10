@@ -38,7 +38,7 @@ size_t tools::finite::measure::length(const StateFinite &state) { return state.g
 
 double tools::finite::measure::norm(const StateFinite &state, bool full) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    cplx norm;
+    cx64 norm;
     auto t_norm = tid::tic_scope("norm", tid::level::highest);
     if(not full) {
         // We know the all sites are normalized. We can check that the current position is normalized
@@ -48,8 +48,8 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         norm = tools::common::contraction::contract_mps_norm(mps.get_M());
     } else {
         tools::log->trace("Measuring norm on full chain");
-        Eigen::Tensor<cplx, 2> chain;
-        Eigen::Tensor<cplx, 2> temp;
+        Eigen::Tensor<cx64, 2> chain;
+        Eigen::Tensor<cx64, 2> temp;
         bool                   first   = true;
         auto                  &threads = tenx::threads::get();
 
@@ -131,9 +131,9 @@ std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFini
     return bond_dimensions;
 }
 
-double tools::finite::measure::entanglement_entropy(const Eigen::Tensor<cplx, 1> &L) {
+double tools::finite::measure::entanglement_entropy(const Eigen::Tensor<cx64, 1> &L) {
     auto t_ent = tid::tic_scope("neumann_entropy", tid::level::highest);
-    auto S     = Eigen::Tensor<cplx, 0>(-L.square().contract(L.square().log().eval(), tenx::idx({0}, {0})));
+    auto S     = Eigen::Tensor<cx64, 0>(-L.square().contract(L.square().log().eval(), tenx::idx({0}, {0})));
     return std::abs(S(0));
 }
 
@@ -186,18 +186,18 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
     if(not state.has_center_point()) renyi_q.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
         const auto            &L = mps->get_L();
-        Eigen::Tensor<cplx, 0> RE;
+        Eigen::Tensor<cx64, 0> RE;
         if(q == inf)
             RE(0) = -2.0 * std::log(L(0));
         else
-            RE = 1.0 / cplx(1.0 - q, 0.0) * L.pow(cplx(2.0 * q, 0.0)).sum().log();
+            RE = 1.0 / cx64(1.0 - q, 0.0) * L.pow(cx64(2.0 * q, 0.0)).sum().log();
         renyi_q.emplace_back(std::abs(RE(0)));
         if(mps->isCenter()) {
             const auto &LC = mps->get_LC();
             if(q == inf)
                 RE(0) = -2.0 * std::log(LC(0));
             else
-                RE = 1.0 / cplx(1.0 - q, 0.0) * LC.pow(cplx(2.0 * q, 0.0)).sum().log();
+                RE = 1.0 / cx64(1.0 - q, 0.0) * LC.pow(cx64(2.0 * q, 0.0)).sum().log();
             renyi_q.emplace_back(std::abs(RE(0)));
         }
     }
@@ -226,11 +226,11 @@ double tools::finite::measure::renyi_entropy_midchain(const StateFinite &state, 
     if(q == 1.0) return entanglement_entropy_midchain(state);
     auto                   t_ren = tid::tic_scope("renyi_entropy_midchain", tid::level::highest);
     auto                  &LC    = state.get_midchain_bond();
-    Eigen::Tensor<cplx, 0> renyi_q;
+    Eigen::Tensor<cx64, 0> renyi_q;
     if(q == inf)
         renyi_q(0) = -2.0 * std::log(LC(0));
     else
-        renyi_q = 1.0 / cplx(1.0 - q, 0.0) * LC.pow(cplx(2.0 * q, 0.0)).sum().log();
+        renyi_q = 1.0 / cx64(1.0 - q, 0.0) * LC.pow(cx64(2.0 * q, 0.0)).sum().log();
     return std::abs(renyi_q(0));
 }
 
@@ -246,14 +246,14 @@ std::array<double, 3> tools::finite::measure::spin_components(const StateFinite 
 double tools::finite::measure::spin_component(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix) {
     auto t_spn       = tid::tic_scope("spin", tid::level::highest);
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
-    Eigen::Tensor<cplx, 3> temp;
+    Eigen::Tensor<cx64, 3> temp;
     for(const auto &mps : state.mps_sites) {
         tools::common::contraction::contract_env_mps_mpo(temp, L, mps->get_M(), mpo);
         L = temp;
     }
 
     if(L.dimensions() != R.dimensions()) throw except::runtime_error("spin_component(): L and R dimension mismatch");
-    Eigen::Tensor<cplx, 0> spin_tmp = L.contract(R, tenx::idx({0, 1, 2}, {0, 1, 2}));
+    Eigen::Tensor<cx64, 0> spin_tmp = L.contract(R, tenx::idx({0, 1, 2}, {0, 1, 2}));
     double                 spin     = std::real(spin_tmp(0));
     return spin;
 }
@@ -317,10 +317,10 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
 }
 
 template<typename Scalar>
-Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std::unique_ptr<MpsSite>> &mps_sites, std::string_view name) {
-    if constexpr(std::is_same_v<Scalar, cplx>) {
+Eigen::Tensor<cx64, 1> tools::finite::measure::mps2tensor(const std::vector<std::unique_ptr<MpsSite>> &mps_sites, std::string_view name) {
+    if constexpr(std::is_same_v<Scalar, cx64>) {
         bool all_real = std::all_of(mps_sites.begin(), mps_sites.end(), [](const auto &mps) -> bool { return mps->is_real(); });
-        if(all_real) return mps2tensor<real>(mps_sites, name);
+        if(all_real) return mps2tensor<fp64>(mps_sites, name);
     }
 
     auto spindims = std::vector<long>();
@@ -349,10 +349,10 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         //        tools::log->info("Contracting temp {} | M[{}]:{} | off1 {} | ext1 {} | ext2 {}", temp.dimensions(), mps->get_position(),
         //        mps->get_M().dimensions(),
         //                         off1, ext1, ext2);
-        if constexpr(std::is_same_v<Scalar, cplx>) {
+        if constexpr(std::is_same_v<Scalar, cx64>) {
             statev.slice(off1, ext1).device(*threads->dev) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
         } else {
-            Eigen::Tensor<real, 3> M                       = mps->get_M().real();
+            Eigen::Tensor<fp64, 3> M                       = mps->get_M().real();
             statev.slice(off1, ext1).device(*threads->dev) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
         }
     }
@@ -360,12 +360,12 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
     statev      = statev.slice(off1, ext1);
     double norm = tenx::norm(statev);
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("mps2tensor [{}]: Norm far from unity: {:.16f}", name, norm); }
-    return statev.template cast<cplx>();
+    return statev.template cast<cx64>();
 }
 
-Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites, state.get_name()); }
+Eigen::Tensor<cx64, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites, state.get_name()); }
 
-cplx tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cplx, 3> &mps, const ModelFinite &model, const EdgesFinite &edges) {
+cx64 tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cx64, 3> &mps, const ModelFinite &model, const EdgesFinite &edges) {
     auto mpo  = model.get_mpo_active();
     auto env  = edges.get_ene_active();
     auto t_H2 = tid::tic_scope("H", tid::level::highest);
@@ -373,7 +373,7 @@ cplx tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cplx, 3> &mp
     return tools::finite::measure::expectation_value(mps, mps, mpo, env);
 }
 
-cplx tools::finite::measure::expval_hamiltonian(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
+cx64 tools::finite::measure::expval_hamiltonian(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
     auto mps = state.get_mps_active();
     auto mpo = model.get_mpo_active();
     auto env = edges.get_ene_active();
@@ -381,36 +381,36 @@ cplx tools::finite::measure::expval_hamiltonian(const StateFinite &state, const 
     return tools::finite::measure::expectation_value(mps, mps, mpo, env);
 }
 
-cplx tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+cx64 tools::finite::measure::expval_hamiltonian(const Eigen::Tensor<cx64, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
                                                 const env_pair<const EnvEne &> &envs) {
     auto t_H = tid::tic_scope("H", tid::level::highest);
     return tools::finite::measure::expectation_value(mps, mps, mpo_refs, envs);
 }
 
-cplx tools::finite::measure::expval_hamiltonian_squared(const Eigen::Tensor<cplx, 3> &mps, const ModelFinite &model, const EdgesFinite &edges) {
+cx64 tools::finite::measure::expval_hamiltonian_squared(const Eigen::Tensor<cx64, 3> &mps, const ModelFinite &model, const EdgesFinite &edges) {
     auto mpo = model.get_mpo_active();
     auto env = edges.get_var_active();
     auto t_H = tid::tic_scope("H2", tid::level::highest);
     return tools::finite::measure::expectation_value(mps, mps, mpo, env);
 }
-cplx tools::finite::measure::expval_hamiltonian_squared(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
+cx64 tools::finite::measure::expval_hamiltonian_squared(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
     auto mps  = state.get_mps_active();
     auto mpo  = model.get_mpo_active();
     auto env  = edges.get_var_active();
     auto t_H2 = tid::tic_scope("H2", tid::level::highest);
     return tools::finite::measure::expectation_value(mps, mps, mpo, env);
 }
-cplx tools::finite::measure::expval_hamiltonian_squared(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+cx64 tools::finite::measure::expval_hamiltonian_squared(const Eigen::Tensor<cx64, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
                                                         const env_pair<const EnvVar &> &envs) {
     auto t_H2 = tid::tic_scope("H2", tid::level::highest);
     return tools::finite::measure::expectation_value(mps, mps, mpo_refs, envs);
 }
 
-cplx tools::finite::measure::expval_hamiltonian(const TensorsFinite &tensors) {
+cx64 tools::finite::measure::expval_hamiltonian(const TensorsFinite &tensors) {
     return tools::finite::measure::expval_hamiltonian(*tensors.state, *tensors.model, *tensors.edges);
 }
 
-cplx tools::finite::measure::expval_hamiltonian_squared(const TensorsFinite &tensors) {
+cx64 tools::finite::measure::expval_hamiltonian_squared(const TensorsFinite &tensors) {
     return tools::finite::measure::expval_hamiltonian_squared(*tensors.state, *tensors.model, *tensors.edges);
 }
 
@@ -446,7 +446,7 @@ double tools::finite::measure::energy_minus_energy_shift(const StateFinite &stat
     return std::real(e_minus_ered);
 }
 
-double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cx64, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
                                                          std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy_minus_energy_shift) {
         if constexpr(!settings::debug_expval) {
@@ -461,7 +461,7 @@ double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cpl
     assert(num::all_equal(model.active_sites, edges.active_sites));
     // Check if we can contract directly or if we need to use the split method
     // Normally it's only worth splitting the multisite mps when it has more than 3 sites
-    auto e_minus_ered = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    auto e_minus_ered = cx64(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
     if(model.active_sites.size() <= 3) {
         // Contract directly
         const auto &mpo = model.get_multisite_mpo();
@@ -523,7 +523,7 @@ double tools::finite::measure::energy(const StateFinite &state, const ModelFinit
     return energy;
 }
 
-double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+double tools::finite::measure::energy(const Eigen::Tensor<cx64, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
                                       std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy) return measurements->energy.value();
     // This measures the actual energy of the system regardless of the energy shift in the MPO's
@@ -572,7 +572,7 @@ double tools::finite::measure::energy_variance(const StateFinite &state, const M
     return var;
 }
 
-double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+double tools::finite::measure::energy_variance(const Eigen::Tensor<cx64, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
                                                std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     // Here we show that the variance calculated with energy-shifted mpo's is equivalent to the usual way.
     // If mpo's are shifted:
@@ -601,7 +601,7 @@ double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mul
 
     // Check if we can contract directly or if we need to use the split method
     // Normally it's only worth splitting the multisite mps when it has more than 3 sites
-    cplx H2 = cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+    cx64 H2 = cx64(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
     if(model.active_sites.size() <= 3) {
         // Direct contraction
         const auto &mpo2 = model.get_multisite_mpo_squared();
@@ -642,7 +642,7 @@ double tools::finite::measure::energy_normalized(const StateFinite &state, const
                                                  double energy_max, MeasurementsTensorsFinite *measurements) {
     return (tools::finite::measure::energy(state, model, edges, measurements) - energy_min) / (energy_max - energy_min);
 }
-double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
+double tools::finite::measure::energy_normalized(const Eigen::Tensor<cx64, 3> &multisite_mps, const ModelFinite &model, const EdgesFinite &edges,
                                                  double energy_min, double energy_max, std::optional<svd::config> svd_cfg,
                                                  MeasurementsTensorsFinite *measurements) {
     return (tools::finite::measure::energy(multisite_mps, model, edges, svd_cfg, measurements) - energy_min) / (energy_max - energy_min);
@@ -692,27 +692,27 @@ double tools::finite::measure::energy_normalized(const StateFinite &state, const
     return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax, measurements);
 }
 
-double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
+double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cx64, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
                                                          MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy_minus_energy_shift(mps, *tensors.model, *tensors.edges, svd_cfg, measurements);
 }
-double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
+double tools::finite::measure::energy(const Eigen::Tensor<cx64, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
                                       MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges, svd_cfg, measurements);
 }
 
-double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
+double tools::finite::measure::energy_variance(const Eigen::Tensor<cx64, 3> &mps, const TensorsFinite &tensors, std::optional<svd::config> svd_cfg,
                                                MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy_variance(mps, *tensors.model, *tensors.edges, svd_cfg, measurements);
 }
 
-double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, double emin, double emax,
+double tools::finite::measure::energy_normalized(const Eigen::Tensor<cx64, 3> &mps, const TensorsFinite &tensors, double emin, double emax,
                                                  std::optional<svd::config> svd_cfg, MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax, svd_cfg, measurements);
 }
 
-double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &envL,
-                                             const Eigen::Tensor<cplx, 3> &envR) {
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cx64, 3> &mps, const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 3> &envL,
+                                             const Eigen::Tensor<cx64, 3> &envR) {
     // Calculate the residual_norm r = |Hv - Ev|
     auto Hv = tools::common::contraction::matrix_vector_product(mps, mpo, envL, envR);
     auto E  = tools::common::contraction::contract_mps_overlap(mps, Hv);
@@ -720,8 +720,8 @@ double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, 
     return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();
 }
 
-double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
-                                             const Eigen::Tensor<cplx, 3> &envL, const Eigen::Tensor<cplx, 3> &envR) {
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cx64, 3> &mps, const std::vector<Eigen::Tensor<cx64, 4>> &mpos,
+                                             const Eigen::Tensor<cx64, 3> &envL, const Eigen::Tensor<cx64, 3> &envR) {
     // Calculate the residual_norm r = |Hv - Ev|
     auto Hv = tools::common::contraction::matrix_vector_product(mps, mpos, envL, envR);
     auto E  = tools::common::contraction::contract_mps_overlap(mps, Hv);
@@ -729,18 +729,18 @@ double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, 
     return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();
 }
 
-double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cx64, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
                                              const env_pair<const EnvEne &> &envs) {
     // Calculate the residual_norm r = |Hv - Ev|
-    auto mpo_vec = std::vector<Eigen::Tensor<cplx, 4>>();
+    auto mpo_vec = std::vector<Eigen::Tensor<cx64, 4>>();
     for(const auto &mpo : mpo_refs) mpo_vec.emplace_back(mpo.get().MPO());
     return residual_norm(mps, mpo_vec, envs.L.get_block(), envs.R.get_block());
 }
 
-double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cx64, 3> &mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpo_refs,
                                              const env_pair<const EnvVar &> &envs) {
     // Calculate the residual_norm r = |H²v - E²v|
-    auto mpo_vec = std::vector<Eigen::Tensor<cplx, 4>>();
+    auto mpo_vec = std::vector<Eigen::Tensor<cx64, 4>>();
     for(const auto &mpo : mpo_refs) mpo_vec.emplace_back(mpo.get().MPO2());
     return residual_norm(mps, mpo_vec, envs.L.get_block(), envs.R.get_block());
 }
@@ -765,7 +765,7 @@ double tools::finite::measure::residual_norm_full(const StateFinite &state, cons
     tools::log->info("Calculating residual norm with full system");
     auto sites = num::range<size_t>(0, state.get_length());
     auto t     = state.get_multisite_mps(sites);
-    std::vector<Eigen::Tensor<cplx,4>> mpos;
+    std::vector<Eigen::Tensor<cx64,4>> mpos;
     for(const auto & mpo : model.get_mpo(sites)) mpos.emplace_back(mpo.get().MPO());
     auto envs  = edges.get_env_ene_blk(sites.front(), sites.back());
     auto Ht    = tools::common::contraction::matrix_vector_product(t, mpos, envs.L, envs.R);
@@ -776,7 +776,7 @@ double tools::finite::measure::residual_norm_full(const StateFinite &state, cons
     return (Hv - v.dot(Hv) * v).norm();
 }
 
-cplx tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
+cx64 tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(ops.empty()) throw std::runtime_error("expectation_value: ops is empty");
     if constexpr(settings::debug_expval) tools::log->trace("Measuring expectation_value <ops>");
@@ -787,27 +787,27 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
     }
     auto &threads = tenx::threads::get();
     for(const auto &mps : state.mps_sites) {
-        Eigen::Tensor<cplx, 3> M   = mps->get_M();
+        Eigen::Tensor<cx64, 3> M   = mps->get_M();
         const auto             pos = mps->get_position<long>();
         for(const auto &op : iter::reverse(ops)) {
             // Reverse to apply operators right to left, if they are on the same position
             // i.e. ABC|psi> should apply C first and A last (if A and C are on the same site).
             if(op.used or op.pos != pos) continue;
-            auto temp                  = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
+            auto temp                  = Eigen::Tensor<cx64, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
             temp.device(*threads->dev) = op.op.contract(M, tenx::idx({1}, {0}));
             M                          = std::move(temp);
             op.used                    = true;
         }
-        auto temp                  = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
+        auto temp                  = Eigen::Tensor<cx64, 2>(M.dimension(2), M.dimension(2));
         temp.device(*threads->dev) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
         chain                      = std::move(temp);
     }
 
-    Eigen::Tensor<cplx, 0> expval = chain.trace();
+    Eigen::Tensor<cx64, 0> expval = chain.trace();
     return expval.coeff(0);
 }
 
-cplx tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableMpo> &mpos) {
+cx64 tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableMpo> &mpos) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(mpos.empty()) throw std::runtime_error("expectation_value: obs is empty");
 
@@ -821,11 +821,11 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
     }
 
     // Create compatible edges
-    Eigen::Tensor<cplx, 1> Ledge(mpodims[0]); // The left  edge
-    Eigen::Tensor<cplx, 1> Redge(mpodims[1]); // The right edge
+    Eigen::Tensor<cx64, 1> Ledge(mpodims[0]); // The left  edge
+    Eigen::Tensor<cx64, 1> Redge(mpodims[1]); // The right edge
     Ledge(mpodims[0] - 1) = 1;
     Redge(0)              = 1;
-    Eigen::Tensor<cplx, 3> Ledge3, Redge3;
+    Eigen::Tensor<cx64, 3> Ledge3, Redge3;
     {
         auto mpsdims = state.mps_sites.front()->dimensions();
         long mpsDim  = mpsdims[1];
@@ -854,12 +854,12 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
     }
 
     // Generate an identity mpo with the same dimensions as the ones in obs
-    Eigen::Tensor<cplx, 1> ones(mpodims[0] * mpodims[2]);
-    ones.setConstant(cplx(1.0, 0.0));
-    Eigen::Tensor<cplx, 4> mpoI = tenx::asDiagonal(ones).reshape(mpodims);
+    Eigen::Tensor<cx64, 1> ones(mpodims[0] * mpodims[2]);
+    ones.setConstant(cx64(1.0, 0.0));
+    Eigen::Tensor<cx64, 4> mpoI = tenx::asDiagonal(ones).reshape(mpodims);
 
     // Start applying the mpo or identity on each site starting from Ledge3
-    Eigen::Tensor<cplx, 3> temp;
+    Eigen::Tensor<cx64, 3> temp;
     for(const auto &mps : state.mps_sites) {
         const auto  pos   = mps->get_position<long>();
         const auto &M     = mps->get_M();
@@ -875,7 +875,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
         throw except::runtime_error("expectation_value: Ledge3 and Redge3 dimension mismatch: {} != {}", Ledge3.dimensions(), Redge3.dimensions());
 
     // Finish by contracting Redge3
-    Eigen::Tensor<cplx, 0> expval = Ledge3.contract(Redge3, tenx::idx({0, 1, 2}, {0, 1, 2}));
+    Eigen::Tensor<cx64, 0> expval = Ledge3.contract(Redge3, tenx::idx({0, 1, 2}, {0, 1, 2}));
 
     if(std::imag(expval(0)) > 1e-14)
         tools::log->warn("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
@@ -884,7 +884,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
     return expval(0);
 }
 
-cplx tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx, 4>> &mpos) {
+cx64 tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cx64, 4>> &mpos) {
     /*!
      * Calculates <state1 | mpos | state2>
      */
@@ -898,12 +898,12 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(state1.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state1 right bond dimension != 1: got {}", state1.get_mps_site(L - 1).get_chiR());
     if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
-    Eigen::Tensor<cplx, 4> result, tmp;
+    Eigen::Tensor<cx64, 4> result, tmp;
     auto                  &threads = tenx::threads::get();
 #pragma message "tools::finite::measure::expectation_value: check if state1, state2 and mpos are real and contract real objects instead"
 
     for(size_t pos = 0; pos < L; ++pos) {
-        Eigen::Tensor<cplx, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
+        Eigen::Tensor<cx64, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
         const auto            &mps2 = state2.get_mps_site(pos).get_M();
         const auto            &mpo  = mpos[pos];
         if(pos == 0) {
@@ -925,7 +925,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     return result.coeff(0);
 }
 
-cplx_t tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx_t, 4>> &mpos_t) {
+cx128 tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cx128, 4>> &mpos_t) {
     /*!
      * Calculates <state1 | mpos | state2>
      */
@@ -939,11 +939,11 @@ cplx_t tools::finite::measure::expectation_value(const StateFinite &state1, cons
     if(state1.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state1 right bond dimension != 1: got {}", state1.get_mps_site(L - 1).get_chiR());
     if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
     if(mpos_t.back().dimension(1) != 1) throw except::logic_error("mpos_t right bond dimension != 1: got {}", mpos_t.back().dimension(1));
-    Eigen::Tensor<cplx_t, 4> result, tmp;
+    Eigen::Tensor<cx128, 4> result, tmp;
     auto                    &threads = tenx::threads::get();
     for(size_t pos = 0; pos < L; ++pos) {
-        const Eigen::Tensor<cplx_t, 3> mps1  = state1.get_mps_site(pos).get_M().conjugate().cast<cplx_t>();
-        const Eigen::Tensor<cplx_t, 3> mps2  = state2.get_mps_site(pos).get_M().cast<cplx_t>();
+        const Eigen::Tensor<cx128, 3> mps1  = state1.get_mps_site(pos).get_M().conjugate().cast<cx128>();
+        const Eigen::Tensor<cx128, 3> mps2  = state2.get_mps_site(pos).get_M().cast<cx128>();
         const auto                    &mpo_t = mpos_t[pos];
         if(pos == 0) {
             auto dim4 = tenx::array4{mpo_t.dimension(0) * mps1.dimension(1) * mps2.dimension(1), mps1.dimension(2), mpo_t.dimension(1), mps2.dimension(2)};
@@ -964,8 +964,8 @@ cplx_t tools::finite::measure::expectation_value(const StateFinite &state1, cons
     return result.coeff(0);
 }
 
-cplx tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
-                                               const Eigen::Tensor<cplx, 1> &ledge, const Eigen::Tensor<cplx, 1> &redge) {
+cx64 tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cx64, 4>> &mpos,
+                                               const Eigen::Tensor<cx64, 1> &ledge, const Eigen::Tensor<cx64, 1> &redge) {
     /*!
      * Calculates <state1 | mpos | state2>
      */
@@ -973,10 +973,10 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     return expectation_value(state1, state2, mpos_w_edge);
 }
 
-Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op) {
+Eigen::Tensor<cx64, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cx64, 2> &op) {
     tools::log->trace("Measuring local expectation values");
     long                   len = state.get_length<long>();
-    Eigen::Tensor<cplx, 1> expvals(len);
+    Eigen::Tensor<cx64, 1> expvals(len);
     expvals.setZero();
     for(long pos = 0; pos < len; pos++) {
         LocalObservableOp ob1 = {op, pos};
@@ -984,13 +984,13 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFin
     }
     return expvals;
 }
-Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Matrix2cd &op) {
-    Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
+Eigen::Tensor<cx64, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Matrix2cd &op) {
+    Eigen::Tensor<cx64, 2> tensor_op = tenx::TensorMap(op);
     return expectation_values(state, tensor_op);
 }
 
 template<typename EnvType>
-real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mpsBra, const Eigen::Tensor<real, 3> &mpsKet,
+fp64 tools::finite::measure::expectation_value(const Eigen::Tensor<fp64, 3> &mpsBra, const Eigen::Tensor<fp64, 3> &mpsKet,
                                                const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
     /*!
      * Calculates <mpsBra | mpos | mpsKet> by applying the mpos in series without splitting the mps first
@@ -998,9 +998,9 @@ real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mps
     auto t_expval = tid::tic_scope("expval", tid::level::highest);
 
     // Extract the correct tensors depending on EnvType
-    Eigen::Tensor<real, 3>              envL = envs.L.get_block().real();
-    Eigen::Tensor<real, 3>              envR = envs.R.get_block().real();
-    std::vector<Eigen::Tensor<real, 4>> mpos_shf;
+    Eigen::Tensor<fp64, 3>              envL = envs.L.get_block().real();
+    Eigen::Tensor<fp64, 3>              envR = envs.R.get_block().real();
+    std::vector<Eigen::Tensor<fp64, 4>> mpos_shf;
 
     assert(tenx::isReal(mpsBra));
     assert(tenx::isReal(mpsKet));
@@ -1017,16 +1017,16 @@ real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mps
         assert(tenx::isReal(mpos_shf.back()));
     }
 
-    Eigen::Tensor<real, 3> mpoMpsKet = tools::common::contraction::matrix_vector_product(mpsKet, mpos_shf, envL, envR);
+    Eigen::Tensor<fp64, 3> mpoMpsKet = tools::common::contraction::matrix_vector_product(mpsKet, mpos_shf, envL, envR);
     return tools::common::contraction::contract_mps_overlap(mpsBra, mpoMpsKet);
 }
-template real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mpsBra, const Eigen::Tensor<real, 3> &mpsKet,
+template fp64 tools::finite::measure::expectation_value(const Eigen::Tensor<fp64, 3> &mpsBra, const Eigen::Tensor<fp64, 3> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs);
-template real tools::finite::measure::expectation_value(const Eigen::Tensor<real, 3> &mpsBra, const Eigen::Tensor<real, 3> &mpsKet,
+template fp64 tools::finite::measure::expectation_value(const Eigen::Tensor<fp64, 3> &mpsBra, const Eigen::Tensor<fp64, 3> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs);
 
 template<typename EnvType>
-cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &mpsBra, const Eigen::Tensor<cx64, 3> &mpsKet,
                                                const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
     /*!
      * Calculates <mpsBra | mpos | mpsKet> by applying the mpos in series without splitting the mps first
@@ -1035,8 +1035,8 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mps
     bool envIsReal = tenx::isReal(envs.L.get_block()) and tenx::isReal(envs.R.get_block());
     bool mpoIsReal = std::all_of(mpos.begin(), mpos.end(), [](const auto &mpo) -> bool { return mpo.get().is_real(); });
     if(mpsIsReal and envIsReal and mpoIsReal) {
-        Eigen::Tensor<real, 3> mpsBraReal = mpsBra.real();
-        Eigen::Tensor<real, 3> mpsKetReal = mpsKet.real();
+        Eigen::Tensor<fp64, 3> mpsBraReal = mpsBra.real();
+        Eigen::Tensor<fp64, 3> mpsKetReal = mpsKet.real();
         return expectation_value(mpsBraReal, mpsKetReal, mpos, envs);
     }
     auto t_expval = tid::tic_scope("expval", tid::level::highest);
@@ -1044,7 +1044,7 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mps
     // Extract the correct tensors depending on EnvType
     const auto                         &envL = envs.L.get_block();
     const auto                         &envR = envs.R.get_block();
-    std::vector<Eigen::Tensor<cplx, 4>> mpos_shf;
+    std::vector<Eigen::Tensor<cx64, 4>> mpos_shf;
     for(size_t pos = 0; pos < mpos.size(); ++pos) {
         if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvEne>)
             mpos_shf.emplace_back(mpos[pos].get().MPO().shuffle(tenx::array4{2, 3, 0, 1}));
@@ -1053,16 +1053,16 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mps
         else
             static_assert(h5pp::type::sfinae::invalid_type_v<EnvType>);
     }
-    Eigen::Tensor<cplx, 3> mpoMpsKet = tools::common::contraction::matrix_vector_product(mpsKet, mpos_shf, envL, envR);
+    Eigen::Tensor<cx64, 3> mpoMpsKet = tools::common::contraction::matrix_vector_product(mpsKet, mpos_shf, envL, envR);
     return tools::common::contraction::contract_mps_overlap(mpsBra, mpoMpsKet);
 }
-template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+template cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &mpsBra, const Eigen::Tensor<cx64, 3> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs);
-template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+template cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &mpsBra, const Eigen::Tensor<cx64, 3> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs);
 
 template<typename EnvType>
-cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
+cx64 tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
                                                const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
                                                const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs) {
     /*!
@@ -1073,9 +1073,9 @@ cplx tools::finite::measure::expectation_value(const std::vector<std::reference_
     assert(num::all_equal(mpsBra.size(), mpsKet.size(), mpos.size()));
     const auto            &envL = envs.L.get_block();
     const auto            &envR = envs.R.get_block();
-    Eigen::Tensor<cplx, 3> resL = envL.shuffle(tenx::array3{0, 2, 1});
-    Eigen::Tensor<cplx, 3> tmp;
-    auto                   mporef  = std::optional<std::reference_wrapper<const Eigen::Tensor<cplx, 4>>>(std::nullopt);
+    Eigen::Tensor<cx64, 3> resL = envL.shuffle(tenx::array3{0, 2, 1});
+    Eigen::Tensor<cx64, 3> tmp;
+    auto                   mporef  = std::optional<std::reference_wrapper<const Eigen::Tensor<cx64, 4>>>(std::nullopt);
     auto                  &threads = tenx::threads::get();
     for(size_t pos = 0; pos < mpos.size(); ++pos) {
         if constexpr(std::is_same_v<std::remove_cvref_t<EnvType>, EnvEne>)
@@ -1100,19 +1100,19 @@ cplx tools::finite::measure::expectation_value(const std::vector<std::reference_
         resL = std::move(tmp);
     }
 
-    Eigen::Tensor<cplx, 0> res = resL.contract(envR, tenx::idx({0, 1, 2}, {0, 2, 1}));
+    Eigen::Tensor<cx64, 0> res = resL.contract(envR, tenx::idx({0, 1, 2}, {0, 2, 1}));
     return res.coeff(0);
 }
 
-template cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
+template cx64 tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
                                                         const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs);
-template cplx tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
+template cx64 tools::finite::measure::expectation_value(const std::vector<std::reference_wrapper<const MpsSite>> &mpsBra,
                                                         const std::vector<std::reference_wrapper<const MpsSite>> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs);
 
 template<typename EnvType>
-cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &mpsBra, const Eigen::Tensor<cx64, 3> &mpsKet,
                                                const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvType> &envs,
                                                std::optional<svd::config> svd_cfg) {
     /*!
@@ -1153,15 +1153,15 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mps
     return expectation_value(mpsBra_refs, mpsKet_refs, mpos, envs);
 }
 
-template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+template cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &mpsBra, const Eigen::Tensor<cx64, 3> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs,
                                                         std::optional<svd::config> svd_cfg);
-template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mpsBra, const Eigen::Tensor<cplx, 3> &mpsKet,
+template cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &mpsBra, const Eigen::Tensor<cx64, 3> &mpsKet,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs,
                                                         std::optional<svd::config> svd_cfg);
 
 template<typename EnvType>
-cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
+cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3> &multisite_mps, const std::vector<std::reference_wrapper<const MpoSite>> &mpos,
                                                const env_pair<EnvType> &envs, std::optional<svd::config> svd_cfg) {
     /*!
      * Calculates <mpsBra | mpos | mpsKet>, where the mps are already multisite.
@@ -1194,8 +1194,8 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mul
         tools::log->warn("expectation_value: skipped splitting a single-site multisite_mps");
         // No need to split. Also, splitting would require stashing artifacts from SVD for neighboring sites,
         // which we can't really do here.
-        auto oneL = Eigen::Tensor<cplx, 1>(multisite_mps.dimension(1));
-        auto oneR = Eigen::Tensor<cplx, 1>(multisite_mps.dimension(2));
+        auto oneL = Eigen::Tensor<cx64, 1>(multisite_mps.dimension(1));
+        auto oneR = Eigen::Tensor<cx64, 1>(multisite_mps.dimension(2));
         auto mps  = MpsSite(multisite_mps, oneL, positions.front(), 0.0, "AC");
         mps.set_LC(oneR);
         // Put them into a vector of reference wrappers for compatibility with the other expectation_value function
@@ -1214,14 +1214,14 @@ cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3> &mul
     }
 }
 
-template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3>                             &multisite_mps,
+template cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3>                             &multisite_mps,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvEne> &envs,
                                                         std::optional<svd::config> svd_cfg);
-template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx, 3>                             &multisite_mps,
+template cx64 tools::finite::measure::expectation_value(const Eigen::Tensor<cx64, 3>                             &multisite_mps,
                                                         const std::vector<std::reference_wrapper<const MpoSite>> &mpos, const env_pair<EnvVar> &envs,
                                                         std::optional<svd::config> svd_cfg);
 
-// cplx tools::finite::measure::expectation_value(const std::vector<MpsSite> &mpsBra, const std::vector<MpsSite> &mpsKet, const std::vector<MpoSite> &mpos,
+// cx64 tools::finite::measure::expectation_value(const std::vector<MpsSite> &mpsBra, const std::vector<MpsSite> &mpsKet, const std::vector<MpoSite> &mpos,
 //                                                const env_pair<EnvVar> &envs) {
 //     /*!
 //      * Calculates <mpsBra | mpos | mpsKet>
@@ -1241,8 +1241,8 @@ template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx
 //     //    1).get_chiR()); if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}",
 //     //    state2.get_mps_site(L - 1).get_chiR()); if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}",
 //     //    mpos.back().dimension(1));
-//     Eigen::Tensor<cplx, 3> resL = envs.L.get_block();
-//     Eigen::Tensor<cplx, 3> tmp;
+//     Eigen::Tensor<cx64, 3> resL = envs.L.get_block();
+//     Eigen::Tensor<cx64, 3> tmp;
 //     auto                  &threads = tenx::threads::get();
 //
 //     for(size_t pos = 0; pos < mpos.size(); ++pos) {
@@ -1259,14 +1259,14 @@ template cplx tools::finite::measure::expectation_value(const Eigen::Tensor<cplx
 //         resL = std::move(tmp);
 //     }
 //
-//     Eigen::Tensor<cplx, 0> res = resL.contract(envs.R.get_block(), tenx::idx({0, 1, 2}, {0, 1, 2}));
+//     Eigen::Tensor<cx64, 0> res = resL.contract(envs.R.get_block(), tenx::idx({0, 1, 2}, {0, 1, 2}));
 //     return res.coeff(0);
 // }
 
-cplx tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1, long pos2) {
+cx64 tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cx64, 2> &op1, const Eigen::Tensor<cx64, 2> &op2, long pos1, long pos2) {
     if(pos1 == pos2) {
         // Stack the operators
-        Eigen::Tensor<cplx, 2> op12 = op1.contract(op2, tenx::idx({0}, {1}));
+        Eigen::Tensor<cx64, 2> op12 = op1.contract(op2, tenx::idx({0}, {1}));
         LocalObservableOp      ob12 = {op12, pos1};
         return expectation_value(state, {ob12});
     } else {
@@ -1277,13 +1277,13 @@ cplx tools::finite::measure::correlation(const StateFinite &state, const Eigen::
     }
 }
 
-Eigen::Tensor<cplx, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1,
-                                                                  const Eigen::Tensor<cplx, 2> &op2) {
+Eigen::Tensor<cx64, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cx64, 2> &op1,
+                                                                  const Eigen::Tensor<cx64, 2> &op2) {
     if constexpr(settings::debug) tools::log->trace("Measuring correlation matrix");
 
     long                   len = state.get_length<long>();
     bool                   eq  = tenx::MatrixMap(op1) == tenx::MatrixMap(op2);
-    Eigen::Tensor<cplx, 2> C(len, len);
+    Eigen::Tensor<cx64, 2> C(len, len);
     C.setZero();
 
     for(long pos_j = 0; pos_j < len; pos_j++) {
@@ -1298,7 +1298,7 @@ Eigen::Tensor<cplx, 2> tools::finite::measure::correlation_matrix(const StateFin
     return C;
 }
 
-Eigen::Tensor<cplx, 2> tools::finite::measure::opdm(const StateFinite &state) {
+Eigen::Tensor<cx64, 2> tools::finite::measure::opdm(const StateFinite &state) {
     /* We create a matrix of the form
      *
      *
@@ -1394,7 +1394,7 @@ Eigen::Tensor<double, 1> tools::finite::measure::opdm_spectrum(const StateFinite
     return state.measurements.opdm_spectrum.value();
 }
 
-double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<cplx, 2> &correlation_matrix) {
+double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<cx64, 2> &correlation_matrix) {
     tools::log->trace("Measuring structure factor");
     if(correlation_matrix.dimension(0) != correlation_matrix.dimension(1))
         throw except::logic_error("Correlation matrix is not square: dims {}", correlation_matrix.dimensions());
@@ -1413,9 +1413,9 @@ std::array<Eigen::Tensor<double, 1>, 3> tools::finite::measure::expectation_valu
 
 std::array<double, 3> tools::finite::measure::expectation_value_xyz(const StateFinite &state) {
     if constexpr(settings::debug) tools::log->trace("Measuring spin expectation_value_xyz");
-    Eigen::Tensor<cplx, 2> sx  = tenx::TensorMap(qm::spin::half::sx);
-    Eigen::Tensor<cplx, 2> sy  = tenx::TensorMap(qm::spin::half::sy);
-    Eigen::Tensor<cplx, 2> sz  = tenx::TensorMap(qm::spin::half::sz);
+    Eigen::Tensor<cx64, 2> sx  = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cx64, 2> sy  = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cx64, 2> sz  = tenx::TensorMap(qm::spin::half::sz);
     auto                   pos = (state.get_length<long>() - 1) / 2;
     return {measure::expectation_value(state, {LocalObservableOp{sx, pos}}).real(), measure::expectation_value(state, {LocalObservableOp{sy, pos}}).real(),
             measure::expectation_value(state, {LocalObservableOp{sz, pos}}).real()};
@@ -1423,9 +1423,9 @@ std::array<double, 3> tools::finite::measure::expectation_value_xyz(const StateF
 
 std::array<Eigen::Tensor<double, 2>, 3> tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
     if constexpr(settings::debug) tools::log->trace("Measuring spin correlation_matrix_xyz");
-    Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
-    Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
-    Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
+    Eigen::Tensor<cx64, 2> sx = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cx64, 2> sy = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cx64, 2> sz = tenx::TensorMap(qm::spin::half::sz);
     if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx).real();
     if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy).real();
     if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz).real();
@@ -1434,9 +1434,9 @@ std::array<Eigen::Tensor<double, 2>, 3> tools::finite::measure::correlation_matr
 }
 
 std::array<double, 3> tools::finite::measure::structure_factor_xyz(const StateFinite &state) {
-    Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
-    Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
-    Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
+    Eigen::Tensor<cx64, 2> sx = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cx64, 2> sy = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cx64, 2> sz = tenx::TensorMap(qm::spin::half::sz);
     if(not state.measurements.structure_factor_x) {
         auto correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
         if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = correlation_matrix_sx.real();

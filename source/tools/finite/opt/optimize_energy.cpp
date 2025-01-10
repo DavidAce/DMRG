@@ -87,7 +87,7 @@ namespace tools::finite::opt {
             if(meta.problem_size <= settings::precision::eigs_max_size_shift_invert) {
                 hamiltonian.factorization       = eig::Factorization::LU;
                 solver.config.ritz              = eig::Ritz::primme_largest_abs;
-                solver.config.sigma             = cplx(meta.eigv_target.value_or(0.0), 0.0);
+                solver.config.sigma             = cx64(meta.eigv_target.value_or(0.0), 0.0);
                 solver.config.primme_projection = "primme_proj_default";
                 solver.config.primme_locking    = false;
                 solver.config.primme_preconditioner = preconditioner_jacobi<Scalar>;
@@ -126,8 +126,8 @@ namespace tools::finite::opt {
 
         auto                 t_eigs = tid::tic_scope("eigs-ene", tid::higher);
         std::vector<opt_mps> results;
-        if(meta.optType == OptType::REAL) results = eigs_energy_executor<real>(tensors, initial_mps, meta);
-        if(meta.optType == OptType::CPLX) results = eigs_energy_executor<cplx>(tensors, initial_mps, meta);
+        if(meta.optType == OptType::REAL) results = eigs_energy_executor<fp64>(tensors, initial_mps, meta);
+        if(meta.optType == OptType::CPLX) results = eigs_energy_executor<cx64>(tensors, initial_mps, meta);
 
         auto t_post = tid::tic_scope("post");
         if(results.empty()) {
@@ -135,7 +135,7 @@ namespace tools::finite::opt {
             return initial_mps; // The solver failed
         }
 
-        auto comparator = [&meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
+        auto comparator = [&meta](const opt_mps &lhs, const opt_mps &rhs) {
             // auto diff = std::abs(lhs.get_energy_shifted() - rhs.get_energy_shifted());
             // if(diff < settings::precision::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             auto lhs_abs_energy = std::abs(lhs.get_energy()) + std::sqrt(std::abs(lhs.get_variance()));
