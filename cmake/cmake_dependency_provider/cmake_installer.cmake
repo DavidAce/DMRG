@@ -29,8 +29,11 @@ function(pkg_install_dependencies  package_name)
         # Backward for printing pretty stack traces
         pkg_install(Backward)
 
+#         For parsing toml config files (work in progress)
+#        pkg_install(tomlplusplus)
+
         # For parsing toml config files (work in progress)
-        pkg_install(tomlplusplus)
+        pkg_install(toml11)
 
         # ceres-solver (for L-BFGS routine)
 #        pkg_install(gflags)

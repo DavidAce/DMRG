@@ -24,7 +24,8 @@ find_package(spdlog       1.11.0...1.16.0 REQUIRED)
 find_package(fmt          11.0.0...11.9.0 REQUIRED)
 find_package(CLI11        2.1.1...2.4.2   REQUIRED)                                         # Command line argument parser
 find_package(Backward     1.6             REQUIRED)
-find_package(tomlplusplus 3.4.0           REQUIRED)
+#find_package(tomlplusplus 3.4.0           REQUIRED)
+find_package(toml11       4.2.0           REQUIRED)
 #find_package(arpack++   2.3.0  REQUIRED)                                          # C++ frontend for arpack-ng. Custom find module.
 #find_package(mpfr       4.1.0  REQUIRED)
 
@@ -68,7 +69,7 @@ target_link_libraries(dmrg-deps INTERFACE
             primme::primme
             lbfgspp
             cppoptlib::cppoptlib
-            tomlplusplus::tomlplusplus
+#            tomlplusplus::tomlplusplus
             # We link Backward::Backward on the dmrg-stacktrace object directly
             )
 

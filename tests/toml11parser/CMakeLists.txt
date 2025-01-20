@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
-project(dmrg-test-tomlparser)
+project(dmrg-test-toml11parser)
 enable_testing()
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE
 
                       )
-find_package(tomlplusplus 3.4.0 REQUIRED)
-find_package(tomlplusplus 3.4.0 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE tomlplusplus::tomlplusplus dmrg-deps dmrg-flags)
+find_package(toml11 4.2.0 REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE toml11::toml11 dmrg-deps dmrg-flags)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/tests)
 target_link_precompiled_headers(${PROJECT_NAME})
