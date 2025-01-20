@@ -106,7 +106,7 @@ template<typename res_type, typename mps_type, typename mpo_type, typename env_t
 void matrix_vector_product_tblis(TensorWrite<res_type> &res_, const TensorRead<mps_type> &mps_, const TensorRead<mpo_type> &mpo_,
                                  const TensorRead<env_type> &enL_, const TensorRead<env_type> &enR_, std::string arch) {
     using T  = typename mps_type::Scalar;
-    using MT = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+    // using MT = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
     auto res = tenx::asEval(res_);
     auto mps = tenx::asEval(mps_);
@@ -364,7 +364,7 @@ int main() {
     settings::threading::num_threads = 1;
     settings::configure_threads();
     using real = double;
-    using cplx = std::complex<double>;
+    // using cplx = std::complex<double>;
     long sites = 24;
     long d     = 2 << (sites - 1);
     // long d     = 8 << (sites - 1);

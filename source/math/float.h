@@ -64,7 +64,7 @@ bool cmp_t(Lhs lhs, Rhs rhs) {
 // }
 
 namespace Eigen {
-
+    #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
     template<>
     struct NumTraits<fp128> : NumTraits<double> // permits to get the epsilon, dummy_precision, lowest, highest functions
     {
@@ -83,7 +83,7 @@ namespace Eigen {
         typedef fp128 Nested;
         enum { IsComplex = 1, IsInteger = 0, IsSigned = 1, RequireInitialization = 1, ReadCost = 1, AddCost = 6, MulCost = 6 };
     };
-
+    #endif
 }
 #if defined(DMRG_USE_QUADMATH)
 
@@ -265,7 +265,6 @@ struct f128_t : f128_base<long double> {
     f128_t(std::string_view s) { val = strtold(s.data(), nullptr); }
     f128_t(const char *c) : f128_t(std::string_view(c)) {}
     [[nodiscard]] std::string string(int prec = 36, size_t width = 0, char pres = 'f', std::string_view align = "", std::string_view sign = "") const final {
-        std::string buf;
         char        fstr[16];
         std::snprintf(fstr, sizeof fstr, "%%%s%s%d.%dL%c", align == "<" ? "-" : align.data(), sign.data(), static_cast<int>(width), prec, pres);
         auto size = std::snprintf(nullptr, 0, fstr, val);

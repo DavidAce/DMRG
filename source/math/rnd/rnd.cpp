@@ -150,7 +150,6 @@ namespace rnd {
     }
     template float       uniform(float mean, float std);
     template double      uniform(double mean, double std);
-    template long double uniform(long double mean, long double std);
 #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
     template fp128 uniform(fp128 mean, fp128 std);
 #endif
@@ -172,7 +171,6 @@ namespace rnd {
     }
     template float       normal(float mean, float std);
     template double      normal(double mean, double std);
-    template long double normal(long double mean, long double std);
     template fp128       normal(fp128 mean, fp128 std);
 
     template<typename out_t>
@@ -192,7 +190,6 @@ namespace rnd {
     }
     template float       log_normal(float mean, float std);
     template double      log_normal(double mean, double std);
-    template long double log_normal(long double mean, long double std);
     template fp128       log_normal(fp128 mean, fp128 std);
 
     std::vector<int> random_with_replacement(const std::vector<int> &in) {
@@ -229,7 +226,6 @@ namespace rnd {
     template void shuffle(std::vector<long> &list);
     template void shuffle(std::vector<size_t> &list);
     template void shuffle(std::vector<double> &list);
-    template void shuffle(std::vector<long double> &list);
 #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
     template void shuffle(std::vector<fp128> &list);
 #endif
@@ -254,7 +250,6 @@ namespace rnd {
     }
     template float       random<float>(dist d, float mean, float width);
     template double      random<double>(dist d, double mean, double width);
-    template long double random<long double>(dist d, long double mean, long double width);
 #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
     template fp128 random<fp128>(dist d, fp128 mean, fp128 width);
 #endif
@@ -264,7 +259,6 @@ namespace rnd {
     }
     template float       random<float>(std::string_view d, float mean, float width);
     template double      random<double>(std::string_view d, double mean, double width);
-    template long double random<long double>(std::string_view d, long double mean, long double width);
     template fp128       random<fp128>(std::string_view d, fp128 mean, fp128 width);
 
     template<typename out_t>
@@ -289,7 +283,6 @@ namespace rnd {
     }
     template std::vector<float>       random<float>(dist d, float mean, float width, size_t num);
     template std::vector<double>      random<double>(dist d, double mean, double width, size_t num);
-    template std::vector<long double> random<long double>(dist d, long double mean, long double width, size_t num);
     template std::vector<fp128>       random<fp128>(dist d, fp128 mean, fp128 width, size_t num);
 
     template<typename out_t>
@@ -300,7 +293,6 @@ namespace rnd {
     }
     template std::vector<float>       random<float>(dist d, float mean, float width, const std::vector<float> &weights);
     template std::vector<double>      random<double>(dist d, double mean, double width, const std::vector<double> &weights);
-    template std::vector<long double> random<long double>(dist d, long double mean, long double width, const std::vector<long double> &weights);
     template std::vector<fp128>       random<fp128>(dist d, fp128 mean, fp128 width, const std::vector<fp128> &weights);
 
     template<typename out_t>
@@ -309,7 +301,6 @@ namespace rnd {
     }
     template std::vector<float>       random<float>(std::string_view d, float mean, float width, size_t num);
     template std::vector<double>      random<double>(std::string_view d, double mean, double width, size_t num);
-    template std::vector<long double> random<long double>(std::string_view d, long double mean, long double width, size_t num);
     template std::vector<fp128>       random<fp128>(std::string_view d, fp128 mean, fp128 width, size_t num);
 
     template<typename out_t>
@@ -318,7 +309,6 @@ namespace rnd {
     }
     template std::vector<float>       random<float>(std::string_view d, float mean, float width, const std::vector<float> &weights);
     template std::vector<double>      random<double>(std::string_view d, double mean, double width, const std::vector<double> &weights);
-    template std::vector<long double> random<long double>(std::string_view d, long double mean, long double width, const std::vector<long double> &weights);
     template std::vector<fp128>       random<fp128>(std::string_view d, fp128 mean, fp128 width, const std::vector<fp128> &weights);
 
 }

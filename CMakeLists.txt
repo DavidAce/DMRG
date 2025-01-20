@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(DMRG++
-        VERSION 3.1.0
-        DESCRIPTION "MPS algorithms for 1D quantum spin chains"
+        VERSION 3.5.0
+        DESCRIPTION "MPS algorithms for 1D quantum systems"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
 include(cmake/Deprecation.cmake) # Warn if user passes deprecated settings
@@ -21,9 +21,7 @@ option(DMRG_CMAKE_DEBUG "Extra information during CMake configuration" FALSE)
 option(COMPILER_PROFILE_BUILD "Enable -ftime-trace (inspect with ClangBuildAnalyzer)" FALSE)
 option(COMPILER_ENABLE_ASAN "Enable runtime address sanitizer -fsanitize=address" FALSE)
 option(COMPILER_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=undefined" FALSE)
-option(COMPILER_ENABLE_LTO "Enable link time optimization" FALSE)
 option(COMPILER_ENABLE_PCH "Enable precompiled headers to speed up compilation" FALSE)
-option(COMPILER_ENABLE_CCACHE "Enable ccache to speed up compilation" FALSE)
 option(COMPILER_ENABLE_COVERAGE "Enable test coverage" FALSE)
 option(EIGEN_USE_THREADS "Use STL threads to parallelize Eigen::Tensor" TRUE)
 option(THREADS_PREFER_PTHREAD_FLAG "Prefer -pthread flag over -lpthread or similar" TRUE)

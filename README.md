@@ -1,4 +1,5 @@
 [![Ubuntu 22.04](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml)
+[![Ubuntu 24.04](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-24.04.yml/badge.svg)](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml)
 [![codecov](https://codecov.io/gh/DavidAce/DMRG/branch/master/graph/badge.svg?token=9YE72CJ522)](https://codecov.io/gh/DavidAce/DMRG)
 # DMRG++
 

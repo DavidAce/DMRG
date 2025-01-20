@@ -131,7 +131,7 @@ namespace tools::common::h5 {
             auto table = h5file.readTableRecords<std::vector<h5pp_ur::item>>(table_path, h5pp::TableSelection::ALL);
             for(const auto &t : table) {
                 tools::log->trace("Loading {}", t.name);
-                auto &t_ur = tid::get(t.name);
+                auto &t_ur = tid::get(t.name.c_str());
                 t_ur.set_time(t.time);
                 t_ur.set_level(static_cast<tid::level>(t.level));
                 t_ur.set_count(t.count);

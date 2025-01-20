@@ -418,10 +418,10 @@ void flbit::run_algorithm2() {
             auto tevo_op = [&time](const auto &h) -> cx64 {
 #if defined(DMRG_USE_QUADMATH)
                 f128_t fmod_th_128 = fmodq(time.real() * fp128(h.real()), atanq(1.0) * 8.0 /* 2 * M_PIq*/);
-                return std::exp(-1.0i * static_cast<fp64>(fmod_th_128));
-#else
-                f128_t fmod_th_128 = std::fmod(time.real() * fp128(h.real()), 2 * std::numbers::pi_v<fp128>);
-                return std::exp(-1.0i * static_cast<fp64>(fmod_th_128));
+                return std::exp(-1.0i * static_cast<fp64>(fmod_th_128.value()));
+#elif defined(DMRG_USE_FLOAT128)
+                f128_t fmod_th_128 = std::fmod<fp128>(time.real() * fp128(h.real()), 2 * std::numbers::pi_v<fp128>);
+                return std::exp(-1.0i * static_cast<fp64>(fmod_th_128.value()));
 #endif
             };
             //            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
