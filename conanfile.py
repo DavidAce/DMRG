@@ -11,7 +11,7 @@ required_conan_version = ">=1.54.0"
 
 class DMRGConan(ConanFile):
     name = "xDMRG++"
-    version = "3.5.0"
+    version = "4.0.0"
     description = "MPS algorithms for 1D quantum spin chains"
     homepage = "https://github.com/DavidAce/DMRG"
     author = "DavidAce <aceituno@kth.se>"

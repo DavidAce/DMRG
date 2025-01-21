@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 project(xDMRG++
-        VERSION 3.5.0
+        VERSION 4.0.0
         DESCRIPTION "MPS algorithms for 1D quantum systems"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
@@ -115,10 +115,9 @@ add_subdirectory(docs)  # Build documentation with doxygen
 #############################
 if(CMAKE_GENERATOR MATCHES Ninja)
     add_custom_command(
-            TARGET xDMRG++
+            TARGET xDMRG++ POST_BUILD
             COMMAND ninja -C ${CMAKE_BINARY_DIR} -t recompact
             COMMAND python ${CMAKE_CURRENT_LIST_DIR}/ninjatracing --showall ${CMAKE_BINARY_DIR}/.ninja_log > ${CMAKE_BINARY_DIR}/.ninja_trace.json
-            DEPENDS ${CMAKE_BINARY_DIR}/.ninja_log
             BYPRODUCTS ${CMAKE_BINARY_DIR}/.ninja_trace.json
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
             COMMENT "Generating ninja build statistics"

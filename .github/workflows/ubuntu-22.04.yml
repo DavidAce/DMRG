@@ -24,7 +24,9 @@ jobs:
 
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: lukka/get-cmake@latest
       - name: Setup caches
         id: dmrg-cache
@@ -94,17 +96,5 @@ jobs:
           configurePresetAdditionalArgs: "['-DCMAKE_INSTALL_PREFIX=~/pkg-install']"
           buildPreset: 'github-actions-${{ matrix.manager }}'
           testPreset: 'github-actions-${{ matrix.manager }}'
-
-      - name: Coverage
-        if: matrix.compiler == 'gcc' && matrix.manager == 'cmake'
-        run: |
-          # Create lcov report
-          lcov --gcov-tool=gcov-12 --capture --directory build/github-actions-${{ matrix.manager }} --output-file coverage.info
-          lcov --gcov-tool=gcov-12 --remove coverage.info '*/pkg-install*' '*/test-*' '/usr/*' '*include/fmt/*' '*include/spdlog/*' '*/Eigen/*' '*/hdf5/*' '*catch.hpp' --output-file coverage.info # filter system-files
-          lcov --gcov-tool=gcov-12 --list coverage.info # debug info
-          # Upload report to CodeCov
-          bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
-
-
 
 

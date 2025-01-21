@@ -9,37 +9,37 @@ else()
     set(OPENBLAS_DYNAMIC_ARCH ON CACHE INTERNAL "")
 endif()
 
-if(NOT TARGET dmrg-flags)
-    add_library(dmrg-flags INTERFACE)
+if(NOT TARGET xdmrg++-flags)
+    add_library(xdmrg++-flags INTERFACE)
 endif()
 
 ###  Add optional RELEASE/DEBUG compile to flags
-target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
-target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:RELWITHDEBINFO>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
-target_compile_options(dmrg-flags INTERFACE
+target_compile_options(xdmrg++-flags INTERFACE $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
+target_compile_options(xdmrg++-flags INTERFACE $<$<AND:$<CONFIG:RELWITHDEBINFO>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
+target_compile_options(xdmrg++-flags INTERFACE
                        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4>
                        $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Wconversion -Wunused -Wformat -Wdouble-promotion>)
 ###  Enable c++23 support
-target_compile_features(dmrg-flags INTERFACE cxx_std_23)
+target_compile_features(xdmrg++-flags INTERFACE cxx_std_23)
 
 ###  Enable build profiling with ClangBuildAnalyzer
 if(COMPILER_PROFILE_BUILD)
-    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANG_AND_ID:CXX,Clang>:-ftime-trace>)
+    target_compile_options(xdmrg++-flags INTERFACE $<$<COMPILE_LANG_AND_ID:CXX,Clang>:-ftime-trace>)
 endif()
 
 # Settings for sanitizers
 if(COMPILER_ENABLE_ASAN)
-    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=address -fno-omit-frame-pointer>) #-fno-omit-frame-pointer
-    target_link_libraries(dmrg-flags INTERFACE -fsanitize=address)
+    target_compile_options(xdmrg++-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=address -fno-omit-frame-pointer>) #-fno-omit-frame-pointer
+    target_link_libraries(xdmrg++-flags INTERFACE -fsanitize=address)
 endif()
 if(COMPILER_ENABLE_USAN)
-    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error>) #  -fno-omit-frame-pointer
-    target_link_libraries(dmrg-flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error)
+    target_compile_options(xdmrg++-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error>) #  -fno-omit-frame-pointer
+    target_link_libraries(xdmrg++-flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error)
 endif()
 
 if(COMPILER_ENABLE_COVERAGE)
-    target_compile_options(dmrg-flags INTERFACE --coverage)
-    target_link_options(dmrg-flags INTERFACE --coverage)
+    target_compile_options(xdmrg++-flags INTERFACE --coverage)
+    target_link_options(xdmrg++-flags INTERFACE --coverage)
 endif()
 
 
@@ -69,7 +69,7 @@ function(target_link_precompiled_headers tgt)
         if(type MATCHES "EXECUTABLE")
             if(NOT TARGET pch-exe)
                 add_executable(pch-exe ${PROJECT_SOURCE_DIR}/cmake/pch.cpp)
-                target_link_libraries(pch-exe PUBLIC dmrg-deps dmrg-flags)
+                target_link_libraries(pch-exe PUBLIC xdmrg++-deps xdmrg++-flags)
                 target_precompile_headers(pch-exe PUBLIC ${PCH_HEADERS})
                 target_enable_static_libgcc(pch-exe)
             endif()
@@ -78,7 +78,7 @@ function(target_link_precompiled_headers tgt)
             if(NOT TARGET pch-obj)
                 message(STATUS "First target for PCH: ${tgt}")
                 add_library(pch-obj OBJECT ${PROJECT_SOURCE_DIR}/cmake/pch.cpp)
-                target_link_libraries(pch-obj PUBLIC dmrg-deps dmrg-flags)
+                target_link_libraries(pch-obj PUBLIC xdmrg++-deps xdmrg++-flags)
                 target_precompile_headers(pch-obj PUBLIC ${PCH_HEADERS})
             endif()
             target_precompile_headers(${tgt} REUSE_FROM pch-obj)
@@ -98,7 +98,7 @@ if(COMPILER_ENABLE_CCACHE)
         message(STATUS "Found ccache ${CCACHE_PROGRAM}")
         set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_PROGRAM})
         if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-            target_compile_options(dmrg-flags INTERFACE -Xclang -fno-pch-timestamp -Xclang -fpch-preprocess)
+            target_compile_options(xdmrg++-flags INTERFACE -Xclang -fno-pch-timestamp -Xclang -fpch-preprocess)
         endif()
         if(COMPILER_ENABLE_PCH)
             message(STATUS "Detected ccache + pch: Remember to set --> sloppiness = include_file_mtime,pch_defines,time_macros <-- in your ccache.conf")

@@ -47,15 +47,15 @@ find_package(primme                  REQUIRED MODULE BYPASS_PROVIDER)
 find_package(lbfgspp   0.3.0         REQUIRED CONFIG BYPASS_PROVIDER)
 find_package(cppoptlib               REQUIRED MODULE BYPASS_PROVIDER)
 
-# Link all dependencies to dmrg-deps
-if(NOT TARGET dmrg-deps)
-    add_library(dmrg-deps INTERFACE)
+# Link all dependencies to xdmrg++-deps
+if(NOT TARGET xdmrg++-deps)
+    add_library(xdmrg++-deps INTERFACE)
 endif()
-if(NOT TARGET dmrg-flags)
-    add_library(dmrg-flags INTERFACE)
+if(NOT TARGET xdmrg++-flags)
+    add_library(xdmrg++-flags INTERFACE)
 endif()
-target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
-target_link_libraries(dmrg-deps INTERFACE
+target_link_libraries(xdmrg++-flags INTERFACE OpenMP::OpenMP_CXX)
+target_link_libraries(xdmrg++-deps INTERFACE
             CLI11::CLI11
             pcg-cpp::pcg-cpp
             h5pp::h5pp
@@ -70,13 +70,13 @@ target_link_libraries(dmrg-deps INTERFACE
             lbfgspp
             cppoptlib::cppoptlib
 #            tomlplusplus::tomlplusplus
-            # We link Backward::Backward on the dmrg-stacktrace object directly
+            # We link Backward::Backward on the xdmrg++-stacktrace object directly
             )
 
 if(DMRG_ENABLE_TBLIS)
     pkg_install(tblis)
     find_package(tblis REQUIRED MODULE BYPASS_PROVIDER)
-    target_link_libraries(dmrg-deps INTERFACE tblis::tblis)
+    target_link_libraries(xdmrg++-deps INTERFACE tblis::tblis)
 endif()
 
 # Configure Eigen
@@ -101,12 +101,12 @@ endif()
 ### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
 ### for accurate long time-scale evolution)
 if(DMRG_USE_FLOAT128)
-    target_compile_definitions(dmrg-flags INTERFACE DMRG_USE_FLOAT128 H5PP_USE_FLOAT128)
-    target_compile_options(dmrg-flags INTERFACE -fext-numeric-literals)
+    target_compile_definitions(xdmrg++-flags INTERFACE DMRG_USE_FLOAT128 H5PP_USE_FLOAT128)
+    target_compile_options(xdmrg++-flags INTERFACE -fext-numeric-literals)
 elseif(DMRG_USE_QUADMATH)
     find_package(quadmath REQUIRED)
-    target_compile_definitions(dmrg-flags INTERFACE DMRG_USE_QUADMATH H5PP_USE_QUADMATH)
-    target_compile_options(dmrg-flags INTERFACE -fext-numeric-literals)
-    target_link_libraries(dmrg-flags INTERFACE quadmath::quadmath)
+    target_compile_definitions(xdmrg++-flags INTERFACE DMRG_USE_QUADMATH H5PP_USE_QUADMATH)
+    target_compile_options(xdmrg++-flags INTERFACE -fext-numeric-literals)
+    target_link_libraries(xdmrg++-flags INTERFACE quadmath::quadmath)
 endif ()
 
