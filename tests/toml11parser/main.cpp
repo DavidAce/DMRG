@@ -111,7 +111,7 @@ void print_table(const toml::ordered_value &table) {
             if(elem.is_table())
                 print_table(elem);
             else {
-                auto keyval = fmt::format("{}{:>{}} {}", key, "=", std::max<size_t>(key.size()+1, maxkeywidth+1) - key.size(), toml::format(elem));
+                auto keyval = fmt::format("{}{:>{}} {}", key, "=", std::max<size_t>(key.size(), maxkeywidth) - key.size(), toml::format(elem));
                 fmt::print("{}{:>{}} {}\n", keyval, "", std::max(30ul, keyval.size()) - keyval.size(), elem.comments().empty() ? "#" : elem.comments().front());
             }
         }
