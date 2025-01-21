@@ -1,0 +1,7 @@
+*.h linguist-language=C++
+*.hpp linguist-language=C++
+*.cpp linguist-language=C++
+
+*.py linguist-detectable=false
+*.pyc linguist-detectable=false
+*.h5 linguist-detectable=false
