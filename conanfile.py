@@ -30,8 +30,8 @@ class DMRGConan(ConanFile):
     }
     default_options = {
         "with_zlib" : True,
-        "with_quadmath": True,
-        "with_float128": False
+        "with_quadmath": False,
+        "with_float128": False,
     }
 
     @property

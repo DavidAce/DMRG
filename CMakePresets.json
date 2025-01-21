@@ -12,7 +12,6 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "DMRG_USE_QUADMATH": "FALSE",
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "TRUE",
         "DMRG_ENABLE_TBLIS": "TRUE",
@@ -169,10 +168,23 @@
       }
     },
     {
+      "name": "float128",
+      "hidden": true,
+      "cacheVariables": {
+        "DMRG_USE_FLOAT128": "TRUE"
+      }
+    },
+    {
+      "name": "quadmath",
+      "hidden": true,
+      "cacheVariables": {
+        "DMRG_USE_QUADMATH": "TRUE"
+      }
+    },
+    {
       "name": "gcc",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc",
         "CMAKE_CXX_COMPILER": "g++",
         "CMAKE_Fortran_COMPILER": "gfortran",
@@ -185,7 +197,6 @@
       "name": "gcc-11",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-11",
         "CMAKE_CXX_COMPILER": "g++-11",
         "CMAKE_Fortran_COMPILER": "gfortran-11"
@@ -195,7 +206,6 @@
       "name": "gcc-12",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-12",
         "CMAKE_CXX_COMPILER": "g++-12",
         "CMAKE_Fortran_COMPILER": "gfortran-12",
@@ -207,7 +217,6 @@
       "name": "gcc-13",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-13",
         "CMAKE_CXX_COMPILER": "g++-13",
         "CMAKE_Fortran_COMPILER": "gfortran-13",
@@ -220,8 +229,6 @@
       "name": "gcc-14",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_USE_QUADMATH": "FALSE",
-        "DMRG_USE_FLOAT128": "TRUE",
         "CMAKE_C_COMPILER": "gcc-14",
         "CMAKE_CXX_COMPILER": "g++-14",
         "CMAKE_Fortran_COMPILER": "gfortran-14",
@@ -723,6 +730,7 @@
       "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
         "gcc",
+        "float128",
         "flexiblas",
         "haswell",
         "conan",
@@ -750,7 +758,6 @@
         "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
-        "DMRG_USE_QUADMATH": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",
         "COMPILER_ENABLE_USAN": "TRUE",
         "COMPILER_ENABLE_PCH": "FALSE",
@@ -765,6 +772,7 @@
       "displayName": "Release|march=native|conan|flexiblas",
       "inherits": [
         "gcc",
+        "float128",
         "flexiblas",
         "native",
         "conan",
@@ -776,7 +784,6 @@
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
-        "DMRG_USE_QUADMATH": "TRUE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
     },
@@ -785,6 +792,7 @@
       "displayName": "Debug|conan|flexiblas",
       "inherits": [
         "gcc",
+        "float128",
         "flexiblas",
         "conan",
         "debug",
@@ -795,7 +803,6 @@
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install-debug",
         "DMRG_BUILD_TOOLS": "FALSE",
-        "DMRG_USE_QUADMATH": "TRUE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
     },
@@ -804,6 +811,7 @@
       "displayName": "Release|march=native|conan|mkl",
       "inherits": [
         "mkl",
+        "quadmath",
         "native",
         "conan",
         "release",
@@ -814,7 +822,6 @@
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/fLBIT/build/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
-        "DMRG_USE_QUADMATH": "TRUE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
     }

@@ -39,7 +39,7 @@ std::vector<tools::common::h5::MpsInfo> tools::common::h5::resume::find_fully_st
         auto path  = fmt::format("{}/{}", state_prefix, pfx);
         auto iter  = h5file.readAttribute<size_t>(path, "iter");
         auto step  = h5file.readAttribute<size_t>(path, "step");
-        auto event = h5file.readAttribute<StorageEvent>(path, "storage_event");
+        auto event = h5file.readAttribute<std::optional<StorageEvent>>(path, "storage_event").value();
         mps_info.emplace_back(MpsInfo{path, iter, step, event});
     }
     // Sort according to step
