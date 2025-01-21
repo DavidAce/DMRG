@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
-project(dmrg-test-map-shuffle)
+project(xdmrg++-test-map-shuffle)
 enable_testing()
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE
-                      dmrg-tid
-                      dmrg-math-svd
-                      dmrg-math-rnd
-                      dmrg-math-tenx
-                      dmrg-tools-common-log
-                      dmrg-tools-common-contraction
+                      xdmrg++-tid
+                      xdmrg++-math-svd
+                      xdmrg++-math-rnd
+                      xdmrg++-math-tenx
+                      xdmrg++-tools-common-log
+                      xdmrg++-tools-common-contraction
                       )
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-deps dmrg-flags)
+target_link_libraries(${PROJECT_NAME} PRIVATE xdmrg++-deps xdmrg++-flags)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/tests)
 target_link_precompiled_headers(${PROJECT_NAME})

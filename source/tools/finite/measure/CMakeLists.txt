@@ -1,22 +1,22 @@
-add_source_target(dmrg-tools-finite-measure
+add_source_target(xdmrg++-tools-finite-measure
         TARGET_SOURCES
         measure.cpp
         measure-parity-components.cpp
         entropy.cpp
         information.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-qm-spin
-        dmrg-qm-mpo
-        dmrg-tensors-finite
-        dmrg-math-eig
-        dmrg-math-tenx
-        dmrg-math-linalg
-        dmrg-tools-finite-mps
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+        xdmrg++-tid
+        xdmrg++-qm-spin
+        xdmrg++-qm-mpo
+        xdmrg++-tensors-finite
+        xdmrg++-math-eig
+        xdmrg++-math-tenx
+        xdmrg++-math-linalg
+        xdmrg++-tools-finite-mps
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-contraction
 
         )
 

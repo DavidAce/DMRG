@@ -20,7 +20,7 @@
 #include <memory>
 
 AlgorithmLauncher::AlgorithmLauncher() {
-    tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::loglevel, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger("xDMRG++ launch", settings::console::loglevel, settings::console::timestamp);
     // Called in reverse order
     std::atexit(debug::print_mem_usage);
     std::atexit(tools::common::timer::print_timers);
@@ -128,22 +128,22 @@ void AlgorithmLauncher::start_h5file() {
     if(h5file) h5file->writeDataset(false, "common/finished_all");
 
     // Put git metadata in file
-    h5file->writeDataset(debug::datetime(), ".env/DMRG++/exec/datetime");
-    h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
-    h5file->writeDataset(debug::cpu_info(), ".env/DMRG++/exec/cpu_type");
-    h5file->writeDataset(env::build::datetime, ".env/DMRG++/build/datetime");
-    h5file->writeDataset(env::build::hostname, ".env/DMRG++/build/hostname");
-    h5file->writeDataset(env::build::cpu_type, ".env/DMRG++/build/cpu_type");
-    h5file->writeDataset(env::build::os_name, ".env/DMRG++/build/os_name");
-    h5file->writeDataset(env::build::os_release, ".env/DMRG++/build/os_release");
-    h5file->writeDataset(env::build::os_version, ".env/DMRG++/build/os_version");
-    h5file->writeDataset(env::build::os_platform, ".env/DMRG++/build/os_platform");
-    h5file->writeDataset(env::build::compiler, ".env/DMRG++/build/compiler");
-    h5file->writeDataset(env::build::compiler_flags, ".env/DMRG++/build/compiler_flags");
-    h5file->writeDataset(env::build::linker_flags, ".env/DMRG++/build/linker_flags");
-    h5file->writeDataset(env::git::branch, ".env/DMRG++/git/branch");
-    h5file->writeDataset(env::git::commit_hash, ".env/DMRG++/git/commit");
-    h5file->writeDataset(env::git::revision, ".env/DMRG++/git/revision");
+    h5file->writeDataset(debug::datetime(), ".env/xDMRG++/exec/datetime");
+    h5file->writeDataset(debug::hostname(), ".env/xDMRG++/exec/hostname");
+    h5file->writeDataset(debug::cpu_info(), ".env/xDMRG++/exec/cpu_type");
+    h5file->writeDataset(env::build::datetime, ".env/xDMRG++/build/datetime");
+    h5file->writeDataset(env::build::hostname, ".env/xDMRG++/build/hostname");
+    h5file->writeDataset(env::build::cpu_type, ".env/xDMRG++/build/cpu_type");
+    h5file->writeDataset(env::build::os_name, ".env/xDMRG++/build/os_name");
+    h5file->writeDataset(env::build::os_release, ".env/xDMRG++/build/os_release");
+    h5file->writeDataset(env::build::os_version, ".env/xDMRG++/build/os_version");
+    h5file->writeDataset(env::build::os_platform, ".env/xDMRG++/build/os_platform");
+    h5file->writeDataset(env::build::compiler, ".env/xDMRG++/build/compiler");
+    h5file->writeDataset(env::build::compiler_flags, ".env/xDMRG++/build/compiler_flags");
+    h5file->writeDataset(env::build::linker_flags, ".env/xDMRG++/build/linker_flags");
+    h5file->writeDataset(env::git::branch, ".env/xDMRG++/git/branch");
+    h5file->writeDataset(env::git::commit_hash, ".env/xDMRG++/git/commit");
+    h5file->writeDataset(env::git::revision, ".env/xDMRG++/git/revision");
     h5file->writeDataset(settings::input::seed, "common/seed");
     h5file->writeDataset(settings::input::config_filename, "common/config_filename");
 }

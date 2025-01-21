@@ -1,156 +1,156 @@
-add_source_target(dmrg-algorithms-status
+add_source_target(xdmrg++-algorithms-status
         TARGET_SOURCES
         AlgorithmStatus.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         )
 
 
-add_source_target(dmrg-algorithms-base
+add_source_target(xdmrg++-algorithms-base
         TARGET_SOURCES
         AlgorithmBase.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-config
-        dmrg-debug
-        dmrg-stacktrace
-        dmrg-algorithms-status
-        dmrg-tools-common-h5
-        dmrg-tools-common-log
+        xdmrg++-config
+        xdmrg++-debug
+        xdmrg++-stacktrace
+        xdmrg++-algorithms-status
+        xdmrg++-tools-common-h5
+        xdmrg++-tools-common-log
         )
 
-add_source_target(dmrg-algorithms-finite
+add_source_target(xdmrg++-algorithms-finite
         TARGET_SOURCES
         AlgorithmFinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-debug
-        dmrg-stacktrace
-        dmrg-qm-spin
-        dmrg-tensors-state-finite
-        dmrg-tensors-model-finite
-        dmrg-tensors-edges-finite
-        dmrg-algorithms-status
-        dmrg-algorithms-base
-        dmrg-tools-finite-env
-        dmrg-tools-finite-h5
-        dmrg-tools-finite-measure
-        dmrg-tools-finite-ops
-        dmrg-tools-finite-print
-        dmrg-tools-common-log
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-debug
+        xdmrg++-stacktrace
+        xdmrg++-qm-spin
+        xdmrg++-tensors-state-finite
+        xdmrg++-tensors-model-finite
+        xdmrg++-tensors-edges-finite
+        xdmrg++-algorithms-status
+        xdmrg++-algorithms-base
+        xdmrg++-tools-finite-env
+        xdmrg++-tools-finite-h5
+        xdmrg++-tools-finite-measure
+        xdmrg++-tools-finite-ops
+        xdmrg++-tools-finite-print
+        xdmrg++-tools-common-log
         )
 
-add_source_target(dmrg-algorithms-infinite
+add_source_target(xdmrg++-algorithms-infinite
         TARGET_SOURCES
         AlgorithmInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-debug
-        dmrg-algorithms-status
-        dmrg-algorithms-base
-        dmrg-tensors-state-finite
-        dmrg-tensors-model-finite
-        dmrg-tools-infinite-h5
-        dmrg-tools-infinite-measure
-        dmrg-tools-common-log
-        dmrg-tools-common-h5
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-debug
+        xdmrg++-algorithms-status
+        xdmrg++-algorithms-base
+        xdmrg++-tensors-state-finite
+        xdmrg++-tensors-model-finite
+        xdmrg++-tools-infinite-h5
+        xdmrg++-tools-infinite-measure
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-h5
 
         )
-add_source_target(dmrg-algorithms-fdmrg
+add_source_target(xdmrg++-algorithms-fdmrg
         TARGET_SOURCES
         fdmrg.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-algorithms-finite
-        dmrg-tools-finite-opt
-        dmrg-tools-common-h5
-        dmrg-tools-common-prof
+        xdmrg++-algorithms-finite
+        xdmrg++-tools-finite-opt
+        xdmrg++-tools-common-h5
+        xdmrg++-tools-common-prof
 
         )
-add_source_target(dmrg-algorithms-flbit
+add_source_target(xdmrg++-algorithms-flbit
         TARGET_SOURCES
         flbit.cpp
         flbit_impl.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-algorithms-finite
-        dmrg-math-tenx
-        dmrg-qm-lbit
-        dmrg-tools-finite-opt
-        dmrg-tools-finite-mps
-        dmrg-tools-common-h5
-        dmrg-tools-common-prof
-        dmrg-tools-common-plot
+        xdmrg++-algorithms-finite
+        xdmrg++-math-tenx
+        xdmrg++-qm-lbit
+        xdmrg++-tools-finite-opt
+        xdmrg++-tools-finite-mps
+        xdmrg++-tools-common-h5
+        xdmrg++-tools-common-prof
+        xdmrg++-tools-common-plot
 
         )
 
-add_source_target(dmrg-algorithms-xdmrg
+add_source_target(xdmrg++-algorithms-xdmrg
         TARGET_SOURCES
         xdmrg.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-algorithms-finite
-        dmrg-qm-time
-        dmrg-math-rnd
-        dmrg-algorithms-fdmrg
-        dmrg-tools-finite-opt
+        xdmrg++-algorithms-finite
+        xdmrg++-qm-time
+        xdmrg++-math-rnd
+        xdmrg++-algorithms-fdmrg
+        xdmrg++-tools-finite-opt
         )
 
-add_source_target(dmrg-algorithms-idmrg
+add_source_target(xdmrg++-algorithms-idmrg
         TARGET_SOURCES
         idmrg.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-algorithms-infinite
-        dmrg-tensors-edges-infinite
-        dmrg-tools-infinite-opt
+        xdmrg++-algorithms-infinite
+        xdmrg++-tensors-edges-infinite
+        xdmrg++-tools-infinite-opt
         )
 
-add_source_target(dmrg-algorithms-itebd
+add_source_target(xdmrg++-algorithms-itebd
         TARGET_SOURCES
         itebd.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-qm-time
-        dmrg-algorithms-infinite
-        dmrg-tools-infinite-opt
+        xdmrg++-qm-time
+        xdmrg++-algorithms-infinite
+        xdmrg++-tools-infinite-opt
 
         )
 
-add_source_target(dmrg-algorithms-launcher
+add_source_target(xdmrg++-algorithms-launcher
         TARGET_SOURCES
         AlgorithmLauncher.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-algorithms-fdmrg
-        dmrg-algorithms-flbit
-        dmrg-algorithms-itebd
-        dmrg-algorithms-idmrg
-        dmrg-algorithms-xdmrg
+        xdmrg++-algorithms-fdmrg
+        xdmrg++-algorithms-flbit
+        xdmrg++-algorithms-itebd
+        xdmrg++-algorithms-idmrg
+        xdmrg++-algorithms-xdmrg
         )
 
-add_library(dmrg-algorithms INTERFACE)
-target_link_libraries(dmrg-algorithms INTERFACE
-        dmrg-algorithms-base
-        dmrg-algorithms-finite
-        dmrg-algorithms-infinite
-        dmrg-algorithms-launcher
-        dmrg-algorithms-fdmrg
-        dmrg-algorithms-flbit
-        dmrg-algorithms-itebd
-        dmrg-algorithms-idmrg
-        dmrg-algorithms-xdmrg
+add_library(xdmrg++-algorithms INTERFACE)
+target_link_libraries(xdmrg++-algorithms INTERFACE
+        xdmrg++-algorithms-base
+        xdmrg++-algorithms-finite
+        xdmrg++-algorithms-infinite
+        xdmrg++-algorithms-launcher
+        xdmrg++-algorithms-fdmrg
+        xdmrg++-algorithms-flbit
+        xdmrg++-algorithms-itebd
+        xdmrg++-algorithms-idmrg
+        xdmrg++-algorithms-xdmrg
         )

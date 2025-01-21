@@ -1,15 +1,15 @@
-add_source_target(dmrg-tensors-env
+add_source_target(xdmrg++-tensors-env
         TARGET_SOURCES
         EnvPair.cpp
         EnvBase.cpp
         EnvEne.cpp
         EnvVar.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-math-hash
-        dmrg-tensors-mps
-        dmrg-tensors-mpo
-        dmrg-tensors-env
-        dmrg-tools-common-log
+        xdmrg++-math-hash
+        xdmrg++-tensors-mps
+        xdmrg++-tensors-mpo
+        xdmrg++-tensors-env
+        xdmrg++-tools-common-log
         )

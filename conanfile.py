@@ -10,7 +10,7 @@ import os
 required_conan_version = ">=1.54.0"
 
 class DMRGConan(ConanFile):
-    name = "DMRG++"
+    name = "xDMRG++"
     version = "3.5.0"
     description = "MPS algorithms for 1D quantum spin chains"
     homepage = "https://github.com/DavidAce/DMRG"
@@ -51,9 +51,9 @@ class DMRGConan(ConanFile):
         minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
         if minimum_version:
             if Version(self.settings.compiler.version) < minimum_version:
-                raise ConanInvalidConfiguration("DMRG++ requires C++23, which your compiler does not support.")
+                raise ConanInvalidConfiguration("xDMRG++ requires C++23, which your compiler does not support.")
         else:
-            self.output.warning("DMRG++ requires C++23. Your compiler is unknown. Assuming it supports C++23.")
+            self.output.warning("xDMRG++ requires C++23. Your compiler is unknown. Assuming it supports C++23.")
 
 
     def config_options(self):

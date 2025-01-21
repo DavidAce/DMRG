@@ -23,7 +23,7 @@ namespace eig {
         // Preconditioner
         std::optional<long> jcbMaxBlockSize = std::nullopt; // Block size used with the block Jacobi preconditioner
 
-        // Subspace tolerance in hybrid dmrg-x
+        // Subspace tolerance in hybrid xdmrg++-x
         std::optional<double> subspace_tol      = std::nullopt;
 
         // Solver properties

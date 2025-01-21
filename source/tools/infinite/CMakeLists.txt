@@ -5,13 +5,13 @@ add_subdirectory(env)
 add_subdirectory(opt)
 add_subdirectory(print)
 
-add_library(dmrg-tools-infinite INTERFACE)
-target_link_libraries(dmrg-tools-infinite INTERFACE
-        dmrg-tools-infinite-h5
-        dmrg-tools-infinite-measure
-        dmrg-tools-infinite-env
-        dmrg-tools-infinite-opt
-        dmrg-tools-infinite-mps
-        dmrg-tools-infinite-print
+add_library(xdmrg++-tools-infinite INTERFACE)
+target_link_libraries(xdmrg++-tools-infinite INTERFACE
+        xdmrg++-tools-infinite-h5
+        xdmrg++-tools-infinite-measure
+        xdmrg++-tools-infinite-env
+        xdmrg++-tools-infinite-opt
+        xdmrg++-tools-infinite-mps
+        xdmrg++-tools-infinite-print
         )
-target_link_libraries(dmrg-tools-infinite INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(xdmrg++-tools-infinite INTERFACE xdmrg++-deps xdmrg++-flags)

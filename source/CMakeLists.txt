@@ -8,20 +8,20 @@ add_subdirectory(qm)
 add_subdirectory(tensors)
 add_subdirectory(tid)
 add_subdirectory(tools)
-add_library(dmrg-main OBJECT)
-target_sources(dmrg-main PRIVATE main.cpp)
-target_link_libraries(dmrg-main PUBLIC dmrg-deps dmrg-flags)
-target_link_libraries(dmrg-main INTERFACE
-        dmrg-algorithms
-        dmrg-config
-        dmrg-debug
-        dmrg-stacktrace
-        dmrg-io
-        dmrg-math
-        dmrg-qm
-        dmrg-tensors
-        dmrg-tid
-        dmrg-tools
+add_library(xdmrg++-main OBJECT)
+target_sources(xdmrg++-main PRIVATE main.cpp)
+target_link_libraries(xdmrg++-main PUBLIC xdmrg++-deps xdmrg++-flags)
+target_link_libraries(xdmrg++-main INTERFACE
+        xdmrg++-algorithms
+        xdmrg++-config
+        xdmrg++-debug
+        xdmrg++-stacktrace
+        xdmrg++-io
+        xdmrg++-math
+        xdmrg++-qm
+        xdmrg++-tensors
+        xdmrg++-tid
+        xdmrg++-tools
         )
 
-target_link_precompiled_headers(dmrg-main)
+target_link_precompiled_headers(xdmrg++-main)

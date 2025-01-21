@@ -275,7 +275,7 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
             // *ierr = 60;
         }
 
-        // Terminate if the subspace is ok (in hybrid dmrg-x)
+        // Terminate if the subspace is ok (in hybrid xdmrg++-x)
         if(solver.result.meta.subspace_ok) {
             primme->maxMatvecs                          = 0;
             primme->maxOuterIterations                  = 0;

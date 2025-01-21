@@ -15,8 +15,7 @@ void bench() {
     svd::config svd_settings;
     svd_settings.svd_save = svd::save::NONE;
     svd_settings.loglevel = 2;
-    //    auto filename         = fmt::format("{}/svd-save.h5", BENCH_DATA_DIR);
-    auto filename = "/home/david/GitProjects/DMRG++/output/rsvd-matrices.h5";
+    auto filename         = fmt::format("{}/svd-save.h5", BENCH_DATA_DIR);
     if(h5pp::fs::exists(filename)) {
         h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
 
@@ -132,8 +131,7 @@ void bench() {
 
 int main() {
     tools::Logger::setLogger(tools::log, "rsvd", 0, true);
-    //    auto filename = fmt::format("{}/rsvd-matrices.h5", BENCH_DATA_DIR);
-    auto filename = "/home/david/GitProjects/DMRG++/output/rsvd-matrices.h5";
+    auto filename = fmt::format("{}/rsvd-matrices.h5", BENCH_DATA_DIR);
 
     if(not h5pp::fs::exists(filename)) {
         tools::log->error("File does not exist: {}", filename);

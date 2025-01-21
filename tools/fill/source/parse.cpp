@@ -58,7 +58,7 @@ int settings::parse_fill(int argc, char **argv) {
     app.add_flag("--show-threads"                      , threading::show_threads        , "Show information about threading and exit immediately");
     app.add_option("-z,--compression"                  , storage::compression_level     , "Compression level of h5pp")->check(CLI::Range(0,9));
     app.add_flag  ("--inplace"                                                          , "Add data in place");
-    app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel              , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
+    app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel              , "Log level of xDMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
     app.add_option("-V,--logh5pp"                      , console::logh5pp               , "Log level of h5pp")->transform(CLI::CheckedTransformer(s2e_logh5pp, CLI::ignore_case))->type_name("ENUM");
 
     /* clang-format on */

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(DMRG++
+project(xDMRG++
         VERSION 3.5.0
         DESCRIPTION "MPS algorithms for 1D quantum systems"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
@@ -10,23 +10,24 @@ include(cmake/Deprecation.cmake) # Warn if user passes deprecated settings
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 # Set options for this build
-option(DMRG_USE_QUADMATH "Use __float128 from quadmath.h for fLBIT time evolution" FALSE)
-option(DMRG_USE_FLOAT128 "Use std::float128_t for fLBIT time evolution" FALSE)
-option(DMRG_ENABLE_TBLIS "Use TBLIS for real-valued tensor contractions instead of Eigen3" FALSE)
-option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" FALSE)
-option(DMRG_BUILD_EXAMPLES "Build examples" FALSE)
-option(DMRG_BUILD_TOOLS "Build tools" FALSE)
-option(DMRG_ENABLE_DOCS "Build documentation" FALSE)
-option(DMRG_CMAKE_DEBUG "Extra information during CMake configuration" FALSE)
-option(COMPILER_PROFILE_BUILD "Enable -ftime-trace (inspect with ClangBuildAnalyzer)" FALSE)
-option(COMPILER_ENABLE_ASAN "Enable runtime address sanitizer -fsanitize=address" FALSE)
-option(COMPILER_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=undefined" FALSE)
-option(COMPILER_ENABLE_PCH "Enable precompiled headers to speed up compilation" FALSE)
-option(COMPILER_ENABLE_COVERAGE "Enable test coverage" FALSE)
-option(EIGEN_USE_THREADS "Use STL threads to parallelize Eigen::Tensor" TRUE)
-option(THREADS_PREFER_PTHREAD_FLAG "Prefer -pthread flag over -lpthread or similar" TRUE)
-option(DMRG_BENCH_CONTRACTION "For internal development"  FALSE)
-option(DMRG_SAVE_CONTRACTION "For internal development"  FALSE)
+option(DMRG_USE_QUADMATH            "Use __float128 from quadmath.h for fLBIT time evolution"           FALSE)
+option(DMRG_USE_FLOAT128            "Use std::float128_t for fLBIT time evolution"                      FALSE)
+option(DMRG_ENABLE_TBLIS            "Use TBLIS for faster tensor contractions (FP64) instead of Eigen3" FALSE)
+option(DMRG_ENABLE_TESTS            "Enable unit testing with ctest"                                    FALSE)
+option(DMRG_BUILD_EXAMPLES          "Build examples"                                                    FALSE)
+option(DMRG_BUILD_TOOLS             "Build tools"                                                       FALSE)
+option(DMRG_ENABLE_DOCS             "Build documentation"                                               FALSE)
+option(DMRG_CMAKE_DEBUG             "Extra information during CMake configuration"                      FALSE)
+option(DMRG_BENCH_CONTRACTION       "For internal development"                                          FALSE)
+option(DMRG_SAVE_CONTRACTION        "For internal development"                                          FALSE)
+option(COMPILER_PROFILE_BUILD       "Enable -ftime-trace (inspect with ClangBuildAnalyzer)"             FALSE)
+option(COMPILER_ENABLE_ASAN         "Enable runtime address sanitizer -fsanitize=address"               FALSE)
+option(COMPILER_ENABLE_USAN         "Enable undefined behavior sanitizer -fsanitize=undefined"          FALSE)
+option(COMPILER_ENABLE_PCH          "Enable precompiled headers to speed up compilation"                FALSE)
+option(COMPILER_ENABLE_COVERAGE     "Enable test coverage"                                              FALSE)
+option(EIGEN_USE_THREADS            "Use STL threads to parallelize Eigen::Tensor"                      TRUE)
+option(THREADS_PREFER_PTHREAD_FLAG  "Prefer -pthread flag over -lpthread or similar"                    TRUE)
+
 
 
 # Make an "enum" for valid package managers
@@ -47,9 +48,9 @@ checkcxxoptional()
 include(cmake/PrintBuildInfo.cmake)
 
 ###  Add targets to collect common settings
-add_library(dmrg-flags INTERFACE)
-add_library(dmrg-deps INTERFACE)
-target_include_directories(dmrg-flags INTERFACE source)
+add_library(xdmrg++-flags INTERFACE)
+add_library(xdmrg++-deps INTERFACE)
+target_include_directories(xdmrg++-flags INTERFACE source)
 
 ###  Apply compiler flags
 include(cmake/CompilerFlags.cmake)
@@ -62,11 +63,11 @@ include(cmake/CompilerFlags.cmake)
 include(cmake/environment.cmake)
 
 ### Create the main executable
-add_executable(DMRG++)
-set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
+add_executable(xDMRG++)
+set_target_properties(xDMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 ### Link precompiled headers. Requires DMRG_ENABLE_PCH=ON
-target_link_precompiled_headers(DMRG++)
+target_link_precompiled_headers(xDMRG++)
 
 # Setup paths that find_package should search and
 # let cmake find our Find<package>.cmake modules
@@ -79,10 +80,10 @@ include(cmake/SetupDependencies.cmake)
 add_subdirectory(source)
 
 ### Link all the things!
-target_link_libraries(DMRG++ PRIVATE dmrg-main)
+target_link_libraries(xDMRG++ PRIVATE xdmrg++-main)
 
 ### Enable static linking of libgcc and libstdc++. Requires BUILD_SHARED_LIBS=OFF
-target_enable_static_libgcc(DMRG++)
+target_enable_static_libgcc(xDMRG++)
 
 # Uninstall target
 if(NOT TARGET uninstall)
@@ -98,7 +99,7 @@ endif()
 if(DMRG_CMAKE_DEBUG)
     # Print summary of CMake configuration
     include(cmake/PrintTargetInfo.cmake)
-    print_and_write_project_summary(DMRG++)
+    print_and_write_project_summary(xDMRG++)
 endif()
 
 if(DMRG_ENABLE_TESTS)
@@ -114,7 +115,7 @@ add_subdirectory(docs)  # Build documentation with doxygen
 #############################
 if(CMAKE_GENERATOR MATCHES Ninja)
     add_custom_command(
-            TARGET DMRG++
+            TARGET xDMRG++
             COMMAND ninja -C ${CMAKE_BINARY_DIR} -t recompact
             COMMAND python ${CMAKE_CURRENT_LIST_DIR}/ninjatracing --showall ${CMAKE_BINARY_DIR}/.ninja_log > ${CMAKE_BINARY_DIR}/.ninja_trace.json
             DEPENDS ${CMAKE_BINARY_DIR}/.ninja_log

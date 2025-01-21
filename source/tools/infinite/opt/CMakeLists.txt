@@ -1,13 +1,13 @@
-add_source_target(dmrg-tools-infinite-opt
+add_source_target(xdmrg++-tools-infinite-opt
         TARGET_SOURCES
         opt.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-math-eig
-        dmrg-math-tenx
-        dmrg-tensors-infinite
-        dmrg-tools-common-split
+        xdmrg++-tid
+        xdmrg++-math-eig
+        xdmrg++-math-tenx
+        xdmrg++-tensors-infinite
+        xdmrg++-tools-common-split
         )
 

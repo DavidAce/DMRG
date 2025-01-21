@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(meld VERSION 1.0.0 DESCRIPTION "Melds DMRG++ batch data in HDF5 format")
+project(meld VERSION 1.0.0 DESCRIPTION "Melds xDMRG++ batch data in HDF5 format")
 
 include(${CMAKE_SOURCE_DIR}/cmake/environment.cmake)
 
@@ -22,12 +22,12 @@ add_executable(meld
 target_include_directories(meld PRIVATE source)
 
 target_link_libraries(meld PRIVATE
-                      dmrg-debug
-                      dmrg-stacktrace
-                      dmrg-tensors-mpo-h5tb # To read the hamiltonian table
-                      dmrg-qm-lbit-h5tb  # To read the circuit table
-                      dmrg-tid)
-target_link_libraries(meld PRIVATE dmrg-flags)
+                      xdmrg++-debug
+                      xdmrg++-stacktrace
+                      xdmrg++-tensors-mpo-h5tb # To read the hamiltonian table
+                      xdmrg++-qm-lbit-h5tb  # To read the circuit table
+                      xdmrg++-tid)
+target_link_libraries(meld PRIVATE xdmrg++-flags)
 target_include_directories(meld PRIVATE ${CMAKE_SOURCE_DIR}/source)
 
 find_package(MPI COMPONENTS CXX REQUIRED)

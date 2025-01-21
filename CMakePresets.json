@@ -739,7 +739,7 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-release-pkg-install",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/xdmrg++-release-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE"
       }
@@ -753,7 +753,7 @@
       ],
       "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
-        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-debug-pkg-install",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/xdmrg++-debug-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
@@ -782,7 +782,7 @@
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/xdmrg++-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
@@ -801,7 +801,7 @@
       "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install-debug",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/xdmrg++-pkg-install-debug",
         "DMRG_BUILD_TOOLS": "FALSE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
@@ -820,7 +820,7 @@
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
-        "CMAKE_INSTALL_PREFIX": "$env{HOME}/fLBIT/build/dmrg-pkg-install",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/fLBIT/build/xdmrg++-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }

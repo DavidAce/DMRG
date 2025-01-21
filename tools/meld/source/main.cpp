@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
         using namespace h5pp;
         using namespace spdlog;
         CLI::App app;
-        app.description("meld: Collect simulation data from DMRG++ batch simulations");
+        app.description("meld: Collect simulation data from xDMRG++ batch simulations");
         app.get_formatter()->column_width(80);
         app.option_defaults()->always_capture_default();
         std::map<std::string, Model>                           ModelMap{{"sdual", Model::SDUAL}, {"majorana", Model::MAJORANA}, {"lbit", Model::LBIT}};

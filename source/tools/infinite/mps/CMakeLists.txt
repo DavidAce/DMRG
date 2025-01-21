@@ -1,12 +1,12 @@
-add_source_target(dmrg-tools-infinite-mps
+add_source_target(xdmrg++-tools-infinite-mps
         TARGET_SOURCES
         mps.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-tensors-state-infinite
-        dmrg-tools-common-split
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-tensors-state-infinite
+        xdmrg++-tools-common-split
         )
 

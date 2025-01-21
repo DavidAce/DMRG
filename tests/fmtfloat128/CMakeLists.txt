@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
-project(dmrg-test-fmtfloat128)
+project(xdmrg++-test-fmtfloat128)
 enable_testing()
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/tests)
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-deps dmrg-flags)
+target_link_libraries(${PROJECT_NAME} PRIVATE xdmrg++-deps xdmrg++-flags)
 target_link_precompiled_headers(${PROJECT_NAME})
 
 if(DMRG_ENABLE_COVERAGE)

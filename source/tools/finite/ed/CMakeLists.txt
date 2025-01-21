@@ -1,16 +1,16 @@
-add_source_target(dmrg-tools-finite-ed
+add_source_target(xdmrg++-tools-finite-ed
         TARGET_SOURCES
         ed.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-algorithms-status
-        dmrg-math-eig
-        dmrg-math-tenx
-        dmrg-tensors-finite
-        dmrg-tools-finite-measure
-        dmrg-tools-finite-opt
-        dmrg-tools-common-split
+        xdmrg++-tid
+        xdmrg++-algorithms-status
+        xdmrg++-math-eig
+        xdmrg++-math-tenx
+        xdmrg++-tensors-finite
+        xdmrg++-tools-finite-measure
+        xdmrg++-tools-finite-opt
+        xdmrg++-tools-common-split
         )
 

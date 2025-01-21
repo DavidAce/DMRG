@@ -3,46 +3,46 @@ add_subdirectory(model)
 add_subdirectory(edges)
 add_subdirectory(state)
 
-add_source_target(dmrg-tensors-finite
+add_source_target(xdmrg++-tensors-finite
                   TARGET_SOURCES
                   TensorsFinite.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   INTERFACE_LINK_LIBRARIES
-                  dmrg-tid
-                  dmrg-config
-                  dmrg-math-tenx
-                  dmrg-tensors-mps
-                  dmrg-tensors-mpo
-                  dmrg-tensors-env
-                  dmrg-tensors-state-finite
-                  dmrg-tensors-model-finite
-                  dmrg-tensors-edges-finite
-                  dmrg-tools-finite-env
-                  dmrg-tools-finite-measure
-                  dmrg-tools-finite-mps
-                  dmrg-tools-finite-mpo
-                  dmrg-tools-finite-multisite
-                  dmrg-tools-finite-ops
-                  dmrg-tools-common-log
+                  xdmrg++-tid
+                  xdmrg++-config
+                  xdmrg++-math-tenx
+                  xdmrg++-tensors-mps
+                  xdmrg++-tensors-mpo
+                  xdmrg++-tensors-env
+                  xdmrg++-tensors-state-finite
+                  xdmrg++-tensors-model-finite
+                  xdmrg++-tensors-edges-finite
+                  xdmrg++-tools-finite-env
+                  xdmrg++-tools-finite-measure
+                  xdmrg++-tools-finite-mps
+                  xdmrg++-tools-finite-mpo
+                  xdmrg++-tools-finite-multisite
+                  xdmrg++-tools-finite-ops
+                  xdmrg++-tools-common-log
                   )
-add_source_target(dmrg-tensors-infinite
+add_source_target(xdmrg++-tensors-infinite
         TARGET_SOURCES
         TensorsInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tensors-mps
-        dmrg-tensors-mpo
-        dmrg-tensors-env
-        dmrg-tensors-state-infinite
-        dmrg-tensors-model-infinite
-        dmrg-tensors-edges-infinite
-        dmrg-tools-infinite-env
-        dmrg-tools-infinite-measure
-        dmrg-tools-infinite-mps
-        dmrg-tools-common-log
+        xdmrg++-tensors-mps
+        xdmrg++-tensors-mpo
+        xdmrg++-tensors-env
+        xdmrg++-tensors-state-infinite
+        xdmrg++-tensors-model-infinite
+        xdmrg++-tensors-edges-infinite
+        xdmrg++-tools-infinite-env
+        xdmrg++-tools-infinite-measure
+        xdmrg++-tools-infinite-mps
+        xdmrg++-tools-common-log
         )
 
-add_library(dmrg-tensors INTERFACE)
-target_link_libraries(dmrg-tensors INTERFACE dmrg-tensors-finite dmrg-tensors-infinite)
+add_library(xdmrg++-tensors INTERFACE)
+target_link_libraries(xdmrg++-tensors INTERFACE xdmrg++-tensors-finite xdmrg++-tensors-infinite)

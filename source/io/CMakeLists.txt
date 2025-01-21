@@ -1,6 +1,6 @@
-add_source_target(dmrg-io
+add_source_target(xdmrg++-io
                   TARGET_SOURCES
                   hdf5_types.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   )

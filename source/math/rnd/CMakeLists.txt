@@ -1,6 +1,6 @@
-add_source_target(dmrg-math-rnd
+add_source_target(xdmrg++-math-rnd
         TARGET_SOURCES
         rnd.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         )

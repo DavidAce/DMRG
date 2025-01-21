@@ -43,7 +43,7 @@ def parse(project_name):
     parser.add_argument('--dryrun', action='store_true', help='Dry run')
     parser.add_argument('--debug', action='store_true', help='Debug this script')
     parser.add_argument('--exclusive', action='store_true', help='Reserve whole node')
-    parser.add_argument('--execname', type=str, help='Name of executable', default='DMRG++')
+    parser.add_argument('--execname', type=str, help='Name of executable', default='xDMRG++')
     parser.add_argument('--hint', type=str, default=None, help='Slurm parallelization hint. Cannot be used with --ntasks-per-core', choices=['multithread', 'nomultithread', 'compute_bound', 'memory_bound'])
     parser.add_argument('-j', '--job-dir', type=str, help='Directory with existing .job files. Use for resuming failed runs')
     parser.add_argument('-J', '--job-name', type=str, help='Slurm job name', default='DMRG')

@@ -72,7 +72,7 @@ Scalar tools::common::contraction::expectation_value(const Scalar * const mps_pt
     #if defined(DMRG_SAVE_CONTRACTION)
     {
         t_expval.toc();
-        auto file       = h5pp::File("dmrg-contractions.h5", h5pp::FilePermission::READWRITE);
+        auto file       = h5pp::File("xdmrg++-contractions.h5", h5pp::FilePermission::READWRITE);
         auto group_num  = 0;
         auto group_name = fmt::format("contraction_{}", group_num);
         while(file.linkExists(group_name)) group_name = fmt::format("contraction_{}", ++group_num);
@@ -147,7 +147,7 @@ Scalar tools::common::contraction::expectation_value(const Scalar * const bra_pt
     #if defined(DMRG_SAVE_CONTRACTION)
     {
         t_expval.toc();
-        auto file       = h5pp::File("dmrg-contractions.h5", h5pp::FilePermission::READWRITE);
+        auto file       = h5pp::File("xdmrg++-contractions.h5", h5pp::FilePermission::READWRITE);
         auto group_num  = 0;
         auto group_name = fmt::format("contraction_{}", group_num);
         while(file.linkExists(group_name)) group_name = fmt::format("contraction_{}", ++group_num);

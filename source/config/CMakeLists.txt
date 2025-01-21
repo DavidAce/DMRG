@@ -1,12 +1,12 @@
-add_source_target(dmrg-config
+add_source_target(xdmrg++-config
                   TARGET_SOURCES
                   loader.cpp
                   settings.cpp
                   parse.cpp
                   threading.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   INTERFACE_LINK_LIBRARIES
-                  dmrg-tools-common-log
+                  xdmrg++-tools-common-log
                   )
 

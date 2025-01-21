@@ -1,8 +1,8 @@
 set(test_inc)
 
 set(test_lnk
-    dmrg-tid
-    dmrg-math-svd
-    dmrg-math-tenx
-    dmrg-tools-common-log
+    xdmrg++-tid
+    xdmrg++-math-svd
+    xdmrg++-math-tenx
+    xdmrg++-tools-common-log
 )

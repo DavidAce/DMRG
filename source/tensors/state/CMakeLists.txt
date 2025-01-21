@@ -1,35 +1,35 @@
-add_source_target(dmrg-tensors-state-finite
+add_source_target(xdmrg++-tensors-state-finite
         TARGET_SOURCES
         StateFinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-debug
-        dmrg-tensors-mps
-        dmrg-math-tenx
-        dmrg-tools-finite-measure
-        dmrg-tools-finite-multisite
-        dmrg-tools-common-contraction
-        dmrg-tools-common-log
+        xdmrg++-debug
+        xdmrg++-tensors-mps
+        xdmrg++-math-tenx
+        xdmrg++-tools-finite-measure
+        xdmrg++-tools-finite-multisite
+        xdmrg++-tools-common-contraction
+        xdmrg++-tools-common-log
         )
-add_source_target(dmrg-tensors-state-infinite
+add_source_target(xdmrg++-tensors-state-infinite
         TARGET_SOURCES
         StateInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-debug
-        dmrg-math-tenx
-        dmrg-tensors-mps
-        dmrg-tools-common-contraction
-        dmrg-tools-infinite-measure
-        dmrg-tools-infinite-mps
-        dmrg-tools-common-log
-        dmrg-tools-common-split
-        dmrg-tools-common-views
+        xdmrg++-debug
+        xdmrg++-math-tenx
+        xdmrg++-tensors-mps
+        xdmrg++-tools-common-contraction
+        xdmrg++-tools-infinite-measure
+        xdmrg++-tools-infinite-mps
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-split
+        xdmrg++-tools-common-views
         )
 
-add_library(dmrg-tensors-state INTERFACE)
-target_link_libraries(dmrg-tensors-state INTERFACE
-        dmrg-tensors-state-finite
-        dmrg-tensors-state-infinite)
+add_library(xdmrg++-tensors-state INTERFACE)
+target_link_libraries(xdmrg++-tensors-state INTERFACE
+        xdmrg++-tensors-state-finite
+        xdmrg++-tensors-state-infinite)

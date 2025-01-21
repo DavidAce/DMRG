@@ -1,4 +1,4 @@
-add_source_target(dmrg-math-eig-lapacke
+add_source_target(xdmrg++-math-eig-lapacke
         TARGET_SOURCES
         # Standard problems
         solver_dgeev.cpp
@@ -13,7 +13,7 @@ add_source_target(dmrg-math-eig-lapacke
         solver_dsygvx.cpp
 
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-math-eig-o
+        xdmrg++-math-eig-o
         )

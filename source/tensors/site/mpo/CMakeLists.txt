@@ -1,5 +1,5 @@
 add_subdirectory(h5tb)
-add_source_target(dmrg-tensors-mpo
+add_source_target(xdmrg++-tensors-mpo
                   TARGET_SOURCES
                   MpoSite.cpp
                   MpoFactory.cpp
@@ -9,14 +9,14 @@ add_source_target(dmrg-tensors-mpo
                   LBit.cpp
                   XXZ.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   INTERFACE_LINK_LIBRARIES
-                  dmrg-tensors-mpo-h5tb
-                  dmrg-config
-                  dmrg-debug
-                  dmrg-math-hash
-                  dmrg-math-rnd
-                  dmrg-math-tenx
-                  dmrg-qm-spin
-                  dmrg-tools-common-log
+                  xdmrg++-tensors-mpo-h5tb
+                  xdmrg++-config
+                  xdmrg++-debug
+                  xdmrg++-math-hash
+                  xdmrg++-math-rnd
+                  xdmrg++-math-tenx
+                  xdmrg++-qm-spin
+                  xdmrg++-tools-common-log
                   )

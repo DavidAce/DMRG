@@ -117,11 +117,11 @@ int settings::parse(int argc, char **argv) {
         pre.set_help_flag("--help-preload", "Help for preloading configuration");
         /* clang-format off */
         pre.add_option("-c,--config"                       , input::config_filename , "Path to a .cfg or .h5 file from a previous simulation");
-        pre.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel      , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
+        pre.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel      , "Log level of xDMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
         pre.add_option("--timestamp"                       , console::timestamp     , "Log timestamp");
         /* clang-format on */
         pre.parse(argc, argv);
-        tools::log = tools::Logger::setLogger("DMRG++ config", settings::console::loglevel, settings::console::timestamp);
+        tools::log = tools::Logger::setLogger("xDMRG++ config", settings::console::loglevel, settings::console::timestamp);
         tools::log->info("Preloading {}", input::config_filename);
         //  Try loading the given config file.
         //  Note that there is a default "input/input.config" if none was given
@@ -138,7 +138,7 @@ int settings::parse(int argc, char **argv) {
     preload();
 
     CLI::App app;
-    app.description("DMRG++: An MPS-based algorithm to calculate 1D quantum-states");
+    app.description("xDMRG++: An MPS-based algorithm to calculate 1D quantum-states");
     app.get_formatter()->column_width(90);
     app.option_defaults()->always_capture_default();
     app.allow_extras(false);
@@ -158,7 +158,7 @@ int settings::parse(int argc, char **argv) {
     app.add_flag  ("-r,--resume"                                                        , "Resume simulation from last iteration");
     app.add_flag  ("--replace"                                                          , "Replace the output file and start from the beginning")->excludes("--resume", "--resume-iter", "--resume-name");
     app.add_flag  ("--revive"                                                           , "Replace the output file and start from the beginning")->excludes("--resume", "--resume-iter", "--resume-name", "--replace");
-    app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel              , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
+    app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel              , "Log level of xDMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
     app.add_option("-V,--logh5pp"                      , console::logh5pp               , "Log level of h5pp")->transform(CLI::CheckedTransformer(s2e_logh5pp, CLI::ignore_case))->type_name("ENUM");
     app.add_option("--timestamp"                       , console::timestamp             , "Log timestamp");
     app.add_option("--dummyrange"                      , dummy                          , "Dummy")->check(CLI::Range(0,3));

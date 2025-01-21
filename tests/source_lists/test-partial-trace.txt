@@ -2,7 +2,7 @@ set(test_inc
 )
 
 set(test_lnk
-    dmrg-qm-spin
-    dmrg-math-rnd
-    dmrg-math-linalg
+    xdmrg++-qm-spin
+    xdmrg++-math-rnd
+    xdmrg++-math-linalg
     )

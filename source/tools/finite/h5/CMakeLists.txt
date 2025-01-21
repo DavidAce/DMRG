@@ -1,21 +1,21 @@
-add_source_target(dmrg-tools-finite-h5
+add_source_target(xdmrg++-tools-finite-h5
                   TARGET_SOURCES
                   load.cpp
                   save.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   INTERFACE_LINK_LIBRARIES
-                  dmrg-io
-                  dmrg-tid
-                  dmrg-config
-                  dmrg-algorithms-status
-                  dmrg-math-tenx
-                  dmrg-tensors-finite
-                  dmrg-tools-finite-measure
-                  dmrg-tools-finite-ops
-                  dmrg-tools-finite-env
-                  dmrg-tools-finite-print
-                  dmrg-tools-common-h5
-                  dmrg-tools-common-log
+                  xdmrg++-io
+                  xdmrg++-tid
+                  xdmrg++-config
+                  xdmrg++-algorithms-status
+                  xdmrg++-math-tenx
+                  xdmrg++-tensors-finite
+                  xdmrg++-tools-finite-measure
+                  xdmrg++-tools-finite-ops
+                  xdmrg++-tools-finite-env
+                  xdmrg++-tools-finite-print
+                  xdmrg++-tools-common-h5
+                  xdmrg++-tools-common-log
                   )
 

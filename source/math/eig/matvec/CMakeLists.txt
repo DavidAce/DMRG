@@ -1,4 +1,4 @@
-add_source_target(dmrg-math-eig-matvec
+add_source_target(xdmrg++-math-eig-matvec
         TARGET_SOURCES
         matvec_dense.cpp
         matvec_sparse.cpp
@@ -6,15 +6,15 @@ add_source_target(dmrg-math-eig-matvec
         matvec_mpos.cpp
         matvec_zero.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-tensors-mps
-        dmrg-tensors-mpo
-        dmrg-tensors-env
-        dmrg-math-svd
-        dmrg-math-tenx
-        dmrg-tools-common-contraction
-        dmrg-math-eig-o
+        xdmrg++-tid
+        xdmrg++-tensors-mps
+        xdmrg++-tensors-mpo
+        xdmrg++-tensors-env
+        xdmrg++-math-svd
+        xdmrg++-math-tenx
+        xdmrg++-tools-common-contraction
+        xdmrg++-math-eig-o
         )
 

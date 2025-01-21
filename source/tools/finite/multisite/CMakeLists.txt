@@ -1,14 +1,14 @@
-add_source_target(dmrg-tools-finite-multisite
+add_source_target(xdmrg++-tools-finite-multisite
         TARGET_SOURCES
         multisite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tensors-state-finite
-        dmrg-tensors-model-finite
-        dmrg-tools-finite-measure
-        dmrg-tools-finite-mps
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+        xdmrg++-tensors-state-finite
+        xdmrg++-tensors-model-finite
+        xdmrg++-tools-finite-measure
+        xdmrg++-tools-finite-mps
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-contraction
         )
 

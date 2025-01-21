@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
-project(dmrg-test-partial-trace)
+project(xdmrg++-test-partial-trace)
 enable_testing()
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE
-                      dmrg-qm-spin
-                      dmrg-math-rnd
-                      dmrg-math-linalg
+                      xdmrg++-qm-spin
+                      xdmrg++-math-rnd
+                      xdmrg++-math-linalg
                       )
-target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-deps dmrg-flags)
+target_link_libraries(${PROJECT_NAME} PRIVATE xdmrg++-deps xdmrg++-flags)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/tests)
 target_link_precompiled_headers(${PROJECT_NAME})

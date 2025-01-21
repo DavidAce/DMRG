@@ -1,29 +1,29 @@
-add_source_target(dmrg-tensors-model-finite
+add_source_target(xdmrg++-tensors-model-finite
         TARGET_SOURCES
         ModelFinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-qm-spin
-        dmrg-math-svd
-        dmrg-tensors-mpo
-        dmrg-tools-finite-multisite
-        dmrg-tools-common-log
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-qm-spin
+        xdmrg++-math-svd
+        xdmrg++-tensors-mpo
+        xdmrg++-tools-finite-multisite
+        xdmrg++-tools-common-log
         )
-add_source_target(dmrg-tensors-model-infinite
+add_source_target(xdmrg++-tensors-model-infinite
         TARGET_SOURCES
         ModelInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-config
-        dmrg-math-svd
-        dmrg-math-tenx
-        dmrg-tensors-mpo
+        xdmrg++-config
+        xdmrg++-math-svd
+        xdmrg++-math-tenx
+        xdmrg++-tensors-mpo
 
         )
 
-add_library(dmrg-tensors-model INTERFACE)
-target_link_libraries(dmrg-tensors-model INTERFACE dmrg-tensors-model-finite dmrg-tensors-model-infinite)
+add_library(xdmrg++-tensors-model INTERFACE)
+target_link_libraries(xdmrg++-tensors-model INTERFACE xdmrg++-tensors-model-finite xdmrg++-tensors-model-infinite)

@@ -1,23 +1,23 @@
-add_source_target(dmrg-tools-finite-mps
+add_source_target(xdmrg++-tools-finite-mps
         TARGET_SOURCES
         mps.cpp
         mps_init_entangled_state.cpp
         mps_init_product_state.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-math-svd
-        dmrg-qm-gate
-        dmrg-qm-mpo
-        dmrg-qm-spin
-        dmrg-tensors-state-finite
-        dmrg-tensors-mps
-        dmrg-tools-common-contraction
-        dmrg-tools-common-log
-        dmrg-tools-common-split
-        dmrg-tools-finite-measure
-        dmrg-tools-finite-ops
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-math-svd
+        xdmrg++-qm-gate
+        xdmrg++-qm-mpo
+        xdmrg++-qm-spin
+        xdmrg++-tensors-state-finite
+        xdmrg++-tensors-mps
+        xdmrg++-tools-common-contraction
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-split
+        xdmrg++-tools-finite-measure
+        xdmrg++-tools-finite-ops
         )
 

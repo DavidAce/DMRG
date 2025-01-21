@@ -1,2 +1,2 @@
 set(test_inc)
-set(test_lnk dmrg-tools-common-log)
+set(test_lnk xdmrg++-tools-common-log)

@@ -5,14 +5,14 @@ add_subdirectory(rnd)
 add_subdirectory(hash)
 add_subdirectory(tenx)
 add_subdirectory(fit)
-add_library(dmrg-math INTERFACE)
-target_link_libraries(dmrg-math INTERFACE
-        dmrg-math-linalg
-        dmrg-math-svd
-        dmrg-math-rnd
-        dmrg-math-eig
-        dmrg-math-hash
-        dmrg-math-tenx
-        dmrg-math-fit
+add_library(xdmrg++-math INTERFACE)
+target_link_libraries(xdmrg++-math INTERFACE
+        xdmrg++-math-linalg
+        xdmrg++-math-svd
+        xdmrg++-math-rnd
+        xdmrg++-math-eig
+        xdmrg++-math-hash
+        xdmrg++-math-tenx
+        xdmrg++-math-fit
         )
-target_link_libraries(dmrg-math INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(xdmrg++-math INTERFACE xdmrg++-deps xdmrg++-flags)

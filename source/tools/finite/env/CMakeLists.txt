@@ -1,15 +1,15 @@
-add_source_target(dmrg-tools-finite-env
+add_source_target(xdmrg++-tools-finite-env
         TARGET_SOURCES
         env.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-math-svd
-        dmrg-math-tenx
-        dmrg-tensors-finite
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-math-svd
+        xdmrg++-math-tenx
+        xdmrg++-tensors-finite
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-contraction
         )
 

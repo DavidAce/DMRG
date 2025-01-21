@@ -30,7 +30,7 @@ void clean_up() {
 int main(int argc, char *argv[]) {
     settings::parse(argc, argv);
 
-    tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::loglevel, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger("xDMRG++ main", settings::console::loglevel, settings::console::timestamp);
 
 
     // Set up the number of openmp and std threads for Eigen Tensor

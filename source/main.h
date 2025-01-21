@@ -10,12 +10,12 @@
 
   \tableofcontents
 
-  \section intro DMRG++ (documentation in progress)
+  \section intro xDMRG++ (documentation in progress)
 
 [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a variational numerical technique used to
 study many-body quantum systems. It works by optimizing a trial wave function in the form of a [Matrix Product
 States](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), to find either the groundstate or an eigenstate of a 1D quantum system with high precision.
-DMRG++ includes 4 different MPS-based algorithms for 1D systems:
+xDMRG++ includes 4 different MPS-based algorithms for 1D systems:
 
   - **iDMRG:** *infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
   - **fDMRG:** *finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.

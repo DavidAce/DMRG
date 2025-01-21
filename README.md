@@ -1,18 +1,18 @@
-[![Ubuntu 22.04](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml)
-[![Ubuntu 24.04](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-24.04.yml/badge.svg)](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml)
+[![Ubuntu 22.04](https://github.com/DavidAce/xDMRGpp/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/DavidAce/xDMRGpp/actions/workflows/ubuntu-22.04.yml)
+[![Ubuntu 24.04](https://github.com/DavidAce/xDMRGpp/actions/workflows/ubuntu-24.04.yml/badge.svg)](https://github.com/DavidAce/xDMRGpp/actions/workflows/ubuntu-22.04.yml)
 [![codecov](https://codecov.io/gh/DavidAce/DMRG/branch/master/graph/badge.svg?token=9YE72CJ522)](https://codecov.io/gh/DavidAce/DMRG)
-# DMRG++
+# xDMRG++
 
 ---
 
 # Introduction
 
-[Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a
-variational technique used to study quantum systems. DMRG works by iteratively optimizing a trial wave function in the
+The [density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) algorithm is a
+variational technique used to calculate eigenstates of 1D quantum systems. DMRG works by iteratively optimizing a trial wave function in the
 form of a [Matrix Product State](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), until obtaining an
-eigenstate of the system with high precision.
+eigenstate with high precision.
 
-DMRG++ includes 4 algorithms for finding eigenstates of 1D quantum spin chains:
+xDMRG++ includes several algorithms:
 
 - ***x*DMRG:** *Excited state* DMRG. Finds highly excited eigenstates of finite systems.
 - ***f*DMRG:** *finite* DMRG. Finds the groundstate of finite systems.
@@ -27,7 +27,7 @@ One additional algorithm is included to study the dynamics in the Many-body Loca
 
 ## Documentation
 
-For more information on using DMRG++, visit
+For more information on using xDMRG++, visit
 
 https://kth-dmrg.readthedocs.io/en/latest/
 
@@ -45,7 +45,7 @@ theoretical background of this implementation.
 
 The default input configuration file `input/input.cfg` sets simulation properties, such as algorithm, system size and
 precision.
-`DMRG++` takes a custom input file from command-line arguments, e.g. `./DMRG++ -c path/to/file.cfg`.  
+`xDMRG++` takes a custom input file from command-line arguments, e.g. `./xDMRG++ -c path/to/file.cfg`.  
 
 ## Output Data File
 
@@ -83,30 +83,20 @@ The following software is required to build the project:
 - CMake version >= 3.24 to use presets.
 
 In addition, conan version 2 is recommended for dependency installation. 
-When using conan, you will need:
+To use conan: 
 
-`conan remote add conan-dmrg https://neumann.theophys.kth.se.org/artifactory/api/conan/conan-dmrg`
-
-to obtain some custom dependencies such as h5pp (dev) and arpack++ (see dependencies below).
-
-## Quick start
-
-- `git clone git@github.com:DavidAce/DMRG.git` and `cd DMRG`
-- Configure `cmake --preset <preset>` (see available presets with `cmake --list-presets`)
-- Build with `cmake --build --preset <preset>`
-- Modify `input/input.config` to configure a simulation.
-- Run with `./build/<preset>/DMRG++ -c input/input.cfg`.
-- Find generated data in `output/output.h5`.
-
-Some presets, with `conan` in their name, can use the 
-[CMake Dependency Provider](https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html#dependency-providers)
-mechanism to let CMake call conan to install all the dependencies automatically.
+```
+pip install conan
+conan profile detect
+conan remote add conan-dmrg https://neumann.theophys.kth.se/artifactory/api/conan/conan-dmrg
+```
+The conan-dmrg remote is needed to download the latest version of [**h5pp**](https://github.com/DavidAce/h5pp).
 
 
 ## Dependencies
 
 - Some BLAS, LAPACK and Lapacke implementation. Choose either [FlexiBLAS](https://www.mpi-magdeburg.mpg.de/projects/flexiblas) with reference Lapacke,  [Intel MKL](https://software.intel.com/en-us/mkl)
-  or [OpenBLAS](https://github.com/xianyi/OpenBLAS). Use the [`BLA_VENDOR`](https://cmake.org/cmake/help/latest/module/FindBLAS.html) mechanism to guide CMake. to OpenBLAS can be built by conan. 
+  or [OpenBLAS](https://github.com/xianyi/OpenBLAS). Set the [`BLA_VENDOR`](https://cmake.org/cmake/help/latest/module/FindBLAS.html) variable to guide CMake. 
 - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
 - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn
   requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
@@ -118,6 +108,19 @@ mechanism to let CMake call conan to install all the dependencies automatically.
 - [**Backward-cpp**](https://github.com/bombela/backward-cpp) pretty stack trace printer.
 
 
+## Quick start
+
+- `git clone git@github.com:DavidAce/xDMRGpp.git` and `cd xDMRGpp`
+- Configure `cmake --preset <preset>` (see the available presets with `cmake --list-presets`)
+- Build with `cmake --build --preset <preset>`
+- Modify `input/default.cfg` to configure a simulation.
+- Run with `./build/<preset>/xDMRG++ -c input/default.cfg`.
+- Find generated data in `output/output.h5`.
+
+Some presets, with `conan` in their name, can use the 
+[CMake Dependency Provider](https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html#dependency-providers)
+mechanism to let CMake call conan to install all the dependencies automatically.
+
 ## Automatic Dependency Installation
 
 The CMake flag `DMRG_PACKAGE_MANAGER` controls the automated behavior for finding or installing dependencies. It can
@@ -126,42 +129,39 @@ take one of these strings:
 | Option               | Description                                                                                         |
 |----------------------|-----------------------------------------------------------------------------------------------------|
 | `find` **(default)** | Use CMake's `find_package`  to find dependencies. (Use this with the CMake Presets labeled `conan`) |
-| `cmake¹`             | Use CMake to download and install dependencies during configure.                                    |
+| `cmake`              | Use CMake to download and install dependencies during configure.                                    |
 |                      |                                                                                                     |
 
 
 ## CMake Options
 
-This project takes several flags in the form `cmake [-DOPTIONS=var] ../ `:
+ Add options to the CMake configuration as `cmake [-D<OPTION>=<VALUE>] ...`:
 
-| Var                       | Default                       | Description                                                                         |
-|---------------------------|-------------------------------|-------------------------------------------------------------------------------------|
-| `DMRG_PACKAGE_MANAGER`    | `find`                        | Handle dependencies, `find` or `cmake`                                              |
-| `DMRG_ENABLE_TBLIS`       | `OFF`                         | Use faster [tblis](https://github.com/devinamatthews/tblis) for tensor contractions |
-| `DMRG_ENABLE_TESTS`       | `OFF`                         | Enable unit testing with ctest                                                      |
-| `DMRG_ENABLE_DOCS`        | `OFF`                         | Build documentation                                                                 |
-| `DMRG_ENABLE_COVERAGE`    | `OFF`                         | Enable test coverage                                                                |
-| `DMRG_BUILD_EXAMPLES`     | `OFF`                         | Build examples                                                                      |
-| `DMRG_BUILD_TOOLS`        | `OFF`                         | Build additional binaries under `./tools` for postprocessing (e.g. dmrg-meld)       |
-| `DMRG_DEPS_INSTALL_DIR`   | `CMAKE_INSTALL_PREFIX`        | Install directory for dependencies                                                  |
-| `DMRG_DEPS_BUILD_DIR`     | `CMAKE_BINARY_DIR/dmrg-build` | Build directory for dependencies                                                    |
-| `DMRG_PREFIX_ADD_PKGNAME` | `OFF`                         | Install dependencies into CMAKE_INSTALL_PREFIX/<PackageName>                        |
-| `DMRG_CMAKE_DEBUG`        | `OFF`                         | Extra information during CMake configuration                                        |
-| `EIGEN_USE_THREADS`       | `ON`                          | Use STL threads to parallelize Eigen::Tensor (honors OMP_NUM_THREADS at runtime)    |
-| `COMPILER_ENABLE_ASAN`    | `OFF`                         | Enable runtime address sanitizer -fsanitize=address                                 |
-| `COMPILER_ENABLE_USAN`    | `OFF`                         | Enable undefined behavior sanitizer -fsanitize=undefined                            |
-| `COMPILER_ENABLE_LTO`     | `OFF`                         | Enable link time optimization                                                       |
-| `COMPILER_ENABLE_PCH`     | `OFF`                         | Enable precompiled headers to speed up compilation                                  |
-| `COMPILER_ENABLE_CCACHE`  | `OFF`                         | Enable ccache to speed up compilation                                               |
+| Var                           | Default | Description                                                       |
+|-------------------------------|---------|-------------------------------------------------------------------|
+| `DMRG_USE_QUADMATH`           | `FALSE` | Use __float128 from quadmath.h for lbit time evolution            |
+| `DMRG_USE_FLOAT128`           | `FALSE` | Use std::float128_t for lbit time evolution                       |
+| `DMRG_ENABLE_TBLIS`           | `FALSE` | Use TBLIS for faster tensor contractions (FP64) instead of Eigen3 |
+| `DMRG_ENABLE_TESTS`           | `FALSE` | Enable unit testing with ctest                                    |
+| `DMRG_BUILD_EXAMPLES`         | `FALSE` | Build examples                                                    |
+| `DMRG_BUILD_TOOLS`            | `FALSE` | Build tools                                                       |
+| `DMRG_ENABLE_DOCS`            | `FALSE` | Build documentation                                               |
+| `DMRG_CMAKE_DEBUG`            | `FALSE` | Extra information during CMake configuration                      |
+| `COMPILER_PROFILE_BUILD`      | `FALSE` | Enable -ftime-trace (inspect with ClangBuildAnalyzer)             |
+| `COMPILER_ENABLE_ASAN`        | `FALSE` | Enable runtime address sanitizer -fsanitize=address               |
+| `COMPILER_ENABLE_USAN`        | `FALSE` | Enable undefined behavior sanitizer -fsanitize=undefined          |
+| `COMPILER_ENABLE_PCH`         | `FALSE` | Enable precompiled headers to speed up compilation                |
+| `COMPILER_ENABLE_COVERAGE`    | `FALSE` | Enable test coverage                                              |
+| `EIGEN_USE_THREADS`           | `TRUE`  | Use STL threads to parallelize Eigen::Tensor                      |
 
 
 In addition, variables such
 as [`<PackageName>_ROOT`](https://cmake.org/cmake/help/latest/variable/PackageName_ROOT.html)
-and [`<PackageName>_DIR`](https://cmake.org/cmake/help/latest/command/find_package.html) can be set to help guide
-CMake's `find_package` calls:
+and [`<PackageName>_DIR`](https://cmake.org/cmake/help/latest/command/find_package.html) can be set to guide
+CMake's `find_package` calls to find dependencies.
 
 
 ---
 
 # Contact Information
-For questions about DMRG++ email David Aceituno aceituno `<at>` kth.se, or create a new [issue](https://github.com/DavidAce/DMRG/issues) or [discussion](https://github.com/DavidAce/DMRG/discussion).
+For questions about xDMRG++ email David Aceituno aceituno `<at>` kth.se, or create a new [issue](https://github.com/DavidAce/xDMRGpp/issues) or [discussion](https://github.com/DavidAce/xDMRGpp/discussion).

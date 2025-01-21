@@ -1,4 +1,4 @@
-add_source_target(dmrg-math-svd
+add_source_target(xdmrg++-math-svd
         TARGET_SOURCES
         svd.cpp
         svd_eigen.cpp
@@ -6,8 +6,8 @@ add_source_target(dmrg-math-svd
         svd_rsvd.cpp
         svd_save.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
+        xdmrg++-tid
         )
 

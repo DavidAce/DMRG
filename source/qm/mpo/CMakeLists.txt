@@ -1,9 +1,9 @@
-add_source_target(dmrg-qm-mpo
+add_source_target(xdmrg++-qm-mpo
         TARGET_SOURCES
         mpo.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-math-rnd
-        dmrg-math-tenx
+        xdmrg++-math-rnd
+        xdmrg++-math-tenx
         )

@@ -1,8 +1,8 @@
-add_source_target(dmrg-tid
+add_source_target(xdmrg++-tid
         TARGET_SOURCES
         tid.cpp
         ur.cpp
         token.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         )

@@ -1,6 +1,6 @@
-add_source_target(dmrg-math-fit
+add_source_target(xdmrg++-math-fit
         TARGET_SOURCES
         fit.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         )

@@ -4,8 +4,8 @@ authors:
   - family-names: Aceituno Chavez
     given-names: David
     orcid: https://orcid.org/0009-0008-8177-9218
-title: "DMRG++"
-abstract: "MPS algorithms for 1D quantum spin chains"
-version: 3.0.0
-repository-code: "https://github.com/DavidAce/DMRG"
+title: "xDMRG++"
+abstract: "MPS algorithms for 1D quantum systems"
+version: 4.0.0
+repository-code: "https://github.com/DavidAce/xDMRGpp"
 date-released: 2018-02-09

@@ -1,6 +1,6 @@
-add_source_target(dmrg-math-tenx
+add_source_target(xdmrg++-math-tenx
                   TARGET_SOURCES
                   threads.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   )

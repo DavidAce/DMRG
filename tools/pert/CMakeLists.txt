@@ -10,14 +10,14 @@ add_executable(pert
 target_include_directories(pert PRIVATE source)
 
 target_link_libraries(pert PRIVATE
-                      dmrg-debug
-                      dmrg-stacktrace
-                      dmrg-tools-common-log
-                      dmrg-tools-finite-h5
-                      dmrg-tools-finite-measure
-                      dmrg-tensors-mpo-h5tb # To read the hamiltonian table
-                      dmrg-tid)
-target_link_libraries(pert PRIVATE dmrg-flags)
+                      xdmrg++-debug
+                      xdmrg++-stacktrace
+                      xdmrg++-tools-common-log
+                      xdmrg++-tools-finite-h5
+                      xdmrg++-tools-finite-measure
+                      xdmrg++-tensors-mpo-h5tb # To read the hamiltonian table
+                      xdmrg++-tid)
+target_link_libraries(pert PRIVATE xdmrg++-flags)
 target_include_directories(pert PRIVATE ${CMAKE_SOURCE_DIR}/source)
 
 find_package(MPI COMPONENTS CXX REQUIRED)

@@ -75,8 +75,8 @@ rclone_files_to_remote () {
   esac
 
   # Generate a file list
-  mkdir -p "$tempdir/DMRG.$USER/rclone"
-  filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  mkdir -p "$tempdir/xDMRG++.$USER/rclone"
+  filesfromtxt="$tempdir/xDMRG++.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   transferlist=()
   for file in "${@:2}"; do
     if [ -f "$file" ]; then
@@ -128,8 +128,8 @@ rclone_files_from_remote () {
   esac
 
   # Generate a file list
-  mkdir -p "$tempdir/DMRG.$USER/rclone"
-  filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  mkdir -p "$tempdir/xDMRG++.$USER/rclone"
+  filesfromtxt="$tempdir/xDMRG++.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   transferlist=()
   for file in "${@:2}"; do
     echo "$file" >> "$filesfromtxt"
@@ -350,7 +350,7 @@ if [ -f "$status_path" ]; then
     elif [ -n "$PDC_TMP" ]; then
        tempdir="$PDC_TMP"
     fi
-    status_temp="$tempdir/DMRG.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+    status_temp="$tempdir/xDMRG++.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
     status_name="$config_base.status"
     if [ ! -f "$status_temp/$status_name" ]; then
       mkdir -p $status_temp

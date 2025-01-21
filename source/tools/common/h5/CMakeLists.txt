@@ -1,4 +1,4 @@
-add_source_target(dmrg-tools-common-h5
+add_source_target(xdmrg++-tools-common-h5
                   TARGET_SOURCES
                   save.cpp
                   load.cpp
@@ -6,12 +6,12 @@ add_source_target(dmrg-tools-common-h5
                   tmp.cpp
                   storage_info.cpp
                   OBJECT_LINK_LIBRARIES
-                  dmrg-deps dmrg-flags
+                  xdmrg++-deps xdmrg++-flags
                   INTERFACE_LINK_LIBRARIES
-                  dmrg-io
-                  dmrg-tid
-                  dmrg-config
-                  dmrg-algorithms-status
-                  dmrg-tools-common-log
+                  xdmrg++-io
+                  xdmrg++-tid
+                  xdmrg++-config
+                  xdmrg++-algorithms-status
+                  xdmrg++-tools-common-log
                   )
 

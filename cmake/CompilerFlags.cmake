@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(PROJECT_UNAME DMRG)
-
 cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
 if($ENV{CI} OR $ENV{GITHUB_ACTIONS})
     set(OPENBLAS_TARGET GENERIC CACHE INTERNAL "")

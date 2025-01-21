@@ -1,14 +1,14 @@
-add_source_target(dmrg-tensors-mps
+add_source_target(xdmrg++-tensors-mps
         TARGET_SOURCES
         MpsSite.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-debug
-        dmrg-math-linalg
-        dmrg-math-tenx
-        dmrg-math-hash
-        dmrg-tools-common-contraction
-        dmrg-tools-common-log
+        xdmrg++-tid
+        xdmrg++-debug
+        xdmrg++-math-linalg
+        xdmrg++-math-tenx
+        xdmrg++-math-hash
+        xdmrg++-tools-common-contraction
+        xdmrg++-tools-common-log
         )

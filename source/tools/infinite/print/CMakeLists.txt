@@ -1,9 +1,9 @@
-add_source_target(dmrg-tools-infinite-print
+add_source_target(xdmrg++-tools-infinite-print
         TARGET_SOURCES
         print.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tensors-infinite
+        xdmrg++-tensors-infinite
         )
 

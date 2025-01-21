@@ -1,4 +1,4 @@
-add_source_target(dmrg-tools-finite-opt
+add_source_target(xdmrg++-tools-finite-opt
         TARGET_SOURCES
             find_subspace.cpp
             filter_subspace.cpp
@@ -16,15 +16,15 @@ add_source_target(dmrg-tools-finite-opt
             opt_extract_results.cpp
             report.cpp
         OBJECT_LINK_LIBRARIES
-            dmrg-deps dmrg-flags
+            xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-            dmrg-tid
-            dmrg-config
-            dmrg-math-eig
-            dmrg-algorithms-status
-            dmrg-tensors-finite
-            dmrg-tools-finite-measure
-            dmrg-tools-common-log
-            dmrg-tools-common-contraction
+            xdmrg++-tid
+            xdmrg++-config
+            xdmrg++-math-eig
+            xdmrg++-algorithms-status
+            xdmrg++-tensors-finite
+            xdmrg++-tools-finite-measure
+            xdmrg++-tools-common-log
+            xdmrg++-tools-common-contraction
         )
 

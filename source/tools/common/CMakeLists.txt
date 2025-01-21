@@ -1,61 +1,61 @@
 add_subdirectory(h5)
 add_subdirectory(contraction)
 
-add_source_target(dmrg-tools-common-log TARGET_SOURCES log.cpp OBJECT_LINK_LIBRARIES dmrg-deps dmrg-flags)
+add_source_target(xdmrg++-tools-common-log TARGET_SOURCES log.cpp OBJECT_LINK_LIBRARIES xdmrg++-deps xdmrg++-flags)
 
-add_source_target(dmrg-tools-common-prof
+add_source_target(xdmrg++-tools-common-prof
         TARGET_SOURCES
         prof.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-tools-common-log
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-tools-common-log
         )
-add_source_target(dmrg-tools-common-split
+add_source_target(xdmrg++-tools-common-split
         TARGET_SOURCES
         split.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-math-svd
-        dmrg-tensors-mps
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-math-svd
+        xdmrg++-tensors-mps
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-contraction
         )
-add_source_target(dmrg-tools-common-views
+add_source_target(xdmrg++-tools-common-views
         TARGET_SOURCES
         views.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-math-eig
-        dmrg-math-tenx
-        dmrg-tensors-state
-        dmrg-tools-common-log
+        xdmrg++-tid
+        xdmrg++-config
+        xdmrg++-math-eig
+        xdmrg++-math-tenx
+        xdmrg++-tensors-state
+        xdmrg++-tools-common-log
         )
-add_source_target(dmrg-tools-common-plot
+add_source_target(xdmrg++-tools-common-plot
         TARGET_SOURCES
         plot/plot.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+        xdmrg++-deps xdmrg++-flags
         INTERFACE_LINK_LIBRARIES
         )
 
 
-add_library(dmrg-tools-common INTERFACE)
-target_link_libraries(dmrg-tools-common INTERFACE dmrg-deps dmrg-flags)
-target_link_libraries(dmrg-tools-common INTERFACE
-        dmrg-tools-common-log
-        dmrg-tools-common-prof
-        dmrg-tools-common-split
-        dmrg-tools-common-views
-        dmrg-tools-common-plot
-        dmrg-tools-common-h5
-        dmrg-tools-common-contraction
+add_library(xdmrg++-tools-common INTERFACE)
+target_link_libraries(xdmrg++-tools-common INTERFACE xdmrg++-deps xdmrg++-flags)
+target_link_libraries(xdmrg++-tools-common INTERFACE
+        xdmrg++-tools-common-log
+        xdmrg++-tools-common-prof
+        xdmrg++-tools-common-split
+        xdmrg++-tools-common-views
+        xdmrg++-tools-common-plot
+        xdmrg++-tools-common-h5
+        xdmrg++-tools-common-contraction
         )

@@ -67,7 +67,7 @@ namespace eig {
             double               last_log_time  = 0;
             std::deque<double>   recent_evals;
             std::deque<double>   recent_rnorms;
-            bool                 subspace_ok = false; // Used for subspace convergence check in hybrid dmrg-x
+            bool                 subspace_ok = false; // Used for subspace convergence check in hybrid xdmrg++-x
             double               problemNorm = std::numeric_limits<double>::quiet_NaN();
             Form                 form;
             Type                 type;

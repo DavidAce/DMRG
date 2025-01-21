@@ -5,13 +5,13 @@ add_subdirectory(mpo)
 add_subdirectory(spin)
 
 
-add_library(dmrg-qm INTERFACE)
-target_link_libraries(dmrg-qm INTERFACE
-        dmrg-qm-gate
-        dmrg-qm-spin
-        dmrg-qm-mpo
-        dmrg-qm-time
-        dmrg-qm-lbit
+add_library(xdmrg++-qm INTERFACE)
+target_link_libraries(xdmrg++-qm INTERFACE
+        xdmrg++-qm-gate
+        xdmrg++-qm-spin
+        xdmrg++-qm-mpo
+        xdmrg++-qm-time
+        xdmrg++-qm-lbit
         )
 
-target_link_libraries(dmrg-qm INTERFACE dmrg-deps dmrg-flags)
+target_link_libraries(xdmrg++-qm INTERFACE xdmrg++-deps xdmrg++-flags)
