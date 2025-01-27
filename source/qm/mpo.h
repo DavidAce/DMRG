@@ -20,11 +20,11 @@ namespace qm::mpo {
         random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1, const Eigen::MatrixXcd &paulimatrix2, size_t sites);
 
     extern std::tuple<std::vector<Eigen::Tensor<cx64, 4>>, Eigen::Tensor<cx64, 3>, Eigen::Tensor<cx64, 3>>
-        random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites);
+        random_pauli_mpos(const std::vector<Eigen::MatrixXcd> &paulimatrices, size_t sites);
 
     extern std::tuple<std::vector<Eigen::Tensor<cx64, 4>>, Eigen::Tensor<cx64, 3>, Eigen::Tensor<cx64, 3>>
-        sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode);
+        sum_of_pauli_mpo(const std::vector<Eigen::MatrixXcd> &paulimatrices, size_t sites, RandomizerMode mode);
 
     extern std::tuple<std::vector<Eigen::Tensor<cx64, 4>>, Eigen::Tensor<cx64, 3>, Eigen::Tensor<cx64, 3>>
-        random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> &uniform_dist_widths, size_t sites);
+        random_pauli_mpos(const std::vector<Eigen::MatrixXcd> &paulimatrices, const std::vector<double> &uniform_dist_widths, size_t sites);
 }

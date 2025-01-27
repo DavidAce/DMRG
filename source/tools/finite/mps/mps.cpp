@@ -408,13 +408,13 @@ void tools::finite::mps::initialize_state(StateFinite &state, StateInit init, St
     }
 }
 
-void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vector<Eigen::Matrix2cd> &paulimatrices) {
+void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vector<Eigen::MatrixXcd> &paulimatrices) {
     auto [mpos, L, R] = qm::mpo::sum_of_pauli_mpo(paulimatrices, state.get_length(), RandomizerMode::SELECT1);
     tools::finite::ops::apply_mpos(state, mpos, L, R);
 }
 
 void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vector<std::string> &paulistrings) {
-    std::vector<Eigen::Matrix2cd> paulimatrices;
+    std::vector<Eigen::MatrixXcd> paulimatrices;
     for(const auto &str : paulistrings) paulimatrices.emplace_back(qm::spin::half::get_pauli(str));
     apply_random_paulis(state, paulimatrices);
 }

@@ -34,7 +34,7 @@ namespace tools::finite::mps {
     extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cx64,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, MergeEvent mevent, std::optional<svd::config> svd_cfg = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
     extern bool normalize_state                      (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
     extern void initialize_state                     (StateFinite & state, StateInit state_type, StateInitType type, std::string_view sector, bool use_eigenspinors, long bond_lim, std::string & pattern);
-    extern void apply_random_paulis                  (StateFinite & state, const std::vector<Eigen::Matrix2cd> & paulimatrices);
+    extern void apply_random_paulis                  (StateFinite & state, const std::vector<Eigen::MatrixXcd> & paulimatrices);
     extern void apply_random_paulis                  (StateFinite & state, const std::vector<std::string> & paulistrings);
     extern void truncate_all_sites                   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_active_sites                (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);

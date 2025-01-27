@@ -1,5 +1,5 @@
 
-#add_subdirectory(solver_arpack)
+add_subdirectory(solver_arpack)
 add_subdirectory(solver_primme)
 add_subdirectory(solver_lapacke)
 add_subdirectory(matvec)
@@ -15,7 +15,7 @@ add_source_target(xdmrg++-math-eig
         INTERFACE_LINK_LIBRARIES
         xdmrg++-tid
         xdmrg++-math-eig-matvec
-#        xdmrg++-math-eig-arpack
+        xdmrg++-math-eig-arpack
         xdmrg++-math-eig-lapacke
         xdmrg++-math-eig-primme
         )

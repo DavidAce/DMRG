@@ -116,7 +116,7 @@ void IsingSelfDual::set_parameter(const std::string_view name, std::any value) {
  */
 Eigen::Tensor<cx64, 4> IsingSelfDual::get_mpo(cx64 energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
                                               [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
-    using namespace qm::spin::half;
+    using namespace qm::spin::half::matrix;
     tools::log->debug("mpo({}): building ising-selfdual mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());

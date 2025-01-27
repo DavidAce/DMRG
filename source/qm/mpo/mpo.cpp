@@ -209,7 +209,7 @@ namespace qm::mpo {
     }
 
     std::tuple<std::vector<Eigen::Tensor<cx64, 4>>, Eigen::Tensor<cx64, 3>, Eigen::Tensor<cx64, 3>>
-        random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites)
+        random_pauli_mpos(const std::vector<Eigen::MatrixXcd> &paulimatrices, size_t sites)
     /*! Builds a string of random pauli matrix MPO's
      *      P = Π  O_i
      * where Π is the product over all sites, and O_i is one of {S, I} on site i.
@@ -267,11 +267,12 @@ namespace qm::mpo {
                 mpos.push_back(MPO_S);
                 mpos_str.emplace_back("S");
             } else {
+
                 mpos.push_back(MPO_I);
                 mpos_str.emplace_back("I");
             }
         }
-        tools::log->warn("Generated random pauli MPO string: {}", mpos_str);
+        // tools::log->warn("Generated random pauli MPO string: {}", mpos_str);
         // Create compatible edges
         Eigen::Tensor<cx64, 3> Ledge(1, 1, num_paulis); // The left  edge
         Eigen::Tensor<cx64, 3> Redge(1, 1, num_paulis); // The right edge
@@ -283,7 +284,7 @@ namespace qm::mpo {
     }
 
     std::tuple<std::vector<Eigen::Tensor<cx64, 4>>, Eigen::Tensor<cx64, 3>, Eigen::Tensor<cx64, 3>>
-        sum_of_pauli_mpo(const std::vector<Eigen::Matrix2cd> &paulimatrices, size_t sites, RandomizerMode mode)
+        sum_of_pauli_mpo(const std::vector<Eigen::MatrixXcd> &paulimatrices, size_t sites, RandomizerMode mode)
     /*! Builds a string of MPO's
      *      P = Π  O_i
      * where Π is the product over all sites, and O_i are MPOs with 2x2 (pauli) matrices on the diagonal
@@ -384,7 +385,7 @@ namespace qm::mpo {
     }
 
     std::tuple<std::vector<Eigen::Tensor<cx64, 4>>, Eigen::Tensor<cx64, 3>, Eigen::Tensor<cx64, 3>>
-        random_pauli_mpos(const std::vector<Eigen::Matrix2cd> &paulimatrices, const std::vector<double> &uniform_dist_widths, size_t sites)
+        random_pauli_mpos(const std::vector<Eigen::MatrixXcd> &paulimatrices, const std::vector<double> &uniform_dist_widths, size_t sites)
     /*! Builds a set of MPO's used for randomizing a state  pauli matrix MPO's with random weights picked from a uniform distribution
      *      P = Π  O_i
      * where Π is the product over all sites, and O_i is the MPO sum of pauli matrices with random weights.

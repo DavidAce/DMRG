@@ -458,7 +458,7 @@ constexpr std::array<long, rank> get_extent(const std::array<long, rank> &I0, co
     }
     auto INN = get_offset(1l + ravel_multi_index(IN, dimensions), dimensions);
     if(INN == std::array<long, rank>{0}) INN = dimensions;
-    for(long idx = rank - 1; idx >= 0; --idx) {
+    for(size_t idx = rank - 1; idx < rank; --idx) {
         extent[idx] = std::clamp(INN[idx] - I0[idx] + 1, 1l, dimensions[idx] - I0[idx]);
         if(INN[idx] > I0[idx]) break;
     }
@@ -622,7 +622,7 @@ typename MatVecMPOS<T>::MatrixType MatVecMPOS<T>::get_diagonal_block(long offset
     if(offset >= size_mps) { return {}; }
     auto t_old = tid::ur("old");
     auto t_new = tid::ur("new");
-    auto res = MatrixType(extent, extent);
+    auto res   = MatrixType(extent, extent);
 
     if(MPOS_A.size() > 1) {
         t_old.tic();
@@ -1213,7 +1213,6 @@ void MatVecMPOS<T>::CalcPc(T shift) {
                     luSuccess = true;
                     break;
 
-
                     // for(auto cidx = 0; cidx < blockI.cols(); ++cidx) {
                     //     VectorType col   = blockI.col(cidx).cwiseAbs();
                     //     blockI.col(cidx) = (col.array() < 2.0 * col.mean()).select(0, blockI.col(cidx)).eval();
@@ -1628,7 +1627,7 @@ template<typename T>
 typename MatVecMPOS<T>::SparseType MatVecMPOS<T>::get_sparse_matrix() const {
     // Fill lower
     std::vector<Eigen::Triplet<T, long>> trip;
-    trip.reserve(size_mps);
+    trip.reserve(static_cast<size_t>(size_mps));
     // #pragma omp parallel for collapse(2)
     for(long J = 0; J < size_mps; J++) {
 #pragma omp parallel for

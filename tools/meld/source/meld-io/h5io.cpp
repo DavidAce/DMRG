@@ -228,13 +228,13 @@ namespace tools::h5io {
                     hamiltonian.h_wdth       = h5tb_hamiltonian.h_wdth;
                     hamiltonian.lambda       = h5tb_hamiltonian.lambda;
                     hamiltonian.delta        = h5tb_hamiltonian.delta;
-                    hamiltonian.distribution = h5tb_hamiltonian.distribution.c_str();
+                    hamiltonian.distribution = static_cast<std::string_view>(h5tb_hamiltonian.distribution);
                 }
                 if constexpr(std::is_same_v<H, majorana>) {
                     auto h5tb_hamiltonian    = h5_src.readTableRecords<h5tb_ising_majorana::table>(hamiltonian_path, h5pp::TableSelection::FIRST);
                     hamiltonian.g            = h5tb_hamiltonian.g;
                     hamiltonian.delta        = h5tb_hamiltonian.delta;
-                    hamiltonian.distribution = h5tb_hamiltonian.distribution.c_str();
+                    hamiltonian.distribution = static_cast<std::string_view>(h5tb_hamiltonian.distribution);
                 }
                 if constexpr(std::is_same_v<H, lbit>) {
                     auto  h5tb_hamiltonian = h5_src.readTableRecords<h5tb_lbit::table>(hamiltonian_path, h5pp::TableSelection::FIRST);
@@ -250,7 +250,7 @@ namespace tools::h5io {
                     hamiltonian.J3_wdth      = h5tb_hamiltonian.J3_wdth;
                     hamiltonian.xi_Jcls      = h5tb_hamiltonian.xi_Jcls;
                     hamiltonian.J2_span      = h5tb_hamiltonian.J2_span;
-                    hamiltonian.distribution = h5tb_hamiltonian.distribution.c_str();
+                    hamiltonian.distribution = static_cast<std::string_view>(h5tb_hamiltonian.distribution);
 
                     auto path_circuit = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
                     circuit.u_depth   = h5tb_circuit.layer + 1; // h5_src.readAttribute<size_t>(path_circuit, "u_depth");

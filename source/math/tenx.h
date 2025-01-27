@@ -17,6 +17,19 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
+// Start by adding missing arithmetic operators
+// template<typename LHS, typename Derived>
+// auto operator*(LHS lhs, const Eigen::TensorBase<Derived> &t) {
+//     return t * lhs;
+// }
+// template<typename LHS, typename Derived>
+// auto operator-(LHS lhs, const Eigen::TensorBase<Derived> &t) {
+//     return t - lhs;
+// }
+// template<typename LHS, typename Derived>
+// auto operator+(LHS lhs, const Eigen::TensorBase<Derived> &t) {
+//     return t + lhs;
+// }
 
 /*! \brief **tenx**: "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -282,16 +295,63 @@ namespace tenx {
     // Detects if Derived is a plain object, like "MatrixXd" or similar.
     // std::decay removes pointer or ref qualifiers if present
     template<typename Derived>
-    using is_plainObject = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived>>, std::decay_t<Derived>>;
+    using is_plain_object = std::is_base_of<Eigen::PlainObjectBase<std::decay_t<Derived>>, std::decay_t<Derived>>;
+    template<typename Derived>
+    inline constexpr bool is_plain_object_v = is_plain_object<Derived>::value;
+    template<typename Derived>
+    inline constexpr bool is_fixed_size_v = Derived::RowsAtCompileTime != Eigen::Dynamic && Derived::ColsAtCompileTime != Eigen::Dynamic;
+    template<typename Derived>
+    inline constexpr bool is_dynamic_size_v = !is_fixed_size_v<Derived>;
 
     template<typename Derived, typename T, auto rank>
     Eigen::Tensor<typename Derived::Scalar, rank> TensorCast(const Eigen::EigenBase<Derived> &matrix, const std::array<T, rank> &dims) {
-        return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
+        // static_assert(is_dynamic_size_v<Derived>);
+        if constexpr(is_plain_object<Derived>::value) {
+            assert(matrix.size() == Eigen::internal::array_prod(dims));
+            return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
+        } else {
+            return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
+        }
     }
+
+    // template<typename Derived>
+    // auto TensorFixedSizeCast(const Eigen::EigenBase<Derived> &matrix) {
+    //     static_assert(is_fixed_size_v<Derived>);
+    //     if constexpr(is_plain_object<Derived>::value) {
+    //         assert(matrix.size() == Eigen::internal::array_prod(dims));
+    //         return Eigen::TensorMap<
+    //             const Eigen::TensorFixedSize<const typename Derived::Scalar, Eigen::Sizes<Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>>>(
+    //             matrix.derived().data(), Derived::RowsAtCompileTime, Derived::ColsAtCompileTime);
+    //     } else {
+    //         return Eigen::TensorMap<
+    //             const Eigen::TensorFixedSize<const typename Derived::Scalar, Eigen::Sizes<Derived::RowsAtCompileTime, Derived::ColsAtCompileTime>>>(
+    //             matrix.derived().eval().data(), Derived::RowsAtCompileTime, Derived::ColsAtCompileTime);
+    //     }
+    // }
+    // template<typename Dimensions, typename Derived>
+    // auto TensorFixedSizeCast(const Eigen::EigenBase<Derived> &matrix) {
+    //     static_assert(is_fixed_size_v<Derived>);
+    //     if constexpr(is_plain_object<Derived>::value) {
+    //         assert(matrix.size() == Eigen::internal::array_prod(Dimensions{}));
+    //         return Eigen::TensorMap<
+    //             const Eigen::TensorFixedSize<const typename Derived::Scalar, Dimensions>>(
+    //             matrix.derived().data(), Dimensions{});
+    //     } else {
+    //         return Eigen::TensorMap<
+    //             const Eigen::TensorFixedSize<const typename Derived::Scalar, Dimensions>>(
+    //             matrix.derived().eval().data(), Dimensions{});
+    //     }
+    // }
 
     template<typename Derived, typename T, auto rank>
     Eigen::Tensor<typename Derived::Scalar, rank> TensorCast(const Eigen::EigenBase<Derived> &matrix, const Eigen::DSizes<T, rank> &dims) {
-        return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
+        // static_assert(is_dynamic_size_v<Derived>);
+        if constexpr(is_plain_object_v<Derived>) {
+            assert(matrix.size() == Eigen::internal::array_prod(dims));
+            return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
+        } else {
+            return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().eval().data(), dims);
+        }
     }
 
     // Helpful overload

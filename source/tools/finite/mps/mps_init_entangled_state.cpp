@@ -53,13 +53,14 @@ void tools::finite::mps::init::set_midchain_singlet_neel_state(StateFinite &stat
                       pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
     move_center_point_to_middle(state);
     Eigen::Tensor<cx64, 1> L(1);
-    L.setConstant(1.0);
+    L.setConstant(cx64{1.0, 0.0});
     Eigen::Tensor<cx64, 1> LC(2); // L for the singlet
     LC.setConstant(1.0 / std::sqrt(2));
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    std::array<Eigen::Tensor<cx64, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
-                                                     tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
+    using namespace qm::spin::half::tensor;
+    std::array<Eigen::Tensor<cx64, 3>, 2> spinors = {get_spinor(axus, +1).reshape(tenx::array3{2, 1, 1}), //
+                                                     get_spinor(axus, -1).reshape(tenx::array3{2, 1, 1})};
     Eigen::Tensor<cx64, 3>                singlet_a(2, 1, 2);
     Eigen::Tensor<cx64, 3>                singlet_b(2, 2, 1);
     singlet_a.slice(std::array<long, 3>{0, 0, 0}, std::array<long, 3>{2, 1, 1}) = spinors[0];  // a_up
@@ -349,11 +350,11 @@ void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspi
 }
 
 void tools::finite::mps::init::randomize_given_state(StateFinite &state, StateInitType type) {
-    using namespace qm::spin::half;
+    using namespace qm::spin::half::matrix;
     switch(type) {
-        case StateInitType::REAL: tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::Matrix2cd>{id, 1.0 / std::sqrt(2.0) * (sx + sz)}); break;
+        case StateInitType::REAL: tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::MatrixXcd>{id, 1.0 / std::sqrt(2.0) * (sx + sz)}); break;
         case StateInitType::CPLX:
-            tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::Matrix2cd>{id, 1.0 / std::sqrt(3.0) * (sx + sy + sz)});
+            tools::finite::mps::apply_random_paulis(state, std::vector<Eigen::MatrixXcd>{id, 1.0 / std::sqrt(3.0) * (sx + sy + sz)});
             break;
     }
 }

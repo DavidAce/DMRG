@@ -55,53 +55,39 @@ namespace num {
 
         template<typename T>
         auto pow(T b, T e) {
-            if constexpr(is_float128<T>)
-                return powq(b, e);
-            else
-                return std::pow(b, e);
+            using std::pow;
+            return pow(b, e);
         }
         template<typename T>
         auto log(T v) {
-            if constexpr(is_float128<T>)
-                return logq(v);
-            else
-                return std::log(v);
+            using std::log;
+            return log(v);
         }
         template<typename T>
         auto log10(T v) {
-            if constexpr(is_float128<T>)
-                return log10q(v);
-            else
-                return std::log10(v);
+            using std::log10;
+            return log10(v);
         }
         template<typename T>
         auto isnan(T v) {
-            if constexpr(is_float128<T>)
-                return isnanq(v);
-            else
-                return std::isnan(v);
+            using std::isnan;
+            return isnan(v);
         }
         template<typename T>
         auto isinf(T v) {
-            if constexpr(is_float128<T>)
-                return isinfq(v);
-            else
-                return std::isinf(v);
+            using std::isinf;
+            return isinf(v);
         }
 
         template<typename T>
         auto floor(T v) {
-            if constexpr(is_float128<T>)
-                return floorq(v);
-            else
-                return std::floor(v);
+            using std::floor;
+            return floor(v);
         }
         template<typename T>
         auto ceil(T v) {
-            if constexpr(is_float128<T>)
-                return ceilq(v);
-            else
-                return std::ceil(v);
+            using std::ceil;
+            return ceil(v);
         }
     }
 

@@ -22,8 +22,8 @@
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_mpos.h"
-#include "../matvec/matvec_zero.h"
 #include "../matvec/matvec_sparse.h"
+#include "../matvec/matvec_zero.h"
 #include "general/sfinae.h"
 #include "math/cast.h"
 #include "tid/tid.h"
@@ -197,7 +197,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, int nev) {
         auto t_prep = tid::tic_scope("prep");
         if constexpr(MatrixType::can_shift) {
             if(config.sigma) {
-                eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
+                eig::log->trace("Setting shift with sigma = {}{:+}", std::real(config.sigma.value()), std::imag(config.sigma.value()));
                 matrix.set_shift(config.sigma.value());
                 if constexpr(MatrixType::can_shift_invert) {
                     if(config.shift_invert == Shinv::ON) {
@@ -273,13 +273,13 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, int nev) {
     eig::log->trace("- {:<30} = {}"     ,"nev_converged",  result.meta.nev_converged);
     eig::log->trace("- {:<30} = {}"     ,"ncv",            result.meta.ncv);
     eig::log->trace("- {:<30} = {}"     ,"ritz",           result.meta.ritz);
-    eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
+    eig::log->trace("- {:<30} = {}{:+}i","sigma",          result.meta.sigma.real(), result.meta.sigma.imag());
     eig::log->trace("- {:<30} = {:.3f}s","time total",     result.meta.time_total);
     eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_mv);
     eig::log->trace("- {:<30} = {:.3f}s","time prep",      result.meta.time_prep);
     /* clang-format on */
 
-    if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
+    // if(result.meta.nev_converged < result.meta.nev) eig::log->warn("Not enough eigenvalues converged");
 }
 
 template<typename MatrixType>
@@ -292,7 +292,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
         auto t_prep = tid::tic_scope("prep");
         if constexpr(MatrixType::can_shift) {
             if(config.sigma) {
-                eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
+                eig::log->trace("Setting shift with sigma = {}{:+}", std::real(config.sigma.value()), std::imag(config.sigma.value()));
                 matrix.set_shift(config.sigma.value());
                 if constexpr(MatrixType::can_shift_invert) {
                     if(config.shift_invert == Shinv::ON) {
@@ -301,8 +301,9 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
                         if constexpr(std::is_same_v<ShiftType, cx64>) solver.SetShiftInvertMode(config.sigma.value());
                         if constexpr(std::is_same_v<ShiftType, fp64>) solver.SetShiftInvertMode(std::real(config.sigma.value()));
                     }
-                } else if(config.shift_invert == Shinv::ON)
+                } else if(config.shift_invert == Shinv::ON) {
                     throw std::runtime_error("Tried to shift-invert an incompatible matrix");
+                }
             }
         } else if(config.sigma) {
             throw std::runtime_error("Tried to apply shift on an incompatible matrix");
@@ -360,7 +361,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
                 solver.FindEigenvectors();
                 if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
                 if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
-            } else {
+                // } else {
                 eig::log->trace("Finding eigenvalues");
                 solver.FindEigenvalues();
                 if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
@@ -409,7 +410,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     eig::log->trace("- {:<30} = {}"     ,"nev_converged",  result.meta.nev_converged);
     eig::log->trace("- {:<30} = {}"     ,"ncv",            result.meta.ncv);
     eig::log->trace("- {:<30} = {}"     ,"ritz",           result.meta.ritz);
-    eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
+    eig::log->trace("- {:<30} = {}{:+}i","sigma",          result.meta.sigma.real(), result.meta.sigma.imag());
     eig::log->trace("- {:<30} = {:.3f}s","time total",     result.meta.time_total);
     eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_mv);
     eig::log->trace("- {:<30} = {:.3f}s","time prep",      result.meta.time_prep);

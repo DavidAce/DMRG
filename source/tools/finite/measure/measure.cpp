@@ -900,7 +900,7 @@ cx64 tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
     Eigen::Tensor<cx64, 4> result, tmp;
     auto                  &threads = tenx::threads::get();
-#pragma message "tools::finite::measure::expectation_value: check if state1, state2 and mpos are real and contract real objects instead"
+#pragma message "tools::finite::measure::expectation_value(state1,state2,mpo): add fp64 mode"
 
     for(size_t pos = 0; pos < L; ++pos) {
         Eigen::Tensor<cx64, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();

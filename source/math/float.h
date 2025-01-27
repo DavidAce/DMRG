@@ -64,7 +64,7 @@ bool cmp_t(Lhs lhs, Rhs rhs) {
 // }
 
 namespace Eigen {
-    #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
+#if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
     template<>
     struct NumTraits<fp128> : NumTraits<double> // permits to get the epsilon, dummy_precision, lowest, highest functions
     {
@@ -83,7 +83,7 @@ namespace Eigen {
         typedef fp128 Nested;
         enum { IsComplex = 1, IsInteger = 0, IsSigned = 1, RequireInitialization = 1, ReadCost = 1, AddCost = 6, MulCost = 6 };
     };
-    #endif
+#endif
 }
 #if defined(DMRG_USE_QUADMATH)
 
@@ -101,6 +101,14 @@ inline fp128 real(const cx128 &x) { return crealq(*reinterpret_cast<const __comp
 inline cx128 imag(const cx128 &x) { return cimagq(*reinterpret_cast<const __complex128 *>(&x)); }
 inline fp128 abs(const cx128 &x) { return cabsq(*reinterpret_cast<const __complex128 *>(&x)); }
 inline fp128 abs2(const cx128 &x) { return abs(conj(x) * x); }
+
+inline fp128 pow(const fp128 &x, const fp128 &e) { return powq(x, e); }
+inline fp128 log(const fp128 &x) { return logq(x); }
+inline fp128 log10(const fp128 &x) { return log10q(x); }
+inline bool  isnan(const fp128 &x) { return isnanq(x); }
+inline bool  isinf(const fp128 &x) { return isinfq(x); }
+inline fp128 floor(const fp128 &x) { return floorq(x); }
+inline fp128 ceil(const fp128 &x) { return ceilq(x); }
 
 #elif defined(DMRG_USE_FLOAT128)
 // inline const fp128 &conj(const fp128 &x) { return x; }
@@ -122,7 +130,7 @@ inline fp128 abs2(const cx128 &x) { return abs(conj(x) * x); }
 template<typename Scalar>
 struct f128_base {
     protected:
-    Scalar val = 0.0;
+    Scalar val = static_cast<Scalar>(0.0);
 
     public:
     virtual ~f128_base() = default;
@@ -184,7 +192,7 @@ struct f128_t : f128_base<fp128> {
         if(size < 0) { throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned < 0"); }
         std::string buf;
         buf.resize(static_cast<size_t>(size));
-        quadmath_snprintf(buf.data(), static_cast<size_t>(size+1), fstr, val);
+        quadmath_snprintf(buf.data(), static_cast<size_t>(size + 1), fstr, val);
         return buf;
     }
 };
@@ -265,13 +273,13 @@ struct f128_t : f128_base<long double> {
     f128_t(std::string_view s) { val = strtold(s.data(), nullptr); }
     f128_t(const char *c) : f128_t(std::string_view(c)) {}
     [[nodiscard]] std::string string(int prec = 36, size_t width = 0, char pres = 'f', std::string_view align = "", std::string_view sign = "") const final {
-        char        fstr[16];
+        char fstr[16];
         std::snprintf(fstr, sizeof fstr, "%%%s%s%d.%dL%c", align == "<" ? "-" : align.data(), sign.data(), static_cast<int>(width), prec, pres);
-        auto size = std::snprintf(nullptr, 0, fstr, val);
-        if(size < 0 ) throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned size < 0");
+        auto size = std::snprintf(nullptr, 0ul, fstr, val);
+        if(size < 0) throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned size < 0");
         std::string buf;
         buf.resize(static_cast<size_t>(size));
-        std::snprintf(buf.data(), size+1, fstr, val);
+        std::snprintf(buf.data(), buf.size() + 1ul, fstr, val);
         return buf;
     }
 };

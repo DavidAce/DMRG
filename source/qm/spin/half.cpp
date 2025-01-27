@@ -1,45 +1,108 @@
 #include "../spin.h"
 #include "debug/exceptions.h"
+#include "math/float.h"
 #include <array>
 #include <Eigen/Core>
+#include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
-
 namespace qm::spin::half {
 
-    /* clang-format off */
-    Eigen::Matrix2cd sx = (Eigen::Matrix2cd() <<
-        0.0, 1.0,
-        1.0, 0.0).finished();
-    Eigen::Matrix2cd sy = (Eigen::Matrix2cd() <<
-        0.0, -1.0i,
-        1.0i, 0.0).finished();
-    Eigen::Matrix2cd sz = (Eigen::Matrix2cd() <<
-        1.0, 0.0,
-        0.0, -1.0).finished();
-    Eigen::Matrix2cd sp = (Eigen::Matrix2cd() <<
-        0.0, 1.0,
-        0.0, 0.0).finished();
-    Eigen::Matrix2cd sm = (Eigen::Matrix2cd() <<
-        0.0, 0.0,
-        1.0, 0.0).finished();
-    Eigen::Matrix2cd nu  = (Eigen::Matrix2cd() <<
-        1.0, 0.0,
-        0.0, 0.0).finished();
-    Eigen::Matrix2cd nd  = (Eigen::Matrix2cd() <<
-        0.0, 0.0,
-        0.0, 1.0).finished();
-    Eigen::Matrix2cd id  = (Eigen::Matrix2cd() <<
-        1.0, 0.0,
-        0.0, 1.0).finished();
+    namespace matrix {
+        const Eigen::MatrixXcd                sx(get_sx<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                sy(get_sy<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                sz(get_sz<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                sp(get_sp<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                sm(get_sm<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                nu(get_nu<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                nd(get_nd<Eigen::MatrixXcd>());
+        const Eigen::MatrixXcd                id(get_id<Eigen::MatrixXcd>());
+        const std::array<Eigen::VectorXcd, 2> sx_spinors(get_sx_spinors<Eigen::VectorXcd>());
+        const std::array<Eigen::VectorXcd, 2> sy_spinors(get_sy_spinors<Eigen::VectorXcd>());
+        const std::array<Eigen::VectorXcd, 2> sz_spinors(get_sz_spinors<Eigen::VectorXcd>());
+        Eigen::VectorXcd                     get_spinor(std::string_view axis, int sign) {
+            auto axus = get_axis_unsigned(axis);
+            if(axus == "x" and sign >= 0) return sx_spinors[0];
+            if(axus == "x" and sign < 0) return sx_spinors[1];
+            if(axus == "y" and sign >= 0) return sy_spinors[0];
+            if(axus == "y" and sign < 0) return sy_spinors[1];
+            if(axus == "z" and sign >= 0) return sz_spinors[0]; // Spin up is |0> = (1,0)
+            if(axus == "z" and sign < 0) return sz_spinors[1];  // Spin down is |1> = (0,1)
+            throw except::runtime_error("get_spinor given invalid axis: {}", axis);
+        }
+        Eigen::VectorXcd get_spinor(std::string_view axis) { return get_spinor(axis, get_sign(axis)); }
 
-    std::array<Eigen::Vector2cd,2> sx_spinors{(Eigen::Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2),
-                                       (Eigen::Vector2cd() << 1.0,-1.0).finished()/std::sqrt(2)};
+    }
+    namespace tensor {
+        const Eigen::Tensor<cx64, 2> sx(get_sx<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> sy(get_sy<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> sz(get_sz<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> sp(get_sp<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> sm(get_sm<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> nu(get_nu<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> nd(get_nd<Eigen::Tensor<cx64, 2>>());
+        const Eigen::Tensor<cx64, 2> id(get_id<Eigen::Tensor<cx64, 2>>());
 
-    std::array<Eigen::Vector2cd,2> sy_spinors{(Eigen::Vector2cd() << 1.0, 1.0i).finished()/std::sqrt(2),
-                                       (Eigen::Vector2cd() << 1.0, -1.0i).finished()/std::sqrt(2)};
+        const std::array<Eigen::Tensor<cx64, 1>, 2> sx_spinors(get_sx_spinors<Eigen::Tensor<cx64, 1>>());
+        const std::array<Eigen::Tensor<cx64, 1>, 2> sy_spinors(get_sy_spinors<Eigen::Tensor<cx64, 1>>());
+        const std::array<Eigen::Tensor<cx64, 1>, 2> sz_spinors(get_sz_spinors<Eigen::Tensor<cx64, 1>>());
+        Eigen::Tensor<cx64, 1>                      get_spinor(std::string_view axis, int sign) {
+            auto axus = get_axis_unsigned(axis);
+            if(axus == "x" and sign >= 0) return sx_spinors[0];
+            if(axus == "x" and sign < 0) return sx_spinors[1];
+            if(axus == "y" and sign >= 0) return sy_spinors[0];
+            if(axus == "y" and sign < 0) return sy_spinors[1];
+            if(axus == "z" and sign >= 0) return sz_spinors[0]; // Spin up is |0> = (1,0)
+            if(axus == "z" and sign < 0) return sz_spinors[1];  // Spin down is |1> = (0,1)
+            throw except::runtime_error("get_spinor given invalid axis: {}", axis);
+        }
+        Eigen::Tensor<cx64, 1> get_spinor(std::string_view axis) { return get_spinor(axis, get_sign(axis)); }
+    }
 
-    std::array<Eigen::Vector2cd,2> sz_spinors{(Eigen::Vector2cd() << 1.0, 0.0).finished()/std::sqrt(2),
-                                              (Eigen::Vector2cd() << 0.0, 1.0).finished()/std::sqrt(2)};
+    const Eigen::Matrix2cd sx(get_sx<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd sy(get_sy<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd sz(get_sz<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd sp(get_sp<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd sm(get_sm<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd nu(get_nu<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd nd(get_nd<Eigen::Matrix2cd>());
+    const Eigen::Matrix2cd id(get_id<Eigen::Matrix2cd>());
+
+    // // auto sx2 = Eigen::Matrix2cd({{0.0 + 0.0i, 1.0 + 0.0i},   //
+    // // {1.0 + 0.0i, 0.0 + 0.0i}}); //
+    // /* clang-format off */
+    // Eigen::Matrix2cd sx = (Eigen::Matrix2cd() <<
+    //     0.0, 1.0,
+    //     1.0, 0.0).finished();
+    // Eigen::Matrix2cd sy = (Eigen::Matrix2cd() <<
+    //     0.0+0.0i, 0.0-1.0i,
+    //     0.0+1.0i, 0.0+0.0i).finished();
+    // Eigen::Matrix2cd sz = (Eigen::Matrix2cd() <<
+    //     1.0 + 0.0i,  0.0 + 0.0i,
+    //     0.0 + 0.0i, -1.0 + 0.0i).finished();
+    // Eigen::Matrix2cd sp = (Eigen::Matrix2cd() <<
+    //     0.0, 1.0,
+    //     0.0, 0.0).finished();
+    // Eigen::Matrix2cd sm = (Eigen::Matrix2cd() <<
+    //     0.0, 0.0,
+    //     1.0, 0.0).finished();
+    // Eigen::Matrix2cd nu  = (Eigen::Matrix2cd() <<
+    //     1.0, 0.0,
+    //     0.0, 0.0).finished();
+    // Eigen::Matrix2cd nd  = (Eigen::Matrix2cd() <<
+    //     0.0, 0.0,
+    //     0.0, 1.0).finished();
+    // Eigen::Matrix2cd id  = (Eigen::Matrix2cd() <<
+    //     1.0, 0.0,
+    //     0.0, 1.0).finished();
+
+    std::array<Eigen::Vector2cd, 2> sx_spinors{(Eigen::Vector2cd() << 1.0 + 0.0i, 1.0 + 0.0i).finished() / std::sqrt(2),
+                                               (Eigen::Vector2cd() << 1.0 + 0.0i, -1.0 + 0.0i).finished() / std::sqrt(2)};
+
+    std::array<Eigen::Vector2cd, 2> sy_spinors{(Eigen::Vector2cd() << 1.0 + 0.0i, 0.0 + 1.0i).finished() / std::sqrt(2),
+                                               (Eigen::Vector2cd() << 1.0 + 0.0i, 0.0 - 1.0i).finished() / std::sqrt(2)};
+
+    std::array<Eigen::Vector2cd, 2> sz_spinors{(Eigen::Vector2cd() << 1.0 + 0.0i, 0.0 + 0.0i).finished() / std::sqrt(2),
+                                               (Eigen::Vector2cd() << 0.0 + 0.0i, 1.0 + 0.0i).finished() / std::sqrt(2)};
 
     std::vector<Eigen::MatrixXcd> SX;
     std::vector<Eigen::MatrixXcd> SY;

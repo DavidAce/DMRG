@@ -105,7 +105,7 @@ Eigen::Tensor<cx64, 4> IsingMajorana::get_mpo(cx64 energy_shift_per_site, std::o
                                               [[maybe_unused]] std::optional<std::vector<size_t>> skip) const
 
 {
-    using namespace qm::spin::half;
+    using namespace qm::spin::half::tensor;
     if constexpr(settings::debug) tools::log->trace("mpo({}): building ising-majorana mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
@@ -123,15 +123,15 @@ Eigen::Tensor<cx64, 4> IsingMajorana::get_mpo(cx64 energy_shift_per_site, std::o
     Eigen::Tensor<cx64, 4> mpo_build;
     mpo_build.resize(5, 5, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_build.setZero();
-    mpo_build.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_build.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
-    mpo_build.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
-    mpo_build.slice(std::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_build.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J1 * get_field() * sz - energy_shift_per_site * id);
-    mpo_build.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * get_coupling() * sx);
-    mpo_build.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sz);
-    mpo_build.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sx);
-    mpo_build.slice(std::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+    mpo_build.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = id;
+    mpo_build.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = sx;
+    mpo_build.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = sz;
+    mpo_build.slice(std::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = id;
+    mpo_build.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = J1 * get_field() * sz - energy_shift_per_site * id;
+    mpo_build.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = J2 * get_coupling() * sx;
+    mpo_build.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.g * sz;
+    mpo_build.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = J2 * h5tb.param.g * sx;
+    mpo_build.slice(std::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = id;
 
     if(tenx::hasNaN(mpo_build)) {
         print_parameter_names();

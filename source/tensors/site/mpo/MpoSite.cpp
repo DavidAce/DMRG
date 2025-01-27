@@ -97,7 +97,7 @@ bool MpoSite::has_mpo() const {
 bool MpoSite::has_mpo_squared() const { return mpo_squared.has_value(); }
 
 Eigen::Tensor<cx128, 4> MpoSite::get_mpo_t(cx128 energy_shift_per_site, std::optional<std::vector<size_t>> nbody,
-                                            std::optional<std::vector<size_t>> skip) const {
+                                           std::optional<std::vector<size_t>> skip) const {
     // tools::log->trace("MpoSite::get_mpo_t(): Pointless upcast {} -> {}", sfinae::type_name<cx64>(), sfinae::type_name<cx128>());
     auto ereal = cx64(static_cast<fp64>(energy_shift_per_site.real(), static_cast<fp64>(energy_shift_per_site.imag())));
     auto mpo   = get_mpo(ereal, nbody, skip);
@@ -173,8 +173,10 @@ bool MpoSite::has_nan() const {
         if(param.second.type() == typeid(long double))
             if(std::isnan(std::any_cast<long double>(param.second))) { return true; }
 #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
-        if(param.second.type() == typeid(fp128))
-            if(isnanq(std::any_cast<fp128>(param.second))) { return true; }
+        if(param.second.type() == typeid(fp128)) {
+            using std::isnan;
+            if(isnan(std::any_cast<fp128>(param.second))) { return true; }
+        }
 #endif
     }
     return (tenx::hasNaN(mpo_internal));
@@ -198,7 +200,8 @@ void MpoSite::assert_validity() const {
         }
 #if defined(DMRG_USE_QUADMATH) || defined(DMRG_USE_FLOAT128)
         if(param.second.type() == typeid(fp128)) {
-            if(isnanq(std::any_cast<fp128>(param.second))) {
+            using std::isnan;
+            if(isnan(std::any_cast<fp128>(param.second))) {
                 print_parameter_names();
                 print_parameter_values();
                 throw except::runtime_error("Param [{}] = {}", param.first, f128_t(std::any_cast<fp128>(param.second)));
@@ -329,7 +332,7 @@ Eigen::Tensor<T, 4> MpoSite::get_parity_shifted_mpo(const Eigen::Tensor<T, 4> &m
     mpo_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl).cast<T>();
     return mpo_with_parity_shift_op;
 }
-template Eigen::Tensor<cx64, 4>   MpoSite::get_parity_shifted_mpo(const Eigen::Tensor<cx64, 4> &mpo_build) const;
+template Eigen::Tensor<cx64, 4>  MpoSite::get_parity_shifted_mpo(const Eigen::Tensor<cx64, 4> &mpo_build) const;
 template Eigen::Tensor<cx128, 4> MpoSite::get_parity_shifted_mpo(const Eigen::Tensor<cx128, 4> &mpo_build) const;
 
 void MpoSite::set_parity_shift_mpo(OptRitz ritz, int sign, std::string_view axis) {
@@ -505,7 +508,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<Scalar, 
     }
     return ledge;
 }
-template Eigen::Tensor<cx64, 1>   MpoSite::get_MPO_edge_left(const Eigen::Tensor<cx64, 4> &mpo) const;
+template Eigen::Tensor<cx64, 1>  MpoSite::get_MPO_edge_left(const Eigen::Tensor<cx64, 4> &mpo) const;
 template Eigen::Tensor<cx128, 1> MpoSite::get_MPO_edge_left(const Eigen::Tensor<cx128, 4> &mpo) const;
 
 template<typename Scalar>
@@ -543,7 +546,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_right(const Eigen::Tensor<Scalar,
     return redge;
 }
 
-template Eigen::Tensor<cx64, 1>   MpoSite::get_MPO_edge_right(const Eigen::Tensor<cx64, 4> &mpo) const;
+template Eigen::Tensor<cx64, 1>  MpoSite::get_MPO_edge_right(const Eigen::Tensor<cx64, 4> &mpo) const;
 template Eigen::Tensor<cx128, 1> MpoSite::get_MPO_edge_right(const Eigen::Tensor<cx128, 4> &mpo) const;
 
 template<typename Scalar>
@@ -559,7 +562,7 @@ Eigen::Tensor<Scalar, 4> MpoSite::apply_edge_left(const Eigen::Tensor<Scalar, 4>
     return tmp;
 }
 
-template Eigen::Tensor<cx64, 4>   MpoSite::apply_edge_left(const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 1> &edgeL) const;
+template Eigen::Tensor<cx64, 4>  MpoSite::apply_edge_left(const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 1> &edgeL) const;
 template Eigen::Tensor<cx128, 4> MpoSite::apply_edge_left(const Eigen::Tensor<cx128, 4> &mpo, const Eigen::Tensor<cx128, 1> &edgeL) const;
 
 template<typename Scalar>
@@ -574,7 +577,7 @@ Eigen::Tensor<Scalar, 4> MpoSite::apply_edge_right(const Eigen::Tensor<Scalar, 4
     tmp.device(*threads->dev) = mpo.contract(edgeR.reshape(tenx::array2{edgeR.size(), 1}), tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
     return tmp;
 }
-template Eigen::Tensor<cx64, 4>   MpoSite::apply_edge_right(const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 1> &edgeR) const;
+template Eigen::Tensor<cx64, 4>  MpoSite::apply_edge_right(const Eigen::Tensor<cx64, 4> &mpo, const Eigen::Tensor<cx64, 1> &edgeR) const;
 template Eigen::Tensor<cx128, 4> MpoSite::apply_edge_right(const Eigen::Tensor<cx128, 4> &mpo, const Eigen::Tensor<cx128, 1> &edgeR) const;
 
 template<typename Scalar>
@@ -588,7 +591,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_left() const {
         throw std::logic_error("Invalid type");
     }
 }
-template Eigen::Tensor<cx64, 1>   MpoSite::get_MPO_edge_left() const;
+template Eigen::Tensor<cx64, 1>  MpoSite::get_MPO_edge_left() const;
 template Eigen::Tensor<cx128, 1> MpoSite::get_MPO_edge_left() const;
 
 template<typename Scalar>
@@ -602,7 +605,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO_edge_right() const {
         throw std::logic_error("Invalid type");
     }
 }
-template Eigen::Tensor<cx64, 1>   MpoSite::get_MPO_edge_right() const;
+template Eigen::Tensor<cx64, 1>  MpoSite::get_MPO_edge_right() const;
 template Eigen::Tensor<cx128, 1> MpoSite::get_MPO_edge_right() const;
 
 template<typename Scalar>
@@ -653,7 +656,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_left() const {
 
     return ledge2_with_shift;
 }
-template Eigen::Tensor<cx64, 1>   MpoSite::get_MPO2_edge_left() const;
+template Eigen::Tensor<cx64, 1>  MpoSite::get_MPO2_edge_left() const;
 template Eigen::Tensor<cx128, 1> MpoSite::get_MPO2_edge_left() const;
 
 template<typename Scalar>
@@ -695,7 +698,7 @@ Eigen::Tensor<Scalar, 1> MpoSite::get_MPO2_edge_right() const {
 
     return redge2_with_shift;
 }
-template Eigen::Tensor<cx64, 1>   MpoSite::get_MPO2_edge_right() const;
+template Eigen::Tensor<cx64, 1>  MpoSite::get_MPO2_edge_right() const;
 template Eigen::Tensor<cx128, 1> MpoSite::get_MPO2_edge_right() const;
 
 void MpoSite::print_parameter_names() const {
