@@ -64,7 +64,6 @@ include(cmake/environment.cmake)
 
 ### Create the main executable
 add_executable(xDMRG++)
-set_target_properties(xDMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
 ### Link precompiled headers. Requires DMRG_ENABLE_PCH=ON
 target_link_precompiled_headers(xDMRG++)

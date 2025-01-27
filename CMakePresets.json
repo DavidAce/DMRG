@@ -1,8 +1,8 @@
 {
-  "version": 3,
+  "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 24,
+    "minor": 28,
     "patch": 0
   },
   "configurePresets": [
@@ -46,6 +46,7 @@
         "CMAKE_Fortran_FLAGS_RELWITHDEBINFO_INIT": "-g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer -fdiagnostics-color=always",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
         "CMAKE_EXE_LINKER_FLAGS": "-Wl,--enable-new-dtags",
+        "CMAKE_LINKER_TYPE": "MOLD",
         "CMAKE_SKIP_BUILD_RPATH": "FALSE",
         "CMAKE_BUILD_WITH_INSTALL_RPATH": "FALSE",
         "CMAKE_INSTALL_RPATH_USE_LINK_PATH": "TRUE"
@@ -182,78 +183,6 @@
       }
     },
     {
-      "name": "gcc",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc",
-        "CMAKE_CXX_COMPILER": "g++",
-        "CMAKE_Fortran_COMPILER": "gfortran",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -Wno-array-bounds",
-        "CMAKE_EXE_LINKER_FLAGS": "-fuse-ld=mold -Wl,--enable-new-dtags",
-        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=mold"
-      }
-    },
-    {
-      "name": "gcc-11",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-11",
-        "CMAKE_CXX_COMPILER": "g++-11",
-        "CMAKE_Fortran_COMPILER": "gfortran-11"
-      }
-    },
-    {
-      "name": "gcc-12",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-12",
-        "CMAKE_CXX_COMPILER": "g++-12",
-        "CMAKE_Fortran_COMPILER": "gfortran-12",
-        "CMAKE_EXE_LINKER_FLAGS": " -fuse-ld=mold -Wl,--enable-new-dtags",
-        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=mold"
-      }
-    },
-    {
-      "name": "gcc-13",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-13",
-        "CMAKE_CXX_COMPILER": "g++-13",
-        "CMAKE_Fortran_COMPILER": "gfortran-13",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -Wno-array-bounds",
-        "CMAKE_EXE_LINKER_FLAGS": "-fuse-ld=mold -Wl,--enable-new-dtags",
-        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=mold"
-      }
-    },
-    {
-      "name": "gcc-14",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-14",
-        "CMAKE_CXX_COMPILER": "g++-14",
-        "CMAKE_Fortran_COMPILER": "gfortran-14",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always",
-        "CMAKE_EXE_LINKER_FLAGS": "-fuse-ld=mold -Wl,--enable-new-dtags",
-        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=mold"
-      }
-    },
-    {
-      "name": "clang-15",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang-15",
-        "CMAKE_CXX_COMPILER": "clang++-15"
-      }
-    },
-    {
-      "name": "clang-18",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang-18",
-        "CMAKE_CXX_COMPILER": "clang++-18"
-      }
-    },
-    {
       "name": "find",
       "hidden": true,
       "cacheVariables": {
@@ -282,404 +211,106 @@
       }
     },
     {
-      "name": "release-gcc-11",
-      "displayName": "Release|gcc-11",
-      "hidden": true,
-      "inherits": [
-        "gcc-11",
-        "release",
-        "default"
-      ]
-    },
-    {
-      "name": "release-gcc-12",
-      "displayName": "Release|gcc-12",
-      "hidden": true,
-      "inherits": [
-        "gcc-12",
-        "release",
-        "default"
-      ]
-    },
-    {
-      "name": "release-gcc-13",
-      "displayName": "Release|gcc-13",
-      "hidden": true,
-      "inherits": [
-        "gcc-13",
-        "release",
-        "default"
-      ]
-    },
-    {
-      "name": "release-gcc-14",
-      "displayName": "Release|gcc-14",
-      "hidden": true,
-      "inherits": [
-        "gcc-14",
-        "release",
-        "default"
-      ]
-    },
-    {
-      "name": "release-clang-15",
-      "displayName": "Release|clang-15",
-      "hidden": true,
-      "inherits": [
-        "clang-15",
-        "release",
-        "default"
-      ]
-    },
-    {
-      "name": "release-clang-18",
-      "displayName": "Release|clang-18",
-      "hidden": true,
-      "inherits": [
-        "clang-18",
-        "release",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-gcc-12",
-      "displayName": "Debug|gcc-12",
-      "hidden": true,
-      "inherits": [
-        "gcc-12",
-        "debug",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-gcc-13",
-      "displayName": "Debug|gcc-13",
-      "hidden": true,
-      "inherits": [
-        "gcc-13",
-        "debug",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-gcc-14",
-      "displayName": "Debug|gcc-14",
-      "hidden": true,
-      "inherits": [
-        "gcc-14",
-        "debug",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-clang-15",
-      "displayName": "Debug|clang-15",
-      "hidden": true,
-      "inherits": [
-        "clang-15",
-        "debug",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-clang-18",
-      "displayName": "Debug|clang-18",
-      "hidden": true,
-      "inherits": [
-        "clang-18",
-        "debug",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-gcc-12-conan-flexiblas",
-      "displayName": "Debug|gcc-12|conan|flexiblas",
+      "name": "debug-conan-flexiblas",
+      "displayName": "Debug|conan|flexiblas",
       "inherits": [
         "flexiblas",
         "conan",
-        "debug-gcc-12"
+        "debug",
+        "default"
       ]
     },
     {
-      "name": "debug-gcc-13-conan-flexiblas",
-      "displayName": "Debug|gcc-13|conan|flexiblas",
+      "name": "debug-asan-conan-flexiblas",
+      "displayName": "Debug|fsanitize|conan|flexiblas",
       "inherits": [
-        "flexiblas",
-        "conan",
-        "debug-gcc-13"
-      ]
-    },
-    {
-      "name": "debug-gcc-14-conan-flexiblas",
-      "displayName": "Debug|gcc-14|conan|flexiblas",
-      "inherits": [
-        "flexiblas",
-        "conan",
-        "debug-gcc-14"
-      ]
-    },
-    {
-      "name": "debug-gcc-13-asan-conan-flexiblas",
-      "displayName": "Debug|gcc-13|fsanitize|conan|flexiblas",
-      "inherits": [
-        "flexiblas",
-        "conan",
         "asan",
-        "debug-gcc-13"
+        "debug-conan-flexiblas"
       ]
     },
     {
-      "name": "debug-gcc-14-asan-conan-flexiblas",
-      "displayName": "Debug|gcc-14|fsanitize|conan|flexiblas",
-      "inherits": [
-        "flexiblas",
-        "conan",
-        "asan",
-        "debug-gcc-14"
-      ]
-    },
-    {
-      "name": "debug-gcc-13-cmake-flexiblas",
-      "displayName": "Debug|gcc-13|cmake|flexiblas",
+      "name": "debug-cmake-flexiblas",
+      "displayName": "Debug|cmake|flexiblas",
       "inherits": [
         "flexiblas",
         "cmake",
-        "debug-gcc-13"
-      ]
-    },
-    {
-      "name": "debug-gcc-14-cmake-flexiblas",
-      "displayName": "Debug|gcc-14|cmake|flexiblas",
-      "inherits": [
-        "flexiblas",
-        "cmake",
-        "debug-gcc-14"
-      ]
-    },
-    {
-      "name": "release-gcc-11-conan-flexiblas-native",
-      "displayName": "Release|gcc-11|conan|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "conan",
-        "release-gcc-11"
-      ]
-    },
-    {
-      "name": "release-gcc-12-conan-mkl-native",
-      "displayName": "Release|gcc-12|conan|mkl|native",
-      "inherits": [
-        "native",
-        "mkl",
-        "conan",
-        "release-gcc-12"
-      ]
-    },
-    {
-      "name": "release-gcc-12-conan-flexiblas-native",
-      "displayName": "Release|gcc-12|conan|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "conan",
-        "release-gcc-12"
-      ]
-    },
-    {
-      "name": "profiling-gcc-12-conan-flexiblas-native",
-      "displayName": "Release|gcc-12|conan|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "conan",
-        "profiling",
-        "gcc-12"
-      ]
-    },
-    {
-      "name": "profiling-gcc-13-conan-flexiblas-native",
-      "displayName": "Release|gcc-13|conan|flexiblas|native",
-      "inherits": [
-        "gcc-13",
-        "native",
-        "profiling",
-        "flexiblas",
-        "conan",
+        "debug",
         "default"
       ]
     },
     {
-      "name": "profiling-gcc-14-conan-flexiblas-native",
-      "displayName": "Release|gcc-14|conan|flexiblas|native",
+      "name": "debug-conan-mkl",
+      "displayName": "Debug|conan|mkl",
       "inherits": [
-        "gcc-14",
-        "native",
-        "profiling",
-        "flexiblas",
-        "conan",
+        "mkl",
+        "cmake",
+        "debug",
         "default"
       ]
     },
     {
-      "name": "release-gcc-12-conan-openblas-native",
-      "displayName": "Release|gcc-12|conan|openblas|native",
+      "name": "debug-conan-openblas",
+      "displayName": "Debug|conan|openblas",
       "inherits": [
-        "native",
         "openblas",
-        "conan",
-        "release-gcc-12"
+        "cmake",
+        "debug",
+        "default"
       ]
     },
     {
-      "name": "release-gcc-12-cmake-flexiblas-native",
-      "displayName": "Release|gcc-12|cmake|flexiblas|native",
+      "name": "release-conan-flexiblas-native",
+      "displayName": "Release|conan|flexiblas|native",
+      "inherits": [
+        "native",
+        "flexiblas",
+        "conan",
+        "release",
+        "default"
+      ]
+    },
+    {
+      "name": "release-cmake-flexiblas-native",
+      "displayName": "Release|cmake|flexiblas|native",
       "inherits": [
         "native",
         "flexiblas",
         "cmake",
-        "release-gcc-12"
+        "release",
+        "default"
       ]
     },
     {
-      "name": "release-gcc-13-cmake-flexiblas-native",
-      "displayName": "Release|gcc-13|cmake|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "cmake",
-        "release-gcc-13"
-      ]
-    },
-    {
-      "name": "release-gcc-14-cmake-flexiblas-native",
-      "displayName": "Release|gcc-14|cmake|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "cmake",
-        "release-gcc-14"
-      ]
-    },
-    {
-      "name": "release-gcc-13-conan-flexiblas-native",
-      "displayName": "Release|gcc-13|conan|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "conan",
-        "release-gcc-13"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_PCH": "FALSE"
-      }
-    },
-    {
-      "name": "release-gcc-14-conan-flexiblas-native",
-      "displayName": "Release|gcc-14|conan|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "conan",
-        "release-gcc-14"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_PCH": "FALSE"
-      }
-    },
-    {
-      "name": "release-clang-15-conan-mkl-native",
-      "displayName": "Release|clang-15|conan|mkl|native",
-      "hidden": true,
+      "name": "release-conan-mkl-native",
+      "displayName": "Release|conan|mkl|native",
       "inherits": [
         "native",
         "mkl",
         "conan",
-        "release-clang-15"
+        "release",
+        "default"
       ]
     },
     {
-      "name": "release-clang-15-conan-openblas-native",
-      "displayName": "Release|clang-15|conan|openblas|native",
+      "name": "release-conan-openblas-native",
+      "displayName": "Release|conan|openblas|native",
       "inherits": [
         "native",
         "openblas",
         "conan",
-        "release-clang-15"
+        "release",
+        "default"
       ]
     },
     {
-      "name": "release-clang-15-conan-flexiblas-native",
-      "displayName": "Release|clang-15|conan|flexiblas|native",
+      "name": "profiling-conan-flexiblas-native",
+      "displayName": "profiling|conan|flexiblas|native",
       "inherits": [
         "native",
         "flexiblas",
         "conan",
-        "release-clang-15"
-      ]
-    },
-    {
-      "name": "release-clang-18-conan-flexiblas-native",
-      "displayName": "Release|clang-18|conan|flexiblas|native",
-      "inherits": [
-        "native",
-        "flexiblas",
-        "conan",
-        "release-clang-18"
-      ]
-    },
-    {
-      "name": "debug-gcc-12-conan-mkl",
-      "displayName": "Debug|gcc-12|conan|mkl|shared|asan",
-      "inherits": [
-        "mkl",
-        "conan",
-        "debug-gcc-12"
-      ]
-    },
-    {
-      "name": "debug-gcc-12-conan-openblas",
-      "displayName": "Debug|gcc-12|conan|openblas|shared|asan",
-      "inherits": [
-        "openblas",
-        "conan",
-        "debug-gcc-12"
-      ]
-    },
-    {
-      "name": "debug-clang-15-conan-mkl",
-      "displayName": "Debug|clang-15|conan|mkl|shared|asan",
-      "inherits": [
-        "mkl",
-        "conan",
-        "debug-clang-15"
-      ]
-    },
-    {
-      "name": "debug-clang-15-conan-openblas",
-      "displayName": "Debug|clang-15|conan|openblas|shared|asan",
-      "inherits": [
-        "openblas",
-        "conan",
-        "debug-clang-15"
-      ]
-    },
-    {
-      "name": "debug-clang-15-conan-flexiblas",
-      "displayName": "Debug|clang-15|conan|flexiblas|shared|asan",
-      "inherits": [
-        "flexiblas",
-        "conan",
-        "debug-clang-15"
-      ]
-    },
-    {
-      "name": "debug-clang-18-conan-flexiblas",
-      "displayName": "Debug|clang-18|conan|flexiblas|shared|asan",
-      "inherits": [
-        "flexiblas",
-        "conan",
-        "debug-clang-18"
+        "profiling",
+        "default"
       ]
     },
     {
@@ -729,7 +360,6 @@
       "name": "kraken",
       "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
-        "gcc",
         "float128",
         "flexiblas",
         "haswell",
@@ -771,7 +401,6 @@
       "name": "tetralith",
       "displayName": "Release|march=native|conan|flexiblas",
       "inherits": [
-        "gcc",
         "float128",
         "flexiblas",
         "native",
@@ -791,7 +420,6 @@
       "name": "tetralith-debug",
       "displayName": "Debug|conan|flexiblas",
       "inherits": [
-        "gcc",
         "float128",
         "flexiblas",
         "conan",
@@ -828,120 +456,44 @@
   ],
   "buildPresets": [
     {
-      "name": "release-gcc-11-conan-flexiblas-native",
-      "configurePreset": "release-gcc-11-conan-flexiblas-native"
+      "name": "debug-conan-flexiblas",
+      "configurePreset": "debug-conan-flexiblas"
     },
     {
-      "name": "release-gcc-12-conan-mkl-native",
-      "configurePreset": "release-gcc-12-conan-mkl-native"
+      "name": "debug-asan-conan-flexiblas",
+      "configurePreset": "debug-conan-flexiblas"
     },
     {
-      "name": "release-gcc-12-conan-flexiblas-native",
-      "configurePreset": "release-gcc-12-conan-flexiblas-native"
+      "name": "debug-cmake-flexiblas",
+      "configurePreset": "debug-cmake-flexiblas"
     },
     {
-      "name": "profiling-gcc-12-conan-flexiblas-native",
-      "configurePreset": "profiling-gcc-12-conan-flexiblas-native"
+      "name": "debug-conan-mkl",
+      "configurePreset": "debug-conan-mkl"
     },
     {
-      "name": "profiling-gcc-13-conan-flexiblas-native",
-      "configurePreset": "profiling-gcc-13-conan-flexiblas-native"
+      "name": "debug-conan-openblas",
+      "configurePreset": "debug-conan-openblas"
     },
     {
-      "name": "profiling-gcc-14-conan-flexiblas-native",
-      "configurePreset": "profiling-gcc-14-conan-flexiblas-native"
+      "name": "release-conan-flexiblas-native",
+      "configurePreset": "release-conan-flexiblas-native"
     },
     {
-      "name": "release-gcc-12-conan-openblas-native",
-      "configurePreset": "release-gcc-12-conan-openblas-native"
+      "name": "release-cmake-flexiblas-native",
+      "configurePreset": "release-cmake-flexiblas-native"
     },
     {
-      "name": "release-gcc-12-cmake-flexiblas-native",
-      "configurePreset": "release-gcc-12-conan-openblas-native"
+      "name": "release-conan-mkl-native",
+      "configurePreset": "release-conan-mkl-native"
     },
     {
-      "name": "release-gcc-13-cmake-flexiblas-native",
-      "configurePreset": "release-gcc-13-cmake-flexiblas-native"
+      "name": "release-conan-openblas-native",
+      "configurePreset": "release-conan-openblas-native"
     },
     {
-      "name": "release-gcc-14-cmake-flexiblas-native",
-      "configurePreset": "release-gcc-14-cmake-flexiblas-native"
-    },
-    {
-      "name": "release-gcc-13-conan-flexiblas-native",
-      "configurePreset": "release-gcc-13-conan-flexiblas-native"
-    },
-    {
-      "name": "release-gcc-14-conan-flexiblas-native",
-      "configurePreset": "release-gcc-14-conan-flexiblas-native"
-    },
-    {
-      "name": "release-clang-15-conan-mkl-native",
-      "configurePreset": "release-clang-15-conan-mkl-native"
-    },
-    {
-      "name": "release-clang-15-conan-openblas-native",
-      "configurePreset": "release-clang-15-conan-openblas-native"
-    },
-    {
-      "name": "release-clang-15-conan-flexiblas-native",
-      "configurePreset": "release-clang-15-conan-flexiblas-native"
-    },
-    {
-      "name": "release-clang-18-conan-flexiblas-native",
-      "configurePreset": "release-clang-18-conan-flexiblas-native"
-    },
-    {
-      "name": "debug-gcc-12-conan-mkl",
-      "configurePreset": "debug-gcc-12-conan-mkl"
-    },
-    {
-      "name": "debug-gcc-12-conan-openblas",
-      "configurePreset": "debug-gcc-12-conan-openblas"
-    },
-    {
-      "name": "debug-gcc-12-conan-flexiblas",
-      "configurePreset": "debug-gcc-12-conan-flexiblas"
-    },
-    {
-      "name": "debug-gcc-13-conan-flexiblas",
-      "configurePreset": "debug-gcc-13-conan-flexiblas"
-    },
-    {
-      "name": "debug-gcc-14-conan-flexiblas",
-      "configurePreset": "debug-gcc-14-conan-flexiblas"
-    },
-    {
-      "name": "debug-gcc-13-asan-conan-flexiblas",
-      "configurePreset": "debug-gcc-13-asan-conan-flexiblas"
-    },
-    {
-      "name": "debug-gcc-14-asan-conan-flexiblas",
-      "configurePreset": "debug-gcc-14-asan-conan-flexiblas"
-    },
-    {
-      "name": "debug-gcc-13-cmake-flexiblas",
-      "configurePreset": "debug-gcc-13-cmake-flexiblas"
-    },
-    {
-      "name": "debug-gcc-14-cmake-flexiblas",
-      "configurePreset": "debug-gcc-14-cmake-flexiblas"
-    },
-    {
-      "name": "debug-clang-15-conan-mkl",
-      "configurePreset": "debug-clang-15-conan-mkl"
-    },
-    {
-      "name": "debug-clang-15-conan-openblas",
-      "configurePreset": "debug-clang-15-conan-openblas"
-    },
-    {
-      "name": "debug-clang-15-conan-flexiblas",
-      "configurePreset": "debug-clang-15-conan-flexiblas"
-    },
-    {
-      "name": "debug-clang-18-conan-flexiblas",
-      "configurePreset": "debug-clang-18-conan-flexiblas"
+      "name": "profiling-conan-flexiblas-native",
+      "configurePreset": "profiling-conan-flexiblas-native"
     },
     {
       "name": "kraken",
@@ -982,6 +534,19 @@
   ],
   "testPresets": [
     {
+      "name": "debug-conan-flexiblas",
+      "displayName": "CTest debug builds",
+      "configurePreset": "debug-conan-flexiblas",
+      "output": {
+        "verbosity": "default",
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    },
+    {
       "name": "github-actions-cmake",
       "displayName": "CMake package manager configuration for github-actions",
       "configurePreset": "github-actions-cmake",
@@ -1006,6 +571,25 @@
         "noTestsAction": "error",
         "stopOnFailure": true
       }
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "debug-conan-flexiblas-test",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "debug-conan-flexiblas"
+        },
+        {
+          "type": "build",
+          "name": "debug-conan-flexiblas"
+        },
+        {
+          "type": "test",
+          "name": "debug-conan-flexiblas"
+        }
+      ]
     }
   ]
 }
