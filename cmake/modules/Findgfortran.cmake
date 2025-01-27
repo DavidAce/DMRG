@@ -30,7 +30,7 @@ if(quadmath IN_LIST gfortran_FIND_COMPONENTS)
     if(gfortran_FIND_REQUIRED_quadmath)
         set(REQUIRED REQUIRED)
     endif()
-    find_package(quadmath ${REQUIRED})
+    find_package(quadmath ${REQUIRED} BYPASS_PROVIDER)
 endif()
 
 include(FindPackageHandleStandardArgs)

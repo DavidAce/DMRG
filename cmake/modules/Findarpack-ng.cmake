@@ -15,9 +15,27 @@ elseif(TARGET arpack-ng::arpack-ng)
     set(ARPACK_TARGET arpack-ng::arpack-ng)
 endif()
 
+
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(arpack-ng
                                   VERSION_VAR PACKAGE_VERSION
                                   REQUIRED_VARS ARPACK_TARGET
                                   HANDLE_VERSION_RANGE
                                   )
+
+
+if(TARGET ${ARPACK_TARGET} AND NOT BUILD_SHARED_LIBS)
+    get_target_property(ARPACK_ALIASED_TARGET ${ARPACK_TARGET} ALIASED_TARGET)
+    if(ARPACK_ALIASED_TARGET)
+        set(ARPACK_TARGET ${ARPACK_ALIASED_TARGET})
+    endif()
+
+    find_package(gfortran BYPASS_PROVIDER OPTIONAL_COMPONENTS quadmath)
+
+    if(TARGET gfortran::gfortran)
+        target_link_libraries(${ARPACK_TARGET} INTERFACE gfortran::gfortran)
+    endif()
+    if(TARGET quadmath::quadmath)
+        target_link_libraries(${ARPACK_TARGET} INTERFACE quadmath::quadmath)
+    endif()
+endif()

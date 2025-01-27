@@ -35,20 +35,6 @@ function(find_arpackpp)
     set(ARPACKPP_ARPACK_TARGET ${arpack_target_name} PARENT_SCOPE)
     set(ARPACKPP_LAPACKE_TARGET ${lapacke_target_name} PARENT_SCOPE)
 
-
-    if(TARGET gfortran::gfortran)
-        set(ARPACKPP_GFORTRAN_TARGET gfortran::gfortran PARENT_SCOPE)
-    else()
-        set(ARPACKPP_GFORTRAN_TARGET gfortran PARENT_SCOPE)
-    endif()
-    if(TARGET quadmath::quadmath)
-        set(ARPACKPP_QUADMATH_TARGET quadmath::quadmath PARENT_SCOPE)
-    else()
-        set(ARPACKPP_QUADMATH_TARGET quadmath PARENT_SCOPE)
-    endif()
-
-
-
     if(ARPACKPP_NO_DEFAULT_PATH)
         set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
     endif()
@@ -108,7 +94,5 @@ if(arpack++_FOUND)
     target_link_libraries(arpack++::arpack++ INTERFACE
                  ${ARPACKPP_ARPACK_TARGET}
                  ${ARPACKPP_LAPACKE_TARGET}
-                 ${ARPACKPP_GFORTRAN_TARGET}
-                 ${ARPACKPP_QUADMATH_TARGET}
              )
 endif()

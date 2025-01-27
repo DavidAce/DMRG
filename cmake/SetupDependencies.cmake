@@ -10,12 +10,25 @@ if(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
 endif()
 
 
+### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
+### for accurate long time-scale evolution)
+if(DMRG_USE_FLOAT128)
+    include(cmake/CheckStdFloat128.cmake)
+    check_std_float128_t()
+    target_compile_definitions(xdmrg++-flags INTERFACE DMRG_USE_FLOAT128 H5PP_USE_FLOAT128)
+elseif(DMRG_USE_QUADMATH)
+    find_package(quadmath REQUIRED BYPASS_PROVIDER)
+    target_compile_definitions(xdmrg++-flags INTERFACE DMRG_USE_QUADMATH H5PP_USE_QUADMATH)
+    target_link_libraries(xdmrg++-deps INTERFACE quadmath::quadmath)
+endif ()
+
+
 
 # Setup dependencies
-find_package(Threads                      REQUIRED)
-find_package(OpenMP                       REQUIRED COMPONENTS CXX )
-find_package(gfortran                     REQUIRED OPTIONAL_COMPONENTS quadmath)
-find_package(Lapacke                      REQUIRED MODULE)
+find_package(Threads                      REQUIRED BYPASS_PROVIDER)
+find_package(OpenMP                       REQUIRED BYPASS_PROVIDER COMPONENTS CXX)
+find_package(gfortran                     REQUIRED BYPASS_PROVIDER OPTIONAL_COMPONENTS quadmath)
+find_package(Lapacke                      REQUIRED BYPASS_PROVIDER MODULE)
 find_package(pcg-cpp                      REQUIRED)
 find_package(Eigen3       3.4.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
 find_package(Ceres        2.2.0           REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
@@ -98,15 +111,4 @@ else()
     message(FATAL_ERROR "Target not defined: Eigen3::Eigen")
 endif()
 
-### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
-### for accurate long time-scale evolution)
-if(DMRG_USE_FLOAT128)
-    target_compile_definitions(xdmrg++-flags INTERFACE DMRG_USE_FLOAT128 H5PP_USE_FLOAT128)
-    target_compile_options(xdmrg++-flags INTERFACE -fext-numeric-literals)
-elseif(DMRG_USE_QUADMATH)
-    find_package(quadmath REQUIRED)
-    target_compile_definitions(xdmrg++-flags INTERFACE DMRG_USE_QUADMATH H5PP_USE_QUADMATH)
-    target_compile_options(xdmrg++-flags INTERFACE -fext-numeric-literals)
-    target_link_libraries(xdmrg++-flags INTERFACE quadmath::quadmath)
-endif ()
 

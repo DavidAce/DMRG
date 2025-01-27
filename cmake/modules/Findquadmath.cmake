@@ -1,16 +1,15 @@
 function(find_quadmath)
-
     find_library(QUADMATH_LIBRARY NAMES quadmath)
     find_path(QUADMATH_INCLUDE_DIR NAMES quadmath.h PATH_SUFFIXES include)
-
-    include(CheckTypeSize)
-    check_type_size(__float128 FLOAT128_EXISTS BUILTIN_TYPES_ONLY LANGUAGE CXX)
-
     if(NOT QUADMATH_LIBRARY OR NOT QUADMATH_INCLUDE_DIR)
         include(CMakePushCheckState)
         include(CheckCXXSourceCompiles)
+        include(CheckTypeSize)
         cmake_push_check_state(RESET)
-        list(APPEND CMAKE_REQUIRED_LIBRARIES "quadmath")
+        set(CMAKE_EXTRA_INCLUDE_FILES "quadmath.h")
+        set(CMAKE_REQUIRED_LIBRARIES "quadmath")
+        set(CMAKE_REQUIRED_QUIET TRUE)
+        check_type_size(__float128 SIZEOF__float128 BUILTIN_TYPES_ONLY LANGUAGE CXX)
         check_cxx_source_compiles("
             #include <quadmath.h>
             int main(void){
@@ -23,25 +22,30 @@ function(find_quadmath)
             set(QUADMATH_INCLUDE_DIR "unused" CACHE PATH "" FORCE)
             set(QUADMATH_LIBRARY "quadmath" CACHE FILEPATH "" FORCE)
         elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-            message(STATUS "Failed to compile a simple quadmath program: Note that Clang does not support quadmath")
+            if(NOT quadmath_FIND_QUIETLY)
+                message(STATUS "Failed to compile a simple quadmath program: Note that Clang does not support quadmath.")
+            endif()
+        else()
+            if(NOT quadmath_FIND_QUIETLY)
+                message(STATUS "Failed to compile a simple quadmath program.")
+            endif()
         endif()
     endif()
-
-
-
 endfunction()
 
 find_quadmath()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(quadmath DEFAULT_MSG QUADMATH_LIBRARY QUADMATH_INCLUDE_DIR FLOAT128_EXISTS)
+find_package_handle_standard_args(quadmath DEFAULT_MSG QUADMATH_LIBRARY QUADMATH_INCLUDE_DIR HAVE_SIZEOF__float128)
 
 if(quadmath_FOUND)
     if(NOT TARGET quadmath::quadmath)
         if(QUADMATH_LINK_ONLY)
+#            message(STATUS "Defining INTERFACE target quadmath::quadmath")
             add_library(quadmath::quadmath INTERFACE IMPORTED)
             target_link_libraries(quadmath::quadmath INTERFACE ${QUADMATH_LIBRARY})
         else()
+#            message(STATUS "Defining UNKNOWN target quadmath::quadmath")
             add_library(quadmath::quadmath UNKNOWN IMPORTED)
             set_target_properties(quadmath::quadmath PROPERTIES IMPORTED_LOCATION "${QUADMATH_LIBRARY}")
             if(QUADMATH_INCLUDE_DIR AND NOT QUADMATH_INCLUDE_DIR MATCHES "unused")
